@@ -1,0 +1,256 @@
+
+The human_phantom example models anthropomorphic phantoms for Geant4 simulations. Two models are available: MIRD and ORNL (Male and Female for each approach).
+
+the organs of the ORNL and MIRD phantom are handled through GDML (Geometry Description Markup Language, www.cern.ch/gdml). The materials of the MIRD and ORNL models are defined in the GDML files. the organs simulated for each model are listed here : 
+
+
+ORNL  :  Head Skull Thyroid Brain LeftLeg RightLeg LeftLegBone RightLegBone Trunk RightArmBone LeftArmBone LeftKidney RightKidney LeftLung RightLung LeftOvary RightOvary LeftBreast RightBreast Heart Spleen UrinaryBladder Pelvis Stomach Pancreas Uterus Liver UpperLargeIntestine LowerLargeIntestine UpperSpine MiddleLowerSpine 
+LeftAdrenal RightAdrenal LeftClavicle RightClavicle LeftScapula RightScapula SmallIntestine RibCage Thymus MaleGenitalia LeftTeste RightTeste .
+
+
+MIRD  :  Head Skull Thyroid Brain Legs LegBone Trunk ArmBone Kidney Lung Ovary Breast Heart Spleen UrinaryBladder Pelvis Stomach Pancreas Uterus Liver UpperLargeIntestine LowerLargeIntestine MiddleLowerSpine UpperSpine 
+
+
+If using ORNL or MIRD phantom model with no GDML set-up a segmentation fault will be otained when running the simulation.
+
+
+
+
+
+-----> Phantom initialization
+
+-the models available in the code are MIRDFemale, MIRDMale, ORNLFemale, ORNLMale. to set one use the command "/phantom/setPhantomModel ORNLFemale" 
+
+-to choose organs according to the sex, you need to set the sex of phantom simulated by the command "/phantom/setPhantomSex Female"
+
+this commands are mandatory to build the phantom geometry
+
+
+
+
+
+-----> Points source generation
+
+-the MIRD dose calculation formalisme is based on the idea of source-target organs, the energy deposit is calculated in all organs, but in each simulation we need to a active an organ like a source or particles and all others organs are targets, using this principle, we have to generate the source points inside the volume of organ-source uniformly, for this purpose, the MonteCarlo method is the best choice, first we create a box surrounded the volume of organ-source, the box now is the mother volume of organ-source, we randomize a point vector (position) inside the box space, if it inside the organ-source we save it, else we randomize another point vector, etc. all the points generated and located inside organ-source volume are saved in a binary file in the build directory with name [organName]points.bin, how to make the code generate this points for an organ-source ! 
+
+
+-First, to generate points in an organ-source you have to set the organ-source name (for example Heart) with the command "/PointsSourceGeneration/setOrganGenName Heart" 
+
+
+-if you want to locate the organ-source volume in a spécific location (for more precision) , you can do it by using the command "/PointsSourceGeneration/setOrganThreeVector 0. -0.3 15.32" . the values are in cm . if this command not used, the code data will be used.
+
+
+-the box created should have hx, hy and hz and this dimension are choosen according the shape and volume of organ choosen, this is done by the command "/PointsSourceGeneration/setBoxXYZWidth 10. 10. 10". the values are in cm . if this command not used, the code data will be used. 
+
+
+-to start the generation of points and save them in the binary file. first, you need to specify the number of generated points by the command "/PointsSourceGeneration/setPointsNumberToGenerate 30000000", now specify the number of saved points with command "/PointsSourceGeneration/setPointsNumberToSave 300000" , then with this commands we save time by stoping the points generation if we reach the number of saved points. the generate number must be greater than save number
+
+
+
+
+
+-----> Primary Particle Generator
+
+
+-first we have to set the organ-source name by command, for example : "/sourceData/setOrganSource Heart" , the code try to locate the file HeartPoints.bin (generated before in points generation step), if the file dosent exist, then all particles will be sourced from (0,0,0). 
+
+
+-the code use e- and gamma, you can activate one by command "/sourceData/setParticleName e-" 
+
+
+-the initial energy of the emited particle is 0.555(by default), but you can use this command "/sourceData/setInitialEnergy 0.555" , to set a new particles energy .
+
+
+-the code have three types of energy distribution they are : mono(for monoenergetic partices, it's the default value), uniform and rayleigh(the particle energy that you set befaore is the max energy in rayleigh distribution) ,to set a new distribution use the command "/sourceData/setEnergyDistribution mono" .
+
+
+-for angle distribution, you can use one of two distribution : uniformSphericalPoint(default value), uniform, to set a new value use the command "/sourceData/setAngleDistribution uniformSphericalPoint" .
+
+
+
+
+-----> data output
+
+
+The energy deposit is calculated in the organs of the phantom. At the end of the execution of the simulation the summary of the energy deposit, absorbed dose, absorbed fraction AF, specific absorbed fraction SAF, in each organ (source or target) and the total energy deposit in all phantom is print out.
+
+
+in addition, this data are printed in file (result.txt) at the end of run, and it will be erased and recreated for next run.
+
+
+-- comparison file : is a text file that contains the reference values of a quantity(SAF, AF) that we will be compared to the values given by the application code. this file have to be in the next format : 
+
+
+
+
+
+
+
+
+-----> analyse code : 
+
+it's a program that use the root-system to create graphs from app results file and the comparison data file.
+
+this code take the file results.txt (generated by the app code) and the comparison_file.txt (constructed by the user in the up format ) , then it creates:
+-graphs based on the data in result files
+-graphs contains two data origin, first of the app code(from result file) and seconde(from comparison file)   
+
+
+
+-----> the file MyScript.mac : is the file used by the application code to build phantom and generate points and setting the source data, the application code excecute it to start of the simulation, all commands listed above are added in this file. 
+
+-the two commands  "/phantom/setPhantomModel ORNLFemale" and "/phantom/setPhantomSex Female" are mandatory to construct the phantom geometry 
+
+-if the command "/PointsSourceGeneration/setOrganGenName Heart" is used, then the points generation will be active, else there is no generation and the binary file will not be created, the positions of source points will be attached to the center (0,0,0) of world volume (if there is no binary file of organ source ) 
+
+-for more on this commands, see MyScript.mac 
+
+
+
+
+-----> How to build the example 
+
+
+the application is based on Geant4-10.5.0 toolkit, which mean that the geant4 system have to be installed with multithreading mode.
+
+--To build the application code, you need to set the : 
+
+-DGEANT4_USE_GDML=ON    flag during the CMAKE configuration step, 
+-DXERCESC_ROOT_DIR=<path_to_xercesc>    flag pointing to the path where the XercesC XML parser package is installed in your system.
+-DWITH_ANALYSIS_USE=ON    To activate the analysis 
+
+
+
+the source directory is in /path/to/workspace/human_phantom/  , then run this commands to build the application : 
+
+cd /path/to/workspace/
+mkdir human_phantom_build
+cd /human_phantom_build
+
+
+****** build the example with MPI libraries to use multithreading mode ****** 
+
+
+1 - install G4MPI libraries by installation of geant4 example MPI : 
+
+
+
+mpigcc   //it will show you the 3 MPI libraries, shoose one to install 
+
+sudo apt-get install libopenmpi-dev   //install the library libopenmpi-dev 
+
+//get the MPI example directory from geant4 examples, you will find it at /.../geant4_install/share/Geant4-10.5.0/examples/extended/parallel/MPI , copy it to /home/.../workSpace
+
+cd /home/.../workSpace
+
+mkdir MPI_build  //where we will build the MPI example
+
+mkdir G4mpi  //where we will install the geant4 MPI library, to use it in geant4 application codes. and finally, you should have to find the library libG4mpi.so /home/.../workSpace/G4mpi/lib
+
+cd MPI_build
+
+cmake -DGeant4_DIR=/home/.../geant4_install/lib/Geant4-10.5.0  -DCMAKE_INSTALL_PREFIX=/home/.../workSpace/0geant4_projects/G4mpi/lib/G4mpi-10.5.0  /home/.../workSpace/MPI
+
+make
+
+make install   //to install the library in /home/.../workSpace/0geant4_projects/G4mpi
+
+
+
+2 - after the installation of geant4 MPI get the path needed to build the application in multithreading mode and add it to the cmake commande using variable -DG4mpi_DIR for example : 
+
+
+ -DG4mpi_DIR=/home/tarik/Desktop/workSpace/0geant4_projects/MPI_build/source , in the source directory you have to find the library libG4mpi.so 
+
+
+
+3 - application code building : 
+
+the application use the ROOT and G4MPI and GDML(included by default)
+
+cmake -G"Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=/home/tarik/Desktop/workSpace/geant4/geant4_install -DGeant4_DIR=/home/tarik/Desktop/workSpace/geant4/geant4_install/lib/Geant4-10.5.0 -DWITH_GDML_USE=ON­‐DGEANT4_BUILD_MULTITHREADED=ON -DWITH_ANALYSIS_USE=ON -DG4mpi_DIR=/home/tarik/Desktop/workSpace/0geant4_projects/G4mpi/lib/G4mpi-10.5.0 -DROOT_DIR=/home/tarik/Desktop/workSpace/root_v6.14.04.source/build /home/tarik/Desktop/workSpace/Qt_projects/MC_for_internalDoseCalculation/GUI_app 
+
+< -G"Eclipse CDT4 - Unix Makefiles" -D CMAKE_BUILD_TYPE=Debug > used if you want to build your application code from eclipse editor  
+
+
+
+build with MPI (MPI(with MultiThreading), seq and normal MultiThreading modes are availables)
+
+build without MPI (just seq and normal MultiThreading modes are availables)
+
+
+make -j4  (processor with 4 cores)
+
+
+
+
+---To run the application after installing
+
+cd /path/to/workspace/human_phantom_build/
+
+<./phantom [mode1] [mode2]>  ( mode1 can be : seq (sequantial "default if we dont set mode1") or mt (multi-threading) ; mode2 can be : B (Batch "default if we dont set mode2") or G (Graphical) )
+
+example : 
+<./phantom seq G>  	Sequantial(specified) , Graphical(specified). 
+<./phantom mt G>  	Multi-threading(specified) , Graphical(specified). 
+<./phantom seq>   	Sequantial(specified) , Batch(default)
+<./phantom>   		Sequantial(default) , Batch(default)
+
+
+
+./phantom or ./phantom seq  (in sequantial mode)
+./phantom mt  (in multi-threading mode)
+
+
+
+
+
+
+---To run the application automatically on a number of organ sources and particles and energies, we ned just to specify these , it works for the batch mode2 
+
+cd /path/to/workspace/human_phantom_build/
+./MyShell.sh 
+
+
+
+
+
+
+- Default macro: MyScript.mac (MIRD, Female model) 
+
+- Visualization macros: openGLVis.mac , vrmlVis.mac , dawnVis.mac (this macros are called from MyScript.mac)
+
+- Run simulation in batch mode: batch.mac
+
+
+****** output files : 
+
+-if there is the comparison file then the .ps for each source-->target will be created by comparing the values of comparison file and thus estimated by application 
+
+
+
+
+
+****** tips : 
+
+- the format of the file that contains values for comparison have to be writen in this format : 
+
+- the gdmlFiles directory have to be in the build directory of application code 
+
+- the number of energies simulated by the application need to be entered to the analyse code 
+
+- the organ names that we need to get there values to comparing or in analysis need to be specified in the run action class
+
+- the organ name have to begin by big letter
+
+- the energies entered have to be in MeV
+
+- if there is no specific organ GDML file , then we dont set it's name as a source or a target in application , because it gives an false values 
+
+- you have to enter the name of organs that you want to write their scorer in output files 
+
+- the seconde code use the path of build directory of geant4 application code , then if you have to add the path to the seconde code 
+
+- the input files are created automatically by the shell file MyShell.sh and the organPoint.bin are created automatically by geant4 code 
+
+- 

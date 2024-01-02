@@ -1,0 +1,30 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>res/Windows-Close-Program-icon.png</file>
+        <file>res/install-icon.png</file>
+        <file>res/open-file-icon.png</file>
+        <file>res/Places-start-here-icon.png</file>
+        <file>res/Save-icon.png</file>
+        <file>res/Stop-icon.png</file>
+        <file>res/System-run-icon.png</file>
+        <file>res/Actions-help-about-icon.png</file>
+        <file>res/Button-Help-icon.png</file>
+        <file>res/Line-Graph-icon.png</file>
+        <file>res/Standing-skeleton-icon.png</file>
+        <file>res/Clear-icon.png</file>
+        <file>res/remove.jpeg</file>
+        <file>res/return.png</file>
+        <file>res/GenerateIcon.png</file>
+        <file>res/GeometryModelling.png</file>
+        <file>res/CommFile.png</file>
+        <file>res/EditFile.png</file>
+        <file>res/check.png</file>
+        <file>res/ReadTextFile.png</file>
+        <file>res/Directory.png</file>
+        <file>res/ValidatePackages.png</file>
+        <file>res/send.png</file>
+        <file>res/saveDefault.png</file>
+        <file>res/Restart.png</file>
+        <file>res/Update.png</file>
+    </qresource>
+</RCC>

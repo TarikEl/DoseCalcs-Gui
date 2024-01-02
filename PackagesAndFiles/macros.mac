@@ -1,0 +1,100 @@
+
+#/control/cout/ignoreInitializationCout
+#/control/cout/setCoutFile Cout.txt 
+/control/cout/ignoreThreadsExcept 0 
+
+#######################################################  Materials  ###########################
+
+/MaterialData/createElement 1 1.008 Hydrogen
+/MaterialData/createElement 6 12.011 Carbon
+/MaterialData/createElement 7 14.007 Nitrogen
+/MaterialData/createElement 8 16 Oxygen
+/MaterialData/createElement 11 12.9898 Sodium
+/MaterialData/createElement 12 24.305 Magnesium
+/MaterialData/createElement 12 30.974 Phosphorus
+/MaterialData/createElement 16 32.065 Sulfur
+/MaterialData/createElement 17 35.453 Chlorine
+/MaterialData/createElement 19 39.0983 Potassium
+/MaterialData/createElement 20 40.078 Calcium
+/MaterialData/createElement 26 56.845 Iron
+/MaterialData/createElement 30 65.37 Zn
+/MaterialData/createElement 37 85.47 Rb
+/MaterialData/createElement 38 87.62 Sr
+/MaterialData/createElement 40 91.22 Zr
+/MaterialData/createElement 53 126.904 Iode
+/MaterialData/createElement 82 207.19 Pb
+
+/MaterialData/createMaterial Liver 95 13 1.05 g/cm3 frac 
+/MaterialData/addElements Hydrogen 10.2 Carbon 13.1 Nitrogen 3.1 Oxygen 72.4 Sodium 0.2 Magnesium 0 Phosphorus 0.2 Sulfur 0.3 Chlorine 0.2 Potassium 0.3 Calcium 0 Iron 0 Iode 0
+
+/MaterialData/createMaterial Spleen 95 13 1.05 g/cm3 frac 
+/MaterialData/addElements Hydrogen 10.2 Carbon 13.1 Nitrogen 3.1 Oxygen 72.4 Sodium 0.2 Magnesium 0 Phosphorus 0.2 Sulfur 0.3 Chlorine 0.2 Potassium 0.3 Calcium 0 Iron 0 Iode 0
+
+/MaterialData/createMaterial SoftTissue 95 18 0.9869 g/cm3 frac 
+/MaterialData/addElements Hydrogen 10.47 Carbon 23.02 Nitrogen 2.34 Oxygen 63.21 Sodium 0.13 Magnesium 0.015 Phosphorus 0.24 Sulfur 0.22 Chlorine 0.14 Potassium 0.21 Calcium 0 Iron 0.0063 Zn 0.0032 Rb 0.00057 Sr 0.000034 Zr 0.0008 Iode 0 Pb 0.000016
+
+
+#######################################################  world volume ########################
+
+#/MaterialData/setNistMaterialNameAndID G4_AIR 1
+#/GeometryData/createWorld G4_AIR 0.5 0.5 2 m
+
+#######################################################  Volumes  ############################
+
+# For c++ format testing
+/GeometryData/createVolume World.c++
+#/GeometryData/createWorld World.c++
+
+# For .geom (or TEXT) format testing
+/GeometryData/createVolume Scripts/Thyroid.geom Head 0 -3.91 -5.65 0 0 180 cm degree
+
+# For command testing
+/GeometryData/createSolid Ellipsoid SpleenSol 3.5 2 6 cm
+/GeometryData/createVolume Spleen SpleenSol SoftTissue Trunk 11 3 2 0 0 0 cm degree
+
+# For .gdml and .stl( or .ast) format testing
+/GeometryData/createVolume Scripts/Teste.ast SoftTissue MaleGenitalia 0 3 0 90 0 0 cm degree
+
+#/GeometryData/createVolume Scripts/World.gdml
+#/GeometryData/createVolume Scripts/Thyroid.geom Head 0 -3.91 -5.925 0 0 180 cm degree
+#/GeometryData/createSolid Ellipsoid SpleenSol 3.2 2.3 5.7 cm
+#/GeometryData/createVolume Spleen SpleenSol SoftTissue Trunk 10.79 2.94 1.8 0 0 0 cm degree
+#/GeometryData/createVolume Scripts/Stomach.stl SoftTissue Trunk 6.90 -3.92 0 90 0 0 cm degree
+
+#######################################################  Physics  ############################
+
+/PhysicsData/setPhysicsData EMS3
+/PhysicsData/setCutsData 0.1 1 mm keV
+#/PhysicsData/generateCrossSectionFor gamma MeV 0.01 0.015 0.02 0.03 0.05 0.1 0.2 0.5 1
+
+#######################################################  Source  ############################
+
+/SourceData/setEventsParticleNameData gamma
+/SourceData/setEventsInitialPosData cm Volume Spleen 3.2 2.3 5.7 Thyroid 2.3 2.3 2.6 Liver 15. 8. 8. 
+# Brain 6.58 8.57 5.73 Stomach 4 3 8 Spleen 3.2 2.3 5.7 Thyroid 2.3 2.3 2.6 Liver 15. 8. 8. Teste  3 1.8 2.6
+/SourceData/setEventsInitialEneData MeV Mono 1. 
+# 0.01 0.015 0.02 0.03 0.05 0.1 0.2 0.5 1. MIRD
+# 0.01 0.015 0.02 0.03  0.04 0.05 0.06 0.08 0.1 0.15 0.2 0.3 0.4 0.5  0.6 0.8 1 ICRP
+/SourceData/setEventsInitialMomDirData degree Isotropic 
+#/SourceData/useDataGenerationFiles 10000 yes yes yes
+
+#/SourceData/testEventsInitialPositions
+#/SourceData/showSourceBox
+
+#######################################################  Score  ############################
+
+/RunAndScoreData/setVolumesToScore All
+/RunAndScoreData/setQuantitiesToScore SAF
+/RunAndScoreData/setSimNumOnRanks m
+/RunAndScoreData/setNumberOfThreads 3
+
+#######################################################  Analysis  ############################
+
+/AnalysisData/generateSelfCrossGraphs Reference_Result Self_Cross MIRD Results/ReferenceData.txt ICRP Results/MaleICRPRefData.txt
+/AnalysisData/generateRelativeErrGraph
+/AnalysisData/generateRelativeSDevGraph
+/AnalysisData/generateVariableRegionGraph Mass
+/AnalysisData/generateEventsDataHisto
+/AnalysisData/setGraphsParameters yes no yes yes RightTop 0.15 0.23 yes .pdf
+
+/AnalysisData/setRadioTracerData 18-FDG 500 DoseCalcs

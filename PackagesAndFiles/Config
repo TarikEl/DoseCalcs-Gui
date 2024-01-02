@@ -1,0 +1,24 @@
+
+CMAKE_INSTALL_DIR        /usr/local/bin
+GEANT4_INSTALL_DIR   /home/tarik/Desktop/DoseCalcs_build/PackagesAndFiles/Geant4_install/bin
+MPI_INSTALL_DIR        /usr/local/bin
+ROOT_INSTALL_DIR       /home/tarik/Desktop/DoseCalcs_build/PackagesAndFiles/ROOT_install/bin
+DCMTK_INSTALL_DIR      /usr/local/lib/cmake/dcmtk
+DoseCalcs_SOURCE_DIR   /home/tarik/Desktop/0EditedFiles/Geant4_Projects/DoseCalcs/core
+
+DEFAULT_DoseCalcs_INPUTS     ../PackagesAndFiles/macros.mac
+
+CMAKE_DOWNLOAD_URL     https://www.cmake.org/files/v3.26/cmake-3.26.3.tar.gz
+GEANT4_DOWNLOAD_URL    https://gitlab.cern.ch/geant4/geant4/-/archive/v11.1.1/geant4-v11.1.1.tar.gz
+XERCES_DOWNLOAD_URL    https://downloads.apache.org//xerces/c/3/sources/xerces-c-3.2.3.tar.gz
+MPI_DOWNLOAD_URL       https://www.mpich.org/static/downloads/4.1.1/mpich-4.1.1.tar.gz
+ROOT_DOWNLOAD_URL      https://root.cern/download/root_v6.28.02.source.tar.gz
+DCMTK_DOWNLOAD_URL     https://dicom.offis.de/download/dcmtk/dcmtk365/dcmtk-3.6.5.tar.gz
+
+VERBOSE_USE            YES
+GDML_USE               NO
+CENTOS_ROCKS_CLUSTER   NO
+MPI_USE                NO
+ROOT_USE               NO
+DCMTK_USE              NO
+
