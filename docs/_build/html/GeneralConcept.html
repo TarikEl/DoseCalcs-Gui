@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DoseCalcs-Core Simulations &mdash; DoseCalcs v1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5cb08e4e"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="DoseCalcs-Core Commands" href="Commands.html" />
+    <link rel="prev" title="DoseCalcs-Core Installations" href="Installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            DoseCalcs
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="GUI.html">DoseCalcs-Gui: Graphical User Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Installation.html">DoseCalcs-Core Installations</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">DoseCalcs-Core Simulations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#simulation-units">Simulation Units</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#build-a-simple-example">Build a Simple Example</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#macros-file">[macros] file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#geometry-input-methods">Geometry Input Methods</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#execution">Execution</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#execution-command">Execution Command</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#computation-modes">Computation Modes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#run-modes">Run Modes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#results">Results</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#absorbed-energy-data-files">Absorbed energy data files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#resultsdata">[ResultsData]</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#how-to-get-this-results">How to get this results</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#analysis">Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#prequisites-to-analysis">prequisites to analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#analysis-executable">[analysis] executable</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Commands.html">DoseCalcs-Core Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Applications.html">DoseCalcs-Core Applications</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">DoseCalcs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">DoseCalcs-Core Simulations</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/GeneralConcept.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="dosecalcs-core-simulations">
+<h1>DoseCalcs-Core Simulations<a class="headerlink" href="#dosecalcs-core-simulations" title="Link to this heading"></a></h1>
+<section id="simulation-units">
+<h2>Simulation Units<a class="headerlink" href="#simulation-units" title="Link to this heading"></a></h2>
+<p>Three computation modes are available for the DoseCalcs execution scenario: sequential (SEQ), multi-threading (MT), and Message Passing Interface (MPI). Only for the (SEQ) and (MT) scenarios are three run modes available: data generation mode (Gen), calculation mode (B), and graphical visualization mode (G). The simulation requires five data types after the messenger classes have initialized the commands parameters. These data types are utilized in the five simulation steps of material and geometry construction, physics setup, source defining, simulation run and scoring, and results analysis.  Each simulation step is carried out in accordance with the given commands.</p>
+<p>The [macros] file, which contains all input commands to construct geometry, physics, source, and define parameters of run, score, and analysis, is the first of two files that may be considered as principal code inputs of DoseCalcs [simulate] executable. Second, if the user imports geometry from a file format, the geometry file (GDML, TEXT or STL). [Simulate] as a result, produces two types of files: absorbed energy data files, which contain the calculation result produced from each thread or rank (i.e. [AE&#64;for&#64;Rank&#64;0&#64;Thread&#64;0&#64;alpha&#64;Liver&#64;0.2]); the [ResultsData] file, which contains the result tables for each defined source parameter and each quantity to score, can alternatively be generated using [merge].</p>
+<p>The input files for the [merge] executable are [macros] and absorbed energy files, with [ResultsData] being the output file. The [analysis] executable uses [macros] and [ResultsData] as input files to generate graphs, histograms, and Latex tables containing results and simulation geometry data.</p>
+<p>Note that the files paths specified in the [macros] file or DoseCalcs execution command should point to the DoseCalcs build directory or be set to the absolute file path.</p>
+</section>
+<section id="build-a-simple-example">
+<h2>Build a Simple Example<a class="headerlink" href="#build-a-simple-example" title="Link to this heading"></a></h2>
+<p>To use the DoseCalcs application to simulate an dosimetry problem, two user files must be used as input data: the [macros] file and the geometry description file (or files if needed).
+The [macros] file includes commands for setting the required parameters for each simulation unit, including geometry (materials and volumes and/or geometry file), physics, source, run and score, and analysis.
+Each of these categories has its own set of commands.</p>
+<section id="macros-file">
+<h3>[macros] file<a class="headerlink" href="#macros-file" title="Link to this heading"></a></h3>
+<p>The [macros] file is a Geant4 macro syntax-based ASCII file.
+The code loads this file to setup the simulation by selecting parameters from commands in it, avoiding the need to recompile the source code if the simulation changes.</p>
+<ol class="arabic simple">
+<li><p>Macros file example</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#######################################################  Materials  ########################</span>
+<span class="o">/</span><span class="n">MaterialData</span><span class="o">/</span><span class="n">createElement</span> <span class="mi">1</span> <span class="mf">1.008</span> <span class="n">Hydrogen</span>
+<span class="o">/</span><span class="n">MaterialData</span><span class="o">/</span><span class="n">createElement</span> <span class="mi">8</span> <span class="mi">16</span> <span class="n">Oxygen</span>
+<span class="o">/</span><span class="n">MaterialData</span><span class="o">/</span><span class="n">createMaterial</span> <span class="n">water</span> <span class="mi">0</span> <span class="mi">2</span> <span class="mf">1.</span> <span class="n">g</span><span class="o">/</span><span class="n">cm3</span> <span class="n">numb</span>
+<span class="o">/</span><span class="n">MaterialData</span><span class="o">/</span><span class="n">addElements</span> <span class="n">Hydrogen</span> <span class="mi">2</span> <span class="n">Oxygen</span> <span class="mi">1</span>
+<span class="o">/</span><span class="n">MaterialData</span><span class="o">/</span><span class="n">setNistMaterialNameAndID</span> <span class="n">G4_AIR</span> <span class="mi">1</span>
+
+<span class="c1">#######################################################  Geometry ##########################</span>
+<span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">createWorld</span> <span class="n">Phantom</span><span class="o">.</span><span class="n">gdml</span>
+<span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">createVolume</span> <span class="n">Brain</span><span class="o">.</span><span class="n">c</span><span class="o">++</span> <span class="n">Head</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mf">8.25</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="n">cm</span> <span class="n">degree</span>
+<span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">createVolume</span> <span class="n">Thyroid</span><span class="o">.</span><span class="n">geom</span> <span class="n">Head</span> <span class="mi">0</span> <span class="o">-</span><span class="mf">3.91</span> <span class="o">-</span><span class="mf">5.925</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">180</span> <span class="n">cm</span> <span class="n">degree</span>
+<span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">createSolid</span> <span class="n">Ellipsoid</span> <span class="n">SpleenSol</span> <span class="mf">3.2</span> <span class="mf">2.3</span> <span class="mf">5.7</span> <span class="n">cm</span>
+<span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">createVolume</span> <span class="n">Spleen</span> <span class="n">SpleenSol</span> <span class="n">SoftTissue</span> <span class="n">Trunk</span> <span class="mf">10.79</span> <span class="mf">2.94</span> <span class="mf">1.8</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="n">cm</span> <span class="n">degree</span>
+<span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">createVolume</span> <span class="n">Testes</span><span class="o">.</span><span class="n">stl</span> <span class="n">SoftTissue</span> <span class="n">MaleGenitalia</span> <span class="mi">0</span> <span class="mi">3</span> <span class="mi">0</span> <span class="mi">90</span> <span class="mi">0</span> <span class="mi">0</span> <span class="n">cm</span> <span class="n">degree</span>
+
+<span class="c1">#######################################################  Physics  ##########################</span>
+<span class="o">/</span><span class="n">PhysicsData</span><span class="o">/</span><span class="n">setPhysicsData</span> <span class="n">EMS3</span>
+<span class="o">/</span><span class="n">PhysicsData</span><span class="o">/</span><span class="n">setCutsData</span> <span class="mf">1.</span> <span class="mf">1.</span> <span class="n">mm</span> <span class="n">keV</span>
+<span class="o">/</span><span class="n">PhysicsData</span><span class="o">/</span><span class="n">generateCrossSectionFor</span> <span class="n">gamma</span> <span class="n">MeV</span> <span class="mf">0.01</span> <span class="mf">0.015</span> <span class="mf">0.02</span> <span class="mf">0.03</span> <span class="mf">0.05</span> <span class="mf">0.1</span> <span class="mf">0.2</span> <span class="mf">0.5</span> <span class="mi">1</span>
+
+<span class="c1">#######################################################  Source  ###########################</span>
+<span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsParticleNameData</span> <span class="n">gamma</span>
+<span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialPosData</span> <span class="n">cm</span> <span class="n">Volume</span> <span class="n">Thyroid</span> <span class="mf">2.</span> <span class="mf">2.1</span> <span class="mf">2.2</span> <span class="n">Liver</span> <span class="mf">15.</span> <span class="mf">8.</span> <span class="mf">8.</span> <span class="n">Kidneys</span> <span class="mf">16.1</span> <span class="mf">2.</span> <span class="mf">5.</span> 
+<span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialEneData</span> <span class="n">MeV</span> <span class="n">Mono</span> <span class="mf">0.01</span> <span class="mf">0.02</span> <span class="mf">0.015</span> <span class="mf">0.03</span> <span class="mf">0.05</span> <span class="mf">0.1</span> <span class="mf">0.2</span> <span class="mf">0.5</span> <span class="mi">1</span>
+<span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialMomDirData</span> <span class="n">degree</span> <span class="n">Isotropic</span>
+<span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setSourceGenerationData</span> <span class="n">read</span> <span class="n">yes</span> <span class="n">yes</span> <span class="n">yes</span>
+
+<span class="c1">#######################################################  Run and Score  ####################</span>
+<span class="o">/</span><span class="n">RunAndScoreData</span><span class="o">/</span><span class="n">setVolumesToScore</span> <span class="n">source</span> <span class="n">Liver</span> <span class="n">Thyroid</span> <span class="n">Testes</span> <span class="n">target</span> <span class="nb">all</span>
+<span class="o">/</span><span class="n">RunAndScoreData</span><span class="o">/</span><span class="n">setQuantitiesToScore</span> <span class="n">SAF</span>
+<span class="o">/</span><span class="n">RunAndScoreData</span><span class="o">/</span><span class="n">setSimNumOnRanks</span> <span class="n">m</span>
+<span class="o">/</span><span class="n">RunAndScoreData</span><span class="o">/</span><span class="n">setNumberOfThreads</span> <span class="mi">3</span>
+
+<span class="c1">#######################################################  Analysis  #########################</span>
+<span class="o">/</span><span class="n">AnalysisData</span><span class="o">/</span><span class="n">generateSelfCrossGraphs</span> <span class="n">Reference_Result</span> <span class="n">Self_Cross</span> <span class="n">ORNL</span> <span class="n">Results</span><span class="o">/</span><span class="n">References</span><span class="o">/</span><span class="n">StylizedORNL1987SAFData</span><span class="o">.</span><span class="n">txt</span> <span class="n">ICRP</span> <span class="n">Results</span><span class="o">/</span><span class="n">References</span><span class="o">/</span><span class="n">VoxelizedMaleICRPRefData</span><span class="o">.</span><span class="n">txt</span>
+<span class="o">/</span><span class="n">AnalysisData</span><span class="o">/</span><span class="n">generateRelativeErrGraph</span> <span class="n">RD</span> 
+<span class="o">/</span><span class="n">AnalysisData</span><span class="o">/</span><span class="n">generateRelativeSDevGraph</span>
+<span class="o">/</span><span class="n">AnalysisData</span><span class="o">/</span><span class="n">generateVariableRegionGraph</span> <span class="n">Mass</span>
+<span class="o">/</span><span class="n">AnalysisData</span><span class="o">/</span><span class="n">generateEventsDataHisto</span>
+<span class="o">/</span><span class="n">AnalysisData</span><span class="o">/</span><span class="n">setGraphsParameters</span> <span class="n">yes</span> <span class="n">no</span> <span class="n">yes</span> <span class="n">yes</span> <span class="n">RightTop</span> <span class="mf">0.15</span> <span class="mf">0.23</span> <span class="n">yes</span> <span class="o">.</span><span class="n">pdf</span>
+</pre></div>
+</div>
+</section>
+<section id="geometry-input-methods">
+<h3>Geometry Input Methods<a class="headerlink" href="#geometry-input-methods" title="Link to this heading"></a></h3>
+<p>Each geometry method uses commands andor a specific geometry file, the geometry files that can be used by DoseCalcs:</p>
+<p>C++ method : Construct volumes by Geant4 standard solids and materials using either simple DoseCalcs commands or C++ code.</p>
+<p>GDML method : Construct volumes by reading .gdml file format, which contains all geometry description data, where materials, solids, logical and physical volumes parameters are given in tags format.</p>
+<p>TEXT method : Construct volumes by reading .geom file format, which contains all geometry description data, where materials, solids, logical and physical volumes parameters are given in TEXT format.</p>
+<p>STL method : Construct solids by reading .stl file format. Each solid is described by an STL file, adding the materials given in [macros] file to construct geometry volume.</p>
+<p>The simulation geometry is constructed in this example using all available geometrical methods, with the most of of phantom volumes imported from GDML format file at path Phantom.gdml, brain volume created by standard Geant4 solids using C++ code added to block of G4TCPPGeometryFormat::ConstructLogicalVolumes(), thyroid volume from TEXT format file at path Thyroid.geom, spleen volume created by standard Geant4 solids by commands, and testes volume imported from STL format file.</p>
+<p>Voxel IDs Geometry File : Contains IDs, each ID represents a specific material that fill the correspondent voxel.</p>
+<p>DICOM Files : Each file contains data for slice (that represents either density or activity of the pixels in slice),</p>
+<p>Tetrahedral data Files : .node file contains data for vertex, and .ele file contains data for tertrahedrons material and points,</p>
+</section>
+</section>
+<section id="execution">
+<h2>Execution<a class="headerlink" href="#execution" title="Link to this heading"></a></h2>
+<section id="execution-command">
+<h3>Execution Command<a class="headerlink" href="#execution-command" title="Link to this heading"></a></h3>
+<p>Of course, installing Geant4 is required before developing DoseCalcs code, and it is recommended that Geant4 be created for multi-threading computing mode. After that, to execute DoseCalcs, the user must specify three options when using a command line processing interface: [Run Mode], [macros file], and [Events Number Per Thread].</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>./simulate<span class="w"> </span><span class="o">[</span>Run<span class="w"> </span>Mode<span class="o">]</span><span class="w"> </span><span class="o">[</span>macros<span class="w"> </span>file<span class="o">]</span><span class="w"> </span><span class="o">[</span>Events<span class="w"> </span>Number<span class="w"> </span>Per<span class="w"> </span>Thread<span class="o">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>[macros file] : inputs commands (macros) file</p>
+<p>[Events Number Per Thread] : All CPU cores are considered one thread for sequential execution. In Multi-Threaded or MPI computation modes, each thread or rank simulates this number on its own thread or rank CPU core.</p>
+</section>
+<section id="computation-modes">
+<h3>Computation Modes<a class="headerlink" href="#computation-modes" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Sequential Execution Command</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>./simulate<span class="w"> </span>B<span class="w"> </span>inp.mac<span class="w"> </span><span class="m">100000</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Total number of events in simulation is 100000</p>
+<ol class="arabic simple" start="2">
+<li><p>Multi-threaded(MT) Execution Command</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>./simulate<span class="w"> </span>B<span class="w"> </span>inp.mac<span class="w"> </span><span class="m">100000</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>100000 Events per Thread. The total number of events in the simulation will be 100000*ThreadNumber. ThreadNumber is set by command /RunAndScoreData/setNumberOfThreads</p>
+<p>This mode is used when Geant4 is built in multi-threading.</p>
+<ol class="arabic simple" start="3">
+<li><p>MPI Execution Command</p></li>
+</ol>
+<p>In MPI computation mode, the mpiexec or mpirun command should be set firstly as given in the following command:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>/home/../mpirun<span class="w"> </span>-np<span class="w"> </span><span class="o">[</span>Rank<span class="w"> </span>Number<span class="o">]</span><span class="w"> </span>./simulate<span class="w"> </span>B<span class="w"> </span>inp.mac<span class="w"> </span><span class="m">100000</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>[Rank Number] : The number of parallel simulations on the cluster, each running on a cluster unit (i.e core). For each simulation on a rank, DoseCalcs can use different source events data. This computation mode is enableb when the DoseCalcs is built with WITH_G4MPI_USE=ON</p>
+<p>100000 Events per Rank. The total number of events in the simulation will be 100000*[Rank Number].</p>
+</section>
+<section id="run-modes">
+<h3>Run Modes<a class="headerlink" href="#run-modes" title="Link to this heading"></a></h3>
+<p>One of the [Run Modes] is B(batch), G(Graphical), or Gen(Generation). The Graphical mode is used to visualize(v) the geometry built by DoseCalcs and to test the events initial positions using the command /TestEventsInitialPositions. The box dimensions may also be shown by using the command /ShowSourceBox in the macros file. The graphical mode can only be utilized in sequential and multi-threading computation modes, as previously stated. The MPI computation mode, on the other hand, is only for Batch and Generation Run Modes. The Batch run mode is for simulation and scoring, whereas the Gen run mode is for generating event data including initial positions, energies, and momentum directions.</p>
+<p>[Run Mode] : can be : B (Batch “default if we don’t set [Run Mode]), G (Graphical), T (Terminal) or Gen (Generation).</p>
+<ol class="arabic simple">
+<li><p>G Run Mode</p></li>
+</ol>
+<p>In Sequential mode (DoseCalcs built with -DWITH_G4MPI_USE set to OFF), G mode is only utilized for geometry visualization, therefore we may use the commands /SourceData/TestEventsInitialPositions and /SourceData/ShowSourceBox.</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>./simulate<span class="w"> </span>G<span class="w"> </span><span class="o">[</span>macros<span class="w"> </span>file<span class="o">]</span><span class="w"> </span><span class="o">[</span>.<span class="o">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>[.] : can be : v or an empty value means view geometry using the Qt interface using the OGL driver; d means download the geometry image in PS format using the DAWNFILE driver. Instead of using the v or d values, the user can use his own Geant4 visualization instructions by setting the visualization macros file path. The user should provide xy, xz, or yz for d value; the default plane when d value is specified is xy plane.</p>
+<p>The DAWNFILE executable [dawn] that Geant4 uses to generate a high-quality picture can be obtained at <a class="reference external" href="https://twiki.cern.ch/twiki/bin/view/CLIC/DawnVisualization">https://twiki.cern.ch/twiki/bin/view/CLIC/DawnVisualization</a>; Follow the installation instructions on this page; before executing graphical run mode (:ref:’GRunModeCommand’), in the terminal, type:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="nv">G4DAWNFILE_VIEWER</span><span class="o">=</span><span class="s2">&quot;dawn -d&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p>Gen Run Mode</p></li>
+</ol>
+<p>Gen mode is only used to generate event data, which is then used in the simulation with the multi-threading and MPI modes. A set of /SourceData/ commands must be used to define the data to be generated in the [macros] file.</p>
+<dl>
+<dt>In  Multi-threaded(MT) or Sequential execution modes</dt><dd><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>./simulate<span class="w"> </span>Gen<span class="w"> </span><span class="o">[</span>macros<span class="w"> </span>file<span class="o">]</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<p>The data units are generated sequentially in multi-threading computation mode, starting with initial positions in source volume 1, then source volume 2,…, energy 1, energy 2,…, momentum direction.</p>
+<dl>
+<dt>In  MPI execution modes</dt><dd><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>/home/../mpirun<span class="w"> </span>-np<span class="w"> </span><span class="o">[</span>Rank<span class="w"> </span>Number<span class="o">]</span><span class="w"> </span>./simulate<span class="w"> </span>Gen<span class="w"> </span><span class="o">[</span>macros<span class="w"> </span>file<span class="o">]</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<p>[Rank Number] : To generate initial positions, energies, and momentum direction, the [Rank Number] must be equal to the data that will be generated, where each rank generates a data unit. For example, to generate initial positions in three source volumes, two energies, and one momentum direction, the [Rank Number] must be set to 6.</p>
+<ol class="arabic simple" start="3">
+<li><p>B Run Mode</p></li>
+</ol>
+<p>B mode is used to simulate the events interactions and gives the dosimetric quantities outputs scored.</p>
+<p>Assuming A particles (Part), B source regions (Src), C energies (Ene), and D momentum directions (MomDir) as source inputs, the data generation and calculation tasks are distributed among the ranks. As a result, the number of ranks required for the generation of this event data is N=B+C+D, where each rank generates a unique data file, but the number of ranks required for calculation is (N = A * B * C * D). Another DoseCalcs option is to simulate one Part-Src-Ene-MomDir combination (A=B=C=D=1 -&gt; N=1) on all ranks (or threads), which is one simulation utilizing the same source data on all ranks. In this scenario, the total number of simulated occurrences is for a single simulation is ([TotalEventsNumber]=N*[EventsNumber]).</p>
+<blockquote>
+<div><img alt="_images/SimModeGen.png" src="_images/SimModeGen.png" />
+<img alt="_images/SimModeGen.png" src="_images/SimModeGen.png" />
+</div></blockquote>
+<p>The total number of simulated events in Multi-threading or MPI modes is the [EventsNumber] multiplied by the thread number or rank number, respectively. In multithreading mode, this total number must not exceed the maximum G4int value, and in MPI mode, EventsNumber must not exceed the maximum G4int value for each rank.</p>
+</section>
+</section>
+<section id="results">
+<h2>Results<a class="headerlink" href="#results" title="Link to this heading"></a></h2>
+<p>Each thread calculation produces its own results. Note that the global results are calculated directly by [simulate] in multithreading mode (or by [merge] executable in MPI mode) and produces [ResultsData] file. The [analysis] executable produces graphs and histograms based on the data in [ResultsData], [macros], and events data files.</p>
+<section id="absorbed-energy-data-files">
+<h3>Absorbed energy data files<a class="headerlink" href="#absorbed-energy-data-files" title="Link to this heading"></a></h3>
+<p>These files represent the calculation results; during simulation, each thread or rank generates its own file, which is identified by its name, which is a combination of rank ID, thread ID, particle name, source region name, and particle energy. Below is a sample of this file, which was generated by thread 2 and simulates 200000000 emitted gamma from the brain, with mono-distributed energies of 1 MeV.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">RegionsData</span>
+<span class="n">Adrenals</span>                       <span class="mf">772.33</span>          <span class="mf">20.9567</span>         <span class="mi">65423</span>           <span class="mf">0.0163439</span>            <span class="mf">15.7153</span>              <span class="mf">1.04</span>                
+<span class="n">Clavicle</span>                       <span class="mf">5199.87</span>         <span class="mf">161.693</span>         <span class="mi">364993</span>          <span class="mf">0.077258</span>             <span class="mf">55.1843</span>              <span class="mf">1.4</span>                 
+<span class="n">Heart</span>                          <span class="mf">57145.5</span>         <span class="mf">2005.8</span>          <span class="mi">3729054</span>         <span class="mf">0.62906</span>              <span class="mf">604.866</span>              <span class="mf">1.04</span>                
+<span class="n">Liver</span>                          <span class="mf">96739.8</span>         <span class="mf">3424.01</span>         <span class="mi">6154651</span>         <span class="mf">1.90069</span>              <span class="mf">1827.58</span>              <span class="mf">1.04</span>                
+<span class="n">Lungs</span>                          <span class="mi">201394</span>          <span class="mf">5140.6</span>          <span class="mi">17778578</span>        <span class="mf">1.00056</span>              <span class="mf">3380.27</span>              <span class="mf">0.296</span>               
+<span class="n">Kidneys</span>                        <span class="mf">8519.31</span>         <span class="mf">278.797</span>         <span class="mi">584894</span>          <span class="mf">0.299464</span>             <span class="mf">287.946</span>              <span class="mf">1.04</span>                
+<span class="n">Pelvis</span>                         <span class="mf">2488.61</span>         <span class="mf">76.9825</span>         <span class="mi">180170</span>          <span class="mf">0.311799</span>             <span class="mf">222.713</span>              <span class="mf">1.4</span>                 
+<span class="n">Spleen</span>                         <span class="mf">10715.9</span>         <span class="mf">374.507</span>         <span class="mi">668992</span>          <span class="mf">0.182757</span>             <span class="mf">175.728</span>              <span class="mf">1.04</span>                
+<span class="n">Stomach</span>                        <span class="mf">18443.6</span>         <span class="mf">645.455</span>         <span class="mi">1187978</span>         <span class="mf">0.41753</span>              <span class="mf">401.471</span>              <span class="mf">1.04</span>                
+<span class="n">Thymus</span>                         <span class="mf">11353.1</span>         <span class="mf">319.935</span>         <span class="mi">896207</span>          <span class="mf">0.0261381</span>            <span class="mf">25.1327</span>              <span class="mf">1.04</span>                
+<span class="n">Pancreas</span>                       <span class="mf">3010.24</span>         <span class="mf">90.3783</span>         <span class="mi">230811</span>          <span class="mf">0.0635052</span>            <span class="mf">61.0627</span>              <span class="mf">1.04</span>                
+<span class="n">Ovary</span>                          <span class="mf">66.2677</span>         <span class="mf">1.84858</span>         <span class="mi">5189</span>            <span class="mf">0.00872043</span>           <span class="mf">8.38502</span>              <span class="mf">1.04</span>                
+<span class="n">SmallIntestine</span>                 <span class="mf">11662.7</span>         <span class="mf">380.472</span>         <span class="mi">840143</span>          <span class="mf">1.06044</span>              <span class="mf">1019.65</span>              <span class="mf">1.04</span>                
+<span class="n">UpperLargeIntestine</span>            <span class="mf">5111.57</span>         <span class="mf">164.296</span>         <span class="mi">365466</span>          <span class="mf">0.344486</span>             <span class="mf">331.237</span>              <span class="mf">1.04</span>                
+<span class="n">UrinaryBladder</span>                 <span class="mf">1046.12</span>         <span class="mf">33.5959</span>         <span class="mi">74561</span>           <span class="mf">0.258097</span>             <span class="mf">248.171</span>              <span class="mf">1.04</span>                
+<span class="n">MiddleLowerSpine</span>               <span class="mi">129261</span>          <span class="mf">4791.35</span>         <span class="mi">7687719</span>         <span class="mf">0.803584</span>             <span class="mf">573.989</span>              <span class="mf">1.4</span>                 
+<span class="n">LowerLargeIntestine</span>            <span class="mf">1795.74</span>         <span class="mf">58.6636</span>         <span class="mi">124581</span>          <span class="mf">0.274503</span>             <span class="mf">263.945</span>              <span class="mf">1.04</span>                
+<span class="n">Uterus</span>                         <span class="mf">484.323</span>         <span class="mf">14.6644</span>         <span class="mi">38142</span>           <span class="mf">0.0742624</span>            <span class="mf">71.4062</span>              <span class="mf">1.04</span>                
+<span class="n">ArmBone</span>                        <span class="mi">112718</span>          <span class="mf">4209.81</span>         <span class="mi">6328454</span>         <span class="mf">1.33774</span>              <span class="mf">955.528</span>              <span class="mf">1.4</span>                 
+<span class="n">Brain</span>                          <span class="mf">3.08552e+07</span>     <span class="mf">1.40788e+06</span>     <span class="mi">1261379192</span>      <span class="mf">1.5295</span>               <span class="mf">1470.67</span>              <span class="mf">1.04</span>                
+<span class="n">Thyroid</span>                        <span class="mf">38212.8</span>         <span class="mf">1265.11</span>         <span class="mi">2469883</span>         <span class="mf">0.0201663</span>            <span class="mf">19.3907</span>              <span class="mf">1.04</span>                
+<span class="n">Skull</span>                          <span class="mf">6.15959e+06</span>     <span class="mi">244074</span>          <span class="mi">304299082</span>       <span class="mf">0.889538</span>             <span class="mf">635.385</span>              <span class="mf">1.4</span>                 
+<span class="n">UpperSpine</span>                     <span class="mi">491070</span>          <span class="mf">20063.9</span>         <span class="mi">24595716</span>        <span class="mf">0.186419</span>             <span class="mf">133.156</span>              <span class="mf">1.4</span>                 
+<span class="n">LegBone</span>                        <span class="mf">1655.73</span>         <span class="mf">59.6234</span>         <span class="mi">98495</span>           <span class="mf">3.90586</span>              <span class="mf">2789.9</span>               <span class="mf">1.4</span>                 
+<span class="n">Head</span>                           <span class="mf">1.15584e+07</span>     <span class="mi">408879</span>          <span class="mi">660299440</span>       <span class="mf">5.27591</span>              <span class="mf">5072.99</span>              <span class="mf">1.04</span>                
+<span class="n">Trunk</span>                          <span class="mf">3.70848e+06</span>     <span class="mi">128363</span>          <span class="mi">221107524</span>       <span class="mf">42.0142</span>              <span class="mf">43274.6</span>              <span class="mf">0.970874</span>            
+<span class="n">Legs</span>                           <span class="mf">5473.71</span>         <span class="mf">189.71</span>          <span class="mi">327385</span>          <span class="mf">22.871</span>               <span class="mf">21991.4</span>              <span class="mf">1.04</span>                
+<span class="n">Skin</span>                           <span class="mf">2857.08</span>         <span class="mf">85.2232</span>         <span class="mi">187112</span>          <span class="mf">2.89826</span>              <span class="mf">2786.79</span>              <span class="mf">1.04</span>                
+<span class="n">Rib</span>                            <span class="mf">7.12832</span>         <span class="mf">0.168109</span>        <span class="mi">546</span>             <span class="mf">0.974065</span>             <span class="mf">695.761</span>              <span class="mf">1.4</span>                 
+<span class="n">MaleGenitalia</span>                  <span class="mf">59.744</span>          <span class="mf">1.91521</span>         <span class="mi">4097</span>            <span class="mf">0.0434325</span>            <span class="mf">41.762</span>               <span class="mf">1.04</span>                
+<span class="n">Testes</span>                         <span class="mf">20.8143</span>         <span class="mf">0.595688</span>        <span class="mi">1622</span>            <span class="mf">0.0390401</span>            <span class="mf">37.5386</span>              <span class="mf">1.04</span>                
+<span class="n">World</span>                          <span class="mf">5.56117e-18</span>     <span class="mf">6.54119e-41</span>     <span class="mi">959372</span>          <span class="mf">3.096e-23</span>            <span class="mi">309600</span>               <span class="mf">1e-25</span>               
+
+<span class="n">TotalEventNumber</span>               <span class="mi">200000000</span>
+<span class="n">EnergyEmittedPerThread</span>         <span class="mf">2e+08</span>
+<span class="n">ExecutionTimeInMin</span>             <span class="mf">909.886</span>
+<span class="n">OneEventExecutionTimeInMs</span>      <span class="mf">7.58238e-05</span>
+<span class="n">ParticleName</span>                   <span class="n">gamma</span>
+<span class="n">SourceType</span>                     <span class="n">Volume</span>
+<span class="n">SourceRegionName</span>               <span class="n">Brain</span>
+<span class="n">EnergyDistribution</span>             <span class="n">Mono</span>
+<span class="n">ParticleSourceEnergy</span>           <span class="mi">1</span>
+<span class="n">MomDirDistribution</span>             <span class="n">Isotropic</span>
+<span class="n">RankID</span>                         <span class="mi">0</span>
+</pre></div>
+</div>
+<p>DoseCalcs calculates absorbed energy in this region, absorbed energy square, and number of histories recorded in each region in simulation geometry. To compute Monte Carlo statistical uncertainty, the two last values are required.</p>
+</section>
+<section id="resultsdata">
+<h3>[ResultsData]<a class="headerlink" href="#resultsdata" title="Link to this heading"></a></h3>
+<p>The internal dosimetry quantities (AE, AD, AF, SAF, S, H, E, and DR) for each source region, particle name, particle energy, and target region are all included in the text file. It’s organized as a series of text lines that summarize the obtained data for each target, such as quantity value, standard deviation, relative standard deviation in percent, among other things.</p>
+<p>The generated scores are appended to the results file for each simulation (i.e. source volume, particle, and energy combination. The produced data is written in a simple manner, with the first line including simulation data such as scored quantity, source volume name, particle name, and so on, followed by data lines containing the results for each scored volume.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">******</span> <span class="n">SAF</span> <span class="n">Thyroid</span> <span class="n">e</span><span class="o">+</span> <span class="mf">0.6335</span> <span class="n">ORNLAdultMale</span> <span class="n">Rayleigh</span> <span class="n">Isotropic</span> <span class="n">Volume</span> <span class="mi">100000000</span><span class="n">Event</span> <span class="mi">1455759402</span><span class="n">Step</span> <span class="mf">0.1</span><span class="n">mm</span> <span class="mf">0.001</span><span class="n">MeV</span> <span class="mi">0</span><span class="n">Wr</span> <span class="n">MT</span> <span class="mi">1</span> <span class="mf">1.05591e+07</span><span class="n">MeV</span> <span class="mf">4.87869e+07</span><span class="n">MeV</span> <span class="mi">0</span><span class="n">Sv</span> <span class="n">Thyroid</span> <span class="mf">0.00374439</span><span class="o">%</span> <span class="n">Testes</span> <span class="mf">9.37733</span><span class="o">%</span> <span class="mf">0.000104726</span><span class="n">ms</span> <span class="mf">628.357</span> <span class="mf">628.357</span> <span class="nb">min</span> 
+<span class="c1"># Volume                 SAF            SDev           Rel SDev %     Values Num     Mass (Kg)      Volume (cm3)   Density (g/cm3)</span>
+<span class="n">Liver</span>                    <span class="mf">7.619237e-03</span>   <span class="mf">4.812242e-13</span>   <span class="mf">0.052168</span>       <span class="mi">8259736</span>        <span class="mf">1.900990</span>       <span class="mf">1827.870</span>       <span class="mf">1.040000</span>       
+<span class="n">Kidneys</span>                  <span class="mf">3.676422e-03</span>   <span class="mf">1.058966e-11</span>   <span class="mf">0.188050</span>       <span class="mi">652856</span>         <span class="mf">0.299384</span>       <span class="mf">287.869</span>        <span class="mf">1.040000</span>       
+<span class="n">Thyroid</span>                  <span class="mf">6.601822e+01</span>   <span class="mf">8.959241e-12</span>   <span class="mf">0.003744</span>       <span class="mi">275914087</span>      <span class="mf">0.020131</span>       <span class="mf">19.356</span>         <span class="mf">1.040000</span>       
+<span class="o">*</span> <span class="o">----------------------------------------------------------------------------------------------------------------------------------------------</span>
+<span class="o">******</span> <span class="n">S</span> <span class="n">Thyroid</span> <span class="n">e</span><span class="o">+</span> <span class="mf">0.6335</span> <span class="n">ORNLAdultMale</span> <span class="n">Rayleigh</span> <span class="n">Isotropic</span> <span class="n">Volume</span> <span class="mi">100000000</span><span class="n">Event</span> <span class="mi">1455759402</span><span class="n">Step</span> <span class="mf">0.1</span><span class="n">mm</span> <span class="mf">0.001</span><span class="n">MeV</span> <span class="mi">0</span><span class="n">Wr</span> <span class="n">MT</span> <span class="mi">1</span> <span class="mf">1.05591e+07</span><span class="n">MeV</span> <span class="mf">4.87869e+07</span><span class="n">MeV</span> <span class="mi">0</span><span class="n">Sv</span> <span class="n">Thyroid</span> <span class="mf">0.00374439</span><span class="o">%</span> <span class="n">Testes</span> <span class="mf">9.37733</span><span class="o">%</span> <span class="mf">0.000104726</span><span class="n">ms</span> <span class="mf">628.357</span> <span class="mf">628.357</span> <span class="nb">min</span> 
+<span class="c1"># Volume                 S              SDev           Rel SDev %     Values Num     Mass (Kg)      Volume (cm3)   Density (g/cm3)</span>
+<span class="n">Liver</span>                    <span class="mf">1.289300e-16</span>   <span class="mf">8.143100e-27</span>   <span class="mf">0.052168</span>       <span class="mi">8259736</span>        <span class="mf">1.900990</span>       <span class="mf">1827.870</span>       <span class="mf">1.040000</span>       
+<span class="n">Kidneys</span>                  <span class="mf">6.221107e-17</span>   <span class="mf">1.791944e-25</span>   <span class="mf">0.188050</span>       <span class="mi">652856</span>         <span class="mf">0.299384</span>       <span class="mf">287.869</span>        <span class="mf">1.040000</span>       
+<span class="n">Thyroid</span>                  <span class="mf">1.117136e-12</span>   <span class="mf">1.516050e-25</span>   <span class="mf">0.003744</span>       <span class="mi">275914087</span>      <span class="mf">0.020131</span>       <span class="mf">19.356</span>         <span class="mf">1.040000</span>       
+<span class="o">*</span> <span class="o">----------------------------------------------------------------------------------------------------------------------------------------------</span>
+<span class="o">******</span> <span class="n">SAF</span> <span class="n">Kidneys</span> <span class="n">gamma</span> <span class="n">ORNLAdultMale</span> <span class="mf">0.511</span> <span class="n">Mono</span> <span class="n">Isotropic</span> <span class="n">Volume</span> <span class="mi">100000000</span><span class="n">Event</span> <span class="mi">767488594</span><span class="n">Step</span> <span class="mf">0.1</span><span class="n">mm</span> <span class="mf">0.001</span><span class="n">MeV</span> <span class="mi">1</span><span class="n">Wr</span> <span class="n">MT</span> <span class="mi">2</span> <span class="mf">5.11e+07</span><span class="n">MeV</span> <span class="mf">2.13531e+07</span><span class="n">MeV</span> <span class="mf">4.20593e-07</span><span class="n">Sv</span> <span class="n">Trunk</span> <span class="mf">0.00532945</span><span class="o">%</span> <span class="n">Rib</span> <span class="mf">96.5117</span><span class="o">%</span> <span class="mf">6.85877e-05</span><span class="n">ms</span> <span class="mf">411.526</span> <span class="mf">411.526</span> <span class="nb">min</span> 
+<span class="c1"># Volume                 SAF            SDev           Rel SDev %     Values Num     Mass (Kg)      Volume (cm3)   Density (g/cm3)</span>
+<span class="n">Liver</span>                    <span class="mf">1.409740e-02</span>   <span class="mf">4.390910e-14</span>   <span class="mf">0.017226</span>       <span class="mi">55306350</span>       <span class="mf">1.900990</span>       <span class="mf">1827.870</span>       <span class="mf">1.040000</span>       
+<span class="n">Kidneys</span>                  <span class="mf">2.529257e-01</span>   <span class="mf">2.340775e-13</span>   <span class="mf">0.009234</span>       <span class="mi">99774548</span>       <span class="mf">0.299384</span>       <span class="mf">287.869</span>        <span class="mf">1.040000</span>       
+<span class="n">Thyroid</span>                  <span class="mf">3.788237e-04</span>   <span class="mf">1.695574e-10</span>   <span class="mf">1.023413</span>       <span class="mi">22865</span>          <span class="mf">0.020131</span>       <span class="mf">19.356</span>         <span class="mf">1.040000</span>       
+<span class="o">*</span> <span class="o">----------------------------------------------------------------------------------------------------------------------------------------------</span>
+<span class="o">******</span> <span class="n">S</span> <span class="n">Kidneys</span> <span class="n">gamma</span> <span class="mf">0.511</span> <span class="n">ORNLAdultMale</span> <span class="n">Mono</span> <span class="n">Isotropic</span> <span class="n">Volume</span> <span class="mi">100000000</span><span class="n">Event</span> <span class="mi">767488594</span><span class="n">Step</span> <span class="mf">0.1</span><span class="n">mm</span> <span class="mf">0.001</span><span class="n">MeV</span> <span class="mi">1</span><span class="n">Wr</span> <span class="n">MT</span> <span class="mi">2</span> <span class="mf">5.11e+07</span><span class="n">MeV</span> <span class="mf">2.13531e+07</span><span class="n">MeV</span> <span class="mf">4.20593e-07</span><span class="n">Sv</span> <span class="n">Trunk</span> <span class="mf">0.00532945</span><span class="o">%</span> <span class="n">Rib</span> <span class="mf">96.5117</span><span class="o">%</span> <span class="mf">6.85877e-05</span><span class="n">ms</span> <span class="mf">411.526</span> <span class="mf">411.526</span> <span class="nb">min</span> 
+<span class="c1"># Volume                 S              SDev           Rel SDev %     Values Num     Mass (Kg)      Volume (cm3)   Density (g/cm3)</span>
+<span class="n">Liver</span>                    <span class="mf">1.154451e-15</span>   <span class="mf">3.595761e-27</span>   <span class="mf">0.017226</span>       <span class="mi">55306350</span>       <span class="mf">1.900990</span>       <span class="mf">1827.870</span>       <span class="mf">1.040000</span>       
+<span class="n">Kidneys</span>                  <span class="mf">2.071235e-14</span>   <span class="mf">1.916885e-26</span>   <span class="mf">0.009234</span>       <span class="mi">99774548</span>       <span class="mf">0.299384</span>       <span class="mf">287.869</span>        <span class="mf">1.040000</span>       
+<span class="n">Thyroid</span>                  <span class="mf">3.102226e-17</span>   <span class="mf">1.388523e-23</span>   <span class="mf">1.023413</span>       <span class="mi">22865</span>          <span class="mf">0.020131</span>       <span class="mf">19.356</span>         <span class="mf">1.040000</span>       
+<span class="o">*</span> <span class="o">----------------------------------------------------------------------------------------------------------------------------------------------</span>
+<span class="o">******</span> <span class="n">SAF</span> <span class="n">Liver</span> <span class="n">gamma</span> <span class="mf">0.511</span> <span class="n">ORNLAdultMale</span> <span class="n">Mono</span> <span class="n">Isotropic</span> <span class="n">Volume</span> <span class="mi">100000000</span><span class="n">Event</span> <span class="mi">834842052</span><span class="n">Step</span> <span class="mf">0.1</span><span class="n">mm</span> <span class="mf">0.001</span><span class="n">MeV</span> <span class="mi">1</span><span class="n">Wr</span> <span class="n">MT</span> <span class="mi">1</span> <span class="mf">5.11e+07</span><span class="n">MeV</span> <span class="mf">2.30874e+07</span><span class="n">MeV</span> <span class="mf">1.80583e-07</span><span class="n">Sv</span> <span class="n">Trunk</span> <span class="mf">0.00585367</span><span class="o">%</span> <span class="n">Rib</span> <span class="mf">36.7604</span><span class="o">%</span> <span class="mf">6.88446e-05</span><span class="n">ms</span> <span class="mf">413.068</span> <span class="mf">413.068</span> <span class="nb">min</span> 
+<span class="c1"># Volume                 SAF            SDev           Rel SDev %     Values Num     Mass (Kg)      Volume (cm3)   Density (g/cm3)</span>
+<span class="n">Liver</span>                    <span class="mf">8.853786e-02</span>   <span class="mf">2.305988e-14</span>   <span class="mf">0.006465</span>       <span class="mi">248238145</span>      <span class="mf">1.900990</span>       <span class="mf">1827.870</span>       <span class="mf">1.040000</span>       
+<span class="n">Kidneys</span>                  <span class="mf">1.401796e-02</span>   <span class="mf">6.935327e-13</span>   <span class="mf">0.043333</span>       <span class="mi">8758680</span>        <span class="mf">0.299384</span>       <span class="mf">287.869</span>        <span class="mf">1.040000</span>       
+<span class="n">Thyroid</span>                  <span class="mf">7.564984e-04</span>   <span class="mf">1.268653e-10</span>   <span class="mf">0.724601</span>       <span class="mi">43208</span>          <span class="mf">0.020131</span>       <span class="mf">19.356</span>         <span class="mf">1.040000</span>       
+<span class="o">*</span> <span class="o">----------------------------------------------------------------------------------------------------------------------------------------------</span>
+<span class="o">******</span> <span class="n">S</span> <span class="n">Liver</span> <span class="n">gamma</span> <span class="mf">0.511</span> <span class="n">ORNLAdultMale</span> <span class="n">Mono</span> <span class="n">Isotropic</span> <span class="n">Volume</span> <span class="mi">100000000</span><span class="n">Event</span> <span class="mi">834842052</span><span class="n">Step</span> <span class="mf">0.1</span><span class="n">mm</span> <span class="mf">0.001</span><span class="n">MeV</span> <span class="mi">1</span><span class="n">Wr</span> <span class="n">MT</span> <span class="mi">1</span> <span class="mf">5.11e+07</span><span class="n">MeV</span> <span class="mf">2.30874e+07</span><span class="n">MeV</span> <span class="mf">1.80583e-07</span><span class="n">Sv</span> <span class="n">Trunk</span> <span class="mf">0.00585367</span><span class="o">%</span> <span class="n">Rib</span> <span class="mf">36.7604</span><span class="o">%</span> <span class="mf">6.88446e-05</span><span class="n">ms</span> <span class="mf">413.068</span> <span class="mf">413.068</span> <span class="nb">min</span> 
+<span class="c1"># Volume                 S              SDev           Rel SDev %     Values Num     Mass (Kg)      Volume (cm3)   Density (g/cm3)</span>
+<span class="n">Liver</span>                    <span class="mf">7.250456e-15</span>   <span class="mf">1.888397e-27</span>   <span class="mf">0.006465</span>       <span class="mi">248238145</span>      <span class="mf">1.900990</span>       <span class="mf">1827.870</span>       <span class="mf">1.040000</span>       
+<span class="n">Kidneys</span>                  <span class="mf">1.147945e-15</span>   <span class="mf">5.679410e-26</span>   <span class="mf">0.043333</span>       <span class="mi">8758680</span>        <span class="mf">0.299384</span>       <span class="mf">287.869</span>        <span class="mf">1.040000</span>       
+<span class="n">Thyroid</span>                  <span class="mf">6.195043e-17</span>   <span class="mf">1.038913e-23</span>   <span class="mf">0.724601</span>       <span class="mi">43208</span>          <span class="mf">0.020131</span>       <span class="mf">19.356</span>         <span class="mf">1.040000</span>       
+<span class="o">*</span> <span class="o">----------------------------------------------------------------------------------------------------------------------------------------------</span>
+
+</pre></div>
+</div>
+<p>The header file reveals that for each source data, the results are produced for two scored quantities: S and SAF, followed by scored target regions data that are presented in separated lines, and each simulation is indicated by individual source data (particle name, source region name, energy).</p>
+<ol class="arabic simple">
+<li><p>Header line</p></li>
+</ol>
+<p>Here, the list of the most important data that are used by [analysis] executable, the first result:</p>
+<p>SAF             : scored quantity
+Thyroid         : source region name
+e+              : particle name
+0.6335          : particle initial energy in (MeV)
+Rayleigh        : particle energy distribution
+Isotropic       : particle momentum direction distribution
+100000000Event  : total number of simulated events
+1455759402Step  : total number of simulated steps
+0.000104726ms   : mean dutarion for events simulation
+628.357 min     : mean dutarion for simulation</p>
+<ol class="arabic simple" start="2">
+<li><p>Scored Data lines</p></li>
+</ol>
+<p>The results for each scored volume are written in the format:</p>
+<p>Scored_Region Scored_Quantity Standard_Deviation Relative_Standard_Deviation Number_Of_Steps Region_Mass Region_Volume Region_Density</p>
+</section>
+<section id="how-to-get-this-results">
+<h3>How to get this results<a class="headerlink" href="#how-to-get-this-results" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Which Computation mode!</p></li>
+</ol>
+<p>Sequential, multi-threading, and MPI computation modes are included in the DoseCalcs code. Only for the (SEQ) and (MT) scenarios are three run modes available for each computation mode: data generation mode (Gen), calculation mode (B), and graphical visualization mode (G).</p>
+<p>Sequential : simulation of total number of events on one thread (master thread)</p>
+<p>Multi-threading : simulation of total number of events is divided on the number of threads, and each thread simulates corresponding events number with the same source data.</p>
+<p>MPI : each rank simulates one run sequentially and the total number of runs will be the number of ranks, each rank simulates a specific source data separately.</p>
+<p>The results are generated using calculation mode (B) even in Sequential, Multi-threading or MPI computation mode.</p>
+<ol class="arabic simple" start="2">
+<li><p>[merge] executable</p></li>
+</ol>
+<p>The results calculation steps are based on two types of files: [macros] and thread or rank region result data files (absorbed energy files), in order to obtain all necessary data, merge threads and ranks, and calculate and write the final simulation results to the file [ResultsData].</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>./merge<span class="w"> </span><span class="o">[</span>macros<span class="w"> </span>file<span class="o">]</span><span class="w"> </span>v
+</pre></div>
+</div>
+</div></blockquote>
+<p>The [merge] command takes two arguments, the first of which is the [macros] file which contains all needed parameters of scoring, the units to be used, and results directory path where the absorbed energy files (i.e. AE&#64;For&#64;Rank&#64;i&#64;Thread&#64;j&#64;SourceOrgan&#64;Particle&#64;Energy) exist. The second argument is “v” which allows you to output more information when reading and calculating results.</p>
+<p>If a simulation on a rank crashes due to a memory problem, the [merge] executable can be used to generate results from threads or ranks files that completed the simulation successfully and produced a results file for their respective thread or rank.</p>
+</section>
+</section>
+<section id="analysis">
+<h2>Analysis<a class="headerlink" href="#analysis" title="Link to this heading"></a></h2>
+<section id="prequisites-to-analysis">
+<h3>prequisites to analysis<a class="headerlink" href="#prequisites-to-analysis" title="Link to this heading"></a></h3>
+<p>The objective of a graph or histogram is to present data that is too large or complicated to be fully expressed in words and in a limited amount of space. [analysis] program has been designed as a direct interface to ROOT Analysis System ROOT in order to produce graphs and histograms efficiently. This executable generate graphs based on the parameters of the /AnalysisData/ commands in the [macros] file. Note that the graph type, comparing type, reference name, reference file path, and other analysis command parameters must be specified in the [macros] file DoseCalcs. This file will be used as an input file for analysis tasks in addition to the final results file ([ResultsData]). However, the parameters in the [macros] file need to be adjusted for [analysis] to provide the required analysis results.</p>
+<p>To use the [analysis] executable, the user must build the DoseCalcs code with option WITH_ANALYSIS_USE=ON and set the ROOT_Dir=/../../root . This will build an executable called analysis.</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>-DWITH_ANALYSIS_USE<span class="o">=</span>ON<span class="w">  </span>-DROOT_DIR<span class="o">=</span>/home/.../RootInstallDir
+</pre></div>
+</div>
+</div></blockquote>
+<p>By executing the [analysis] executable after building DoseCalcs and configuring the Root install path, you can generate graphs using the /AnalysisData/generateSelfCrossGraphs command arguments. Note that the comparing type, graph type, reference name, reference file, and other analysis command arguments are included in this command. Only Latex format tables containing geometry regions data and scored results data can be generated if DoseCalcs is built with -DWITH_ANALYSIS_USE=OFF.</p>
+<p>When the source and target regions are the same, the graph is called a self-absorption graph. The data of all target region that receive radiation from a single source region is saved in a cross-irradiation graph, also known as a source graph. Given reference data in a file with a simple determined format, the code can automatically compare simulation results with this reference data and generate graphs and tables to make simulation accuracy measurement easier, as well as to search in the physical context for the source of the discrepancy between reference data and code results.</p>
+<p>The graphs and histograms are generated via a direct interface to the ROOT Analysis System, which supports many file formats for the graphs and histograms generated. In DoseCalcs, the user can select the suitable format. Self-absorption and cross-irradiation data, as well as additional graphs such as relative errors and relative standard deviation, macroscopic cross-section, and so on, can be generated. The simulation inputs, such as initial positions, energies, and momentum directions, can also be represented as 2D and 3D histograms.</p>
+</section>
+<section id="analysis-executable">
+<h3>[analysis] executable<a class="headerlink" href="#analysis-executable" title="Link to this heading"></a></h3>
+<p>The [simulate] command takes two arguments, the first of which is the [macros] file which contains all needed parameters of analysis tasks, including the results directory path where the absorbed energy files (i.e. AE&#64;For&#64;Rank&#64;i&#64;Thread&#64;j&#64;SourceOrgan&#64;Particle&#64;Energy) exist. The second argument is “v” which allows you to output more information when reading and calculating results.</p>
+<p>The the simple command line to analysis is:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>./analysis<span class="w"> </span><span class="o">[</span>macros<span class="w"> </span>file<span class="o">]</span><span class="w"> </span>v
+</pre></div>
+</div>
+</div></blockquote>
+<p>After the execution, the resulted files (graphs, histograms and latex tables) will be generated in the result directory path under the /Graphs_Histograms directory. The DoseCalcs and reference data can be generated in graphs and tables, which necessity providing a reference file in a specific format.</p>
+<p>For [merge] and [analysis] executables, if the given result directory path not found, the [Results] directory in the DoseCalcs build directory will be used.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Installation.html" class="btn btn-neutral float-left" title="DoseCalcs-Core Installations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Commands.html" class="btn btn-neutral float-right" title="DoseCalcs-Core Commands" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Tarik El Ghalbzouri.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

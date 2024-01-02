@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DoseCalcs-Gui: Graphical User Interface &mdash; DoseCalcs v1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5cb08e4e"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="DoseCalcs-Core Installations" href="Installation.html" />
+    <link rel="prev" title="Welcome to DoseCalcs’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            DoseCalcs
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">DoseCalcs-Gui: Graphical User Interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#dosecalcs-package">DoseCalcs Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installing-the-dosecalcs-gui-component">Installing the DoseCalcs-Gui component</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#package-requirements">Package Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dosecalcs-gui-installation">DoseCalcs-Gui Installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#installation-window-and-dosecalcs-core-component-installing">Installation window and DoseCalcs-Core component Installing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#config-file-and-default-inputs">[Config] file and default inputs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#after-installations">After Installations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#run-a-simulation">Run a simulation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#main-window">Main window</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#materials-and-geometry-window">Materials and Geometry Window</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#geometry-visualization-windows">Geometry visualization windows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#physics-radiation-source-and-run-window">Physics, Radiation Source, and Run Window</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#score-merge-root-analysis-window">Score, Merge, ROOT Analysis window</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dosecalcs-analysis-window">DoseCalcs Analysis Window</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Installation.html">DoseCalcs-Core Installations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GeneralConcept.html">DoseCalcs-Core Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Commands.html">DoseCalcs-Core Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Applications.html">DoseCalcs-Core Applications</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">DoseCalcs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">DoseCalcs-Gui: Graphical User Interface</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/GUI.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="dosecalcs-gui-graphical-user-interface">
+<h1>DoseCalcs-Gui: Graphical User Interface<a class="headerlink" href="#dosecalcs-gui-graphical-user-interface" title="Link to this heading"></a></h1>
+<p>In this section, we will introduce how to use the GUI component to investigate the DoseCalcs-Core (geant4-based code) for internal dosimetry simulations. This package was developed to facilitate the use of DoseCalcs code by providing a platform that contains:</p>
+<img alt="_images/mainWin.png" src="_images/mainWin.png" />
+<ul class="simple">
+<li><p>DoseCalcs input fields (line edit, list of choices, etc.) with an input validation system to avoid user error entry;</p></li>
+<li><p>Text editor to manipulate the macro files and external files;</p></li>
+<li><p>Terminal to run commands;</p></li>
+<li><p>Installation windows to get and install the prerequisites of DoseCalcs code such as CMAKE, GEANT4, ROOT, MPI, and DCMTK;</p></li>
+<li><p>Visualization window to read the geometry macros from the input file and visualize the geometry (voxelized, DICOM, GDML, TEXT, and C++ geometry);</p></li>
+<li><p>In addition to running DoseCalcs in the GUI Terminal, there is an interface to run multithreading, or MPI, on the CentOS Rocks cluster.</p></li>
+</ul>
+<section id="dosecalcs-package">
+<h2>DoseCalcs Package<a class="headerlink" href="#dosecalcs-package" title="Link to this heading"></a></h2>
+<p>When the user download the DoseCalcs package and unpack it under Ubuntu, the DoseCalcs directory should contain three sub-directories and the DoseCalcs.pro file:</p>
+<ol class="arabic simple">
+<li><p>core: contains the source and header files of DoseCalcs-Core.</p></li>
+<li><p>gui: contains the source, header, “.ui”, and resources files of the Qt5 C++ DoseCalcs-Gui.</p></li>
+<li><p>PackagesAndFiles: It will be used to held the installed prerequisite packages using the DoseCalcs-Gui. Also, it contains the following:</p></li>
+</ol>
+<ul class="simple">
+<li><p>[Config] file, which is used by the DoseCalcs-Gui application to get and fill the default inputs such as the default [macros] file,  CMAKE “bin” directory path, Geant4 install “bin” directory path, ROOT install “bin” directory path, MPI install “bin” directory path, DCMTK install directory path, and DoseCalcs-Core source directory path. An example of a [Config] file is given in (ConfigFile).</p></li>
+</ul>
+<img alt="_images/ConfigFile.png" src="_images/ConfigFile.png" />
+<ul class="simple">
+<li><p>[ICRPDATA] directory, which contains files from ICRP Publications 107, such as torgans_2016-08-12.NDX, sregions_2016-08-12.NDX, rcp-am_photon_2016-08-12.SAF, rcp-am_neutron_2016-08-12.SAF, rcp-am_electron_2016-08-12.SAF, rcp-am_alpha_2016-08-12.SAF, rcp-af_photon_2016-08-12.SAF, rcp-af_neutron_2016-08-12.SAF, rcp-af_electron_2016-08-12.SAF, and rcp-af_alpha_2016-08-12.SAF; and ICRP Publication 133 files such as ICRP-07.RAD, ICRP-07.NSF, ICRP-07.NDX, ICRP-07.BET, and ICRP-07.ACK.</p></li>
+<li><p>[PreDefinedGeometry] directory, which contains several [macros] files and the corresponding geometry files. These files are used when the user would use a geometry from this provided list, which covers all DoseCalcs geometry methods.</p></li>
+</ul>
+<p>The [ICRPDATA] and [PreDefinedGeometry] do not come with DoseCalcs-Gui package, they can be downloaded from (<a class="reference external" href="https://drive.google.com/file/d/1v9cmMbN5pNsTiqtlNA18uF_qvtlPtYpD/view?usp=sharing">Download ICRPDATA and PreDefinedGeometry Zip file.</a>) in the form of a zip file (DoseCalcsSupplementary.tar.xz), then unzipped in the PackagesAndFiles directory before building the DoseCalcs-Gui package. Or you can just click on “Download DoseCalcs Supplementary Files” button in DoseCalcs-Gui Installations window, and the ICRPDATA and PreDefinedGeometry will be downloaded and added to PackagesAndFiles directory in the DoseCalcs-Gui build directory.</p>
+</section>
+<section id="installing-the-dosecalcs-gui-component">
+<h2>Installing the DoseCalcs-Gui component<a class="headerlink" href="#installing-the-dosecalcs-gui-component" title="Link to this heading"></a></h2>
+<section id="package-requirements">
+<h3>Package Requirements<a class="headerlink" href="#package-requirements" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Compiler, Qt5, xterm, scp</p></li>
+</ul>
+<p>Qt5 packages and xterm are required to install DoseCalcs-Gui. If the user will install DoseCalcs on Rocks-Cluster, it should be noted that to get the results from the cluster to the personal computer by DoseCalcs, it is recommended to install scp. The following command will install all the DoseCalcs-Gui requirements:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>build-essential<span class="w"> </span>qtbase5-dev<span class="w"> </span>qtchooser<span class="w"> </span>qt5-qmake<span class="w"> </span>qtbase5-dev-tools<span class="w"> </span>libqt5charts5-dev<span class="w"> </span>qttools5-dev<span class="w"> </span>xterm<span class="w"> </span>openssh-client<span class="w"> </span>openssh-server
+</pre></div>
+</div>
+</div></blockquote>
+<p>On CentOs, you can use “yum”.</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>sudo<span class="w"> </span>yum<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>build-essential<span class="w"> </span>qtbase5-dev<span class="w"> </span>qtchooser<span class="w"> </span>qt5-qmake<span class="w"> </span>qtbase5-dev-tools<span class="w"> </span>libqt5charts5-dev<span class="w"> </span>qttools5-dev<span class="w"> </span>xterm<span class="w"> </span>openssh-clients<span class="w"> </span>openssh
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="dosecalcs-gui-installation">
+<h3>DoseCalcs-Gui Installation<a class="headerlink" href="#dosecalcs-gui-installation" title="Link to this heading"></a></h3>
+<p>After having installed the prerequisite packages, download DoseCalcs from: <a class="reference external" href="https://codeload.github.com/TarikEl/DoseCalcs-Gui/zip/refs/heads/main">https://codeload.github.com/TarikEl/DoseCalcs-Gui/zip/refs/heads/main</a></p>
+<p>Unpack the DoseCalcs source package “DoseCalcs.XX.tar.gz” to a location of your choice. For illustration only, this guide will assume it’s been unpacked in a directory named, for example, /home/User/Desktop, so that the DoseCalcs source package sits in a subdirectory (DoseCalcs.XX means the version of DoseCalcs). The unpacked source is now in /home/User/Desktop/DoseCalcs.XX</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>/home/User/Desktop
+$<span class="w"> </span>mkdir<span class="w"> </span>DoseCalcs_install
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>/home/User/Desktop/DoseCalcs_install
+$<span class="w"> </span>qmake<span class="w"> </span>/home/User/Desktop/DoseCalcs.XX/DoseCalcs.pro
+</pre></div>
+</div>
+</div></blockquote>
+<p>Now, to run the DoseCalcs-Gui application, from terminal /home/User/Desktop/DoseCalcs_install, run:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="nv">QT_QPA_PLATFORM</span><span class="o">=</span>xcb
+$<span class="w"> </span>./DoseCalcs
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="installation-window-and-dosecalcs-core-component-installing">
+<h3>Installation window and DoseCalcs-Core component Installing<a class="headerlink" href="#installation-window-and-dosecalcs-core-component-installing" title="Link to this heading"></a></h3>
+<p>After installing and running DoseCalcs-Gui, DoseCalcs-Core is ready for installation by using the installation window as illustrated below:</p>
+<img alt="_images/InsWin.png" src="_images/InsWin.png" />
+<p>The “Installations” window can be opened from menu items or from the menubar. Follow the next steps:</p>
+<ul class="simple">
+<li><p>Install the DoseCalcs-Core package requirement (the packages CMAKE, Prerequisites, and Geant4 are essentials) by clicking first on the “Installations” button, which shows the list of packages to be installed. For each package, click on “Generate”, The installation commands will be generated automatically in the “Input” text field, and the user can modify and add other commands. Then, click on “Save” below the “Input” text field. Finally, the “Install” button will execute the installation commands saved for that package in “Terminal”, Follow “Terminal” if an inout is required to continue the installation;</p></li>
+<li><p>Choose the DoseCalcs-Core directory, which is in the DoseCalcs downloaded source directory (i.e., ../../DoseCalcs/core), check configurations (checkbox) and library paths (Geant4 and CMAKE are required; other packages such as DCMTK, MPI, and ROOT are used if the user checked their checkbox for the building process) that will be considered in the building process;</p></li>
+<li><p>Click on the “Generate” button to generate the building CMAKE command. You can edit the text of the commands shown in the “Input” field and save the generated command by clicking on “Save” below the “Input” text field.</p></li>
+<li><p>Click on the “Build” button to build the DoseCalcs-Core, and the building process output will be shown in the “Terminal” field.</p></li>
+<li><p>Click on “Download DoseCalcs Supplementary Files” to download the ICRPDATA and PreDefinedGeometry files to the PackagesAndFiles directory. These files are used in simulation inputs if the user will use the pre-defined DoseCalcs geometries and ICRP radiation data files for the radiation source.</p></li>
+<li><p>Don’t forget to click on “Check Paths” at the top of the “Installations” window to check what packages are installed and are known by DoseCalcs-Gui, which are the library paths used in the DoseCalcs-Core building process and also will be used in the simulation process. After checking, save these paths to the [Config] file (/../DoseCalcs_install/PackagesAndFiles/Config) by clicking on the “Save Data To Config File” button. Then you can use the same configuration each time you want to re-build DoseCalcs-Core.</p></li>
+</ul>
+<img alt="_images/DownInstPartWin.png" src="_images/DownInstPartWin.png" />
+</section>
+<section id="config-file-and-default-inputs">
+<h3>[Config] file and default inputs<a class="headerlink" href="#config-file-and-default-inputs" title="Link to this heading"></a></h3>
+<p>The [Config] file is manipulated by the installation window. The input fields can be saved to the [Config] file by clicking on the “Save Data To Config File” button and loaded by clicking on “Load Config Data”. Also, you can edit the [Config] file by clicking on “Edit Config File”, then edit the text in the “Input” field, and click on “Save”.</p>
+<img alt="_images/ConfFileEdit.png" src="_images/ConfFileEdit.png" />
+<p>If the current package directory paths in the [Config] file are not found, the default paths will be:
+cmake  : /usr/bin.
+geant4 : /usr/local/bin
+root   : /usr/local/bin
+dcmtk  : /usr/local/bin
+mpich  : /usr/local/bin
+default DoseCalcs source directory  : /usr/local/bin</p>
+<p>The user default path of the [macros] file can be set by clicking on the “Default DoseCalcs Inputs” button, choosing the file path, and clicking on the “Save Data To Config File” button. The default macros file path is: /usr/local/bin. Also, the user should check the latest package download link and update it in the [Config] file.</p>
+</section>
+</section>
+<section id="after-installations">
+<h2>After Installations<a class="headerlink" href="#after-installations" title="Link to this heading"></a></h2>
+<p>Now we have installed DoseCalcs-Gui; also, the prerequired packages and DoseCalcs-Core are installed, and DoseCalcs supplementary files were downloaded. The directory tree in DoseCalcs_install should be:</p>
+<p>/../DoseCalcs_install/DoseCalcs : executable to be used to run DoseCalcs-Gui “./DoseCalcs”.
+/../DoseCalcs_install/core_build : Here we found DoseCalcs-Core installed executables such as [simulate], [merge], and [analysis]; also, the DoseCalcs-Core results directory, and all generated macro files of simulations, etc.
+/../DoseCalcs_install/PackagesAndFiles : contains all installed package directories (Geant4_install, cmake_install, etc.), the [Config] file, and the downloaded files ICRPDATA and PreDefinedGeometry.</p>
+<p>The user can investigate the terminal to reach any of these directories and manipulate any file, especially the core_build that contains macro files of previous simulations, and the result files that will be saved from DoseCalcs by default in the directory “/../DoseCalcs/core_build/Results”.</p>
+<p>In addition to this instructions, the input components in DoseCalcs-Gui (checkboxes, buttons, lists of choices, and input text fields) are supported by tooltips when the cursor passes through them in order to give the necessary information and message about how to fill that input component. Also, when filling in the input components, the entered values can be checked and verified before being used in simulation.</p>
+<section id="run-a-simulation">
+<h3>Run a simulation<a class="headerlink" href="#run-a-simulation" title="Link to this heading"></a></h3>
+<p>In the “Main window”, we use a pre-defined geometry from a provided list in the “Geometry” tab, the geometry, physics, and radiation source components will be filled by the read inputs; add run configuration; and then click on the “Run” button. Now the “Terminal” is the interface between the DoseCalcs-Gui and DoseCalcs-Core outputs. Now, all generated files will be in “/../DoseCalcs_install/core_build”, such as:</p>
+<ul class="simple">
+<li><p>macros file generated automatically by the “Run” button, which begins with “Macros_…” followed by simulation ID and simulation input indications. This file contains parameters given in the GUI components.</p></li>
+<li><p>simulation output file’s name begins with the word: “nohup_…” (in case we run simulation in the background) or “DoseCalcs_…” (in case we run simulation on Rocks-Cluster), this word is followed by the simulation ID and principal simulation parameters. This file contains DoseCalcs-Core outputs. In case the user runs simulation without “Run In Background” and “Use On Rocks” conditions, the simulation outputs will be shown simultaneously on “Terminal” after clicking on the “Run” button. You can cancel the run by clicking Ctrl+C in “Terminal”.</p></li>
+</ul>
+<p>When you run a simulation, the “Terminal” will automatically be in the “/../DoseCalcs_install/core_build” workspace, and you can view all the output in this file by “cat nohup_…” or simultaniously by “tail -f nohup_…”.</p>
+<ul class="simple">
+<li><p>simulation-run result files, are generated by DoseCalcs-Core by default in “/../DoseCalcs_install/core_build/Results”. The file’s name begins with the word: “AE&#64;…”, this word is followed by the compute-unit ID and principal simulation parameters. These files should be merged by clicking on the “Merge Results” button in the “Score, Merge, ROOT Analysis” tab according to the user-added score inputs. The merging execution will be shown on “Terminal”, and the [ResultsData] file-generated can be viewed on the “Input” tab by clicking on the “View Results” button in the “Score, Merge, ROOT Analysis” tab or in “Terminal” by “cat /../DoseCalcs_install/core_build/Results/ResultsData”.</p></li>
+</ul>
+</section>
+</section>
+<section id="main-window">
+<h2>Main window<a class="headerlink" href="#main-window" title="Link to this heading"></a></h2>
+<p>It is known that DoseCalcs-Core uses inputs from the [macros] file, which contains text commands. The main window is dedicated to contain two frames; the left frame contains four GUI input tabs (“Geometry”, “Physics, Source, Run”, “Score, Merge, ROOT analysis”, and “Dose Estimation”). The right frame contains the output fields (three tabs: “Input”, “Output” and “Terminal”), including: [Macros] text edit that shows the text commands generated by the input tab components (these commands can be edited and saved); “File” text edit that can be used to edit any other required file such as GDML, TEXT, and C++ geometry files; “Output” text edit that shows the message of reading files, paths, content of generated files, etc. “Terminal” is used to run and show the simulation outputs.</p>
+<img alt="_images/RightLeftMain.png" src="_images/RightLeftMain.png" />
+<p>Several menu items in the menubar can be investigated, such as:</p>
+<ul class="simple">
+<li><p>Open: Open a file chooser to choose a [macros] file and read it, to fill the GUI components.</p></li>
+<li><p>Save Inputs: Save inputs of GUI components to a [macros] file.</p></li>
+<li><p>Save Inputs to Default File: Save inputs of GUI components to the default macros file.</p></li>
+<li><p>Check: Check the simulation inputs entered in GUI components to see if they are valid or not.</p></li>
+<li><p>Run: Run simulation with the entered inputs in GUI components.</p></li>
+<li><p>Send Results: Send the simulation results (Results directory) from the calculation machine to the personal computer.</p></li>
+<li><p>Visualize: Visualize the voxelized or DICOM geometry either in the Qt viewer or the DoseCalcs Voxels viewer.</p></li>
+<li><p>Install: Open a window to install the prerequisites and DoseCalcs-Core.</p></li>
+<li><p>Analysis: Open a window to analyze the result calculated by the “Run” button and merged by the “Merge” button.</p></li>
+<li><p>Clear GUI components.</p></li>
+<li><p>Return: refill the GUI components if they are cleared.</p></li>
+<li><p>Clear edit text and terminal window.</p></li>
+<li><p>Exit: Close the DoseCalcs-Gui window.</p></li>
+<li><p>Update: Automatically the latest version of DoseCalcs downloading and installing on terminal.</p></li>
+<li><p>Restart: Closing the DoseCalcs-Gui window and reopening it.</p></li>
+<li><p>About: Read information about the developer and documentation.</p></li>
+</ul>
+<img alt="_images/MenuWin.png" src="_images/MenuWin.png" />
+<img alt="_images/ToolTip.png" src="_images/ToolTip.png" />
+<p>For each simulation unit (geometry, physics, source, run, score, and ROOT analysis), there are several inputs grouped in a groupbox. A groupbox begins with a checkbox that is used to enable the filling of inputs when reading a [Macros] file or not.</p>
+<section id="materials-and-geometry-window">
+<h3>Materials and Geometry Window<a class="headerlink" href="#materials-and-geometry-window" title="Link to this heading"></a></h3>
+<p>The materials can be manipulated by clicking on the “Edit” button in “Material Data” in the “Geometry” tab. A new frame will be generated to manipulate the material data, such as by creating elements, adding and creating materials, etc.</p>
+<img alt="_images/MatCreaframe.png" src="_images/MatCreaframe.png" />
+<p>The simulation geometry can be manipulated in this tab by clicking on the “Edit” button in “Geometry Data” in the “Geometry” tab. A new frame will be generated according to the “Geometry Method” checked, to manipulate the solids, volumes, voxels, etc.</p>
+<img alt="_images/GeomContFrame.png" src="_images/GeomContFrame.png" />
+<img alt="_images/GeomGDMLFrame.png" src="_images/GeomGDMLFrame.png" />
+<img alt="_images/GeomVoxFrame.png" src="_images/GeomVoxFrame.png" />
+<img alt="_images/GeomDICOMFrame.png" src="_images/GeomDICOMFrame.png" />
+<p>Several geometry and materials [macros] files of all DoseCalcs geometry methods were prepared to be used directly by the user. First, check the “Use Pre-defined” checkbox, then choose any geometry from the list provided. Each time you choose a file, the corresponding [macros] file will be read and automatically fill DoseCalcs-Gui inputs. To view the materials, world, and geometry macros, the user should click on the “Show Commands” buttons.</p>
+<ul class="simple">
+<li><p>Simulate geometries with one radiation source and physics configuration.</p></li>
+</ul>
+<p>In the “Geometry” tab, by checking the checkbox under this groupbox (MultiGeom) the user can select a number of [Macros] files, each of which contains different geometry data. When selecting the files, the user can check the validity of the inputs in each file and open a file edit if any syntax errors occur. If all files go well, the user should fill in the physics and radiation source data, then run the simulation. Each geometry data file will be grouped with physics and radiation source configuration to compose the [Macros] files of DoseCalcs-Core and run.</p>
+<img alt="_images/MultiGeom.png" src="_images/MultiGeom.png" />
+</section>
+<section id="geometry-visualization-windows">
+<h3>Geometry visualization windows<a class="headerlink" href="#geometry-visualization-windows" title="Link to this heading"></a></h3>
+<p>In order to prevent any geometrical problems in simulation, DoseCalcs-Gui comes with two visualization editors: the Geant4 QT viewer and the Voxelized Geometry viewer. By clicking on “Visualize” button in the “Geometry” tab, a chooser will list two editors for visualization.
+across x, y, or z plan
+.. .. _VisChoser:</p>
+<img alt="_images/VisChooserDialog.png" src="_images/VisChooserDialog.png" />
+<p>For voxelized and tetrahedral geometries visualization using the Qt viewer, the user is asked to set the phantom limits across the x, y, or z plan to visualize in order to avoid memory problems.</p>
+<ul class="simple">
+<li><p>Geant4 QT visualization</p></li>
+</ul>
+<p>The Geant4 QT viewer is launched by invoking the [simulate] executable, which necessitates the materials and geometry, physics, and radiation source inputs.</p>
+<img alt="_images/QtVis.png" src="_images/QtVis.png" />
+<ul class="simple">
+<li><p>DoseCalcs visualization</p></li>
+</ul>
+<p>The voxelized geometry viewer necessitates the geometry inputs given in the “Geometry” tab, such as the numebers and sizes of voxels and the Voxels IDs data file for VoxIDs and DICOM geometry methods.</p>
+<img alt="_images/DoseCalcsVisVoxels.png" src="_images/DoseCalcsVisVoxels.png" />
+</section>
+<section id="physics-radiation-source-and-run-window">
+<h3>Physics, Radiation Source, and Run Window<a class="headerlink" href="#physics-radiation-source-and-run-window" title="Link to this heading"></a></h3>
+<p>The physics and radiation source configuration can be manipulated in the “Physics and Source” tab, which contains several input components to be filled in order to create a physics and radiation source model.</p>
+<img alt="_images/PhySrcWin.png" src="_images/PhySrcWin.png" />
+<p>Now, DoseCalcs-Core can be executed since simulation inputs are given in the “Geometry” and “Physics, Source, and Run” tabs; this is done by manipulating the “Run and Merge” group (RunGrBox) in the “Run and Score” tab. First, you should specify the number of events, number of threads for multithreading mode, or number of ranks for MPI mode.
+Before running, you can visualize the input file to be simulated in the “Output” tab by clicking on the “View” button. When you click on the “Run” button, a message will be shown that contains the principal simulation inputs as shown in (SimMessRun).</p>
+<img alt="_images/RunScrWin.png" src="_images/RunScrWin.png" />
+<p>When clicking on the “Run” button in the “Physics, Source, Run” tab or in the menubar, DoseCalcs checks the validity of simulation geometry, radiation source, and physics inputs. If there is any error in these inputs, a simple message dialog will be shown to give information about which inputs are not correct (DoseCalcsTestInputsMsgBox), and nothing will be done until the error is corrected. If all inputs go well, a message box (DoseCalcsRunMsgBox) will be shown to give you the main simulation inputs that will be simulated and to confirm the run by clicking on the “yes” button in this message box.</p>
+<img alt="_images/TestInputsMsgBox.png" src="_images/TestInputsMsgBox.png" />
+<img alt="_images/SimOutMessagePanel.png" src="_images/SimOutMessagePanel.png" />
+<p>In general, the default execution of DoseCalcs will be locally, and simulation progress messages will be shown on the terminal. This can be cancelled by clicking “Ctrl+c” or by closing the DoseCalcs-Gui application. To avoid this canceling method, you can execute the simulation in the background by checking the “Run in Background” checkbox in the “Physics, Source, Run” tab. In this case, the execution can be terminated when the calculation has been terminated or by using the terminal “top” command to get the process ID of [simulate] process and then killing it with “kill ID”.</p>
+<p>If the user is on Rocks-Cluster with the CentOS operation system (or wants to install and use Rocks-Cluster on a machine), and he would benefit from the parallel calculation, then he should activate the “Use on Rocks” checkbox to show the Rocks execution frame (DoseCalcsRunMsgBox), and choose if the execution of the simulation will be in MPI mode or MT mode. The execution on Rocks, as it is known, is constructed in the form of a head node and slave nodes. The DoseCalcs application should be installed on the head node, which is visible and controlled by the user as in a personal computer system. Then, when user click on the “Run” button, automatically, a Rocks execution file is generated to distribute the calculation on slave nodes, and the result will be written to the files in the directory chosen in the head node. During simulation, the user can stop a simulation that is in execution state by clicking on “Stop Job” and choosing the simulation to be stopped in a list of simulations, or just check the output of the current simulations by clicking on “Check” and choosing the simulation to be checked in a list of simulations. The “Check” button serves to read the simulation output file created by the Rocks Job execution file, its name begins with “DoseCalcs” followed by the simulation main inputs. To check the state of all DoseCalcs executed simulations on the Rocks-Cluster, click on “qstat” button.</p>
+<p>The difference between MPI and MT computational modes is that in MT, the simulation geometry and physics data are initialized once, in the head node memory, where a slave node just reads this data to simulate the appropriate number of events. In this case, the total number of events in all slaves shouldn’t exceed the INT_SIZE as recommanded by Geant4. Whereas in MPI mode, the initialization is done on each slave node, which can cause a problem in the memory of the system in some cases when a geometry requires a large memory, each slave node can simulate INT_SIZE as the maximum number of events.</p>
+<img alt="_images/RocksFrame.png" src="_images/RocksFrame.png" />
+<p>The button “&gt;” in the “Run” groupbox is used to automatically calculate the number of sub-simulations that will be executed according to the radiation source configuration given by the user. Another option is provided, the user can check the checkbox in the “Run” groupbox or “&lt;/&gt;” in the menubar to activate the [Macros] file editing, then manually change any commands in the “Macros” text field and save it to be used as an input file for DoseCalcs-Core.</p>
+</section>
+<section id="score-merge-root-analysis-window">
+<h3>Score, Merge, ROOT Analysis window<a class="headerlink" href="#score-merge-root-analysis-window" title="Link to this heading"></a></h3>
+<img alt="_images/RunScrWin.png" src="_images/RunScrWin.png" />
+<p>The results generated by the “Run” button for each thread and/or rank can be merged using the “Merge Results” button in the “Run and Merge” groupbox, which invokes the “merge” executable of DoseCalcs-Core to produce data according to the parameters filled in the “Score” groupbox. The generated results can be viewed by clicking on “View Results” in the “Merge” groupbox.</p>
+<p>By filling in the input components in the “Graphs Data” and “Graphs Parameters” input groupbox, the “Generate” button invokes the “analysis” executable of DoseCalcs-Core to generate ROOT graphs in several formats, Latex tables, text tables, CSV tables, etc.</p>
+</section>
+<section id="dosecalcs-analysis-window">
+<h3>DoseCalcs Analysis Window<a class="headerlink" href="#dosecalcs-analysis-window" title="Link to this heading"></a></h3>
+<p>In addition to the ROOT analysis interface, the DoseCalcs-Gui analysis window provides a powerful utility for internal dosimetry analysis, using an editor containing input components, graphs, and table spaces. For particles and radionuclides, the internal dosimetric quantities such as AE, AF, SAF, AD, S, H, E, and DR in the simulated geometries can be generated in graphs and tables to be saved in PDF files.</p>
+<p>First, the [ResultsData] file should be read to fill in the input component parameters.</p>
+<p>For a graph of DoseCalcs result comparison with a reference, the reference file should be read, in order to generate the relative difference, relative difference percent, and ratio of the compared data set.</p>
+<p>Another type of graph can be generated with data such as relative standard deviation, simulation time, cross-section, and quantity variation in function of mass, volume, and density.</p>
+<p>It should be noted that this frame uses just the run, score, and ROOT Analysis inputs defined in the “Run, Score, and ROOT Analysis” tab.</p>
+<img alt="_images/AnaWin.png" src="_images/AnaWin.png" />
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to DoseCalcs’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Installation.html" class="btn btn-neutral float-right" title="DoseCalcs-Core Installations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Tarik El Ghalbzouri.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

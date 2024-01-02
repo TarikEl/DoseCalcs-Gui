@@ -1,0 +1,36 @@
+=============================== Latex Table for particle gamma and All Sources Self-absorption  Data 
+
+\begin{table}[H] 
+\centering 
+\caption{Regions names implemented in the in ORNLAdultFemale phantom geometry and the corresponding volume, mass and density.} 
+\begin{tabular}{llll} 
+\hline 
+\textbf{Region name}         & \textbf{Volume (cm3)}      & \textbf{Mass (kg)}   & \textbf{Density (g/cm3)}                     \\\hline
+Thyroid     & 12.9244      & 0.0134414     & 1.04       \\\hline
+Liver     & 1437.16      & 1.49465     & 1.04       \\\hline
+Kidneys     & 0      & 0     & 0\\ \hline
+\end{tabular} 
+\label{RegionImpleData}
+\end{table}
+
+
+
+
+=============================== Latex Table for particle gamma and All Sources Self-absorption  Data 
+
+\begin{table}[H] 
+\centering 
+\caption{Regions names implemented in the in ORNLAdultFemale phantom geometry and the corresponding volume, mass and density.} 
+\begin{tabular}{llll} 
+\hline 
+\textbf{Region name}         & \textbf{Volume (cm3)}      & \textbf{Mass (kg)}   & \textbf{Density (g/cm3)}                     \\\hline
+Thyroid     & 12.9244      & 0.0134414     & 1.04       \\\hline
+Liver     & 1437.16      & 1.49465     & 1.04       \\\hline
+Kidneys     & 0      & 0     & 0\\ \hline
+\end{tabular} 
+\label{RegionImpleData}
+\end{table}
+
+
+
+

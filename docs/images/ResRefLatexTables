@@ -1,0 +1,115 @@
+\usepackage{booktabs, makecell, graphicx, caption, subcaption}
+\usepackage{threeparttable}
+\usepackage{multirow}
+
+
+
+
+\begin{table}[H] 
+\centering 
+\caption{Self-absorption SAF Values calculated by DoseCalcs and compared to the reference MIRD. } 
+\begin{adjustbox}{width=\columnwidth,center}
+\begin{threeparttable}
+\begin{tabular}{lllllllllll} \hline 
+\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Region Name}}} & \multirow{2}{*}{\textbf{Method}} & \multicolumn{9}{c}{\textbf{ SAF Self-absorption with gamma energies in MeV}}       \\ \cline{3-11}
+                 \multicolumn{1}{c}{}                             & \multicolumn{1}{c}{}                           & \textbf{0.01}   & \textbf{0.015}   & \textbf{0.02}   & \textbf{0.03}   & \textbf{0.05}   & \textbf{0.1}   & \textbf{0.2}   & \textbf{0.5}   & \textbf{1}       \\\hline 
+\multirow{4}{*}{\textbf{Liver}}       & DoseCalcs                                         & 0.536218        & 0.500466        & 0.442905        & 0.30936        & 0.159941        & 0.0948983        & 0.0896701        & 0.089012        & 0.0808983        \\ 
+                             & MIRD                                        & 0.536        & 0.496        & 0.434        & 0.297        & 0.152        & 0.0914        & 0.0882        & 0.0885        & 0.0807        \\ 
+                             & RD(\%)\tnote{a}                                        & 0.0407463        & 0.900363        & 2.05194        & 4.16172        & 5.22434        & 3.82749        & 1.66672        & 0.578565        & 0.245675        \\ 
+                             & Rel SD(\%)\tnote{b}                                         & 0.01        & 0.011        & 0.013        & 0.017        & 0.021        & 0.017        & 0.016        & 0.01        & 0.008               \\\hline 
+\multirow{4}{*}{\textbf{Kidney}}       & DoseCalcs                                         & 3.29824        & 2.80777        & 2.13773        & 1.09964        & 0.418557        & 0.238256        & 0.244064        & 0.25383        & 0.22953        \\ 
+                             & MIRD                                        & 3.28        & 2.74        & 2.04        & 1.03        & 0.393        & 0.235        & 0.239        & 0.252        & 0.226        \\ 
+                             & RD(\%)\tnote{a}                                        & 0.556189        & 2.47321        & 4.79064        & 6.76146        & 6.5031        & 1.3854        & 2.11879        & 0.72631        & 1.5619        \\ 
+                             & Rel SD(\%)\tnote{b}                                         & 0.01        & 0.012        & 0.015        & 0.022        & 0.034        & 0.026        & 0.025        & 0.015        & 0.011               \\\hline 
+\multirow{4}{*}{\textbf{Adrenal}}       & DoseCalcs                                         & 52.4148        & 34.0331        & 19.9623        & 7.52409        & 2.30845        & 1.3332        & 1.45581        & 1.5463        & 1.33078        \\ 
+                             & MIRD                                        & 52.2        & 32.9        & 18.9        & 7.04        & 2.23        & 1.33        & 1.45        & 1.57        & 1.51        \\ 
+                             & RD(\%)\tnote{a}                                        & 0.411533        & 3.44404        & 5.62058        & 6.87634        & 3.51776        & 0.240752        & 0.400414        & -1.5093        & -11.869        \\ 
+                             & Rel SD(\%)\tnote{b}                                         & 0.011        & 0.015        & 0.021        & 0.037        & 0.062        & 0.046        & 0.045        & 0.028        & 0.021        \\ \hline
+\end{tabular} 
+\begin{tablenotes}\footnotesize
+\item[a] Relative Difference (\%)
+\item[b] Relative Standard Deviation (\%)
+\end{tablenotes}
+\begin{threeparttable}
+\end{adjustbox}
+\label{SelfIrr}
+\end{table}
+
+\begin{table}[H] 
+\centering 
+\caption{Cross-irradiationSAF Values from Liver calculated by DoseCalcs and compared to the reference MIRD. } 
+\begin{adjustbox}{width=\columnwidth,center}
+\begin{threeparttable}
+\begin{tabular}{lllllllllll} \hline 
+\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Region Name}}} & \multirow{2}{*}{\textbf{Method}} & \multicolumn{9}{c}{ SAF Cross-iradiation from Liver \textbf{Source with gamma Energies in MeV}}       \\ \cline{3-11}
+                 \multicolumn{1}{c}{}                             & \multicolumn{1}{c}{}                           & \textbf{0.01}   & \textbf{0.015}   & \textbf{0.02}   & \textbf{0.03}   & \textbf{0.05}   & \textbf{0.1}   & \textbf{0.2}   & \textbf{0.5}   & \textbf{1}       \\\hline 
+\multirow{4}{*}{\textbf{Kidney}}       & DoseCalcs                                         & 3.56162e-05        & 0.000932552        & 0.00466864        & 0.0159893        & 0.0208884        & 0.0167583        & 0.0150188        & 0.0141481        & 0.013049        \\ 
+                             & MIRD                                        & 0.00083        & 0.00126        & 0.0045        & 0.0157        & 0.0195        & 0.0158        & 0.0136        & 0.0129        & 0.0118        \\ 
+                             & RD(\%)\tnote{a}                                        & -95.7089        & -25.9879        & 3.74762        & 1.84287        & 7.12015        & 6.06513        & 10.432        & 9.67488        & 10.5847        \\ 
+                             & Rel SD(\%)\tnote{b}                                         & 3.112        & 0.665        & 0.316        & 0.182        & 0.146        & 0.108        & 0.096        & 0.07        & 0.052               \\\hline 
+\multirow{4}{*}{\textbf{Adrenal}}       & DoseCalcs                                         & 0.000406109        & 0.00524748        & 0.0144641        & 0.0255523        & 0.0245866        & 0.018958        & 0.0170914        & 0.0164116        & 0.0154254        \\ 
+                             & MIRD                                        & 0.00245        & 0.00368        & 0.0136        & 0.0268        & 0.0215        & 0.0161        & 0.0181        & 0.0168        & 0.0156        \\ 
+                             & RD(\%)\tnote{a}                                        & -83.4241        & 42.5947        & 6.3536        & -4.65545        & 14.3564        & 17.7517        & -5.57243        & -2.31173        & -1.11949        \\ 
+                             & Rel SD(\%)\tnote{b}                                         & 4.011        & 1.207        & 0.773        & 0.621        & 0.579        & 0.43        & 0.389        & 0.281        & 0.198        \\ \hline
+\end{tabular} 
+\begin{tablenotes}\footnotesize
+\item[a] Relative Difference (\%)
+\item[b] Relative Standard Deviation (\%)
+\end{tablenotes}
+\end{threeparttable}
+\end{adjustbox}
+\label{CrossFromLiver}
+\end{table}
+
+\begin{table}[H] 
+\centering 
+\caption{Cross-irradiationSAF Values from Kidney calculated by DoseCalcs and compared to the reference MIRD. } 
+\begin{adjustbox}{width=\columnwidth,center}
+\begin{threeparttable}
+\begin{tabular}{lllllllllll} \hline 
+\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Region Name}}} & \multirow{2}{*}{\textbf{Method}} & \multicolumn{9}{c}{ SAF Cross-iradiation from Kidney \textbf{Source with gamma Energies in MeV}}       \\ \cline{3-11}
+                 \multicolumn{1}{c}{}                             & \multicolumn{1}{c}{}                           & \textbf{0.01}   & \textbf{0.015}   & \textbf{0.02}   & \textbf{0.03}   & \textbf{0.05}   & \textbf{0.1}   & \textbf{0.2}   & \textbf{0.5}   & \textbf{1}       \\\hline 
+\multirow{4}{*}{\textbf{Liver}}       & DoseCalcs                                         & 3.55321e-05        & 0.000933995        & 0.00469021        & 0.016021        & 0.02108        & 0.017003        & 0.0151281        & 0.0142009        & 0.0131008        \\ 
+                             & MIRD                                        & 0.00044        & 0.000665        & 0.00468        & 0.0154        & 0.0195        & 0.0153        & 0.0136        & 0.0138        & 0.0122        \\ 
+                             & RD(\%)\tnote{a}                                        & -91.9245        & 40.4504        & 0.218077        & 4.03279        & 8.10231        & 11.1307        & 11.2359        & 2.90493        & 7.38336        \\ 
+                             & Rel SD(\%)\tnote{b}                                         & 1.247        & 0.263        & 0.125        & 0.072        & 0.058        & 0.043        & 0.038        & 0.028        & 0.021               \\\hline 
+\multirow{4}{*}{\textbf{Adrenal}}       & DoseCalcs                                         & 0.00115539        & 0.0251886        & 0.0675812        & 0.0989554        & 0.0692466        & 0.0439754        & 0.0411712        & 0.0406676        & 0.0375683        \\ 
+                             & MIRD                                        & 0.0047        & 0.0395        & 0.0811        & 0.0944        & 0.063        & 0.0451        & 0.0348        & 0.0428        & 0.0401        \\ 
+                             & RD(\%)\tnote{a}                                        & -75.4173        & -36.2314        & -16.6692        & 4.82565        & 9.9153        & -2.49346        & 18.3082        & -4.9822        & -6.31354        \\ 
+                             & Rel SD(\%)\tnote{b}                                         & 2.375        & 0.55        & 0.358        & 0.316        & 0.348        & 0.275        & 0.256        & 0.177        & 0.124        \\ \hline
+\end{tabular} 
+\begin{tablenotes}\footnotesize
+\item[a] Relative Difference (\%)
+\item[b] Relative Standard Deviation (\%)
+\end{tablenotes}
+\end{threeparttable}
+\end{adjustbox}
+\label{CrossFromKidney}
+\end{table}
+
+\begin{table}[H] 
+\centering 
+\caption{Cross-irradiationSAF Values from Adrenal calculated by DoseCalcs and compared to the reference MIRD. } 
+\begin{adjustbox}{width=\columnwidth,center}
+\begin{threeparttable}
+\begin{tabular}{lllllllllll} \hline 
+\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Region Name}}} & \multirow{2}{*}{\textbf{Method}} & \multicolumn{9}{c}{ SAF Cross-iradiation from Adrenal \textbf{Source with gamma Energies in MeV}}       \\ \cline{3-11}
+                 \multicolumn{1}{c}{}                             & \multicolumn{1}{c}{}                           & \textbf{0.01}   & \textbf{0.015}   & \textbf{0.02}   & \textbf{0.03}   & \textbf{0.05}   & \textbf{0.1}   & \textbf{0.2}   & \textbf{0.5}   & \textbf{1}       \\\hline 
+\multirow{4}{*}{\textbf{Liver}}       & DoseCalcs                                         & 0.000363626        & 0.00543032        & 0.0144803        & 0.0252812        & 0.0250155        & 0.0191947        & 0.0174069        & 0.0166057        & 0.0153873        \\ 
+                             & MIRD                                        & 0.00027        & 0.00414        & 0.0128        & 0.0264        & 0.0255        & 0.0193        & 0.0176        & 0.0168        & 0.015        \\ 
+                             & RD(\%)\tnote{a}                                        & 34.6762        & 31.1671        & 13.127        & -4.23788        & -1.89992        & -0.545492        & -1.09733        & -1.15649        & 2.58193        \\ 
+                             & Rel SD(\%)\tnote{b}                                         & 0.391        & 0.109        & 0.071        & 0.058        & 0.053        & 0.04        & 0.036        & 0.026        & 0.019               \\\hline 
+\multirow{4}{*}{\textbf{Kidney}}       & DoseCalcs                                         & 0.00119437        & 0.0254447        & 0.0675867        & 0.0987255        & 0.0694711        & 0.0444418        & 0.041422        & 0.0407966        & 0.0377775        \\ 
+                             & MIRD                                        & 0.0042        & 0.0371        & 0.0753        & 0.0937        & 0.059        & 0.0425        & 0.0412        & 0.0395        & 0.0359        \\ 
+                             & RD(\%)\tnote{a}                                        & -71.5627        & -31.4158        & -10.2435        & 5.36336        & 17.7476        & 4.56887        & 0.538762        & 3.28253        & 5.22978        \\ 
+                             & Rel SD(\%)\tnote{b}                                         & 0.545        & 0.127        & 0.083        & 0.074        & 0.081        & 0.064        & 0.06        & 0.04        & 0.029        \\ \hline
+\end{tabular} 
+\begin{tablenotes}\footnotesize
+\item[a] Relative Difference (\%)
+\item[b] Relative Standard Deviation (\%)
+\end{tablenotes}
+\end{threeparttable}
+\end{adjustbox}
+\label{CrossFromAdrenal}
+\end{table}
+

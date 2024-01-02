@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DoseCalcs-Core Installations &mdash; DoseCalcs v1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5cb08e4e"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="DoseCalcs-Core Simulations" href="GeneralConcept.html" />
+    <link rel="prev" title="DoseCalcs-Gui: Graphical User Interface" href="GUI.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            DoseCalcs
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="GUI.html">DoseCalcs-Gui: Graphical User Interface</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">DoseCalcs-Core Installations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#package-requirements">Package Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dosecalcs-building">DoseCalcs building</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="GeneralConcept.html">DoseCalcs-Core Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Commands.html">DoseCalcs-Core Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Applications.html">DoseCalcs-Core Applications</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">DoseCalcs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">DoseCalcs-Core Installations</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Installation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="dosecalcs-core-installations">
+<h1>DoseCalcs-Core Installations<a class="headerlink" href="#dosecalcs-core-installations" title="Link to this heading"></a></h1>
+<section id="package-requirements">
+<h2>Package Requirements<a class="headerlink" href="#package-requirements" title="Link to this heading"></a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><p>prerequiered ubuntu libraries</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>cmake<span class="w"> </span>build-essential<span class="w"> </span>libxaw7-dev<span class="w"> </span>libxaw7<span class="w"> </span>mesa-common-dev<span class="w"> </span>libglu1-mesa-dev<span class="w"> </span>-y<span class="w"> </span>qt5-default<span class="w"> </span>libicu-dev
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>CMake</p></li>
+</ul>
+</div></blockquote>
+<p>Download CMake from: <a class="reference external" href="https://cmake.org/download/">https://cmake.org/download/</a></p>
+<p>Unpack the CMake source package cmake.XX.XX.tar.gz to a location of your choice. For illustration only, this guide will assume it’s been unpacked in a directory named for example at /home/User/Desktop, so that the CMake source package sits in a subdirectory. (cmake.XX.XX means the version.Release of CMake). The unpacked source now is in : /home/User/Desktop/cmake.XX.XX</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>/home/User/Desktop
+$<span class="w"> </span>mkdir<span class="w"> </span>cmake_install
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>/home/User/Desktop/cmake.XX.XX
+$<span class="w"> </span>./configure<span class="w"> </span>--prefix<span class="o">=</span>/home/User/Desktop/cmake_install
+$<span class="w"> </span>gmake<span class="w"> </span>-j4
+$<span class="w"> </span>gmake<span class="w"> </span>install
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Xerces-C++ headers and libraries</p></li>
+</ul>
+</div></blockquote>
+<p>Download Xerces-C++ from: <a class="reference external" href="https://xerces.apache.org/xerces-c/download.cgi">https://xerces.apache.org/xerces-c/download.cgi</a></p>
+<p>Unpack the Xerces-C++ source package Xerces-C++.XX.XX.tar.gz to a location of your choice. For illustration only, this guide will assume it’s been unpacked in a directory named for example at /home/User/Desktop, so that the Xerces-C++ source package sits in a subdirectory. (Xerces-C++.XX.XX means the version.Release of Xerces-C++). The unpacked source now is in : /home/User/Desktop/Xerces-C++.XX.XX</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>/home/User/Desktop
+$<span class="w"> </span>mkdir<span class="w"> </span>xerces_install
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>/home/User/Desktop/Xerces-C++.XX.XX
+$<span class="w"> </span>./configure<span class="w"> </span>--prefix<span class="o">=</span>/home/User/Desktop/xerces_install
+$<span class="w"> </span>make<span class="w"> </span>-j4s
+$<span class="w"> </span>make<span class="w"> </span>install
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Geant4</p></li>
+</ul>
+</div></blockquote>
+<p>Download geant4 from:  <a class="reference external" href="http://geant4.web.cern.ch/geant4/support/download.html">http://geant4.web.cern.ch/geant4/support/download.html</a></p>
+<p>Unpack the Geant4 source package geant4.XX.XX.tar.gz to a location of your choice. For illustration only, this guide will assume it’s been unpacked in a directory named for example at /home/User/Desktop, so that the Geant4 source package sits in a subdirectory. (geant4.XX.XX means the version.Release of Geant4). The unpacked source now is in : /home/User/Desktop/geant4.XX.XX</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>/home/User/Desktop
+$<span class="w"> </span>mkdir<span class="w"> </span>geant4_build
+$<span class="w"> </span>mkdir<span class="w"> </span>geant4_install
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>geant4_build
+$<span class="w"> </span>/home/User/Desktop/cmake_install/bin/cmake<span class="w"> </span>-DCMAKE_INSTALL_PREFIX<span class="o">=</span>/home/User/Desktop/geant4_install<span class="w"> </span>-DGEANT4_BUILD_MULTITHREADED<span class="o">=</span>ON<span class="w"> </span>-DGEANT4_USE_QT<span class="o">=</span>ON<span class="w"> </span>-DGEANT4_USE_OPENGL_X11<span class="o">=</span>ON<span class="w"> </span>-DGEANT4_INSTALL_DATA<span class="o">=</span>ON<span class="w"> </span>-DGEANT4_USE_GDML<span class="o">=</span>ON<span class="w"> </span>-DXERCESC_ROOT_DIR<span class="o">=</span>/home/User/Desktop/xerces_install<span class="w"> </span>/home/tarik/Desktop/geant4.XX.XX
+</pre></div>
+</div>
+</div></blockquote>
+<p>(if fails, rm -rf * in /geant4_build before rerunning CMake). cmake -D and Tab, will show you all the CMake variables possibilities to build geant4 as you need.</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>make<span class="w"> </span>-j4
+$<span class="w"> </span>make<span class="w"> </span>install
+</pre></div>
+</div>
+</div></blockquote>
+<p>-DXERCESC_ROOT_DIR=&lt;path_to_xercesc&gt; : pointing to the path where the Xerces-C++ XML parser package is installed in your system.</p>
+<p>To have Geant4 setup automatically at each login, open ~/.bashrc configuration file, and append the command</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span>/home/User/Desktop/geant4_install/bin/geant4.sh
+</pre></div>
+</div>
+</div></blockquote>
+<p>In terminal, execute</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span>~/.bashrc
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>MPICH</p></li>
+</ul>
+</div></blockquote>
+<p>Download MPICH from <a class="reference external" href="https://www.mpich.org/downloads/">https://www.mpich.org/downloads/</a> or</p>
+<p>Unpack the MPICH source package MPICH.XX.XX.tar.gz to a location of your choice. For illustration only, this guide will assume it’s been unpacked in a directory named for example at /home/User/Desktop, so that the MPICH source package sits in a subdirectory. (MPICH.XX.XX means the version.Release of MPICH). The unpacked source now is in : /home/User/Desktop/MPICH.XX.XX</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>/home/User/Desktop
+$<span class="w"> </span>mkdir<span class="w"> </span>mpich_install
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>/home/User/Desktop/MPICH.XX.XX
+$<span class="w"> </span>./configure<span class="w"> </span>--disable-fortran<span class="w"> </span>--prefix<span class="o">=</span>/home/User/Desktop/mpich_install
+$<span class="w"> </span>make<span class="w"> </span>-j4
+$<span class="w"> </span>make<span class="w"> </span>install
+
+To<span class="w"> </span>have<span class="w"> </span>MPICH<span class="w"> </span>setup<span class="w"> </span>automatically<span class="w"> </span>at<span class="w"> </span>each<span class="w"> </span>login,<span class="w"> </span>open<span class="w"> </span>~/.bashrc<span class="w"> </span>configuration<span class="w"> </span>file,<span class="w"> </span>and<span class="w"> </span>append<span class="w"> </span>the<span class="w"> </span><span class="nb">command</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">MPI_ROOT</span><span class="o">=</span>/home/User/Desktop/mpich_install
+<span class="nb">export</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$MPI_ROOT</span>/bin:<span class="nv">$PATH</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>In terminal, execute</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span>~/.bashrc
+</pre></div>
+</div>
+</div></blockquote>
+<p>The related variables used in DoseCalcs building should be set to :
+-DWITH_G4MPI_USE=ON,
+-DCMAKE_CXX_COMPILER=/home/User/Desktop/openmpi1.8.1/install/bin/mpicxx,
+-DCMAKE_C_COMPILER=/home/User/Desktop/openmpi1.8.1/install/bin/mpicc.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>ROOT Analysis System</p></li>
+</ul>
+</div></blockquote>
+<p>Installing dependencies (<a class="reference external" href="https://root.cern/install/dependencies/">https://root.cern/install/dependencies/</a>):</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>dpkg-dev<span class="w"> </span>cmake<span class="w"> </span>g++<span class="w"> </span>gcc<span class="w"> </span>binutils<span class="w"> </span>libx11-dev<span class="w"> </span>libxpm-dev<span class="w"> </span>libxft-dev<span class="w"> </span>libxext-dev<span class="w"> </span>python<span class="w"> </span>libssl-dev<span class="w"> </span>gfortran<span class="w"> </span>libpcre3-dev<span class="w"> </span>xlibmesa-glu-dev<span class="w"> </span>libglew1.5-dev<span class="w"> </span>libftgl-dev<span class="w"> </span>libmysqlclient-dev<span class="w"> </span>libfftw3-dev<span class="w"> </span>libcfitsio-dev<span class="w"> </span>graphviz-dev<span class="w"> </span>libavahi-compat-libdnssd-dev<span class="w"> </span>libldap2-dev<span class="w"> </span>python-dev<span class="w"> </span>libxml2-dev<span class="w"> </span>libkrb5-dev<span class="w"> </span>libgsl0-dev
+</pre></div>
+</div>
+</div></blockquote>
+<p>Installing ROOT:</p>
+<p>Download Root from: <a class="reference external" href="https://root.cern/downloading-root">https://root.cern/downloading-root</a></p>
+<p>Unpack the Root source package root-X.XX.XX.tar.gz to a location of your choice. For illustration only, this guide will assume it’s been unpacked in /home/User/Desktop , so that the root source package sits in a subdirectory . (/root-X.XX.XX , X is the version). The unpacked source now is in : /home/User/Desktop/root-X.XX.XX</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>/home/User/Desktop
+$<span class="w"> </span>mkdir<span class="w"> </span>root_build
+$<span class="w"> </span>mkdir<span class="w"> </span>root_install
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>root_build
+$<span class="w"> </span>/home/User/Desktop/cmake_install/bin/cmake<span class="w"> </span>-DCMAKE_INSTALL_PREFIX<span class="o">=</span>/home/User/Desktop/root_install<span class="w"> </span>/home/User/Desktop/root-X.XX.XX
+$<span class="w"> </span>make<span class="w"> </span>-j4
+$<span class="w"> </span>make<span class="w"> </span>install
+
+To<span class="w"> </span>have<span class="w"> </span>ROOT<span class="w"> </span>setup<span class="w"> </span>automatically<span class="w"> </span>at<span class="w"> </span>each<span class="w"> </span>login,<span class="w"> </span>open<span class="w"> </span>~/.bashrc<span class="w"> </span>configuration<span class="w"> </span>file,<span class="w"> </span>and<span class="w"> </span>append<span class="w"> </span>the<span class="w"> </span>following<span class="w"> </span><span class="nb">command</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span>/home/User/Desktop/root_install/bin/thisroot.sh
+</pre></div>
+</div>
+</div></blockquote>
+<p>In terminal, execute</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span>~/.bashrc
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="dosecalcs-building">
+<span id="buildingcommand"></span><h2>DoseCalcs building<a class="headerlink" href="#dosecalcs-building" title="Link to this heading"></a></h2>
+<p>DoseCalcs is available for download at <a class="reference external" href="https://github.com/TarikEl/DoseCalcs/archive/refs/heads/main.zip">https://github.com/TarikEl/DoseCalcs/archive/refs/heads/main.zip</a>. The source will look like this after extraction:</p>
+<blockquote>
+<div><img alt="_images/SourceDir.png" src="_images/SourceDir.png" />
+</div></blockquote>
+<p>The build step produces executables as illustrated below:</p>
+<blockquote>
+<div><img alt="_images/DoseCalcsBuilding.png" src="_images/DoseCalcsBuilding.png" />
+</div></blockquote>
+<ol class="arabic simple">
+<li><p>Building Command</p></li>
+</ol>
+<p>Considering that DoseCalcs source directory path is /home/User/Desktop/DoseCalcs. Enter the following into the terminal:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>/home/User/Desktop
+$<span class="w"> </span>mkdir<span class="w"> </span>DoseCalcs_build
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>/DoseCalcs_build
+</pre></div>
+</div>
+</div></blockquote>
+<p>Using MPI computation mode:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>/home/User/Desktop/cmake_install/bin/cmake<span class="w"> </span>-DCMAKE_BUILD_TYPE<span class="o">=</span>Debug<span class="w"> </span>-DWITH_GEANT4_UIVIS<span class="o">=</span>ON<span class="w"> </span>-DWITH_GDML_USE<span class="o">=</span>ON­<span class="w"> </span>-DWITH_ANALYSIS_USE<span class="o">=</span>ON<span class="w"> </span>-DWITH_G4MPI_USE<span class="o">=</span>ON<span class="w"> </span>-DCMAKE_CXX_COMPILER<span class="o">=</span>/home/User/Desktop/mpich_install/bin/mpicxx<span class="w"> </span>-DCMAKE_C_COMPILER<span class="o">=</span>/home/User/Desktop/mpich_install/bin/mpicc<span class="w"> </span>/home/User/Desktop/DoseCalcs
+$<span class="w"> </span>make<span class="w"> </span>-j4
+</pre></div>
+</div>
+</div></blockquote>
+<p>Using multi-threaded or sequential computation mode:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>/home/User/Desktop/cmake_install/bin/cmake<span class="w"> </span>-DCMAKE_BUILD_TYPE<span class="o">=</span>Debug<span class="w"> </span>-DWITH_GEANT4_UIVIS<span class="o">=</span>ON<span class="w"> </span>-DWITH_GDML_USE<span class="o">=</span>ON­<span class="w"> </span>-DWITH_ANALYSIS_USE<span class="o">=</span>ON<span class="w"> </span>-DWITH_G4MPI_USE<span class="o">=</span>OFF<span class="w"> </span>/home/User/Desktop/DoseCalcs
+$<span class="w"> </span>make<span class="w"> </span>-j4
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p>Building Variables</p></li>
+</ol>
+<p>-DWITH_GDML_USE : Use GDML geometry in the simulation (if Geant4 is built with Xerces-C++)</p>
+<p>-DWITH_DCMTK_USE : Used with DICOM voxelized geometry, this allow to read DICOM files using DCMTK Packages</p>
+<p>-DDCMTK_DIR : Used If -DWITH_VOX_USE and -DWITH_DCMTK_USE set to ON, the value of this variable is the installation path of DCMTK</p>
+<p>-DWITH_ANALYSIS_USE : Used If we want to generate graphs using ROOT ANALYSIS SYSTEM, CMake generates an executable called [analysis], The use of ROOT requires the installation path of ROOT libraries to be given with -DROOT_DIR while building the code.</p>
+<p>-DROOT_DIR : Used if -DWITH_ANALYSIS_USE set to ON. The value of this variable is the installation path of ROOT libraries. It should be set if ROOT not setup automatically.</p>
+<p>-DWITH_G4MPI_USE : Used for MPI DoseCalcs computation mode, to run the application on a cluster containing multiple computers. Each computer has a number of cores. G4MPI usage necessitates the use of the CMake variables -DCMAKE_C_COMPILER and -DCMAKE_CXX_COMPILER. DoseCalcs is built with the use of G4MPI libraries. If a user uses just multi-threading or sequential computation modes, -DWITH_G4MPI_USE should be set to OFF, and there is no need to use -DCMAKE_C_COMPILER and -DCMAKE_CXX_COMPILER.</p>
+<p>-DCMAKE_C_COMPILER : Used if -DWITH_G4MPI_USE set to ON, the value of this variable is the path of mpicc.</p>
+<p>-DCMAKE_CXX_COMPILER : Used if -DWITH_G4MPI_USE set to ON, the value of this variable is the path of mpicxx.</p>
+<p>After DoseCalcs building, the three directories [EventsData], [Scripts] and [Results] in the main application directory structure shown in figure ref{SrcDir}, are copied to the build directory. Where  scripts directory contains TissueRadiationFactors.mac file which is used in calculation of the equivalent dose (H) and the effective dose (E). It can also contain the macros file and geometry files. The directory [EventsData], will contain the generated data files. Finally, the [Results] directory will contain all the results of the simulation, text files, and ROOT-generated graphs and histograms. Besides these directories, the file simulate.cc serves to generate executable [simulate], the same as analysis.cc and merge.cc, which serve to generate [analysis] and [merge] executable files respectively, as shown in the figure ref{BuildDir}.</p>
+<p>All of the executables [simulate], [merge], and [analysis], and optionally the directories [EventsData], [Results], and [Scripts], should exist in the build directory, which will be the user workspace, after DoseCalcs has been successfully built.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="GUI.html" class="btn btn-neutral float-left" title="DoseCalcs-Gui: Graphical User Interface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="GeneralConcept.html" class="btn btn-neutral float-right" title="DoseCalcs-Core Simulations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Tarik El Ghalbzouri.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

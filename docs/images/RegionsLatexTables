@@ -1,0 +1,46 @@
+=============================== Latex Table for particle gamma and All Sources Self-absorption  Data 
+
+\begin{table}[H] 
+\centering 
+\caption{Regions names implemented in the phantom geometry and the corresponding volume, mass and density.} 
+\begin{tabular}{llll} 
+\hline 
+\textbf{Region Name}         & \textbf{Volume (cm3)}      & \textbf{Mass (kg)}   & \textbf{Density (g/cm3)}                     \\\hline
+Adrenal     & 15.7245      & 0.0155185     & 0.9869       \\\hline
+Clavicle     & 55.2679      & 0.0821392     & 1.4862       \\\hline
+Heart     & 605.696      & 0.597761     & 0.9869       \\\hline
+Liver     & 1833.56      & 1.80954     & 0.9869       \\\hline
+Lung     & 3376.16      & 0.998668     & 0.2958       \\\hline
+Kidney     & 287.751      & 0.283982     & 0.9869       \\\hline
+Pelvis     & 217.49      & 0.323234     & 1.4862       \\\hline
+Spleen     & 175.728      & 0.173426     & 0.9869       \\\hline
+Stomach     & 401.471      & 0.396212     & 0.9869       \\\hline
+Thymus     & 25.1327      & 0.0248035     & 0.9869       \\\hline
+Pancreas     & 61.1651      & 0.0603638     & 0.9869       \\\hline
+Ovary     & 8.41669      & 0.00830643     & 0.9869       \\\hline
+SmallIntestine     & 1019.74      & 1.00638     & 0.9869       \\\hline
+UpperLargeIntestine     & 330.516      & 0.326186     & 0.9869       \\\hline
+UrinaryBladder     & 248.171      & 0.24492     & 0.9869       \\\hline
+MiddleLowerSpine     & 573.463      & 0.852281     & 1.4862       \\\hline
+LowerLargeIntestine     & 264.583      & 0.261117     & 0.9869       \\\hline
+Uterus     & 71.4062      & 0.0704708     & 0.9869       \\\hline
+ArmBone     & 954.736      & 1.41893     & 1.4862       \\\hline
+Brain     & 1470.67      & 1.45141     & 0.9869       \\\hline
+Thyroid     & 19.3444      & 0.019091     & 0.9869       \\\hline
+Skull     & 635.278      & 0.94415     & 1.4862       \\\hline
+UpperSpine     & 133.156      & 0.197897     & 1.4862       \\\hline
+LegBone     & 2789.11      & 4.14518     & 1.4862       \\\hline
+Head     & 5072.06      & 5.00562     & 0.9869       \\\hline
+Trunk     & 43274.6      & 42.0142     & 0.970874       \\\hline
+Legs     & 21991      & 21.7029     & 0.9869       \\\hline
+Skin     & 2819.74      & 2.7828     & 0.9869       \\\hline
+Rib     & 692.362      & 1.02899     & 1.4862       \\\hline
+MaleGenitalia     & 0      & 0     & 0.9869       \\\hline
+Teste     & 37.635      & 0.037142     & 0.9869\\ \hline
+\end{tabular} 
+\label{RegionImpleData}
+\end{table}
+
+
+
+

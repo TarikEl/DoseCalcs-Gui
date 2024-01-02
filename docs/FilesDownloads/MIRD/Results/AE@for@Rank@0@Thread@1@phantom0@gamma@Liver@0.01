@@ -1,0 +1,41 @@
+RegionsData
+Adrenals                       0               0               0               0.0155095            15.7153              0.9869              
+Clavicle                       0               0               0               0.0820149            55.1843              1.4862              
+Heart                          0               0               0               0.596942             604.866              0.9869              
+Liver                          97.0911         0.854002        20202           1.80364              1827.58              0.9869              
+Lungs                          0.01            8.98317e-05     2               0.999883             3380.27              0.2958              
+Kidneys                        0               0               0               0.284174             287.946              0.9869              
+Pelvis                         0               0               0               0.330997             222.713              1.4862              
+Stomach                        0.07            0.000638408     14              0.396212             401.471              0.9869              
+Thymus                         0               0               0               0.0248035            25.1327              0.9869              
+Pancreas                       0               0               0               0.0602628            61.0627              0.9869              
+Ovary                          0               0               0               0.00827518           8.38502              0.9869              
+SmallIntestine                 0               0               0               1.0063               1019.65              0.9869              
+UpperLargeIntestine            0.02            0.000189249     4               0.326897             331.237              0.9869              
+UrinaryBladder                 0               0               0               0.24492              248.171              0.9869              
+MiddleLowerSpine               0               0               0               0.853062             573.989              1.4862              
+LowerLargeIntestine            0               0               0               0.260487             263.945              0.9869              
+Uterus                         0               0               0               0.0704708            71.4062              0.9869              
+ArmBone                        0               0               0               1.42011              955.528              1.4862              
+Skull                          0               0               0               0.94854              638.231              1.4862              
+UpperSpine                     0               0               0               0.197897             133.156              1.4862              
+LegBone                        0               0               0               4.148                2791.01              1.4862              
+Head                           0               0               0               5.00507              5071.51              0.9869              
+Trunk                          2.8089          0.0247399       583             42.0142              43274.6              0.970874            
+Legs                           0               0               0               21.7098              21997.9              0.9869              
+Skin                           0               0               0               2.78431              2821.27              0.9869              
+Rib                            0               0               0               1.03512              696.487              1.4862              
+MaleGenitalia                  0               0               0               0.0412417            41.7891              0.9869              
+World                          0               0               0               2.88e-23             288000               1e-25               
+
+TotalEventNumber               10000
+EnergyEmittedPerThread         100
+ExecutionTimeInMin             0.0320064
+OneEventExecutionTimeInMs      5.33441e-05
+ParticleName                   gamma
+SourceType                     Volume
+SourceRegionName               Liver
+EnergyDistribution             Mono
+ParticleSourceEnergy           0.01
+MomDirDistribution             Isotropic
+RankID                         0

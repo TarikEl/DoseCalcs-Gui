@@ -1,0 +1,34 @@
+
+/GeometryData/setGeometrySymbol ORNLAdultFemale
+
+/PhysicsData/setPhysicsData Livermore
+/PhysicsData/setCutsData 0.1 1 mm keV
+/PhysicsData/generateCrossSectionFor gamma MeV 0.01 0.02 0.05 0.1 0.2 0.5 1 2
+
+/SourceData/setEventsParticleNameData gamma
+/SourceData/setEventsInitialPosData cm Volume LeftKidney 4.1 2. 5. RightKidney 4.1 2. 5. Spleen 3.2 2.3 5.7 Thyroid 2. 2.1 2.2 
+/SourceData/setEventsInitialEneData MeV Rayleigh 0.6335 
+/SourceData/setEventsInitialMomDirData degree Isotropic 
+# /SourceData/useDataGenerationFiles save
+
+/RunAndScoreData/setNumberOfThreads 3
+/RunAndScoreData/setSimNumOnRanks o
+/RunAndScoreData/setQuantitiesUnits  AE MeV SAF kg-1 AD mGy S nGy H mSv E mSv
+/RunAndScoreData/setRadiationFactors gamma 1 1 gamma 0.511 1 alpha 2 20
+/RunAndScoreData/setTissueFactors 
+
+#/SourceData/showSourceBox
+#/SourceData/testEventsInitialPositions
+
+/RunAndScoreData/setResultDirectoryPath AnaInOut
+/RunAndScoreData/setVolumesToScore source Kidneys:LeftKidney:RightKidney Spleen Liver target Kidneys:LeftKidney:RightKidney Spleen Liver
+#/RunAndScoreData/setVolumesToScore source all target all
+#source Kidneys:LeftKidney:RightKidney LeftKidney RightKidney Spleen Thyroid Stomach Liver Brain UrinaryBladder target Kidneys:LeftKidney:RightKidney LeftKidney RightKidney Spleen Thyroid Stomach Liver Brain UrinaryBladder
+/RunAndScoreData/setQuantitiesToScore SAF
+
+/AnalysisData/generateSelfCrossGraphs Reference_Result Self_Cross ORNLAdultMale AnaInOut/StylizedORNL1987SAFData.txt MIRDGate AnaInOut/MIRDWithGateSAFData.txt
+/AnalysisData/generateRelativeErrGraph RA
+/AnalysisData/generateRelativeSDevGraph
+#/AnalysisData/generateVariableRegionGraph Mass
+/AnalysisData/generateEventsDataHisto AnaInOut/Pos_LeftKidney_Volume_100000_0.bin  AnaInOut/Ene_Rayleigh_0.6335_100000_0.bin AnaInOut/MomDir_Isotropic_100000_0.bin 
+/AnalysisData/setGraphsParameters  yes yes yes yes RightTop 0.15 0.23 no .png

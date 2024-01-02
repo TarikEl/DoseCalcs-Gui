@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DoseCalcs-Core Applications &mdash; DoseCalcs v1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5cb08e4e"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="DoseCalcs-Core Commands" href="Commands.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            DoseCalcs
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="GUI.html">DoseCalcs-Gui: Graphical User Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Installation.html">DoseCalcs-Core Installations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GeneralConcept.html">DoseCalcs-Core Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Commands.html">DoseCalcs-Core Commands</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">DoseCalcs-Core Applications</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#mird-phantom-in-gdml-format-file">MIRD phantom in GDML format file</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#example-inputs-description">Example inputs description:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#results">Results</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generate-graphs-histograms-and-latex-format-tables">Generate graphs, histograms and latex format Tables</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#geometry-from-text-format-file">Geometry from TEXT format file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#basic-geometry-from-geant4-standard-solids">Basic geometry from Geant4 Standard solids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#combination-of-different-geometry-methods-to-construct-simulation-phantom">Combination of different geometry methods to construct simulation phantom</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">DoseCalcs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">DoseCalcs-Core Applications</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Applications.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="dosecalcs-core-applications">
+<span id="applications"></span><h1>DoseCalcs-Core Applications<a class="headerlink" href="#dosecalcs-core-applications" title="Link to this heading"></a></h1>
+<section id="mird-phantom-in-gdml-format-file">
+<h2>MIRD phantom in GDML format file<a class="headerlink" href="#mird-phantom-in-gdml-format-file" title="Link to this heading"></a></h2>
+<p>The used input files for [simulate] executable was the macros.mac and MIRDGDMLPhantom.gdml, The files are provided to users in links below:</p>
+<p><a class="reference download internal" download="" href="_downloads/c1f07cbcffa7894b1f70b638ea47df78/MIRDGDMLPhantom.gdml"><code class="xref download docutils literal notranslate"><span class="pre">Phantom</span> <span class="pre">geometry</span> <span class="pre">in</span> <span class="pre">GDML</span> <span class="pre">format</span> <span class="pre">file</span></code></a>.</p>
+<p><a class="reference download internal" download="" href="_downloads/68e51f2e60caccef2f75a65fb141ab60/macros.mac"><code class="xref download docutils literal notranslate"><span class="pre">macros</span> <span class="pre">file</span></code></a>.</p>
+<section id="example-inputs-description">
+<h3>Example inputs description:<a class="headerlink" href="#example-inputs-description" title="Link to this heading"></a></h3>
+<p>The simulation geometry will be imported from the MIRDGDMLPhantom.gdml file, in which all volumes, materials, and shapes, including world volume data, are described by gdml tags to describe MIRD phantom regions, and the physics used to track the particles is EMS3 (i.e. ElectromagneticStandard 3), with a cut in range of 1 mm and an energy threshold of 1 keV.</p>
+<p>Initial positions in the liver, adrenals, and kidneys were used to provide data for the radiation source.
+The event momentum directions were generated using an isotropic distribution with starting Mono energy of 0.01 0.015 0.02 0.03 0.05 0.1 0.2 0.5 and 1 MeV.</p>
+<p>In calculation mode, the scored quantity was Specific Absorbed Fraction (SAF), which is scored in three : liver, kidney, and adrenal.
+The “m” value indicates that each rank will use the MPI computing method to simulate a combination of Particle-SourceRegion-Energy-MomentumDirection.
+There are a total of 27 ranks that should be used.</p>
+<p>The generation (Gen) mode was the initial run mode.
+By changing the event data number and generation flags for initial positions, energies, and momentum directions in the macro file, you may speed up the calculation mode while getting event data:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="hll"><span class="linenos">1</span><span class="c1">#######################################################  Source  ############################</span>
+</span><span class="linenos">2</span><span class="o">....</span>
+<span class="linenos">3</span><span class="o">..</span>
+<span class="linenos">4</span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">useDataGenerationFiles</span> <span class="n">read</span> <span class="n">yes</span> <span class="n">yes</span> <span class="n">yes</span>
+</pre></div>
+</div>
+<p>The calculation was carried out in MPI mode, with 13 ranks utilized to produce initial positions in three source regions, nine energies, and one momentum direction distribution.
+Using the following command:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>/home/../mpirun<span class="w"> </span>-np<span class="w"> </span><span class="m">13</span><span class="w"> </span>./simulate<span class="w"> </span>Gen<span class="w"> </span>macros.mac
+</pre></div>
+</div>
+</div></blockquote>
+<p>The command /SourceData/useDataGenerationFiles is used to enable data generation in files, and the 40000000 initial positions for events are generated.</p>
+<p>The second run mode was calculation mode (B), in which the computation was done in MPI mode to speed up the calculation mode while getting event data, and the used ranks were 27 ranks to conduct 27 simulations. The command used on the terminal, from the build directory, was: simulations. In terminal, from build directory, the used command was:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>/home/../mpirun<span class="w"> </span>-np<span class="w"> </span><span class="m">27</span><span class="w"> </span>./simulate<span class="w"> </span>B<span class="w"> </span>macros.mac<span class="w"> </span><span class="m">40000000</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>If the user wants to produce events data without having to utilize events data files, they should comment the command in the macro file as shown below.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="hll"><span class="linenos">1</span><span class="c1">#######################################################  Source  ############################</span>
+</span><span class="linenos">2</span><span class="o">....</span>
+<span class="linenos">3</span><span class="o">..</span>
+<span class="linenos">4</span><span class="c1">#/SourceData/useDataGenerationFiles read yes yes yes</span>
+</pre></div>
+</div>
+</section>
+<section id="results">
+<h3>Results<a class="headerlink" href="#results" title="Link to this heading"></a></h3>
+<p>The Absorbed energy files, and [ResultsData] files produced by the [simulate] executable are available to users in the URLs below:</p>
+<p><a class="reference download internal" download="" href="_downloads/2339df07a8c88c5ee66de709baf0c936/ResultsData"><code class="xref download docutils literal notranslate"><span class="pre">The</span> <span class="pre">calculated</span> <span class="pre">results</span> <span class="pre">data</span> <span class="pre">for</span> <span class="pre">scored</span> <span class="pre">quantities</span> <span class="pre">and</span> <span class="pre">regions</span></code></a>.</p>
+<p>The user can generate new results for new scored quantities or new target regions by using the [merge] program and specifying the new quantities and targets in [macros] as follows:</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">QuantitiesToScore</span>                <span class="n">AD</span> <span class="n">AF</span> <span class="n">S</span>
+<span class="linenos">2</span><span class="n">RegionsNamesToScore</span>              <span class="n">Liver</span> <span class="n">Kidney</span> <span class="n">Adrenal</span> <span class="n">Thyroid</span> <span class="n">Testes</span> <span class="n">Spleen</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Then executing [merge]:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>./merge<span class="w"> </span><span class="o">[</span>Macros<span class="w"> </span>File<span class="o">]</span><span class="w"> </span>v
+</pre></div>
+</div>
+</div></blockquote>
+<p>The new results will be written to [ResultsData] file.</p>
+</section>
+<section id="generate-graphs-histograms-and-latex-format-tables">
+<h3>Generate graphs, histograms and latex format Tables<a class="headerlink" href="#generate-graphs-histograms-and-latex-format-tables" title="Link to this heading"></a></h3>
+<p>The various graph types were generated using the command below, which used the [macros] file as an input file.</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>./analysis<span class="w"> </span><span class="o">[</span>Macros<span class="w"> </span>File<span class="o">]</span><span class="w"> </span>v
+</pre></div>
+</div>
+</div></blockquote>
+<p>An example of the generated graphs is shown below</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><figure class="align-default" id="id1">
+<img alt="_images/Cross_Result_SAF_Liver_gamma.png" src="_images/Cross_Result_SAF_Liver_gamma.png" />
+<figcaption>
+<p><span class="caption-text">Results Cross Irradiation Graph</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+<td><figure class="align-default" id="id2">
+<img alt="_images/Cross_ReferenceResult_SAF_gamma_Adrenal_Kidney_DoseCalcs_vs_MIRD.png" src="_images/Cross_ReferenceResult_SAF_gamma_Adrenal_Kidney_DoseCalcs_vs_MIRD.png" />
+<figcaption>
+<p><span class="caption-text">Results and Reference Cross Irradiation Graph</span><a class="headerlink" href="#id2" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+</tr>
+<tr class="row-even"><td><figure class="align-default" id="id3">
+<img alt="_images/Self_Result_SAF_gamma.png" src="_images/Self_Result_SAF_gamma.png" />
+<figcaption>
+<p><span class="caption-text">Results Self Absorption Graph</span><a class="headerlink" href="#id3" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+<td><figure class="align-default" id="id4">
+<img alt="_images/Self_ReferenceResult_SAF_gamma_Liver_DoseCalcs_vs_MIRD.png" src="_images/Self_ReferenceResult_SAF_gamma_Liver_DoseCalcs_vs_MIRD.png" />
+<figcaption>
+<p><span class="caption-text">Results and Reference Self Irradiation Graph</span><a class="headerlink" href="#id4" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+</tr>
+<tr class="row-odd"><td><figure class="align-default" id="id5">
+<img alt="_images/RelativeSDv_SelfSAF.png" src="_images/RelativeSDv_SelfSAF.png" />
+<figcaption>
+<p><span class="caption-text">Self Relative SDv Graph</span><a class="headerlink" href="#id5" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+<td><figure class="align-default" id="id6">
+<img alt="_images/RelativeSDv_CrossSAF_Liver.png" src="_images/RelativeSDv_CrossSAF_Liver.png" />
+<figcaption>
+<p><span class="caption-text">Cross Relative SDv Graph</span><a class="headerlink" href="#id6" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+</tr>
+<tr class="row-even"><td><figure class="align-default" id="id7">
+<img alt="_images/RelativeError_Self_SAF_DoseCalcs_vs_MIRD.png" src="_images/RelativeError_Self_SAF_DoseCalcs_vs_MIRD.png" />
+<figcaption>
+<p><span class="caption-text">Self Relative error Graph</span><a class="headerlink" href="#id7" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+<td><figure class="align-default" id="id8">
+<img alt="_images/RelativeError_Cross_SAF_Liver_DoseCalcs_vs_MIRD.png" src="_images/RelativeError_Cross_SAF_Liver_DoseCalcs_vs_MIRD.png" />
+<figcaption>
+<p><span class="caption-text">Cross Relative error Graph</span><a class="headerlink" href="#id8" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+</tr>
+<tr class="row-odd"><td><figure class="align-default" id="id9">
+<img alt="_images/Mass_SAFForAllEnergies_inSelfAbsorption.png" src="_images/Mass_SAFForAllEnergies_inSelfAbsorption.png" />
+<figcaption>
+<p><span class="caption-text">Mass SAF in Self Absorption Graph</span><a class="headerlink" href="#id9" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+<td><figure class="align-default" id="id10">
+<img alt="_images/Macroscopic_Cross_Section_for_gamma_in_material_SoftTissue.png" src="_images/Macroscopic_Cross_Section_for_gamma_in_material_SoftTissue.png" />
+<figcaption>
+<p><span class="caption-text">Macroscopic Cross Section Graph</span><a class="headerlink" href="#id10" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The [Scripts] and [Results] can be downloaded and pasted to the build workspace to simulate with the same inputs or with user adjustment to get new desired results.</p>
+<p><a class="reference download internal" download="" href="_downloads/9ae96f91646326c17b43f0ab861a2d75/f.tar.xz"><code class="xref download docutils literal notranslate"><span class="pre">Compressed</span> <span class="pre">file,</span> <span class="pre">contains</span> <span class="pre">[Scripts]</span> <span class="pre">and</span> <span class="pre">[Results]</span> <span class="pre">directories</span></code></a>.</p>
+</section>
+</section>
+<section id="geometry-from-text-format-file">
+<h2>Geometry from TEXT format file<a class="headerlink" href="#geometry-from-text-format-file" title="Link to this heading"></a></h2>
+<p>The simulation inputs are identical to those for GDML phantom geometry; the geometry was taken from a TEXT format file called MIRDTEXTPhantom.geom. As shown in the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="hll"><span class="linenos">1</span><span class="c1">#######################################################  Geometry ##########################</span>
+</span><span class="linenos">2</span><span class="c1">#/GeometryData/createVolume Scripts/MIRDGDMLPhantom.geom</span>
+<span class="linenos">3</span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">createVolume</span> <span class="n">Scripts</span><span class="o">/</span><span class="n">MIRDTEXTPhantom</span><span class="o">.</span><span class="n">geom</span>
+</pre></div>
+</div>
+<p>The file is provided to users in link below:</p>
+<p><a class="reference download internal" download="" href="_downloads/6e0084be8421277b3c443ca667bb2a52/MIRDTEXTPhantom.geom"><code class="xref download docutils literal notranslate"><span class="pre">Phantom</span> <span class="pre">geometry</span> <span class="pre">in</span> <span class="pre">TEXT</span> <span class="pre">format</span> <span class="pre">file</span></code></a>.</p>
+</section>
+<section id="basic-geometry-from-geant4-standard-solids">
+<h2>Basic geometry from Geant4 Standard solids<a class="headerlink" href="#basic-geometry-from-geant4-standard-solids" title="Link to this heading"></a></h2>
+<p>The macros were used as inputs for the [simulate] executable. No geometry files are needed; instead, DoseCalcs’ basic commands are used to build the world and geometry volumes. Users can access the file using the following link:</p>
+<p><a class="reference download internal" download="" href="_downloads/e02f680ac38f5142763ff3fb72a17051/macros.mac"><code class="xref download docutils literal notranslate"><span class="pre">macros</span> <span class="pre">file</span></code></a>.</p>
+<p>The [Scripts] and [Results] can be downloaded and pasted to the build workspace to simulate with the same inputs or with user adjustment to get new desired results.</p>
+<p><a class="reference download internal" download="" href="_downloads/4f9fa46f19647ec80960c972e9cea20e/f.tar.xz"><code class="xref download docutils literal notranslate"><span class="pre">Compressed</span> <span class="pre">file,</span> <span class="pre">contains</span> <span class="pre">[Scripts]</span> <span class="pre">and</span> <span class="pre">[Results]</span> <span class="pre">directories</span></code></a>.</p>
+<p>After copying [Scripts] and [Results] to the build workspace directory, the user should execute the command below in terminal and from the build directory to visualize the world geometry:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>./simulate<span class="w"> </span>G<span class="w"> </span>macros.mac
+</pre></div>
+</div>
+</div></blockquote>
+<p>To configure the desired simulation inputs, the user should also adjust the macros.mac to simulate a volume as a source and calculate various dosimetry quantities. Run the command below:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>./simulate<span class="w"> </span>B<span class="w"> </span>macros.mac<span class="w"> </span><span class="m">1000000</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="combination-of-different-geometry-methods-to-construct-simulation-phantom">
+<h2>Combination of different geometry methods to construct simulation phantom<a class="headerlink" href="#combination-of-different-geometry-methods-to-construct-simulation-phantom" title="Link to this heading"></a></h2>
+<p>This example’s [Scripts] and [Results] may be downloaded, and the user should copy them to the build workspace in order to simulate with the same inputs or with user adjustment to obtain new desired results.</p>
+<p><a class="reference download internal" download="" href="_downloads/ee4ddc3c4b569974013b47c50b61b71a/f.tar.xz"><code class="xref download docutils literal notranslate"><span class="pre">Compressed</span> <span class="pre">file,</span> <span class="pre">contains</span> <span class="pre">[Scripts]</span> <span class="pre">and</span> <span class="pre">[Results]</span> <span class="pre">directories</span></code></a>.</p>
+<p>Testes are imported from STL file, thyroid from TEXT file, spleen from Geant4 standard solids using the DoseCalcs command, brain from adding geometrical C++ code to G4TCPPGeometryFormat::ConstructLogicalVolumes() function block (which requires re-building DoseCalcs source code), and all remaining organs, including world volume, from GDML files. The spleen volume-related DoseCalcs commands and brain-related C++ code are listed below, along with links to the geometry files:</p>
+<p>Spleen region related geometry commands defined in macros.mac:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>/GeometryData/createSolid<span class="w"> </span>Ellipsoid<span class="w"> </span>SpleenSol<span class="w"> </span><span class="m">3</span>.2<span class="w"> </span><span class="m">2</span>.3<span class="w"> </span><span class="m">5</span>.7<span class="w"> </span>cm
+/GeometryData/createVolume<span class="w"> </span>Spleen<span class="w"> </span>SpleenSol<span class="w"> </span>SoftTissue<span class="w"> </span>Trunk<span class="w"> </span><span class="m">10</span>.79<span class="w"> </span><span class="m">2</span>.94<span class="w"> </span><span class="m">1</span>.8<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">0</span><span class="w"> </span>cm<span class="w"> </span>degree
+</pre></div>
+</div>
+</div></blockquote>
+<p><a class="reference download internal" download="" href="_downloads/cac8531dd20640246652ae0a5766ca4f/Testes.ast"><code class="xref download docutils literal notranslate"><span class="pre">Testes</span> <span class="pre">STL</span> <span class="pre">format</span> <span class="pre">file</span></code></a>.</p>
+<p><a class="reference download internal" download="" href="_downloads/74cbc65d8cd9e548026d71c06c294b23/Thyroid.geom"><code class="xref download docutils literal notranslate"><span class="pre">Thyroid</span> <span class="pre">TEXT</span> <span class="pre">format</span> <span class="pre">file</span></code></a>.</p>
+<p><a class="reference download internal" download="" href="_downloads/fbea5baf6b5854fadd166d3724f7de4c/ORNLPhantom.gdml"><code class="xref download docutils literal notranslate"><span class="pre">World</span> <span class="pre">and</span> <span class="pre">remains</span> <span class="pre">organs</span> <span class="pre">GDML</span> <span class="pre">format</span> <span class="pre">file</span></code></a>.</p>
+<p><a class="reference download internal" download="" href="_downloads/78f7a3768389b98dc99938d988d7446e/G4TCPPGeometryFormat.cc"><code class="xref download docutils literal notranslate"><span class="pre">Brain</span> <span class="pre">region</span> <span class="pre">C++</span> <span class="pre">related</span> <span class="pre">code</span> <span class="pre">implemented</span> <span class="pre">in</span> <span class="pre">G4TCPPGeometryFormat</span> <span class="pre">C++</span> <span class="pre">format</span> <span class="pre">file</span></code></a>.</p>
+<p>This C++ file format cannot be utilized directly by DoseCalcs like other geometry files; instead, the C++ class file should be used to replace the existing G4TCPPGeometryFormat class file in the DoseCalcs source directory, or copy G4TCPPGeometryFormat::ConstructLogicalVolumes() block code from this file to a source file that already exists. To account for the new C++ built brain volume, the user must build the updated DoseCalcs source.</p>
+<p>After copying [Results], geometry files and [macros] to the build workspace directory, add the C++ code for brain volume to G4TCPPGeometryFormat::ConstructLogicalVolumes() block and build DoseCalcs source to visualize the world geometry. The user should execute the command below in terminal and from the build directory:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>./simulate<span class="w"> </span>G<span class="w"> </span>macros.mac
+</pre></div>
+</div>
+</div></blockquote>
+<p>And to simulate a volume as a source and calculating some dosimetry quantities, the user should edit the macros.mac to set the desired simulation inputs and run the command below:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>./simulate<span class="w"> </span>B<span class="w"> </span>macros.mac<span class="w"> </span><span class="m">1000000</span>
+$<span class="w"> </span>./merge<span class="w"> </span>macros.mac
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Commands.html" class="btn btn-neutral float-left" title="DoseCalcs-Core Commands" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Tarik El Ghalbzouri.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,81 @@
+#######################################################  Materials  ###########################
+/MaterialData/createElement 1 1.01 Hydrogen
+/MaterialData/createElement 6 12. Carbon
+/MaterialData/createElement 8 16.02 Oxygen
+
+/MaterialData/createMaterial H2O 1 2 1.03 g/cm3 numb
+/MaterialData/addElements Hydrogen 2 Oxygen 1
+
+/MaterialData/setNistMaterialNameAndID G4_AIR 2
+
+#######################################################  world volume ########################
+/GeometryData/createWorld G4_AIR 400. 400. 400. cm
+
+#######################################################  Volumes  ############################
+/GeometryData/createSolid Box BoxSol 50. 40. 60. cm
+/GeometryData/createVolume BoxVol BoxSol H2O World 80. 80. 80. 30. 10. 130. cm degree
+
+/GeometryData/createSolid Box BoxSol2 10. 20. 15 cm radian
+/GeometryData/createVolume BoxVol2 BoxSol2 H2O BoxVol 0 0 0 99. 30. 34. cm degree
+
+/GeometryData/createSolid Tubs tubsSol 10. 40. 50 3.14 3.14 cm radian
+/GeometryData/createVolume tubsVol tubsSol H2O World 99. 130. 111. 0. 0. 0. cm degree
+
+/GeometryData/createSolid Cons ConsSol 10. 40. 20. 60. 50 3.14 3.14 cm radian
+/GeometryData/createVolume ConsVol ConsSol H2O World 0. 8. 0. 0. 0. 0. cm degree
+
+/GeometryData/createSolid Para ParaSol 20. 40. 60. 3.14 3.14 3.14 cm radian
+/GeometryData/createVolume ParaVol ParaSol H2O World 0. 12. 0. 0. 0. 0. cm degree
+
+/GeometryData/createSolid Trd TrdSol 30. 10. 40. 15. 60. cm radian
+/GeometryData/createVolume TrdVol TrdSol H2O World 0. 16 0. 0. 0. 0. cm degree
+
+/GeometryData/createSolid Sphere SphereSol 20. 40. 0. 180 0. 180 cm degree
+/GeometryData/createVolume SphereVol SphereSol H2O World 5. 0. 0. 0. 0. 0. cm degree
+
+/GeometryData/createSolid Orb OrbSol 5. cm radian
+/GeometryData/createVolume OrbVol OrbSol H2O World 90. 0. 0. 0. 0. 0. cm degree
+
+/GeometryData/createSolid Torus TorusSol 10. 20. 90. 0. 1.57 cm radian
+/GeometryData/createVolume TorusVol TorusSol H2O World 18 0. 0. 0. 0. 0. cm degree
+
+/GeometryData/createSolid Ellipsoid EllipsoidSol 10. 20. 50. cm radian
+/GeometryData/createVolume EllipsoidVol EllipsoidSol H2O World 24. 0. 0. 0. 0. 0. cm degree
+
+/GeometryData/createSolid Union UnionSol EllipsoidSol BoxSol 10. 0. 23. 0. 0. 0. cm radian
+/GeometryData/createVolume UnionVol UnionSol H2O World 0. 0. 20. 0. 0. 0. cm degree
+
+/GeometryData/createSolid Intersection IntersectionSol EllipsoidSol BoxSol 10. 0. 23. 0. 0. 0. cm radian
+/GeometryData/createVolume IntersectionVol IntersectionSol H2O World 0. 10. 20. 0. 0. 0. cm degree
+
+/GeometryData/createSolid Subtraction SubtractionSol EllipsoidSol BoxSol 10. 0. 23. 0. 0. 0. cm radian
+/GeometryData/createVolume SubtractionVol SubtractionSol H2O World 0. 20. 20. 0. 0. 0. cm degree
+
+#######################################################  Physics  ############################
+/PhysicsData/setPhysicsData EMS2
+/PhysicsData/setCutsData 0.1 1 mm keV
+#/PhysicsData/generateCrossSectionFor gamma MeV 0.01 0.015 0.02 0.03 0.05 0.1 0.2 0.5 1
+
+#######################################################  Source  ############################
+/SourceData/setEventsParticleNameData gamma
+/SourceData/setEventsInitialPosData cm Volume BoxVol 1.2 1.2 1.2 EllipsoidVol 2.5 1.2 4.
+/SourceData/setEventsInitialEneData MeV Rayleigh 0.511
+/SourceData/setEventsInitialMomDirData degree Isotropic
+#/SourceData/useDataGenerationFiles save
+
+/SourceData/showSourceBox
+/SourceData/testEventsInitialPositions
+
+#######################################################  Score  ############################
+/RunAndScoreData/setVolumesToScore source all target all
+/RunAndScoreData/setQuantitiesToScore AD SAF S 
+/RunAndScoreData/setSimNumOnRanks m
+/RunAndScoreData/setNumberOfThreads 2
+
+#######################################################  Analysis  ############################
+/AnalysisData/generateSelfCrossGraphs Reference_Result Self_Cross MIRD Results/References/StylizedMIRD1976SAFData.txt
+/AnalysisData/generateRelativeErrGraph RA
+/AnalysisData/generateRelativeSDevGraph
+/AnalysisData/generateVariableRegionGraph Mass
+/AnalysisData/generateEventsDataHisto
+/AnalysisData/setGraphsParameters yes no yes yes RightTop 0.15 0.23 yes .pdf

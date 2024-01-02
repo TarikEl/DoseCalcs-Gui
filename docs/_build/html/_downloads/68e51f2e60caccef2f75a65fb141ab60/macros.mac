@@ -1,0 +1,35 @@
+#######################################################  Materials  ###########################
+#######################################################  world volume ########################
+#######################################################  Volumes  ############################
+/GeometryData/createVolume MIRDGDMLPhantom.gdml
+#/GeometryData/createVolume MIRDTEXTPhantom.geom
+
+#######################################################  Physics  ############################
+/PhysicsData/setPhysicsData EMS3
+/PhysicsData/setCutsData 0.1 1 mm keV
+#/PhysicsData/generateCrossSectionFor gamma MeV 0.01 0.015 0.02 0.03 0.05 0.1 0.2 0.5 1
+
+#######################################################  Source  ############################
+/SourceData/setEventsParticleNameData gamma
+/SourceData/setEventsInitialPosData cm Volume Liver 15. 8. 8. Adrenal 10.5 0.5 4.96 Kidney 16. 2. 5.
+/SourceData/setEventsInitialEneData MeV Mono 1 0.01 0.015 0.02 0.03 0.05 0.1 0.2 0.5
+/SourceData/setEventsInitialMomDirData degree Isotropic
+#/SourceData/useDataGenerationFiles save
+
+/SourceData/showSourceBox
+/SourceData/testEventsInitialPositions
+
+#######################################################  Score  ############################
+/RunAndScoreData/setVolumesToScore source Liver Adrenal Kidney target all
+/RunAndScoreData/setQuantitiesToScore SAF
+/RunAndScoreData/setSimNumOnRanks m
+/RunAndScoreData/setNumberOfThreads 3
+
+#######################################################  Analysis  ############################
+/AnalysisData/generateSelfCrossGraphs Reference_Result Self_Cross MIRD Results/StylizedMIRD1976SAFData.txt
+/AnalysisData/generateRelativeErrGraph RA
+/AnalysisData/generateRelativeSDevGraph
+/AnalysisData/generateVariableRegionGraph Mass
+/AnalysisData/generateEventsDataHisto
+/AnalysisData/setGraphsParameters yes no yes yes RightTop 0.15 0.23 yes .pdf
+

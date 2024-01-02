@@ -1,0 +1,894 @@
+
+
+
+
+\usepackage{booktabs, makecell, graphicx, caption, subcaption}
+\usepackage{threeparttable}
+\usepackage{multirow}
+
+
+\begin{table}[H] 
+\centering 
+\caption{Self-absorption SAF values of gamma calculated in ORNLAdultFemale by DoseCalcs and compared to the ORNLAdultMale reference. } 
+\begin{adjustbox}{width=\columnwidth,center}
+\begin{threeparttable}
+\begin{tabular}{llllllllll} \hline 
+\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Region}}} & \multirow{2}{*}{\textbf{Method}} & \multicolumn{8}{c}{  \textbf{ Energies in MeV}}       \\ \cline{3-10}
+                 \multicolumn{1}{c}{}                             & \multicolumn{1}{c}{}                           & \textbf{0.01}   & \textbf{0.02}   & \textbf{0.05}   & \textbf{0.1}   & \textbf{0.2}   & \textbf{0.5}   & \textbf{1}   & \textbf{2}       \\\hline 
+\multirow{4}{*}{\textbf{Kidneys}}       & DoseCalcs                                         & 0        & 0        & 0        & 0        & 0        & 0        & 0        & 0        \\ 
+                             & ORNLAdultMale                                        & 3.77        & 2.33        & 0.457        & 0.266        & 0.277        & 0.286        & 0.264        & 0.226        \\ 
+                             & RD (\%) \tnote{a}                                        & 100        & 100        & 100        & 100        & 100        & 100        & 100        & 100        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0        & 0        & 0        & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Thyroid}}       & DoseCalcs                                         & 62.7688        & 27.2154        & 3.46805        & 1.97752        & 2.13975        & 2.24604        & 1.95932        & 1.37781        \\ 
+                             & ORNLAdultMale                                        & 66.4        & 26        & 3.43        & 2.03        & 2.2        & 2.43        & 2.29        & 1.9        \\ 
+                             & RD (\%) \tnote{a}                                        & 6176.88        & 2621.54        & 246.805        & 97.752        & 113.975        & 124.604        & 95.932        & 37.781        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0.00538561        & 0.00895299        & 0.0152674        & 0.0144424        & 0.00934603        & 0.00596914        & 0.00584722        & 0.00629801               \\\hline 
+\multirow{4}{*}{\textbf{Liver}}       & DoseCalcs                                         & 0.648446        & 0.528814        & 0.18304        & 0.107842        & 0.103026        & 0.102207        & 0.0928535        & 0.0758259        \\ 
+                             & ORNLAdultMale                                        & 0.685        & 0.543        & 0.185        & 0.111        & 0.106        & 0.107        & 0.0983        & 0.0829        \\ 
+                             & RD (\%) \tnote{a}                                        & -35.1554        & -47.1186        & -81.696        & -89.2158        & -89.6974        & -89.7793        & -90.7146        & -92.4174        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0.00502288        & 0.00607324        & 0.00643111        & 0.00580387        & 0.00416304        & 0.00269497        & 0.00277093        & 0.00331911        \\ \hline
+\end{tabular} 
+\begin{tablenotes}\footnotesize
+\item[a] Relative Difference (\%)
+\item[b] Relative Standard Deviation (\%)
+\end{tablenotes}
+\end{threeparttable}
+\end{adjustbox}
+\label{tab:SelfIrr}
+\end{table}
+
+
+
+
+
+\usepackage{booktabs, makecell, graphicx, caption, subcaption}
+\usepackage{threeparttable}
+\usepackage{multirow}
+
+
+\begin{table}[H] 
+\centering 
+\caption{Cross-irradiation SAF values of gamma from Kidneys calculated in ORNLAdultFemale by DoseCalcs and compared to the ORNLAdultMale reference. } 
+\begin{adjustbox}{width=\columnwidth,center}
+\begin{threeparttable}
+\begin{tabular}{llllllllll} \hline 
+\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Target region}}} & \multirow{2}{*}{\textbf{Method}} & \multicolumn{8}{c}{  \textbf{Kidneys source with gamma energies in MeV}}       \\ \cline{3-10}
+                 \multicolumn{1}{c}{}                             & \multicolumn{1}{c}{}                           & \textbf{0.01}   & \textbf{0.02}   & \textbf{0.05}   & \textbf{0.1}   & \textbf{0.2}   & \textbf{0.5}   & \textbf{1}   & \textbf{2}       \\\hline 
+\multirow{4}{*}{\textbf{Thyroid}}       & DoseCalcs                                         & 0        & 0        & 0        & 0        & 0        & 0        & 0        & 0        \\ 
+                             & ORNLAdultMale                                        & 0        & 0        & 3.82e-05        & 0.000185        & 0.00035        & 0.0005        & 0.00056        & 0.00057        \\ 
+                             & RD (\%) \tnote{a}                                        & 100        & 100        & 100        & 100        & 100        & 100        & 100        & 100        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0        & 0        & 0        & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Liver}}       & DoseCalcs                                         & 0        & 0        & 0        & 0        & 0        & 0        & 0        & 0        \\ 
+                             & ORNLAdultMale                                        & 6.06e-05        & 0.00534        & 0.0227        & 0.0181        & 0.0166        & 0.0155        & 0.0142        & 0.0127        \\ 
+                             & RD (\%) \tnote{a}                                        & 100        & 100        & 100        & 100        & 100        & 100        & 100        & 100        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0        & 0        & 0        & 0        & 0        & 0        \\ \hline
+\end{tabular} 
+\begin{tablenotes}\footnotesize
+\item[a] Relative Difference (\%)
+\item[b] Relative Standard Deviation (\%)
+\end{tablenotes}
+\end{threeparttable}
+\end{adjustbox}
+\label{tab:CrossFromKidneys}
+\end{table}
+
+
+
+
+
+\usepackage{booktabs, makecell, graphicx, caption, subcaption}
+\usepackage{threeparttable}
+\usepackage{multirow}
+
+
+\begin{table}[H] 
+\centering 
+\caption{Cross-irradiation SAF values of gamma from Thyroid calculated in ORNLAdultFemale by DoseCalcs and compared to the ORNLAdultMale reference. } 
+\begin{adjustbox}{width=\columnwidth,center}
+\begin{threeparttable}
+\begin{tabular}{llllllllll} \hline 
+\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Target region}}} & \multirow{2}{*}{\textbf{Method}} & \multicolumn{8}{c}{  \textbf{Thyroid source with gamma energies in MeV}}       \\ \cline{3-10}
+                 \multicolumn{1}{c}{}                             & \multicolumn{1}{c}{}                           & \textbf{0.01}   & \textbf{0.02}   & \textbf{0.05}   & \textbf{0.1}   & \textbf{0.2}   & \textbf{0.5}   & \textbf{1}   & \textbf{2}       \\\hline 
+\multirow{4}{*}{\textbf{Kidneys}}       & DoseCalcs                                         & 0        & 0        & 0        & 0        & 0        & 0        & 0        & 0        \\ 
+                             & ORNLAdultMale                                        & 0        & 0        & 3.82e-05        & 0.000185        & 0.00035        & 0.0005        & 0.00056        & 0.00057        \\ 
+                             & RD (\%) \tnote{a}                                        & 100        & 100        & 100        & 100        & 100        & 100        & 100        & 100        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0        & 0        & 0        & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Liver}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 0.000150998        & 0.000339779        & 0.000416534        & 0.00055682        & 0.000669153        & 0.000731305        \\ 
+                             & ORNLAdultMale                                        & 4.71932e-12        & 1.42e-10        & 0.000252        & 0.000658        & 0.000764        & 0.000858        & 0.000932        & 0.000988        \\ 
+                             & RD (\%) \tnote{a}                                        & -100        & -100        & -99.9849        & -99.966        & -99.9583        & -99.9443        & -99.9331        & -99.9269        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0.229445        & 0.103155        & 0.0673581        & 0.0385662        & 0.0315068        & 0.0312748        \\ \hline
+\end{tabular} 
+\begin{tablenotes}\footnotesize
+\item[a] Relative Difference (\%)
+\item[b] Relative Standard Deviation (\%)
+\end{tablenotes}
+\end{threeparttable}
+\end{adjustbox}
+\label{tab:CrossFromThyroid}
+\end{table}
+
+
+
+
+
+\usepackage{booktabs, makecell, graphicx, caption, subcaption}
+\usepackage{threeparttable}
+\usepackage{multirow}
+
+
+\begin{table}[H] 
+\centering 
+\caption{Cross-irradiation SAF values of gamma from Liver calculated in ORNLAdultFemale by DoseCalcs and compared to the ORNLAdultMale reference. } 
+\begin{adjustbox}{width=\columnwidth,center}
+\begin{threeparttable}
+\begin{tabular}{llllllllll} \hline 
+\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Target region}}} & \multirow{2}{*}{\textbf{Method}} & \multicolumn{8}{c}{  \textbf{Liver source with gamma energies in MeV}}       \\ \cline{3-10}
+                 \multicolumn{1}{c}{}                             & \multicolumn{1}{c}{}                           & \textbf{0.01}   & \textbf{0.02}   & \textbf{0.05}   & \textbf{0.1}   & \textbf{0.2}   & \textbf{0.5}   & \textbf{1}   & \textbf{2}       \\\hline 
+\multirow{4}{*}{\textbf{Kidneys}}       & DoseCalcs                                         & 0        & 0        & 0        & 0        & 0        & 0        & 0        & 0        \\ 
+                             & ORNLAdultMale                                        & 6.06e-05        & 0.00534        & 0.0227        & 0.0181        & 0.0166        & 0.0155        & 0.0142        & 0.0127        \\ 
+                             & RD (\%) \tnote{a}                                        & 100        & 100        & 100        & 100        & 100        & 100        & 100        & 100        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0        & 0        & 0        & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Thyroid}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 0.000142957        & 0.000340432        & 0.000410597        & 0.000547877        & 0.00066579        & 0.000720991        \\ 
+                             & ORNLAdultMale                                        & 4.71932e-12        & 1.42e-10        & 0.000252        & 0.000658        & 0.000764        & 0.000858        & 0.000932        & 0.000988        \\ 
+                             & RD (\%) \tnote{a}                                        & -100        & -100        & -99.9857        & -99.966        & -99.9589        & -99.9452        & -99.9334        & -99.9279        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 2.50511        & 1.08209        & 0.711753        & 0.406065        & 0.310848        & 0.261651        \\ \hline
+\end{tabular} 
+\begin{tablenotes}\footnotesize
+\item[a] Relative Difference (\%)
+\item[b] Relative Standard Deviation (\%)
+\end{tablenotes}
+\end{threeparttable}
+\end{adjustbox}
+\label{tab:CrossFromLiver}
+\end{table}
+
+
+
+
+
+\usepackage{booktabs, makecell, graphicx, caption, subcaption}
+\usepackage{threeparttable}
+\usepackage{multirow}
+
+
+\begin{table}[H] 
+\centering 
+\caption{Self- and cross-irradiation SAF values of gamma for each source-target combination calculated in ORNLAdultFemale by DoseCalcs and compared to the ORNLAdultMale reference. } 
+\begin{adjustbox}{width=\columnwidth,center}
+\begin{threeparttable}
+\begin{tabular}{llllllllll} \hline 
+\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Source$\to$Target}}} & \multirow{2}{*}{\textbf{Method}} & \multicolumn{8}{c}{  \textbf{ Energies in MeV}}       \\ \cline{3-10}
+                 \multicolumn{1}{c}{}                             & \multicolumn{1}{c}{}                           & \textbf{0.01}   & \textbf{0.02}   & \textbf{0.05}   & \textbf{0.1}   & \textbf{0.2}   & \textbf{0.5}   & \textbf{1}   & \textbf{2}       \\\hline 
+\multirow{4}{*}{\textbf{Kidneys$\to$Kidneys}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        \\ 
+                             & ORNLAdultMale                                        & 3.77        & 2.33        & 0.457        & 0.266        & 0.277        & 0.286        & 0.264        & 0.226        \\ 
+                             & RD (\%) \tnote{a}                                        & -100        & -100        & -100        & -100        & -100        & -100        & -100        & -100        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0        & 0        & 0        & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Kidneys$\to$Thyroid}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        \\ 
+                             & ORNLAdultMale                                        & 4.71932e-12        & 4.71932e-12        & 3.82e-05        & 0.000185        & 0.00035        & 0.0005        & 0.00056        & 0.00057        \\ 
+                             & RD (\%) \tnote{a}                                        & -100        & -100        & -100        & -100        & -100        & -100        & -100        & -100        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0        & 0        & 0        & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Kidneys$\to$Liver}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        \\ 
+                             & ORNLAdultMale                                        & 6.06e-05        & 0.00534        & 0.0227        & 0.0181        & 0.0166        & 0.0155        & 0.0142        & 0.0127        \\ 
+                             & RD (\%) \tnote{a}                                        & -100        & -100        & -100        & -100        & -100        & -100        & -100        & -100        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0        & 0        & 0        & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Thyroid$\to$Kidneys}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        \\ 
+                             & ORNLAdultMale                                        & 4.71932e-12        & 4.71932e-12        & 3.82e-05        & 0.000185        & 0.00035        & 0.0005        & 0.00056        & 0.00057        \\ 
+                             & RD (\%) \tnote{a}                                        & -100        & -100        & -100        & -100        & -100        & -100        & -100        & -100        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0        & 0        & 0        & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Thyroid$\to$Thyroid}}       & DoseCalcs                                         & 62.7688        & 27.2154        & 3.46805        & 1.97752        & 2.13975        & 2.24604        & 1.95932        & 1.37781        \\ 
+                             & ORNLAdultMale                                        & 66.4        & 26        & 3.43        & 2.03        & 2.2        & 2.43        & 2.29        & 1.9        \\ 
+                             & RD (\%) \tnote{a}                                        & 6176.88        & 2621.54        & 246.805        & 97.752        & 113.975        & 124.604        & 95.932        & 37.781        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0.00538561        & 0.00895299        & 0.0152674        & 0.0144424        & 0.00934603        & 0.00596914        & 0.00584722        & 0.00629801               \\\hline 
+\multirow{4}{*}{\textbf{Thyroid$\to$Liver}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 0.000150998        & 0.000339779        & 0.000416534        & 0.00055682        & 0.000669153        & 0.000731305        \\ 
+                             & ORNLAdultMale                                        & 4.71932e-12        & 1.42e-10        & 0.000252        & 0.000658        & 0.000764        & 0.000858        & 0.000932        & 0.000988        \\ 
+                             & RD (\%) \tnote{a}                                        & -100        & -100        & -99.9849        & -99.966        & -99.9583        & -99.9443        & -99.9331        & -99.9269        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0.229445        & 0.103155        & 0.0673581        & 0.0385662        & 0.0315068        & 0.0312748               \\\hline 
+\multirow{4}{*}{\textbf{Liver$\to$Kidneys}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        \\ 
+                             & ORNLAdultMale                                        & 6.06e-05        & 0.00534        & 0.0227        & 0.0181        & 0.0166        & 0.0155        & 0.0142        & 0.0127        \\ 
+                             & RD (\%) \tnote{a}                                        & -100        & -100        & -100        & -100        & -100        & -100        & -100        & -100        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0        & 0        & 0        & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Liver$\to$Thyroid}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 0.000142957        & 0.000340432        & 0.000410597        & 0.000547877        & 0.00066579        & 0.000720991        \\ 
+                             & ORNLAdultMale                                        & 4.71932e-12        & 1.42e-10        & 0.000252        & 0.000658        & 0.000764        & 0.000858        & 0.000932        & 0.000988        \\ 
+                             & RD (\%) \tnote{a}                                        & -100        & -100        & -99.9857        & -99.966        & -99.9589        & -99.9452        & -99.9334        & -99.9279        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 2.50511        & 1.08209        & 0.711753        & 0.406065        & 0.310848        & 0.261651               \\\hline 
+\multirow{4}{*}{\textbf{Liver$\to$Liver}}       & DoseCalcs                                         & 0.648446        & 0.528814        & 0.18304        & 0.107842        & 0.103026        & 0.102207        & 0.0928535        & 0.0758259        \\ 
+                             & ORNLAdultMale                                        & 0.685        & 0.543        & 0.185        & 0.111        & 0.106        & 0.107        & 0.0983        & 0.0829        \\ 
+                             & RD (\%) \tnote{a}                                        & -35.1554        & -47.1186        & -81.696        & -89.2158        & -89.6974        & -89.7793        & -90.7146        & -92.4174        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0.00502288        & 0.00607324        & 0.00643111        & 0.00580387        & 0.00416304        & 0.00269497        & 0.00277093        & 0.00331911        \\ \hline
+\end{tabular} 
+\begin{tablenotes}\footnotesize
+\item[a] Relative Difference (\%)
+\item[b] Relative Standard Deviation (\%)
+\end{tablenotes}
+\end{threeparttable}
+\end{adjustbox}
+\label{tab:SelfCrossIrr}
+\end{table}
+
+\begin{table}[H] 
+\centering 
+\caption{SAF values for gamma of energy 0.01 MeV calculated in ORNLAdultFemale by DoseCalcs and compared to the ORNLAdultMale reference. } 
+\begin{adjustbox}{width=\columnwidth,center}
+\begin{threeparttable}
+\begin{tabular}{lllll} \hline 
+\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Source region}}} & \multirow{2}{*}{\textbf{Method}} & \multicolumn{3}{c}{  \textbf{Target region}}       \\ \cline{3-5}
+                 \multicolumn{1}{c}{}                             & \multicolumn{1}{c}{}                           & \textbf{Kidneys}   & \textbf{Thyroid}   & \textbf{Liver}       \\\hline 
+\multirow{4}{*}{\textbf{Kidneys}}       & DoseCalcs                                         & 0        & 0        & 0        \\ 
+                             & ORNLAdultMale                                        & 3.77        & 4.71932e-12        & 6.06e-05        \\ 
+                             & RD (\%) \tnote{a}                                        & 100        & 100        & 100        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Thyroid}}       & DoseCalcs                                         & 0        & 62.7688        & 4.71932e-12        \\ 
+                             & ORNLAdultMale                                        & 4.71932e-12        & 66.4        & 4.71932e-12        \\ 
+                             & RD (\%) \tnote{a}                                        & 100        & 6176.88        & -100        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0.00538561        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Liver}}       & DoseCalcs                                         & 0        & 4.71932e-12        & 0.648446        \\ 
+                             & ORNLAdultMale                                        & 6.06e-05        & 4.71932e-12        & 0.685        \\ 
+                             & RD (\%) \tnote{a}                                        & 100        & -100        & -35.1554        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0.00502288        \\ \hline
+\end{tabular} 
+\begin{tablenotes}\footnotesize
+\item[a] Relative Difference (\%) 
+\item[b] Relative Standard Deviation (\%)
+\end{tablenotes}
+\end{threeparttable}
+\end{adjustbox}
+\label{SAF_gamma_SelfCross_0.01}
+\end{table}
+
+\begin{table}[H] 
+\centering 
+\caption{SAF values for gamma of energy 0.02 MeV calculated in ORNLAdultFemale by DoseCalcs and compared to the ORNLAdultMale reference. } 
+\begin{adjustbox}{width=\columnwidth,center}
+\begin{threeparttable}
+\begin{tabular}{lllll} \hline 
+\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Source region}}} & \multirow{2}{*}{\textbf{Method}} & \multicolumn{3}{c}{  \textbf{Target region}}       \\ \cline{3-5}
+                 \multicolumn{1}{c}{}                             & \multicolumn{1}{c}{}                           & \textbf{Kidneys}   & \textbf{Thyroid}   & \textbf{Liver}       \\\hline 
+\multirow{4}{*}{\textbf{Kidneys}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        \\ 
+                             & ORNLAdultMale                                        & 2.33        & 4.71932e-12        & 0.00534        \\ 
+                             & RD (\%) \tnote{a}                                        & -100        & -100        & -100        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Thyroid}}       & DoseCalcs                                         & 4.71932e-12        & 27.2154        & 4.71932e-12        \\ 
+                             & ORNLAdultMale                                        & 4.71932e-12        & 26        & 1.42e-10        \\ 
+                             & RD (\%) \tnote{a}                                        & -100        & 2621.54        & -100        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0.00895299        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Liver}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 0.528814        \\ 
+                             & ORNLAdultMale                                        & 0.00534        & 1.42e-10        & 0.543        \\ 
+                             & RD (\%) \tnote{a}                                        & -100        & -100        & -47.1186        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0.00607324        \\ \hline
+\end{tabular} 
+\begin{tablenotes}\footnotesize
+\item[a] Relative Difference (\%) 
+\item[b] Relative Standard Deviation (\%)
+\end{tablenotes}
+\end{threeparttable}
+\end{adjustbox}
+\label{SAF_gamma_SelfCross_0.02}
+\end{table}
+
+\begin{table}[H] 
+\centering 
+\caption{SAF values for gamma of energy 0.05 MeV calculated in ORNLAdultFemale by DoseCalcs and compared to the ORNLAdultMale reference. } 
+\begin{adjustbox}{width=\columnwidth,center}
+\begin{threeparttable}
+\begin{tabular}{lllll} \hline 
+\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Source region}}} & \multirow{2}{*}{\textbf{Method}} & \multicolumn{3}{c}{  \textbf{Target region}}       \\ \cline{3-5}
+                 \multicolumn{1}{c}{}                             & \multicolumn{1}{c}{}                           & \textbf{Kidneys}   & \textbf{Thyroid}   & \textbf{Liver}       \\\hline 
+\multirow{4}{*}{\textbf{Kidneys}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        \\ 
+                             & ORNLAdultMale                                        & 0.457        & 3.82e-05        & 0.0227        \\ 
+                             & RD (\%) \tnote{a}                                        & -100        & -100        & -100        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Thyroid}}       & DoseCalcs                                         & 4.71932e-12        & 3.46805        & 0.000150998        \\ 
+                             & ORNLAdultMale                                        & 3.82e-05        & 3.43        & 0.000252        \\ 
+                             & RD (\%) \tnote{a}                                        & -100        & 246.805        & -99.9849        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0.0152674        & 0.229445               \\\hline 
+\multirow{4}{*}{\textbf{Liver}}       & DoseCalcs                                         & 4.71932e-12        & 0.000142957        & 0.18304        \\ 
+                             & ORNLAdultMale                                        & 0.0227        & 0.000252        & 0.185        \\ 
+                             & RD (\%) \tnote{a}                                        & -100        & -99.9857        & -81.696        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 2.50511        & 0.00643111        \\ \hline
+\end{tabular} 
+\begin{tablenotes}\footnotesize
+\item[a] Relative Difference (\%) 
+\item[b] Relative Standard Deviation (\%)
+\end{tablenotes}
+\end{threeparttable}
+\end{adjustbox}
+\label{SAF_gamma_SelfCross_0.05}
+\end{table}
+
+\begin{table}[H] 
+\centering 
+\caption{SAF values for gamma of energy 0.1 MeV calculated in ORNLAdultFemale by DoseCalcs and compared to the ORNLAdultMale reference. } 
+\begin{adjustbox}{width=\columnwidth,center}
+\begin{threeparttable}
+\begin{tabular}{lllll} \hline 
+\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Source region}}} & \multirow{2}{*}{\textbf{Method}} & \multicolumn{3}{c}{  \textbf{Target region}}       \\ \cline{3-5}
+                 \multicolumn{1}{c}{}                             & \multicolumn{1}{c}{}                           & \textbf{Kidneys}   & \textbf{Thyroid}   & \textbf{Liver}       \\\hline 
+\multirow{4}{*}{\textbf{Kidneys}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        \\ 
+                             & ORNLAdultMale                                        & 0.266        & 0.000185        & 0.0181        \\ 
+                             & RD (\%) \tnote{a}                                        & -100        & -100        & -100        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Thyroid}}       & DoseCalcs                                         & 4.71932e-12        & 1.97752        & 0.000339779        \\ 
+                             & ORNLAdultMale                                        & 0.000185        & 2.03        & 0.000658        \\ 
+                             & RD (\%) \tnote{a}                                        & -100        & 97.752        & -99.966        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0.0144424        & 0.103155               \\\hline 
+\multirow{4}{*}{\textbf{Liver}}       & DoseCalcs                                         & 4.71932e-12        & 0.000340432        & 0.107842        \\ 
+                             & ORNLAdultMale                                        & 0.0181        & 0.000658        & 0.111        \\ 
+                             & RD (\%) \tnote{a}                                        & -100        & -99.966        & -89.2158        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 1.08209        & 0.00580387        \\ \hline
+\end{tabular} 
+\begin{tablenotes}\footnotesize
+\item[a] Relative Difference (\%) 
+\item[b] Relative Standard Deviation (\%)
+\end{tablenotes}
+\end{threeparttable}
+\end{adjustbox}
+\label{SAF_gamma_SelfCross_0.1}
+\end{table}
+
+\begin{table}[H] 
+\centering 
+\caption{SAF values for gamma of energy 0.2 MeV calculated in ORNLAdultFemale by DoseCalcs and compared to the ORNLAdultMale reference. } 
+\begin{adjustbox}{width=\columnwidth,center}
+\begin{threeparttable}
+\begin{tabular}{lllll} \hline 
+\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Source region}}} & \multirow{2}{*}{\textbf{Method}} & \multicolumn{3}{c}{  \textbf{Target region}}       \\ \cline{3-5}
+                 \multicolumn{1}{c}{}                             & \multicolumn{1}{c}{}                           & \textbf{Kidneys}   & \textbf{Thyroid}   & \textbf{Liver}       \\\hline 
+\multirow{4}{*}{\textbf{Kidneys}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        \\ 
+                             & ORNLAdultMale                                        & 0.277        & 0.00035        & 0.0166        \\ 
+                             & RD (\%) \tnote{a}                                        & -100        & -100        & -100        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Thyroid}}       & DoseCalcs                                         & 4.71932e-12        & 2.13975        & 0.000416534        \\ 
+                             & ORNLAdultMale                                        & 0.00035        & 2.2        & 0.000764        \\ 
+                             & RD (\%) \tnote{a}                                        & -100        & 113.975        & -99.9583        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0.00934603        & 0.0673581               \\\hline 
+\multirow{4}{*}{\textbf{Liver}}       & DoseCalcs                                         & 4.71932e-12        & 0.000410597        & 0.103026        \\ 
+                             & ORNLAdultMale                                        & 0.0166        & 0.000764        & 0.106        \\ 
+                             & RD (\%) \tnote{a}                                        & -100        & -99.9589        & -89.6974        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0.711753        & 0.00416304        \\ \hline
+\end{tabular} 
+\begin{tablenotes}\footnotesize
+\item[a] Relative Difference (\%) 
+\item[b] Relative Standard Deviation (\%)
+\end{tablenotes}
+\end{threeparttable}
+\end{adjustbox}
+\label{SAF_gamma_SelfCross_0.2}
+\end{table}
+
+\begin{table}[H] 
+\centering 
+\caption{SAF values for gamma of energy 0.5 MeV calculated in ORNLAdultFemale by DoseCalcs and compared to the ORNLAdultMale reference. } 
+\begin{adjustbox}{width=\columnwidth,center}
+\begin{threeparttable}
+\begin{tabular}{lllll} \hline 
+\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Source region}}} & \multirow{2}{*}{\textbf{Method}} & \multicolumn{3}{c}{  \textbf{Target region}}       \\ \cline{3-5}
+                 \multicolumn{1}{c}{}                             & \multicolumn{1}{c}{}                           & \textbf{Kidneys}   & \textbf{Thyroid}   & \textbf{Liver}       \\\hline 
+\multirow{4}{*}{\textbf{Kidneys}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        \\ 
+                             & ORNLAdultMale                                        & 0.286        & 0.0005        & 0.0155        \\ 
+                             & RD (\%) \tnote{a}                                        & -100        & -100        & -100        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Thyroid}}       & DoseCalcs                                         & 4.71932e-12        & 2.24604        & 0.00055682        \\ 
+                             & ORNLAdultMale                                        & 0.0005        & 2.43        & 0.000858        \\ 
+                             & RD (\%) \tnote{a}                                        & -100        & 124.604        & -99.9443        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0.00596914        & 0.0385662               \\\hline 
+\multirow{4}{*}{\textbf{Liver}}       & DoseCalcs                                         & 4.71932e-12        & 0.000547877        & 0.102207        \\ 
+                             & ORNLAdultMale                                        & 0.0155        & 0.000858        & 0.107        \\ 
+                             & RD (\%) \tnote{a}                                        & -100        & -99.9452        & -89.7793        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0.406065        & 0.00269497        \\ \hline
+\end{tabular} 
+\begin{tablenotes}\footnotesize
+\item[a] Relative Difference (\%) 
+\item[b] Relative Standard Deviation (\%)
+\end{tablenotes}
+\end{threeparttable}
+\end{adjustbox}
+\label{SAF_gamma_SelfCross_0.5}
+\end{table}
+
+\begin{table}[H] 
+\centering 
+\caption{SAF values for gamma of energy 1 MeV calculated in ORNLAdultFemale by DoseCalcs and compared to the ORNLAdultMale reference. } 
+\begin{adjustbox}{width=\columnwidth,center}
+\begin{threeparttable}
+\begin{tabular}{lllll} \hline 
+\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Source region}}} & \multirow{2}{*}{\textbf{Method}} & \multicolumn{3}{c}{  \textbf{Target region}}       \\ \cline{3-5}
+                 \multicolumn{1}{c}{}                             & \multicolumn{1}{c}{}                           & \textbf{Kidneys}   & \textbf{Thyroid}   & \textbf{Liver}       \\\hline 
+\multirow{4}{*}{\textbf{Kidneys}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        \\ 
+                             & ORNLAdultMale                                        & 0.264        & 0.00056        & 0.0142        \\ 
+                             & RD (\%) \tnote{a}                                        & -100        & -100        & -100        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Thyroid}}       & DoseCalcs                                         & 4.71932e-12        & 1.95932        & 0.000669153        \\ 
+                             & ORNLAdultMale                                        & 0.00056        & 2.29        & 0.000932        \\ 
+                             & RD (\%) \tnote{a}                                        & -100        & 95.932        & -99.9331        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0.00584722        & 0.0315068               \\\hline 
+\multirow{4}{*}{\textbf{Liver}}       & DoseCalcs                                         & 4.71932e-12        & 0.00066579        & 0.0928535        \\ 
+                             & ORNLAdultMale                                        & 0.0142        & 0.000932        & 0.0983        \\ 
+                             & RD (\%) \tnote{a}                                        & -100        & -99.9334        & -90.7146        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0.310848        & 0.00277093        \\ \hline
+\end{tabular} 
+\begin{tablenotes}\footnotesize
+\item[a] Relative Difference (\%) 
+\item[b] Relative Standard Deviation (\%)
+\end{tablenotes}
+\end{threeparttable}
+\end{adjustbox}
+\label{SAF_gamma_SelfCross_1}
+\end{table}
+
+\begin{table}[H] 
+\centering 
+\caption{SAF values for gamma of energy 2 MeV calculated in ORNLAdultFemale by DoseCalcs and compared to the ORNLAdultMale reference. } 
+\begin{adjustbox}{width=\columnwidth,center}
+\begin{threeparttable}
+\begin{tabular}{lllll} \hline 
+\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Source region}}} & \multirow{2}{*}{\textbf{Method}} & \multicolumn{3}{c}{  \textbf{Target region}}       \\ \cline{3-5}
+                 \multicolumn{1}{c}{}                             & \multicolumn{1}{c}{}                           & \textbf{Kidneys}   & \textbf{Thyroid}   & \textbf{Liver}       \\\hline 
+\multirow{4}{*}{\textbf{Kidneys}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        \\ 
+                             & ORNLAdultMale                                        & 0.226        & 0.00057        & 0.0127        \\ 
+                             & RD (\%) \tnote{a}                                        & -100        & -100        & -100        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Thyroid}}       & DoseCalcs                                         & 4.71932e-12        & 1.37781        & 0.000731305        \\ 
+                             & ORNLAdultMale                                        & 0.00057        & 1.9        & 0.000988        \\ 
+                             & RD (\%) \tnote{a}                                        & -100        & 37.781        & -99.9269        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0.00629801        & 0.0312748               \\\hline 
+\multirow{4}{*}{\textbf{Liver}}       & DoseCalcs                                         & 4.71932e-12        & 0.000720991        & 0.0758259        \\ 
+                             & ORNLAdultMale                                        & 0.0127        & 0.000988        & 0.0829        \\ 
+                             & RD (\%) \tnote{a}                                        & -100        & -99.9279        & -92.4174        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0.261651        & 0.00331911        \\ \hline
+\end{tabular} 
+\begin{tablenotes}\footnotesize
+\item[a] Relative Difference (\%) 
+\item[b] Relative Standard Deviation (\%)
+\end{tablenotes}
+\end{threeparttable}
+\end{adjustbox}
+\label{SAF_gamma_SelfCross_2}
+\end{table}
+
+
+
+
+
+\usepackage{booktabs, makecell, graphicx, caption, subcaption}
+\usepackage{threeparttable}
+\usepackage{multirow}
+
+
+\begin{table}[H] 
+\centering 
+\caption{Self-absorption SAF values of gamma calculated in ORNLAdultFemale by DoseCalcs and compared to the ORNLAdultMale reference. } 
+\begin{adjustbox}{width=\columnwidth,center}
+\begin{threeparttable}
+\begin{tabular}{llllllllll} \hline 
+\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Region}}} & \multirow{2}{*}{\textbf{Method}} & \multicolumn{8}{c}{  \textbf{ Energies in MeV}}       \\ \cline{3-10}
+                 \multicolumn{1}{c}{}                             & \multicolumn{1}{c}{}                           & \textbf{0.01}   & \textbf{0.02}   & \textbf{0.05}   & \textbf{0.1}   & \textbf{0.2}   & \textbf{0.5}   & \textbf{1}   & \textbf{2}       \\\hline 
+\multirow{4}{*}{\textbf{Kidneys}}       & DoseCalcs                                         & 0        & 0        & 0        & 0        & 0        & 0        & 0        & 0        \\ 
+                             & ORNLAdultMale                                        & 3.77        & 2.33        & 0.457        & 0.266        & 0.277        & 0.286        & 0.264        & 0.226        \\ 
+                             & R \tnote{a}                                        & 0        & 0        & 0        & 0        & 0        & 0        & 0        & 0        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0        & 0        & 0        & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Thyroid}}       & DoseCalcs                                         & 62.7688        & 27.2154        & 3.46805        & 1.97752        & 2.13975        & 2.24604        & 1.95932        & 1.37781        \\ 
+                             & ORNLAdultMale                                        & 66.4        & 26        & 3.43        & 2.03        & 2.2        & 2.43        & 2.29        & 1.9        \\ 
+                             & R \tnote{a}                                        & 0.945313        & 1.04675        & 1.01109        & 0.974148        & 0.972614        & 0.924296        & 0.855598        & 0.725163        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0.00538561        & 0.00895299        & 0.0152674        & 0.0144424        & 0.00934603        & 0.00596914        & 0.00584722        & 0.00629801               \\\hline 
+\multirow{4}{*}{\textbf{Liver}}       & DoseCalcs                                         & 0.648446        & 0.528814        & 0.18304        & 0.107842        & 0.103026        & 0.102207        & 0.0928535        & 0.0758259        \\ 
+                             & ORNLAdultMale                                        & 0.685        & 0.543        & 0.185        & 0.111        & 0.106        & 0.107        & 0.0983        & 0.0829        \\ 
+                             & R \tnote{a}                                        & 0.946636        & 0.973875        & 0.989405        & 0.97155        & 0.971943        & 0.955206        & 0.944593        & 0.914667        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0.00502288        & 0.00607324        & 0.00643111        & 0.00580387        & 0.00416304        & 0.00269497        & 0.00277093        & 0.00331911        \\ \hline
+\end{tabular} 
+\begin{tablenotes}\footnotesize
+\item[a] Ratio 
+\item[b] Relative Standard Deviation (\%)
+\end{tablenotes}
+\end{threeparttable}
+\end{adjustbox}
+\label{tab:SelfIrr}
+\end{table}
+
+
+
+
+
+\usepackage{booktabs, makecell, graphicx, caption, subcaption}
+\usepackage{threeparttable}
+\usepackage{multirow}
+
+
+\begin{table}[H] 
+\centering 
+\caption{Cross-irradiation SAF values of gamma from Kidneys calculated in ORNLAdultFemale by DoseCalcs and compared to the ORNLAdultMale reference. } 
+\begin{adjustbox}{width=\columnwidth,center}
+\begin{threeparttable}
+\begin{tabular}{llllllllll} \hline 
+\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Target region}}} & \multirow{2}{*}{\textbf{Method}} & \multicolumn{8}{c}{  \textbf{Kidneys source with gamma energies in MeV}}       \\ \cline{3-10}
+                 \multicolumn{1}{c}{}                             & \multicolumn{1}{c}{}                           & \textbf{0.01}   & \textbf{0.02}   & \textbf{0.05}   & \textbf{0.1}   & \textbf{0.2}   & \textbf{0.5}   & \textbf{1}   & \textbf{2}       \\\hline 
+\multirow{4}{*}{\textbf{Thyroid}}       & DoseCalcs                                         & 0        & 0        & 0        & 0        & 0        & 0        & 0        & 0        \\ 
+                             & ORNLAdultMale                                        & 0        & 0        & 3.82e-05        & 0.000185        & 0.00035        & 0.0005        & 0.00056        & 0.00057        \\ 
+                             & R \tnote{a}                                        & 100        & 100        & 0        & 0        & 0        & 0        & 0        & 0        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0        & 0        & 0        & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Liver}}       & DoseCalcs                                         & 0        & 0        & 0        & 0        & 0        & 0        & 0        & 0        \\ 
+                             & ORNLAdultMale                                        & 6.06e-05        & 0.00534        & 0.0227        & 0.0181        & 0.0166        & 0.0155        & 0.0142        & 0.0127        \\ 
+                             & R \tnote{a}                                        & 0        & 0        & 0        & 0        & 0        & 0        & 0        & 0        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0        & 0        & 0        & 0        & 0        & 0        \\ \hline
+\end{tabular} 
+\begin{tablenotes}\footnotesize
+\item[a] Ratio 
+\item[b] Relative Standard Deviation (\%)
+\end{tablenotes}
+\end{threeparttable}
+\end{adjustbox}
+\label{tab:CrossFromKidneys}
+\end{table}
+
+
+
+
+
+\usepackage{booktabs, makecell, graphicx, caption, subcaption}
+\usepackage{threeparttable}
+\usepackage{multirow}
+
+
+\begin{table}[H] 
+\centering 
+\caption{Cross-irradiation SAF values of gamma from Thyroid calculated in ORNLAdultFemale by DoseCalcs and compared to the ORNLAdultMale reference. } 
+\begin{adjustbox}{width=\columnwidth,center}
+\begin{threeparttable}
+\begin{tabular}{llllllllll} \hline 
+\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Target region}}} & \multirow{2}{*}{\textbf{Method}} & \multicolumn{8}{c}{  \textbf{Thyroid source with gamma energies in MeV}}       \\ \cline{3-10}
+                 \multicolumn{1}{c}{}                             & \multicolumn{1}{c}{}                           & \textbf{0.01}   & \textbf{0.02}   & \textbf{0.05}   & \textbf{0.1}   & \textbf{0.2}   & \textbf{0.5}   & \textbf{1}   & \textbf{2}       \\\hline 
+\multirow{4}{*}{\textbf{Kidneys}}       & DoseCalcs                                         & 0        & 0        & 0        & 0        & 0        & 0        & 0        & 0        \\ 
+                             & ORNLAdultMale                                        & 0        & 0        & 3.82e-05        & 0.000185        & 0.00035        & 0.0005        & 0.00056        & 0.00057        \\ 
+                             & R \tnote{a}                                        & 100        & 100        & 0        & 0        & 0        & 0        & 0        & 0        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0        & 0        & 0        & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Liver}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 0.000150998        & 0.000339779        & 0.000416534        & 0.00055682        & 0.000669153        & 0.000731305        \\ 
+                             & ORNLAdultMale                                        & 4.71932e-12        & 1.42e-10        & 0.000252        & 0.000658        & 0.000764        & 0.000858        & 0.000932        & 0.000988        \\ 
+                             & R \tnote{a}                                        & 1        & 0.0332346        & 0.599198        & 0.516381        & 0.545202        & 0.648974        & 0.717975        & 0.740187        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0.229445        & 0.103155        & 0.0673581        & 0.0385662        & 0.0315068        & 0.0312748        \\ \hline
+\end{tabular} 
+\begin{tablenotes}\footnotesize
+\item[a] Ratio 
+\item[b] Relative Standard Deviation (\%)
+\end{tablenotes}
+\end{threeparttable}
+\end{adjustbox}
+\label{tab:CrossFromThyroid}
+\end{table}
+
+
+
+
+
+\usepackage{booktabs, makecell, graphicx, caption, subcaption}
+\usepackage{threeparttable}
+\usepackage{multirow}
+
+
+\begin{table}[H] 
+\centering 
+\caption{Cross-irradiation SAF values of gamma from Liver calculated in ORNLAdultFemale by DoseCalcs and compared to the ORNLAdultMale reference. } 
+\begin{adjustbox}{width=\columnwidth,center}
+\begin{threeparttable}
+\begin{tabular}{llllllllll} \hline 
+\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Target region}}} & \multirow{2}{*}{\textbf{Method}} & \multicolumn{8}{c}{  \textbf{Liver source with gamma energies in MeV}}       \\ \cline{3-10}
+                 \multicolumn{1}{c}{}                             & \multicolumn{1}{c}{}                           & \textbf{0.01}   & \textbf{0.02}   & \textbf{0.05}   & \textbf{0.1}   & \textbf{0.2}   & \textbf{0.5}   & \textbf{1}   & \textbf{2}       \\\hline 
+\multirow{4}{*}{\textbf{Kidneys}}       & DoseCalcs                                         & 0        & 0        & 0        & 0        & 0        & 0        & 0        & 0        \\ 
+                             & ORNLAdultMale                                        & 6.06e-05        & 0.00534        & 0.0227        & 0.0181        & 0.0166        & 0.0155        & 0.0142        & 0.0127        \\ 
+                             & R \tnote{a}                                        & 0        & 0        & 0        & 0        & 0        & 0        & 0        & 0        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0        & 0        & 0        & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Thyroid}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 0.000142957        & 0.000340432        & 0.000410597        & 0.000547877        & 0.00066579        & 0.000720991        \\ 
+                             & ORNLAdultMale                                        & 4.71932e-12        & 1.42e-10        & 0.000252        & 0.000658        & 0.000764        & 0.000858        & 0.000932        & 0.000988        \\ 
+                             & R \tnote{a}                                        & 1        & 0.0332346        & 0.56729        & 0.517374        & 0.537431        & 0.638551        & 0.714367        & 0.729748        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 2.50511        & 1.08209        & 0.711753        & 0.406065        & 0.310848        & 0.261651        \\ \hline
+\end{tabular} 
+\begin{tablenotes}\footnotesize
+\item[a] Ratio 
+\item[b] Relative Standard Deviation (\%)
+\end{tablenotes}
+\end{threeparttable}
+\end{adjustbox}
+\label{tab:CrossFromLiver}
+\end{table}
+
+
+
+
+
+\usepackage{booktabs, makecell, graphicx, caption, subcaption}
+\usepackage{threeparttable}
+\usepackage{multirow}
+
+
+\begin{table}[H] 
+\centering 
+\caption{Self- and cross-irradiation SAF values of gamma for each source-target combination calculated in ORNLAdultFemale by DoseCalcs and compared to the ORNLAdultMale reference. } 
+\begin{adjustbox}{width=\columnwidth,center}
+\begin{threeparttable}
+\begin{tabular}{llllllllll} \hline 
+\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Source$\to$Target}}} & \multirow{2}{*}{\textbf{Method}} & \multicolumn{8}{c}{  \textbf{ Energies in MeV}}       \\ \cline{3-10}
+                 \multicolumn{1}{c}{}                             & \multicolumn{1}{c}{}                           & \textbf{0.01}   & \textbf{0.02}   & \textbf{0.05}   & \textbf{0.1}   & \textbf{0.2}   & \textbf{0.5}   & \textbf{1}   & \textbf{2}       \\\hline 
+\multirow{4}{*}{\textbf{Kidneys$\to$Kidneys}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        \\ 
+                             & ORNLAdultMale                                        & 3.77        & 2.33        & 0.457        & 0.266        & 0.277        & 0.286        & 0.264        & 0.226        \\ 
+                             & R \tnote{a}                                        & 1.25181e-12        & 2.02546e-12        & 1.03267e-11        & 1.77418e-11        & 1.70373e-11        & 1.65011e-11        & 1.78762e-11        & 2.08819e-11        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0        & 0        & 0        & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Kidneys$\to$Thyroid}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        \\ 
+                             & ORNLAdultMale                                        & 4.71932e-12        & 4.71932e-12        & 3.82e-05        & 0.000185        & 0.00035        & 0.0005        & 0.00056        & 0.00057        \\ 
+                             & R \tnote{a}                                        & 1        & 1        & 1.23542e-07        & 2.55098e-08        & 1.34838e-08        & 9.43864e-09        & 8.42736e-09        & 8.27951e-09        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0        & 0        & 0        & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Kidneys$\to$Liver}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        \\ 
+                             & ORNLAdultMale                                        & 6.06e-05        & 0.00534        & 0.0227        & 0.0181        & 0.0166        & 0.0155        & 0.0142        & 0.0127        \\ 
+                             & R \tnote{a}                                        & 7.78766e-08        & 8.83768e-10        & 2.079e-10        & 2.60736e-10        & 2.84296e-10        & 3.04472e-10        & 3.32346e-10        & 3.716e-10        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0        & 0        & 0        & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Thyroid$\to$Kidneys}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        \\ 
+                             & ORNLAdultMale                                        & 4.71932e-12        & 4.71932e-12        & 3.82e-05        & 0.000185        & 0.00035        & 0.0005        & 0.00056        & 0.00057        \\ 
+                             & R \tnote{a}                                        & 1        & 1        & 1.23542e-07        & 2.55098e-08        & 1.34838e-08        & 9.43864e-09        & 8.42736e-09        & 8.27951e-09        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0        & 0        & 0        & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Thyroid$\to$Thyroid}}       & DoseCalcs                                         & 62.7688        & 27.2154        & 3.46805        & 1.97752        & 2.13975        & 2.24604        & 1.95932        & 1.37781        \\ 
+                             & ORNLAdultMale                                        & 66.4        & 26        & 3.43        & 2.03        & 2.2        & 2.43        & 2.29        & 1.9        \\ 
+                             & R \tnote{a}                                        & 0.945313        & 1.04675        & 1.01109        & 0.974148        & 0.972614        & 0.924296        & 0.855598        & 0.725163        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0.00538561        & 0.00895299        & 0.0152674        & 0.0144424        & 0.00934603        & 0.00596914        & 0.00584722        & 0.00629801               \\\hline 
+\multirow{4}{*}{\textbf{Thyroid$\to$Liver}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 0.000150998        & 0.000339779        & 0.000416534        & 0.00055682        & 0.000669153        & 0.000731305        \\ 
+                             & ORNLAdultMale                                        & 4.71932e-12        & 1.42e-10        & 0.000252        & 0.000658        & 0.000764        & 0.000858        & 0.000932        & 0.000988        \\ 
+                             & R \tnote{a}                                        & 1        & 0.0332346        & 0.599198        & 0.516381        & 0.545202        & 0.648974        & 0.717975        & 0.740187        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0.229445        & 0.103155        & 0.0673581        & 0.0385662        & 0.0315068        & 0.0312748               \\\hline 
+\multirow{4}{*}{\textbf{Liver$\to$Kidneys}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        \\ 
+                             & ORNLAdultMale                                        & 6.06e-05        & 0.00534        & 0.0227        & 0.0181        & 0.0166        & 0.0155        & 0.0142        & 0.0127        \\ 
+                             & R \tnote{a}                                        & 7.78766e-08        & 8.83768e-10        & 2.079e-10        & 2.60736e-10        & 2.84296e-10        & 3.04472e-10        & 3.32346e-10        & 3.716e-10        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0        & 0        & 0        & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Liver$\to$Thyroid}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 0.000142957        & 0.000340432        & 0.000410597        & 0.000547877        & 0.00066579        & 0.000720991        \\ 
+                             & ORNLAdultMale                                        & 4.71932e-12        & 1.42e-10        & 0.000252        & 0.000658        & 0.000764        & 0.000858        & 0.000932        & 0.000988        \\ 
+                             & R \tnote{a}                                        & 1        & 0.0332346        & 0.56729        & 0.517374        & 0.537431        & 0.638551        & 0.714367        & 0.729748        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 2.50511        & 1.08209        & 0.711753        & 0.406065        & 0.310848        & 0.261651               \\\hline 
+\multirow{4}{*}{\textbf{Liver$\to$Liver}}       & DoseCalcs                                         & 0.648446        & 0.528814        & 0.18304        & 0.107842        & 0.103026        & 0.102207        & 0.0928535        & 0.0758259        \\ 
+                             & ORNLAdultMale                                        & 0.685        & 0.543        & 0.185        & 0.111        & 0.106        & 0.107        & 0.0983        & 0.0829        \\ 
+                             & R \tnote{a}                                        & 0.946636        & 0.973875        & 0.989405        & 0.97155        & 0.971943        & 0.955206        & 0.944593        & 0.914667        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0.00502288        & 0.00607324        & 0.00643111        & 0.00580387        & 0.00416304        & 0.00269497        & 0.00277093        & 0.00331911        \\ \hline
+\end{tabular} 
+\begin{tablenotes}\footnotesize
+\item[a] Ratio 
+\item[b] Relative Standard Deviation (\%)
+\end{tablenotes}
+\end{threeparttable}
+\end{adjustbox}
+\label{tab:SelfCrossIrr}
+\end{table}
+
+\begin{table}[H] 
+\centering 
+\caption{SAF values for gamma of energy 0.01 MeV calculated in ORNLAdultFemale by DoseCalcs and compared to the ORNLAdultMale reference. } 
+\begin{adjustbox}{width=\columnwidth,center}
+\begin{threeparttable}
+\begin{tabular}{lllll} \hline 
+\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Source region}}} & \multirow{2}{*}{\textbf{Method}} & \multicolumn{3}{c}{  \textbf{Target region}}       \\ \cline{3-5}
+                 \multicolumn{1}{c}{}                             & \multicolumn{1}{c}{}                           & \textbf{Kidneys}   & \textbf{Thyroid}   & \textbf{Liver}       \\\hline 
+\multirow{4}{*}{\textbf{Kidneys}}       & DoseCalcs                                         & 0        & 0        & 0        \\ 
+                             & ORNLAdultMale                                        & 3.77        & 4.71932e-12        & 6.06e-05        \\ 
+                             & R \tnote{a}                                        & 0        & 0        & 0        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Thyroid}}       & DoseCalcs                                         & 0        & 62.7688        & 4.71932e-12        \\ 
+                             & ORNLAdultMale                                        & 4.71932e-12        & 66.4        & 4.71932e-12        \\ 
+                             & R \tnote{a}                                        & 0        & 0.945313        & 1        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0.00538561        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Liver}}       & DoseCalcs                                         & 0        & 4.71932e-12        & 0.648446        \\ 
+                             & ORNLAdultMale                                        & 6.06e-05        & 4.71932e-12        & 0.685        \\ 
+                             & R \tnote{a}                                        & 0        & 1        & 0.946636        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0.00502288        \\ \hline
+\end{tabular} 
+\begin{tablenotes}\footnotesize
+\item[a] Ratio  
+\item[b] Relative Standard Deviation (\%)
+\end{tablenotes}
+\end{threeparttable}
+\end{adjustbox}
+\label{SAF_gamma_SelfCross_0.01}
+\end{table}
+
+\begin{table}[H] 
+\centering 
+\caption{SAF values for gamma of energy 0.02 MeV calculated in ORNLAdultFemale by DoseCalcs and compared to the ORNLAdultMale reference. } 
+\begin{adjustbox}{width=\columnwidth,center}
+\begin{threeparttable}
+\begin{tabular}{lllll} \hline 
+\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Source region}}} & \multirow{2}{*}{\textbf{Method}} & \multicolumn{3}{c}{  \textbf{Target region}}       \\ \cline{3-5}
+                 \multicolumn{1}{c}{}                             & \multicolumn{1}{c}{}                           & \textbf{Kidneys}   & \textbf{Thyroid}   & \textbf{Liver}       \\\hline 
+\multirow{4}{*}{\textbf{Kidneys}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        \\ 
+                             & ORNLAdultMale                                        & 2.33        & 4.71932e-12        & 0.00534        \\ 
+                             & R \tnote{a}                                        & 2.02546e-12        & 1        & 8.83768e-10        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Thyroid}}       & DoseCalcs                                         & 4.71932e-12        & 27.2154        & 4.71932e-12        \\ 
+                             & ORNLAdultMale                                        & 4.71932e-12        & 26        & 1.42e-10        \\ 
+                             & R \tnote{a}                                        & 1        & 1.04675        & 0.0332346        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0.00895299        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Liver}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 0.528814        \\ 
+                             & ORNLAdultMale                                        & 0.00534        & 1.42e-10        & 0.543        \\ 
+                             & R \tnote{a}                                        & 8.83768e-10        & 0.0332346        & 0.973875        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0.00607324        \\ \hline
+\end{tabular} 
+\begin{tablenotes}\footnotesize
+\item[a] Ratio  
+\item[b] Relative Standard Deviation (\%)
+\end{tablenotes}
+\end{threeparttable}
+\end{adjustbox}
+\label{SAF_gamma_SelfCross_0.02}
+\end{table}
+
+\begin{table}[H] 
+\centering 
+\caption{SAF values for gamma of energy 0.05 MeV calculated in ORNLAdultFemale by DoseCalcs and compared to the ORNLAdultMale reference. } 
+\begin{adjustbox}{width=\columnwidth,center}
+\begin{threeparttable}
+\begin{tabular}{lllll} \hline 
+\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Source region}}} & \multirow{2}{*}{\textbf{Method}} & \multicolumn{3}{c}{  \textbf{Target region}}       \\ \cline{3-5}
+                 \multicolumn{1}{c}{}                             & \multicolumn{1}{c}{}                           & \textbf{Kidneys}   & \textbf{Thyroid}   & \textbf{Liver}       \\\hline 
+\multirow{4}{*}{\textbf{Kidneys}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        \\ 
+                             & ORNLAdultMale                                        & 0.457        & 3.82e-05        & 0.0227        \\ 
+                             & R \tnote{a}                                        & 1.03267e-11        & 1.23542e-07        & 2.079e-10        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Thyroid}}       & DoseCalcs                                         & 4.71932e-12        & 3.46805        & 0.000150998        \\ 
+                             & ORNLAdultMale                                        & 3.82e-05        & 3.43        & 0.000252        \\ 
+                             & R \tnote{a}                                        & 1.23542e-07        & 1.01109        & 0.599198        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0.0152674        & 0.229445               \\\hline 
+\multirow{4}{*}{\textbf{Liver}}       & DoseCalcs                                         & 4.71932e-12        & 0.000142957        & 0.18304        \\ 
+                             & ORNLAdultMale                                        & 0.0227        & 0.000252        & 0.185        \\ 
+                             & R \tnote{a}                                        & 2.079e-10        & 0.56729        & 0.989405        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 2.50511        & 0.00643111        \\ \hline
+\end{tabular} 
+\begin{tablenotes}\footnotesize
+\item[a] Ratio  
+\item[b] Relative Standard Deviation (\%)
+\end{tablenotes}
+\end{threeparttable}
+\end{adjustbox}
+\label{SAF_gamma_SelfCross_0.05}
+\end{table}
+
+\begin{table}[H] 
+\centering 
+\caption{SAF values for gamma of energy 0.1 MeV calculated in ORNLAdultFemale by DoseCalcs and compared to the ORNLAdultMale reference. } 
+\begin{adjustbox}{width=\columnwidth,center}
+\begin{threeparttable}
+\begin{tabular}{lllll} \hline 
+\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Source region}}} & \multirow{2}{*}{\textbf{Method}} & \multicolumn{3}{c}{  \textbf{Target region}}       \\ \cline{3-5}
+                 \multicolumn{1}{c}{}                             & \multicolumn{1}{c}{}                           & \textbf{Kidneys}   & \textbf{Thyroid}   & \textbf{Liver}       \\\hline 
+\multirow{4}{*}{\textbf{Kidneys}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        \\ 
+                             & ORNLAdultMale                                        & 0.266        & 0.000185        & 0.0181        \\ 
+                             & R \tnote{a}                                        & 1.77418e-11        & 2.55098e-08        & 2.60736e-10        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Thyroid}}       & DoseCalcs                                         & 4.71932e-12        & 1.97752        & 0.000339779        \\ 
+                             & ORNLAdultMale                                        & 0.000185        & 2.03        & 0.000658        \\ 
+                             & R \tnote{a}                                        & 2.55098e-08        & 0.974148        & 0.516381        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0.0144424        & 0.103155               \\\hline 
+\multirow{4}{*}{\textbf{Liver}}       & DoseCalcs                                         & 4.71932e-12        & 0.000340432        & 0.107842        \\ 
+                             & ORNLAdultMale                                        & 0.0181        & 0.000658        & 0.111        \\ 
+                             & R \tnote{a}                                        & 2.60736e-10        & 0.517374        & 0.97155        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 1.08209        & 0.00580387        \\ \hline
+\end{tabular} 
+\begin{tablenotes}\footnotesize
+\item[a] Ratio  
+\item[b] Relative Standard Deviation (\%)
+\end{tablenotes}
+\end{threeparttable}
+\end{adjustbox}
+\label{SAF_gamma_SelfCross_0.1}
+\end{table}
+
+\begin{table}[H] 
+\centering 
+\caption{SAF values for gamma of energy 0.2 MeV calculated in ORNLAdultFemale by DoseCalcs and compared to the ORNLAdultMale reference. } 
+\begin{adjustbox}{width=\columnwidth,center}
+\begin{threeparttable}
+\begin{tabular}{lllll} \hline 
+\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Source region}}} & \multirow{2}{*}{\textbf{Method}} & \multicolumn{3}{c}{  \textbf{Target region}}       \\ \cline{3-5}
+                 \multicolumn{1}{c}{}                             & \multicolumn{1}{c}{}                           & \textbf{Kidneys}   & \textbf{Thyroid}   & \textbf{Liver}       \\\hline 
+\multirow{4}{*}{\textbf{Kidneys}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        \\ 
+                             & ORNLAdultMale                                        & 0.277        & 0.00035        & 0.0166        \\ 
+                             & R \tnote{a}                                        & 1.70373e-11        & 1.34838e-08        & 2.84296e-10        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Thyroid}}       & DoseCalcs                                         & 4.71932e-12        & 2.13975        & 0.000416534        \\ 
+                             & ORNLAdultMale                                        & 0.00035        & 2.2        & 0.000764        \\ 
+                             & R \tnote{a}                                        & 1.34838e-08        & 0.972614        & 0.545202        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0.00934603        & 0.0673581               \\\hline 
+\multirow{4}{*}{\textbf{Liver}}       & DoseCalcs                                         & 4.71932e-12        & 0.000410597        & 0.103026        \\ 
+                             & ORNLAdultMale                                        & 0.0166        & 0.000764        & 0.106        \\ 
+                             & R \tnote{a}                                        & 2.84296e-10        & 0.537431        & 0.971943        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0.711753        & 0.00416304        \\ \hline
+\end{tabular} 
+\begin{tablenotes}\footnotesize
+\item[a] Ratio  
+\item[b] Relative Standard Deviation (\%)
+\end{tablenotes}
+\end{threeparttable}
+\end{adjustbox}
+\label{SAF_gamma_SelfCross_0.2}
+\end{table}
+
+\begin{table}[H] 
+\centering 
+\caption{SAF values for gamma of energy 0.5 MeV calculated in ORNLAdultFemale by DoseCalcs and compared to the ORNLAdultMale reference. } 
+\begin{adjustbox}{width=\columnwidth,center}
+\begin{threeparttable}
+\begin{tabular}{lllll} \hline 
+\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Source region}}} & \multirow{2}{*}{\textbf{Method}} & \multicolumn{3}{c}{  \textbf{Target region}}       \\ \cline{3-5}
+                 \multicolumn{1}{c}{}                             & \multicolumn{1}{c}{}                           & \textbf{Kidneys}   & \textbf{Thyroid}   & \textbf{Liver}       \\\hline 
+\multirow{4}{*}{\textbf{Kidneys}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        \\ 
+                             & ORNLAdultMale                                        & 0.286        & 0.0005        & 0.0155        \\ 
+                             & R \tnote{a}                                        & 1.65011e-11        & 9.43864e-09        & 3.04472e-10        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Thyroid}}       & DoseCalcs                                         & 4.71932e-12        & 2.24604        & 0.00055682        \\ 
+                             & ORNLAdultMale                                        & 0.0005        & 2.43        & 0.000858        \\ 
+                             & R \tnote{a}                                        & 9.43864e-09        & 0.924296        & 0.648974        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0.00596914        & 0.0385662               \\\hline 
+\multirow{4}{*}{\textbf{Liver}}       & DoseCalcs                                         & 4.71932e-12        & 0.000547877        & 0.102207        \\ 
+                             & ORNLAdultMale                                        & 0.0155        & 0.000858        & 0.107        \\ 
+                             & R \tnote{a}                                        & 3.04472e-10        & 0.638551        & 0.955206        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0.406065        & 0.00269497        \\ \hline
+\end{tabular} 
+\begin{tablenotes}\footnotesize
+\item[a] Ratio  
+\item[b] Relative Standard Deviation (\%)
+\end{tablenotes}
+\end{threeparttable}
+\end{adjustbox}
+\label{SAF_gamma_SelfCross_0.5}
+\end{table}
+
+\begin{table}[H] 
+\centering 
+\caption{SAF values for gamma of energy 1 MeV calculated in ORNLAdultFemale by DoseCalcs and compared to the ORNLAdultMale reference. } 
+\begin{adjustbox}{width=\columnwidth,center}
+\begin{threeparttable}
+\begin{tabular}{lllll} \hline 
+\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Source region}}} & \multirow{2}{*}{\textbf{Method}} & \multicolumn{3}{c}{  \textbf{Target region}}       \\ \cline{3-5}
+                 \multicolumn{1}{c}{}                             & \multicolumn{1}{c}{}                           & \textbf{Kidneys}   & \textbf{Thyroid}   & \textbf{Liver}       \\\hline 
+\multirow{4}{*}{\textbf{Kidneys}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        \\ 
+                             & ORNLAdultMale                                        & 0.264        & 0.00056        & 0.0142        \\ 
+                             & R \tnote{a}                                        & 1.78762e-11        & 8.42736e-09        & 3.32346e-10        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Thyroid}}       & DoseCalcs                                         & 4.71932e-12        & 1.95932        & 0.000669153        \\ 
+                             & ORNLAdultMale                                        & 0.00056        & 2.29        & 0.000932        \\ 
+                             & R \tnote{a}                                        & 8.42736e-09        & 0.855598        & 0.717975        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0.00584722        & 0.0315068               \\\hline 
+\multirow{4}{*}{\textbf{Liver}}       & DoseCalcs                                         & 4.71932e-12        & 0.00066579        & 0.0928535        \\ 
+                             & ORNLAdultMale                                        & 0.0142        & 0.000932        & 0.0983        \\ 
+                             & R \tnote{a}                                        & 3.32346e-10        & 0.714367        & 0.944593        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0.310848        & 0.00277093        \\ \hline
+\end{tabular} 
+\begin{tablenotes}\footnotesize
+\item[a] Ratio  
+\item[b] Relative Standard Deviation (\%)
+\end{tablenotes}
+\end{threeparttable}
+\end{adjustbox}
+\label{SAF_gamma_SelfCross_1}
+\end{table}
+
+\begin{table}[H] 
+\centering 
+\caption{SAF values for gamma of energy 2 MeV calculated in ORNLAdultFemale by DoseCalcs and compared to the ORNLAdultMale reference. } 
+\begin{adjustbox}{width=\columnwidth,center}
+\begin{threeparttable}
+\begin{tabular}{lllll} \hline 
+\multicolumn{1}{c}{\multirow{2}{*}{\textbf{Source region}}} & \multirow{2}{*}{\textbf{Method}} & \multicolumn{3}{c}{  \textbf{Target region}}       \\ \cline{3-5}
+                 \multicolumn{1}{c}{}                             & \multicolumn{1}{c}{}                           & \textbf{Kidneys}   & \textbf{Thyroid}   & \textbf{Liver}       \\\hline 
+\multirow{4}{*}{\textbf{Kidneys}}       & DoseCalcs                                         & 4.71932e-12        & 4.71932e-12        & 4.71932e-12        \\ 
+                             & ORNLAdultMale                                        & 0.226        & 0.00057        & 0.0127        \\ 
+                             & R \tnote{a}                                        & 2.08819e-11        & 8.27951e-09        & 3.716e-10        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0        & 0               \\\hline 
+\multirow{4}{*}{\textbf{Thyroid}}       & DoseCalcs                                         & 4.71932e-12        & 1.37781        & 0.000731305        \\ 
+                             & ORNLAdultMale                                        & 0.00057        & 1.9        & 0.000988        \\ 
+                             & R \tnote{a}                                        & 8.27951e-09        & 0.725163        & 0.740187        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0.00629801        & 0.0312748               \\\hline 
+\multirow{4}{*}{\textbf{Liver}}       & DoseCalcs                                         & 4.71932e-12        & 0.000720991        & 0.0758259        \\ 
+                             & ORNLAdultMale                                        & 0.0127        & 0.000988        & 0.0829        \\ 
+                             & R \tnote{a}                                        & 3.716e-10        & 0.729748        & 0.914667        \\ 
+                             & RSD(\%)\tnote{b}                                         & 0        & 0.261651        & 0.00331911        \\ \hline
+\end{tabular} 
+\begin{tablenotes}\footnotesize
+\item[a] Ratio  
+\item[b] Relative Standard Deviation (\%)
+\end{tablenotes}
+\end{threeparttable}
+\end{adjustbox}
+\label{SAF_gamma_SelfCross_2}
+\end{table}
+

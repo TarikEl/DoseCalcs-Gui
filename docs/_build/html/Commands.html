@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DoseCalcs-Core Commands &mdash; DoseCalcs v1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5cb08e4e"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="DoseCalcs-Core Applications" href="Applications.html" />
+    <link rel="prev" title="DoseCalcs-Core Simulations" href="GeneralConcept.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            DoseCalcs
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="GUI.html">DoseCalcs-Gui: Graphical User Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Installation.html">DoseCalcs-Core Installations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GeneralConcept.html">DoseCalcs-Core Simulations</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">DoseCalcs-Core Commands</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#to-build-materials">To Build Materials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#to-set-geometry-symbol">To Set Geometry Symbol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#to-construct-volumes">To Construct Volumes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#creating-world-volume">Creating World Volume</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#creating-solids">Creating Solids</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#creating-volumes">Creating Volumes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#to-define-source">To Define Source</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#generation-initial-positions">Generation Initial Positions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generation-initial-energies">Generation Initial Energies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generation-initial-momentum-directions-momdir">Generation Initial Momentum Directions(MomDir)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#setting-events-particle-names">Setting Events Particle Names</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#setting-events-data-number-activating-data-files-generation">Setting Events Data Number, Activating Data Files Generation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#geometry-and-source-data-visualization">Geometry and Source Data Visualization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#to-define-physics">To Define Physics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#setting-physics">Setting Physics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#setting-cuts-in-range-and-energy-range-data">Setting Cuts in Range and Energy Range Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generating-cross-section-data">Generating Cross Section Data</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#to-set-run-and-score-parameters">To Set Run and Score Parameters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#setting-a-new-results-directory">Setting a New Results Directory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#setting-volumes-to-score">Setting Volumes To Score</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#setting-quantities-to-score">Setting Quantities To Score</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#setting-number-of-simulation-per-ranks">Setting Number Of Simulation Per Ranks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#setting-number-of-threads">Setting Number Of threads</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#setting-additional-related-quantities-data">Setting Additional Related Quantities Data</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#analysis-using-root">Analysis using ROOT</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#setting-graphs-parameters">Setting Graphs Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generate-self-and-cross-graphs">Generate Self and Cross Graphs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generate-relative-error-graph">Generate Relative Error Graph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generate-relative-standard-deviation-graph">Generate Relative Standard Deviation Graph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generate-variable-region-graph">Generate Variable-Region Graph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generate-events-data-histograms">Generate Events Data Histograms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generate-results-in-csv-and-latex-format">Generate results in .csv and Latex format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#analysis-input-and-output-examples">[analysis] input and output examples</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Applications.html">DoseCalcs-Core Applications</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">DoseCalcs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">DoseCalcs-Core Commands</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Commands.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="dosecalcs-core-commands">
+<h1>DoseCalcs-Core Commands<a class="headerlink" href="#dosecalcs-core-commands" title="Link to this heading"></a></h1>
+<section id="to-build-materials">
+<h2>To Build Materials<a class="headerlink" href="#to-build-materials" title="Link to this heading"></a></h2>
+<p>The materials are created using four commands. The elements are set before the materials are formed. Another option to create materials directly is to use the NIST material database. In fact, material construction is required to build world volume, voxelized (VOX) and tetrahedral (TET) volumes, STL volume, and Geant4 standard solids. Except for C++, TEXT and GDML geometry methods, which use all geometry and material data from the C++, TEXT or GDML file, including the world.</p>
+<p>Once a material is created and used in volume creation, regardless of how it was created (by GDML, TEXT, C++ or command method), it can be used for the next volumes just by setting its name.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">MaterialData</span><span class="o">/</span><span class="n">createElement</span> <span class="p">[</span><span class="n">Number</span> <span class="n">Z</span><span class="p">]</span> <span class="p">[</span><span class="n">Number</span> <span class="n">A</span><span class="p">]</span> <span class="p">[</span><span class="n">Element</span> <span class="n">Name</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /MaterialData/createElement 8 16.02 Oxygen</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">MaterialData</span><span class="o">/</span><span class="n">createMaterial</span> <span class="p">[</span><span class="n">Material</span> <span class="n">Name</span><span class="p">]</span> <span class="p">[</span><span class="n">Material</span> <span class="n">ID</span><span class="p">]</span> <span class="p">[</span><span class="n">Number</span> <span class="n">Of</span> <span class="n">Elements</span><span class="p">]</span> <span class="p">[</span><span class="n">Density</span><span class="p">]</span> <span class="p">[</span><span class="n">Density</span> <span class="n">Unit</span><span class="p">]</span> <span class="p">[</span><span class="n">Element</span> <span class="n">Accumulation</span> <span class="n">by</span> <span class="n">fraction</span> <span class="p">(</span><span class="n">frac</span><span class="p">)</span> <span class="ow">or</span> <span class="n">Number</span> <span class="p">(</span><span class="n">Numb</span><span class="p">)]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /MaterialData/createMaterial CO2 1 2 1.0 g/cm3 numb</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">MaterialData</span><span class="o">/</span><span class="n">AddElements</span> <span class="p">[</span><span class="n">Element</span> <span class="n">Name1</span><span class="p">]</span>  <span class="p">[</span><span class="n">fraction</span><span class="p">(</span><span class="ow">or</span> <span class="n">number</span><span class="p">)]</span> <span class="p">[</span><span class="n">Element</span> <span class="n">Name2</span><span class="p">]</span> <span class="p">[</span><span class="n">fraction</span><span class="p">(</span><span class="ow">or</span> <span class="n">number</span><span class="p">)]</span> <span class="o">...</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /MaterialData/AddElements Carbon 1 Oxygen 2</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">MaterialData</span><span class="o">/</span><span class="n">setNistMaterialNameAndID</span> <span class="p">[</span><span class="n">NIST</span> <span class="n">Material</span> <span class="n">Name</span><span class="p">]</span> <span class="p">[</span><span class="n">Material</span> <span class="n">ID</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /MaterialData/setNistMaterialNameAndID G4_AIR 1</p>
+</section>
+<section id="to-set-geometry-symbol">
+<h2>To Set Geometry Symbol<a class="headerlink" href="#to-set-geometry-symbol" title="Link to this heading"></a></h2>
+<p>The geometry symbol is used to characterize the results in the result file. Note that a value is localized in the result file by geometry symbol, radionuclide or particle, quantity, source region, target region (and energy for particle). The default value is phantom0.</p>
+<p>/GeometryData/setGeometrySymbol [GeometrySymbol]</p>
+<p>[GeometrySymbol] : can be any name without spaces.</p>
+</section>
+<section id="to-construct-volumes">
+<h2>To Construct Volumes<a class="headerlink" href="#to-construct-volumes" title="Link to this heading"></a></h2>
+<p>To create simulation geometry using a single method, such as TET, VOX, GDML, TEXT, or C++, all volumes, including the world, should be defined in the method-specific file; however, when using multiple methods, the world volume should be created using commands, and the geometry file for each volume should be set to append it to the simulation geometry.</p>
+<section id="creating-world-volume">
+<h3>Creating World Volume<a class="headerlink" href="#creating-world-volume" title="Link to this heading"></a></h3>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span>/GeometryData/createWorld [World Volume Name] [Material Name] [is Sensitive Detector! (yes or no)] [X Y Z half size] [Length Unit]
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /GeometryData/createWorld World G4_AIR yes 200. 200. 200. cm</p>
+<p>As well, the world volume can be imported from GDML, TEXT or C++ format files using /GeometryData/createVolume command (<a class="reference internal" href="#createvolume"><span class="std std-ref">Creating Volumes</span></a>).</p>
+</section>
+<section id="creating-solids">
+<h3>Creating Solids<a class="headerlink" href="#creating-solids" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>General Command :</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">createSolid</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Type</span><span class="p">]</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Name</span><span class="p">]</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Parameters</span><span class="p">]</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="p">[</span><span class="n">Angle</span> <span class="n">Unit</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>The next solid types require firstly, the World volume construction. which is done by /GeometryData/createWorld command.</p>
+<ol class="arabic simple" start="2">
+<li><p>Box</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">createSolid</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Type</span><span class="p">]</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Name</span><span class="p">]</span> <span class="p">[</span><span class="n">X</span> <span class="n">Y</span> <span class="n">Z</span> <span class="n">half</span> <span class="n">size</span><span class="p">]</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="p">[</span><span class="n">Angle</span> <span class="n">Unit</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="3">
+<li><p>Tubs</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">createSolid</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Type</span><span class="p">]</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Name</span><span class="p">]</span> <span class="p">[</span><span class="n">Rmin</span> <span class="n">Rmax</span> <span class="n">Dz</span> <span class="n">SPhi</span> <span class="n">DPhi</span><span class="p">]</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="p">[</span><span class="n">Angle</span> <span class="n">Unit</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="4">
+<li><p>CutTubs :</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">createSolid</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Type</span><span class="p">]</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Name</span><span class="p">]</span> <span class="p">[</span><span class="n">Rmin</span> <span class="n">Rmax</span> <span class="n">Dz</span> <span class="n">SPhi</span> <span class="n">DPhi</span><span class="p">]</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="p">[</span><span class="n">Angle</span> <span class="n">Unit</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="5">
+<li><p>Cons</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">createSolid</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Type</span><span class="p">]</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Name</span><span class="p">]</span> <span class="p">[</span><span class="n">Rmin1</span> <span class="n">Rmax1</span> <span class="n">Rmin2</span> <span class="n">Rmax2</span> <span class="n">Dz</span> <span class="n">SPhi</span> <span class="n">DPhi</span><span class="p">]</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="p">[</span><span class="n">Angle</span> <span class="n">Unit</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="6">
+<li><p>Para</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">createSolid</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Type</span><span class="p">]</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Name</span><span class="p">]</span> <span class="p">[</span><span class="n">Dx</span> <span class="n">Dy</span> <span class="n">DZ</span> <span class="n">Alpha</span> <span class="n">Theta0</span> <span class="n">Phi0</span><span class="p">]</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="p">[</span><span class="n">Angle</span> <span class="n">Unit</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="7">
+<li><p>Trd</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">createSolid</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Type</span><span class="p">]</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Name</span><span class="p">]</span> <span class="p">[</span><span class="n">Dx1</span> <span class="n">Dx2</span> <span class="n">Dy1</span> <span class="n">Dy2</span> <span class="n">Dz</span><span class="p">]</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="p">[</span><span class="n">Angle</span> <span class="n">Unit</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="8">
+<li><p>Sphere</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">createSolid</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Type</span><span class="p">]</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Name</span><span class="p">]</span> <span class="p">[</span><span class="n">Rmin</span> <span class="n">Rmax</span> <span class="n">SPhi</span> <span class="n">DPhi</span> <span class="n">STheta</span> <span class="n">DTheta</span><span class="p">]</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="p">[</span><span class="n">Angle</span> <span class="n">Unit</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="9">
+<li><p>Orb</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">createSolid</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Type</span><span class="p">]</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Name</span><span class="p">]</span> <span class="p">[</span><span class="n">Rmax</span><span class="p">]</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="p">[</span><span class="n">Angle</span> <span class="n">Unit</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="10">
+<li><p>Torus</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">createSolid</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Type</span><span class="p">]</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Name</span><span class="p">]</span> <span class="p">[</span><span class="n">Rmin</span> <span class="n">Rmax</span> <span class="n">Rtor</span> <span class="n">SPhi</span> <span class="n">DPhi</span><span class="p">]</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="p">[</span><span class="n">Angle</span> <span class="n">Unit</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="11">
+<li><p>Ellipsoid</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">createSolid</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Type</span><span class="p">]</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Name</span><span class="p">]</span> <span class="p">[</span><span class="n">xSemiAxis</span> <span class="n">ySemiAxis</span> <span class="n">zSemiAxis</span><span class="p">]</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="p">[</span><span class="n">Angle</span> <span class="n">Unit</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="12">
+<li><p>Union</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">createSolid</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Type</span><span class="p">]</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Name</span><span class="p">]</span> <span class="p">[</span><span class="n">First</span> <span class="n">Solid</span> <span class="n">Name</span><span class="p">]</span> <span class="p">[</span><span class="n">Second</span> <span class="n">Solid</span> <span class="n">Name</span><span class="p">]</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Relative</span> <span class="n">Translation</span><span class="p">]</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Relative</span> <span class="n">Rotation</span><span class="p">]</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="p">[</span><span class="n">Angle</span> <span class="n">Unit</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="13">
+<li><p>Intersection</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">createSolid</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Type</span><span class="p">]</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Name</span><span class="p">]</span> <span class="p">[</span><span class="n">First</span> <span class="n">Solid</span> <span class="n">Name</span><span class="p">]</span> <span class="p">[</span><span class="n">Second</span> <span class="n">Solid</span> <span class="n">Name</span><span class="p">]</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Relative</span> <span class="n">Translation</span><span class="p">]</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Relative</span> <span class="n">Rotation</span><span class="p">]</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="p">[</span><span class="n">Angle</span> <span class="n">Unit</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="14">
+<li><p>Subtraction</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">createSolid</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Type</span><span class="p">]</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Name</span><span class="p">]</span> <span class="p">[</span><span class="n">First</span> <span class="n">Solid</span> <span class="n">Name</span><span class="p">]</span> <span class="p">[</span><span class="n">Second</span> <span class="n">Solid</span> <span class="n">Name</span><span class="p">]</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Relative</span> <span class="n">Translation</span><span class="p">]</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">Relative</span> <span class="n">Rotation</span><span class="p">]</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="p">[</span><span class="n">Angle</span> <span class="n">Unit</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>The user requires two solids to construct the third, which can be a union, intersection, or subtraction of the two solids.</p>
+</section>
+<section id="creating-volumes">
+<span id="createvolume"></span><h3>Creating Volumes<a class="headerlink" href="#creating-volumes" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Import world volume from GDML, TEXT formats or by C++ code</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">createVolume</span> <span class="p">[</span><span class="n">World</span><span class="o">.</span><span class="n">c</span><span class="o">++</span> <span class="n">Or</span> <span class="o">/../../</span><span class="n">World</span><span class="o">.</span><span class="n">geom</span> <span class="o">/../../</span><span class="n">World</span><span class="o">.</span><span class="n">gdml</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>To construct world using C++, GDML and TEXT format files, this file must contain the world physical volume and all daughters volumes, which means DoseCalcs will take the full geometry from this file rather than having to construct world individually by command.</p>
+<p>In the G4TCPPGeometryFormat::ConstructPhysicalVolumes() function block, the world physical volume is built using C++ code.
+The user must use the C++ Geant4 syntax to code the world physical volume as well as all daughters volumes.</p>
+<p>The name of the world volume is always “World”, and it is this name that is used when assigning a new volume to the world as a mother volume by setting the mother volume name parameter to “World”.</p>
+<ol class="arabic simple" start="2">
+<li><p>Import logical volume from GDML file</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">createVolume</span> <span class="p">[</span><span class="o">/../../</span><span class="n">VolumeName</span><span class="o">.</span><span class="n">gdml</span> <span class="n">Volume</span> <span class="n">File</span> <span class="n">Path</span><span class="p">]</span> <span class="p">[</span><span class="n">Volume</span> <span class="n">Mother</span> <span class="n">Name</span><span class="p">]</span> <span class="p">[</span><span class="n">X</span> <span class="n">Y</span> <span class="n">Z</span> <span class="n">Position</span><span class="p">]</span> <span class="p">[</span><span class="n">X</span> <span class="n">Y</span> <span class="n">Z</span> <span class="n">Rotation</span><span class="p">]</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="p">[</span><span class="n">Angle</span> <span class="n">Unit</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>This command does not need the /GeometryData/createSolid or any built material.</p>
+<ol class="arabic simple" start="3">
+<li><p>Import logical volume from TEXT file</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">createVolume</span> <span class="p">[</span><span class="o">/../../</span><span class="n">VolumeName</span><span class="o">.</span><span class="n">geom</span> <span class="n">Volume</span> <span class="n">File</span> <span class="n">Path</span><span class="p">]</span> <span class="p">[</span><span class="n">Volume</span> <span class="n">Mother</span> <span class="n">Name</span><span class="p">]</span> <span class="p">[</span><span class="n">X</span> <span class="n">Y</span> <span class="n">Z</span> <span class="n">Position</span><span class="p">]</span> <span class="p">[</span><span class="n">X</span> <span class="n">Y</span> <span class="n">Z</span> <span class="n">Rotation</span><span class="p">]</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="p">[</span><span class="n">Angle</span> <span class="n">Unit</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>The logical volume data is read from a C++, GDML and TEXT format file without the requirement for /GeometryData/createSolid. The shape, rotation, position, and material data of a volume are described in the C++, TEXT or GDML format according to the format syntax. Then, to create physical volume, specifies position relative and relative rotation to the mother volume.</p>
+<ol class="arabic simple" start="4">
+<li><p>Construct logical volume by C++ code</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">createVolume</span> <span class="p">[</span><span class="n">VolumeName</span><span class="o">.</span><span class="n">c</span><span class="o">++</span><span class="p">]</span> <span class="p">[</span><span class="n">Volume</span> <span class="n">Mother</span> <span class="n">Name</span><span class="p">]</span> <span class="p">[</span><span class="n">X</span> <span class="n">Y</span> <span class="n">Z</span> <span class="n">Position</span><span class="p">]</span> <span class="p">[</span><span class="n">X</span> <span class="n">Y</span> <span class="n">Z</span> <span class="n">Rotation</span><span class="p">]</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="p">[</span><span class="n">Angle</span> <span class="n">Unit</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="5">
+<li><p>Import solid data from STL file</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">createVolume</span> <span class="p">[</span><span class="o">.</span><span class="n">stl</span> <span class="n">Solid</span> <span class="n">File</span> <span class="n">Path</span><span class="p">]</span> <span class="p">[</span><span class="n">Volume</span> <span class="n">Material</span> <span class="n">Name</span><span class="p">]</span> <span class="p">[</span><span class="n">Volume</span> <span class="n">Mother</span> <span class="n">Name</span><span class="p">]</span> <span class="p">[</span><span class="n">X</span> <span class="n">Y</span> <span class="n">Z</span> <span class="n">Position</span><span class="p">]</span> <span class="p">[</span><span class="n">X</span> <span class="n">Y</span> <span class="n">Z</span> <span class="n">Rotation</span><span class="p">]</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="p">[</span><span class="n">Angle</span> <span class="n">Unit</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="6">
+<li><p>Construct volume using created solid</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">createVolume</span> <span class="p">[</span><span class="n">Solid</span> <span class="n">name</span><span class="p">]</span> <span class="p">[</span><span class="n">Volume</span> <span class="n">Material</span> <span class="n">Name</span><span class="p">]</span> <span class="p">[</span><span class="n">Volume</span> <span class="n">Mother</span> <span class="n">Name</span><span class="p">]</span> <span class="p">[</span><span class="n">X</span> <span class="n">Y</span> <span class="n">Z</span> <span class="n">Position</span><span class="p">]</span> <span class="p">[</span><span class="n">X</span> <span class="n">Y</span> <span class="n">Z</span> <span class="n">Rotation</span><span class="p">]</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="p">[</span><span class="n">Angle</span> <span class="n">Unit</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Using the /GeometryData/createSolid command to create a solid, filling it with the specified material to create a logical volume, and then giving position and rotation relative to the mother volume to construct a physical volume.</p>
+<p>Following the creation of the world, the user can build additional volumes, in which materials and volumes created previously in GDML, TEXT, STL, command, or C++ formats can be used by just changing the name of the material or volume.</p>
+<p>Except for files containing world volumes, the file name should match the logical volume name set in C++, GDML and TEXT. The volume name will be the same as the solid file name for STL file. It should be noted that the macros file will use the logical volume name as the name.</p>
+<ol class="arabic simple" start="7">
+<li><p>Voxelized Geometry</p></li>
+</ol>
+<p>/CreateVolume/ is the main command for specifying the voxelized method to be used, with the first parameter set to VOXEL, VoxIDs, or DICOM.</p>
+<p>The VOXEL method is used to create a basic voxelized geometry. Using the four mentioned commands, the user may create voxelized phantom data, where the user must give the region sizes limits as well as the material ID from the material list that will be used to fill the region voxels. To put it another way, the user attaches his or her own materials to the region voxels.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">createVolume</span> <span class="n">VoxIDs</span> <span class="p">[</span><span class="n">Materials</span> <span class="n">IDs</span> <span class="n">file</span> <span class="n">path</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>[Materials IDs file path] : The path of the file containing a matrix of NX-NY-NZ material ID of defined phantom regions.</p>
+<p>Aside from the voxel data command, the path of voxel material IDs file must be given in the VoxIDs method, which is the second parameter of the /CreateVolume command. With this voxelized method, the user must create materials and associate a unique ID that is defined in the materials IDs file; this ID will be used in region voxels selection, which is done by setting the region data with the /GeometryData/setVoxelizedRegionData command, which selects all voxels of the specified data to be belonged to the region name as specified by the user. Selecting voxels based on density interval variable is not suggested, since all materials supplied by IDs in the file were built with their respective densities by the user. By locating the box bounded by size limits, this box holds voxels that will be filtered by material ID. The material ID is then sufficient, and choosing a density interval can ignore the material ID option.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">setVoxelsData</span> <span class="p">[</span><span class="n">Voxels</span><span class="o">-</span><span class="n">Number</span><span class="o">-</span><span class="n">X</span> <span class="o">-</span><span class="n">Y</span> <span class="o">-</span><span class="n">Z</span><span class="p">]</span> <span class="p">[</span><span class="n">Parametrisation</span><span class="p">]</span> <span class="p">[</span><span class="n">Default</span> <span class="n">material</span><span class="p">]</span> <span class="p">[</span><span class="n">Half</span><span class="o">-</span><span class="n">Dimension</span><span class="o">-</span><span class="n">X</span> <span class="o">-</span><span class="n">Y</span> <span class="o">-</span><span class="n">Z</span><span class="p">]</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>[Voxels-Number-X -Y -Z] : Number of voxels in X, Y and Z axis</p>
+<p>[Parametrisation] : can be 0 for Phantom parametrisation or 1 for phantom nested paramerization</p>
+<p>[Default material] : the default</p>
+<p>[Half-Dimension-X -Y -Z] :</p>
+<p>[Length Unit] : length unit of the voxel half dimension</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">setVoxelsData</span> <span class="mi">254</span> <span class="mi">127</span> <span class="mi">222</span> <span class="mi">1</span> <span class="n">G4_AIR</span> <span class="mf">1.06857</span> <span class="mf">1.06857</span> <span class="mi">4</span> <span class="n">mm</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">createVolume</span> <span class="n">DICOM</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>For DICOM method, additional commands are used to specify some parameters, but first, the user have to build materials each with a specific density, then order materials according to the density values with /setMaterialsOrdered, the command take the materials names as parameters, ordered incrementally by density (first material is one with low density), a density interval will be created for each material (i.e. the first material density interval will be from 0 to its density, for second material will be from first material density to its density etc.). As well, attaching CT number for each density value by /setCTDensity command, take as first parameter CT number, and second density val, these values are used in the conversion from the CT number to the density while reading Dicom file. Note that the pixel can present a density value that is not defined in density list given by the user while constructing material, in this case, a new material with a new density and ID will be generated and added to the list of materials, the new material is chosen according to the location of pixel density in the density interval.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">setMaterialsOrdered</span> <span class="p">[</span><span class="n">Material</span> <span class="n">Name1</span><span class="p">]</span> <span class="p">[</span><span class="n">Material</span> <span class="n">Name2</span><span class="p">]</span> <span class="o">...</span> <span class="p">[</span><span class="n">Material</span> <span class="n">NameN</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">setCTDensity</span> <span class="p">[</span><span class="n">CT</span> <span class="n">Value</span><span class="p">]</span> <span class="p">[</span><span class="n">Density</span> <span class="n">Value</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>This command should be set a number of times according to the CT numbers intervals.</p>
+<p>Another useful command is /setPixelsCompression, which is used to compress xy voxels, in order to reduce pixels number in slices.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">setPixelsCompression</span> <span class="mi">4</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">visualizeVoxelizedPlanes</span> <span class="p">[</span><span class="n">Plane</span><span class="p">]</span> <span class="p">[</span><span class="n">Min</span> <span class="n">Plane</span> <span class="n">ID</span><span class="p">]</span> <span class="p">[</span><span class="n">Max</span> <span class="n">Plane</span> <span class="n">ID</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>[Plane] can be : all, xy, xz or yz.</p>
+<p>[Min Plane ID] : integer value, ID of min plane in selected axis, for example if we choose the Plane xy, the axis will be z. The ID can be from 0 to Number of voxels in the axis (- 1)</p>
+<p>[Max Plane ID] : integer value, ID of max plane in selected axis, for example if we choose the Plane xy, the axis will be z. The ID can be from 0 to Number of voxels in the axis (- 1)</p>
+<p>The number of voxels in voxelized geometry created with VoxIDs methods might be huge, requiring a high-quality computation resource for visualization. This entails the visualization of voxelized geometry parts (planes), which is aided by the command above.</p>
+<p>To choose voxels based on x, y, and z limits, as well as material IDs and density intervals, to construct a region:</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">setVoxelizedRegionData</span> <span class="p">[</span><span class="n">Region</span> <span class="n">Name</span><span class="p">]</span> <span class="p">[</span><span class="n">Min</span> <span class="n">x</span><span class="p">]</span> <span class="p">[</span><span class="n">Max</span> <span class="n">x</span><span class="p">]</span> <span class="p">[</span><span class="n">Min</span> <span class="n">y</span><span class="p">]</span> <span class="p">[</span><span class="n">Max</span> <span class="n">y</span><span class="p">]</span> <span class="p">[</span><span class="n">Min</span> <span class="n">z</span><span class="p">]</span> <span class="p">[</span><span class="n">Max</span> <span class="n">z</span><span class="p">]</span> <span class="p">[</span><span class="n">Material</span> <span class="n">ID</span><span class="p">]</span> <span class="p">[</span><span class="n">Min</span> <span class="n">Density</span><span class="p">]</span> <span class="p">[</span><span class="n">Max</span> <span class="n">Density</span><span class="p">]</span> <span class="p">[</span><span class="n">Density</span> <span class="n">Unit</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>[Region Name] : the name to be assigned to the selected voxels, the name is used in the source specification and results</p>
+<p>[Min x] and [Max x] : the minimum and maximum limits on x-axis where to search about the specific voxels, the same for y- and z-axis</p>
+<p>[Material ID] : the voxels in specified limits will be selected if they present the set material ID</p>
+<p>[Min Density] [Max Density] : the voxels in the specified limits and material ID are selected only if the contained material has a density in the set interval</p>
+<p>The commend bellow can be set with different syntax, for example: if the limits is all the phantom, there are no needs to set x, y and z limits, setting just “all” instead of [Min x] [Max x] [Min y] [Max y] [Min z] [Max z]. As well for use of material ID and density interval values, the user can set “null” at parameter that won’t be used, an example of this command:</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">setVoxelizedRegionData</span> <span class="n">Residual_tissue_head</span> <span class="nb">all</span> <span class="mi">116</span> <span class="n">null</span> <span class="n">null</span> <span class="n">null</span>
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="8">
+<li><p>Tetrahedral Geometry</p></li>
+</ol>
+<p>/CreateVolume/ is the main command for specifying the tetrahedral method to be used, with the first parameter set to TET.</p>
+<p>[.node file path] : The path of .node file.</p>
+<p>[.ele file path] : The path of .node file.</p>
+<p>The TET method is used to create a tetrahedral geometry. Using three TET commands, the user may create TET phantom data, where the user must give the used materials, phantom size limits, and TET region data.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">createVolume</span> <span class="n">TET</span> <span class="p">[</span><span class="o">.</span><span class="n">node</span> <span class="n">file</span> <span class="n">path</span><span class="p">]</span> <span class="p">[</span><span class="o">.</span><span class="n">ele</span> <span class="n">file</span> <span class="n">path</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>As an example:</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">createVolume</span> <span class="n">TET</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">user</span><span class="o">/../</span><span class="n">AF</span><span class="o">.</span><span class="n">node</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">user</span><span class="o">/../</span><span class="n">AF</span><span class="o">.</span><span class="n">ele</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>To set the TET phantom limits:</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">setTETPhantomLimits</span> <span class="p">[</span><span class="n">Plane</span><span class="p">]</span> <span class="p">[</span><span class="n">Min</span><span class="p">]</span> <span class="p">[</span><span class="n">Max</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>[Plane] can be : all, xy, xz or yz.</p>
+<p>[Min] : Min in the selected axis, for example if we choose the Plane xy, the axis will be z.</p>
+<p>[Max] : Max in the selected axis, for example if we choose the Plane xy, the axis will be z.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">setTETPhantomLimits</span> <span class="n">xy</span> <span class="o">-</span><span class="mi">5</span> <span class="mi">5</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Means that phantom will be composed by tetrahedrons from -5 mm to 5 mm in the z axis.</p>
+<p>To create a new region data based on material density:</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">setTETRegionData</span> <span class="p">[</span><span class="n">Region</span> <span class="n">Name</span><span class="p">]</span> <span class="p">[</span><span class="n">Min</span> <span class="n">Density</span><span class="p">]</span> <span class="p">[</span><span class="n">Max</span> <span class="n">Density</span><span class="p">]</span> <span class="p">[</span><span class="n">Density</span> <span class="n">Unit</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>[Region Name] : the name to be assigned to the selected tetrahedrons, the name is used in the source specification and results</p>
+<p>[Min Density] [Max Density] : the tetrahedrons are selected only if the contained material has a density in the set interval</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">setTETRegionData</span> <span class="n">skeleton</span> <span class="mf">1.3</span> <span class="n">null</span> <span class="n">g</span><span class="o">/</span><span class="n">cm3</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>In this case, all tetrahedrons with a density greater or equal to 1.3 g/cm3 will be selected to belong to the “skeleton” region.</p>
+<p>For VoxIDs and TET methods, the user can use the default created regions based on read material IDs from files “material name as region name”. In this case, the user shouldn’t create new regions, and this is activated by:</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">setMaterialNameAsRegionName</span> <span class="p">[</span><span class="n">yes</span> <span class="ow">or</span> <span class="n">no</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+</section>
+<section id="to-define-source">
+<h2>To Define Source<a class="headerlink" href="#to-define-source" title="Link to this heading"></a></h2>
+<p>The radiation source is made up of five main /SourceData/ commands that provide source parameters including event particle names, initial positions, initial energies, initial momentum directions, and the number of data to generate.</p>
+<section id="generation-initial-positions">
+<h3>Generation Initial Positions<a class="headerlink" href="#generation-initial-positions" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>General Command</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialPosData</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="p">[</span><span class="n">Generate</span> <span class="n">Type</span><span class="p">]</span> <span class="p">[</span><span class="n">Parameters</span> <span class="n">Case</span> <span class="mi">1</span><span class="p">]</span> <span class="p">[</span><span class="n">Parameters</span> <span class="n">Case</span> <span class="mi">2</span><span class="p">]</span> <span class="o">...</span>
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p>Volume Generate Type</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialPosData</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="n">Volume</span> <span class="p">[</span><span class="n">VolumeName1</span> <span class="n">hx</span> <span class="n">hy</span> <span class="n">hz</span><span class="p">(</span><span class="n">surrends</span> <span class="n">box</span> <span class="n">half</span> <span class="n">sizes</span><span class="p">)]</span> <span class="p">[</span><span class="n">VolumeName2</span> <span class="n">hx2</span> <span class="n">hy2</span> <span class="n">hz2</span><span class="p">(</span><span class="n">surrends</span> <span class="n">box</span> <span class="n">half</span> <span class="n">sizes</span><span class="p">)]</span> <span class="o">...</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /SourceData/setEventsInitialPosData cm Volume Vol1 4 2 5 Vol2 6 6 10</p>
+<p>The region name, as well as the box half dimensions hx, hy, and hz, were passed as parameters. The first parameter is the length unit, followed by the word “Volume,” which indicates that the volume where we wish to create data has non-uniform forms, and finally the source volume name and the associated hx, hy, and hz. Additionally, the command supports multiple source volume data by giving the second source volume name, followed by the matching hx, hy, and hz, and so on… This makes generating initial positions or simulating many sources with a single command easy.</p>
+<p>For “Volume” source type:</p>
+<p>ex1 : /SourceData/setEventsInitialPosData cm Volume AllRegions 3 Liver Brain Spleen 20 20 90 Brain 6.58 9 6.5 Spleen 3.2 2.3 5.7 Liver 15. 8. 8.</p>
+<p>The values “20 20 90” is “Allregions” X, Y, and Y half dimensions, they should not exced the World hammf dimensions.</p>
+<p>For “Voxels” and “TET” source types:</p>
+<p>ex2 : /SourceData/setEventsInitialPosData cm Voxels AllRegions 3 Liver Brain Spleen Liver Brain Spleen</p>
+</section>
+<section id="generation-initial-energies">
+<h3>Generation Initial Energies<a class="headerlink" href="#generation-initial-energies" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>General Command</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialEneData</span> <span class="p">[</span><span class="n">Energy</span> <span class="n">Unit</span><span class="p">]</span> <span class="p">[</span><span class="n">Energy</span> <span class="n">Distribution</span><span class="p">]</span> <span class="p">[</span><span class="n">Parameter1</span><span class="p">]</span> <span class="p">[</span><span class="n">Parameter2</span><span class="p">]</span> <span class="o">...</span>
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p>Mono Distribution</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialEneData</span> <span class="p">[</span><span class="n">Energy</span> <span class="n">Unit</span><span class="p">]</span> <span class="n">Mono</span> <span class="p">[</span><span class="n">Mone</span> <span class="n">Energy</span> <span class="mi">1</span><span class="p">]</span> <span class="p">[</span><span class="n">Mone</span> <span class="n">Energy</span> <span class="mi">2</span><span class="p">]</span> <span class="o">...</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /SourceData/setEventsInitialEneData MeV Mono 0.01 0.02 0.015 0.03 0.05 0.1 0.2 0.5 1</p>
+<ol class="arabic simple" start="3">
+<li><p>Gauss Distribution</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialEneData</span> <span class="p">[</span><span class="n">Energy</span> <span class="n">Unit</span><span class="p">]</span> <span class="n">Gauss</span> <span class="p">[</span><span class="n">Gauss</span> <span class="n">SDev</span><span class="p">]</span> <span class="p">[</span><span class="n">Gauss</span> <span class="n">Mean</span> <span class="mi">1</span><span class="p">]</span> <span class="p">[</span><span class="n">Gauss</span> <span class="n">Mean</span> <span class="mi">2</span><span class="p">]</span> <span class="o">...</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /SourceData/setEventsInitialEneData MeV Gauss 0.01 1 2 3 4 5 10</p>
+<ol class="arabic simple" start="4">
+<li><p>Rayleigh Distribution</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialEneData</span> <span class="p">[</span><span class="n">Energy</span> <span class="n">Unit</span><span class="p">]</span> <span class="n">Rayleigh</span> <span class="p">[</span><span class="n">Rayleigh</span> <span class="n">Max</span> <span class="n">Energy</span> <span class="mi">1</span><span class="p">]</span> <span class="p">[</span><span class="n">Rayleigh</span> <span class="n">Max</span> <span class="n">Energy</span> <span class="mi">2</span><span class="p">]</span> <span class="o">...</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /SourceData/setEventsInitialEneData MeV Rayleigh 0.5 0.7 0.6</p>
+<ol class="arabic simple" start="5">
+<li><p>Uniform Distribution</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialEneData</span> <span class="p">[</span><span class="n">Energy</span> <span class="n">Unit</span><span class="p">]</span> <span class="n">Uniform</span> <span class="p">[</span><span class="n">Min</span> <span class="n">Energy</span><span class="p">]</span> <span class="p">[</span><span class="n">Max</span> <span class="n">Energy</span> <span class="mi">1</span><span class="p">]</span> <span class="p">[</span><span class="n">Max</span> <span class="n">Energy</span> <span class="mi">2</span><span class="p">]</span> <span class="o">...</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /SourceData/setEventsInitialEneData MeV Uniform 6 6.1 6.2 6.3</p>
+<ol class="arabic simple" start="6">
+<li><p>Spectrum Distribution</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialEneData</span> <span class="p">[</span><span class="n">Energy</span> <span class="n">Unit</span><span class="p">]</span> <span class="n">Spectrum</span> <span class="p">[</span><span class="n">Energy1</span><span class="p">]</span> <span class="p">[</span><span class="n">Probability1</span><span class="p">]</span> <span class="p">[</span><span class="n">Energy2</span><span class="p">]</span> <span class="p">[</span><span class="n">Probability2</span><span class="p">]</span> <span class="p">[</span><span class="n">Energy3</span><span class="p">]</span> <span class="p">[</span><span class="n">Probability3</span><span class="p">]</span> <span class="o">...</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /SourceData/setEventsInitialEneData MeV Spectrum 0.1 0.2 0.3 0.4 0.7 0.1 1 0.3</p>
+<ol class="arabic simple" start="7">
+<li><p>File Spectrum Distribution</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialEneData</span> <span class="p">[</span><span class="n">Energy</span> <span class="n">Unit</span><span class="p">]</span> <span class="n">File</span> <span class="p">[</span><span class="n">Energy</span> <span class="n">particle</span><span class="o">-</span><span class="n">energy</span><span class="o">-</span><span class="k">yield</span> <span class="n">file</span> <span class="n">path</span><span class="p">]</span> <span class="o">...</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>[Energy particle-energy-yield file] : the ASCII file should contains, the particles names followed by the absolute yields energies as described in the ICRP publication 107. and example of this file can be downloaded from the link below.</p>
+<p><a class="reference download internal" download="" href="_downloads/fb6443154b4e009713e030efae9f5f6c/I131Energies.dat"><code class="xref download docutils literal notranslate"><span class="pre">I131</span> <span class="pre">energy</span> <span class="pre">data</span> <span class="pre">file</span></code></a>.</p>
+<p>ex : /SourceData/setEventsInitialEneData MeV File /../I131EnergyData.dat</p>
+<p>The particle name should be set to the radiotracer name when using the file energy distribution, and the energy that characterizes the radiotracer is regarded the largest energy value in the energy file. This energy will be used to set the radiotracer data and generate the corresponding results.</p>
+</section>
+<section id="generation-initial-momentum-directions-momdir">
+<h3>Generation Initial Momentum Directions(MomDir)<a class="headerlink" href="#generation-initial-momentum-directions-momdir" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>General Command</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialMomDirData</span> <span class="p">[</span><span class="n">Angle</span> <span class="n">Unit</span><span class="p">]</span> <span class="p">[</span><span class="n">MomDir</span> <span class="n">Distribution</span><span class="p">]</span> <span class="p">[</span><span class="n">Parameter1</span><span class="p">]</span> <span class="p">[</span><span class="n">Parameter2</span><span class="p">]</span> <span class="o">...</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>The angle unit is the first parameter, followed by the distribution name and, when necessary, the distribution-related parameters.</p>
+<ol class="arabic simple" start="2">
+<li><p>Isotropic Distribution</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialMomDirData</span> <span class="p">[</span><span class="n">Angle</span> <span class="n">Unit</span><span class="p">]</span> <span class="n">Isotropic</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /SourceData/setEventsInitialMomDirData degree Isotropic</p>
+<ol class="arabic simple" start="3">
+<li><p>Uniform Distribution</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialMomDirData</span> <span class="p">[</span><span class="n">Angle</span> <span class="n">Unit</span><span class="p">]</span> <span class="n">Uniform</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /SourceData/setEventsInitialMomDirData degree Uniform</p>
+<ol class="arabic simple" start="4">
+<li><p>Directed Distribution</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialMomDirData</span> <span class="p">[</span><span class="n">Angle</span> <span class="n">Unit</span><span class="p">]</span> <span class="n">Directed</span> <span class="p">[</span><span class="n">Theta</span><span class="p">]</span> <span class="p">[</span><span class="n">Phi</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /SourceData/setEventsInitialMomDirData degree Directed 145 30</p>
+</section>
+<section id="setting-events-particle-names">
+<h3>Setting Events Particle Names<a class="headerlink" href="#setting-events-particle-names" title="Link to this heading"></a></h3>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsParticleNameData</span> <span class="p">[</span><span class="n">Particle1</span><span class="p">]</span> <span class="p">[</span><span class="n">Particle2</span><span class="p">]</span> <span class="o">...</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /SourceData/setEventsParticleNameData gamma e- e+</p>
+<p>If the person wants to simulate all radiotracer emitted particles as a source, the radiotracer symbol should be specified in /SourceData/setEventsParticleNameData, along with the particle and energy distribution file using /SourceData/setEventsInitialEneData.</p>
+</section>
+<section id="setting-events-data-number-activating-data-files-generation">
+<h3>Setting Events Data Number, Activating Data Files Generation<a class="headerlink" href="#setting-events-data-number-activating-data-files-generation" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>General Command</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setSourceGenerationData</span> <span class="p">[</span><span class="n">how</span> <span class="n">to</span> <span class="n">use</span> <span class="n">events</span> <span class="n">data</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>[how to use events data] : can be read, save and generate. The read option necessite the existance of data file named with nomenclature “Ene_EnergyDistribution_Energy_DataNumber_ThreadOrRankID.bin”, “Pos_SourceType_SourceName_DataNumber_ThreadOrRankID.bin” and “MomDir_MomDirDistribution_MomDir_DataNumber_ThreadOrRankID.bin”.</p>
+<p>ex : /SourceData/useDataGenerationFiles read</p>
+<p>DoseCalcs’ data file nomenclature is based on four main inputs: data type, distribution name, a value associated with this distribution, and the number of events to be generated. As a result, whether the file is created during data generation or read during the simulation process, the file name is built in the same way. This nomenclature is used to identify which data file should be used for simulation and to avoid simulation of data with the same name.</p>
+<p>Setting this command activates data generation; data will be generated and stored in data files in generation run mode, and initial data will be read from data files in calculation run mode, where the file name is formed in the same manner as when the file was created. By unsetting these commands, you simply simulate direct event data without having to use data files.</p>
+<p>During simulation, each thread or rank reads the data files and fills the position, energy, and momentum arrays with the number of events assigned to it. It reads the required lines from the data files to prevent an event’s simulation from repeating with the same initial data. As a result, the total number of simulated events by all threads should be equal to or lower than the number of lines in the data files. Each line in a data file represents a position, energy, or momentum direction for an event.</p>
+</section>
+<section id="geometry-and-source-data-visualization">
+<h3>Geometry and Source Data Visualization<a class="headerlink" href="#geometry-and-source-data-visualization" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>To visualize the Box that surrend the source region</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">showSourceBox</span>
+</pre></div>
+</div>
+</div></blockquote>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><figure class="align-default" id="id1">
+<img alt="_images/BoxSurrendVolume.png" src="_images/BoxSurrendVolume.png" />
+<figcaption>
+<p><span class="caption-text">The box surrounds the liver organ</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+</tr>
+</tbody>
+</table>
+<p>In order to decrease the generation CPU time, the box dimensions for initial positions generation must be such that the box surrounds the source region as precisely as possible. As a result, the user may use the /SourceData/showSourceBox command to see the enclosing box in the full geometry, and then fine-tune the box dimensions before doing any generation or computation tasks. It is the user’s task to ensure that a surrender region exists.</p>
+<ol class="arabic simple" start="2">
+<li><p>To Visualize generated initial positions</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">testEventsInitialPositions</span>
+</pre></div>
+</div>
+</div></blockquote>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><figure class="align-default" id="id2">
+<img alt="_images/BoxPointsTestVisualization.png" src="_images/BoxPointsTestVisualization.png" />
+<figcaption>
+<p><span class="caption-text">The generated events’ initial positions with isotropic distribution in liver</span><a class="headerlink" href="#id2" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+</tr>
+</tbody>
+</table>
+<p>If the user wants to see the initial positions, they may do so by running the simulation using the command /SourceData/testEventsInitialPositions. This command disables the transport process across the geometry volumes, showing just the initial source points.</p>
+<p>These two commands are helpful for ensuring that the starting positions in the specified Region volume are correctly produced.</p>
+<ol class="arabic simple" start="3">
+<li><p>To visualize just the ineterest geometry regions without containers</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">GeometryData</span><span class="o">/</span><span class="n">setVolumesVisToNotForced</span> <span class="n">World</span> <span class="n">Trunk</span> <span class="n">Head</span> <span class="n">Legs</span>
+</pre></div>
+</div>
+</div></blockquote>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><figure class="align-default" id="id3">
+<img alt="_images/NotForcedVolumes.png" src="_images/NotForcedVolumes.png" />
+<figcaption>
+<p><span class="caption-text">Visualization DoseCalcs model of the ORNL adult male phantom with with the not forced volumes: world, trunk, head and legs</span><a class="headerlink" href="#id3" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="to-define-physics">
+<h2>To Define Physics<a class="headerlink" href="#to-define-physics" title="Link to this heading"></a></h2>
+<section id="setting-physics">
+<h3>Setting Physics<a class="headerlink" href="#setting-physics" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>General Command</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">PhysicsData</span><span class="o">/</span><span class="n">setPhysicsData</span> <span class="p">[</span><span class="n">Physics</span><span class="p">]</span> <span class="p">[</span><span class="n">Parameters</span> <span class="p">(</span><span class="k">for</span> <span class="s2">&quot;Construct physics&quot;</span><span class="p">)]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p>Electromagnetic constructors, hadron constructors, or general factory</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">PhysicsData</span><span class="o">/</span><span class="n">setPhysicsData</span> <span class="p">[</span><span class="n">Physics</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /PhysicsData/setPhysicsData EMS3</p>
+<p>[Electromagnetic Constructor] parameter can be : for EMS, EMS1, EMS2, EMS3, EMS4, Livermore, Penelope. For hadrons, HADRON_FTFP_BERT, HADRON_FTFP_BERT_ATL, HADRON_FTFP_BERT_TRV, HADRON_QGSP_FTFP_BERT, HADRON_QGSP_BERT, HADRON_QGSP_BERT_HP, HADRON_QGSP_BIC, HADRON_QGSP_BIC_AllHP, HADRON_INCLXX, HADRON_Shielding, HADRON_ShieldingLEND. The EMS3 is used with hadron physics. Or Factory, FACTORY_FTFP_BERT, FACTORY_FTFP_BERT_ATL, FACTORY_FTFP_BERT_TRV, FACTORY_QGSP_FTFP_BERT, FACTORY_QGSP_BERT, FACTORY_QGSP_BERT_HP, FACTORY_QGSP_BIC, FACTORY_QGSP_BIC_AllHP, FACTORY_INCLXX, FACTORY_Shielding, FACTORY_ShieldingLEND.</p>
+<ol class="arabic simple" start="2">
+<li><p>Construct Electromagnetic Physics</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">PhysicsData</span><span class="o">/</span><span class="n">setPhysicsData</span> <span class="n">Construct</span> <span class="p">[</span><span class="n">PhotoElectricEffect</span> <span class="n">Model</span><span class="p">]</span> <span class="p">[</span><span class="n">ComptonScattering</span> <span class="n">Model</span><span class="p">]</span> <span class="p">[</span><span class="n">GammaConversion</span> <span class="n">Model</span><span class="p">]</span> <span class="p">[</span><span class="n">RayleighScattering</span> <span class="n">Model</span><span class="p">]</span> <span class="p">[</span><span class="n">ElectronIonisation</span> <span class="n">Model</span><span class="p">]</span> <span class="p">[</span><span class="n">ElectronBrem</span> <span class="n">Model</span><span class="p">]</span> <span class="p">[</span><span class="n">HadronIonisation</span> <span class="n">Model</span><span class="p">]</span> <span class="p">[</span><span class="n">IonIonisation</span> <span class="n">Model</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>[PhotoElectricEffect Model] can be : 1 for G4PEEffectFluoModel, 2 for G4LivermorePhotoElectricModel, 3 for G4LivermorePolarizedPhotoElectricModel, 4 for G4PenelopePhotoElectricModel.</p>
+<p>[ComptonScattering Model] can be : 1 for G4KleinNishinaCompton, 2 for G4KleinNishinaModel, 3 for G4LowEPComptonModel, 4 for G4LivermoreComptonModel, 5 for G4LivermoreComptonModifiedModel, 6 for G4LivermorePolarizedComptonModel, 7 for G4PenelopeComptonModel, 8 for G4TKleinNishinaCompton.</p>
+<p>[GammaConversion Model] can be : 1 for G4BetheHeitlerModel, 2 for G4BetheHeitler5DModel, 3 for G4PairProductionRelModel, 4 for G4LivermoreGammaConversionModel, 5 for G4BoldyshevTripletModel, 6 for G4LivermoreNuclearGammaConversionModel, 7 for G4LivermorePolarizedGammaConversionModel, 8 for G4PenelopeGammaConversionModel.</p>
+<p>[RayleighScattering Model] can be : 1 for G4LivermoreRayleighModel, 2 for G4LivermorePolarizedRayleighModel, 3 for G4PenelopeRayleighModel.</p>
+<p>[ElectronIonisation Model] can be : 1 for G4MollerBhabhaModel, 2 for G4LivermoreIonisationModel.</p>
+<p>[ElectronBrem Model] can be : 1 for G4SeltzerBergerModel, 2 for G4eBremsstrahlungRelModel, 3 for G4LivermoreBremsstrahlungModel, 4 for G4PenelopeBremsstrahlungModel.</p>
+<p>[HadronIonisation Model] can be : 1 for G4BetheBlochModel, 2 for G4BetheBlochIonGasModel, 3 for G4BraggIonModel, 4 for G4BraggIonGasModel, 5 for G4IonParametrisedLossModel, 6 for G4AtimaEnergyLossModel, 7 for G4LindhardSorensenIonModel.</p>
+<p>[IonIonisation Model] can be : 1 for G4BetheBlochModel, 2 for G4BraggModel, 3 for G4ICRU73QOModel.</p>
+<p>ex : /PhysicsData/setPhysicsData Construct 1 2 1 2 1 1 1 1</p>
+</section>
+<section id="setting-cuts-in-range-and-energy-range-data">
+<h3>Setting Cuts in Range and Energy Range Data<a class="headerlink" href="#setting-cuts-in-range-and-energy-range-data" title="Link to this heading"></a></h3>
+<p>Electrons, positrons, gamma - ray, and protons all have cutoffs. To figure out what the cutoff values for the simulated particles should be. The energy cut value is set to the default minimal energy if the distance cut is not passed. If both cuts miss, the default range cut value for electrons and photons is 1 mm, which is translated to the energy threshold according to the material specification.</p>
+<p>The secondary particles are simulated as continuous energy loss by the incident particle below a threshold energy defined by setting a cut in range or in kinetic energy; this has no significant effect on the simulation results. Secondary particles are explicitly generated and followed over this level.</p>
+<p>If all secondary particles are simulated and tracked, the performance of any Monte Carlo simulation will be low. We employ a cut in range (distance cut) or an energy threshold (energy cut) to minimize simulation duration. The energy threshold in Geant4 can be 1 keV or higher.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">PhysicsData</span><span class="o">/</span><span class="n">setCutsInRange</span> <span class="p">[</span><span class="n">Particle</span> <span class="mi">1</span><span class="p">]</span> <span class="p">[</span><span class="n">Range</span> <span class="ow">in</span> <span class="n">Cut</span> <span class="mi">1</span><span class="p">]</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span> <span class="mi">1</span><span class="p">]</span> <span class="o">...</span> <span class="p">[</span><span class="n">Particle</span> <span class="n">n</span><span class="p">]</span> <span class="p">[</span><span class="n">Range</span> <span class="ow">in</span> <span class="n">Cut</span> <span class="n">n</span><span class="p">]</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span> <span class="n">n</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /PhysicsData/setCutsInRange e- 1 mm e+ 1 mm gamma 2 mm proton 1 cm</p>
+<p>Four particles can be used (n_max = 4), e-, e+, gamma, proton(the proton cuts is used for all hadrons)</p>
+<p>To set the energy range use the command below:</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">PhysicsData</span><span class="o">/</span><span class="n">setEnergyRange</span> <span class="p">[</span><span class="n">Min</span> <span class="n">Energy</span><span class="p">]</span> <span class="p">[</span><span class="n">Energy</span> <span class="n">Unit</span> <span class="n">of</span> <span class="n">Min</span><span class="p">]</span> <span class="p">[</span><span class="n">Max</span> <span class="n">Energy</span><span class="p">]</span> <span class="p">[</span><span class="n">Energy</span> <span class="n">Unit</span> <span class="n">of</span> <span class="n">Max</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /PhysicsData/setEnergyRange 4 keV 10 MeV</p>
+</section>
+<section id="generating-cross-section-data">
+<h3>Generating Cross Section Data<a class="headerlink" href="#generating-cross-section-data" title="Link to this heading"></a></h3>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">PhysicsData</span><span class="o">/</span><span class="n">generateCrossSectionFor</span> <span class="p">[</span><span class="n">Particle</span> <span class="n">Name</span><span class="p">]</span> <span class="p">[</span><span class="n">Energy</span> <span class="n">Unit</span><span class="p">]</span> <span class="p">[</span><span class="n">Energy1</span><span class="p">]</span> <span class="p">[</span><span class="n">Energy2</span><span class="p">]</span> <span class="p">[</span><span class="n">Energy3</span><span class="p">]</span> <span class="o">...</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /PhysicsData/generateCrossSectionFor gamma MeV 0.01 0.015 0.02 0.03 0.05 0.1 0.2 0.5 1</p>
+<p>A table of macroscopic cross-sections will be prepared for each created material in the geometry using this command. It comprises columns for particle name and all set energies for all processes to be simulated, which are saved to the [CrossSectionData] file.</p>
+</section>
+</section>
+<section id="to-set-run-and-score-parameters">
+<h2>To Set Run and Score Parameters<a class="headerlink" href="#to-set-run-and-score-parameters" title="Link to this heading"></a></h2>
+<section id="setting-a-new-results-directory">
+<h3>Setting a New Results Directory<a class="headerlink" href="#setting-a-new-results-directory" title="Link to this heading"></a></h3>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">RunAndScoreData</span><span class="o">/</span><span class="n">setResultDirectoryPath</span> <span class="p">[</span><span class="n">Path</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /RunAndScoreData/setResultDirectoryPath /../../Results/ICRPResults</p>
+</section>
+<section id="setting-volumes-to-score">
+<h3>Setting Volumes To Score<a class="headerlink" href="#setting-volumes-to-score" title="Link to this heading"></a></h3>
+<p>The results will be calculated for the set source-target combinations. If you want to calculate the results for all defined sources and targets in results directory, set “all” instead of  “[Volume1] [Volume2] [Volume3] …” after source and target keyword.</p>
+<p>ex1 : /RunAndScoreData/setVolumesToScore source LiverVol LungsVol target SpleenVol PancreasVol</p>
+<p>ex2 : /RunAndScoreData/setVolumesToScore source all target all</p>
+<p>You can define a combination of several geometry-defined target regions in one for example:</p>
+<p>ex : /RunAndScoreData/setVolumesToScore source all target LiverVol LungsVol:LeftLung:RightLung</p>
+<p>The result will be given for LungsVol as a new region in form of combination of LeftLung and RightLung regions.</p>
+<p>sex : /RunAndScoreData/setVolumesToScore source all target LungsVol:LeftLung:RightLung</p>
+<p>Also, you can generate results by considering a number of simulated source organs as one combined source organ</p>
+<p>sex : /RunAndScoreData/setVolumesToScore source LungsVol:LeftLung:RightLung target all</p>
+</section>
+<section id="setting-quantities-to-score">
+<h3>Setting Quantities To Score<a class="headerlink" href="#setting-quantities-to-score" title="Link to this heading"></a></h3>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">RunAndScoreData</span><span class="o">/</span><span class="n">setQuantitiesToScore</span> <span class="p">[</span><span class="n">Quantity1</span><span class="p">]</span> <span class="p">[</span><span class="n">Quantity2</span><span class="p">]</span> <span class="p">[</span><span class="n">Quantity3</span><span class="p">]</span> <span class="o">...</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /RunAndScoreData/setQuantitiesToScore SAF AE S E</p>
+<p>AE stands for absorbed energy, AF for absorbed fraction, SAF for specific absorbed fraction, AD for absorbed dose, S for S values, H for equivalent dose, E for effective dose, ER for effective dose ratio and DR for absorbed dose ratio. Set the commands /setVolumesToScore and /setQuantitiesToScore to “all” or “All” to generate all quantities results in all simulation geometry regions.</p>
+<p>The calculation of radiotracer dosimetry quantities is done with the help of the /RunAndScoreData/setRadioTracerData command by accumulating data for each related emitted particle-energy, either by using particle-energy simulated data or by interpolating the existing simulated particle-energy data if the specific particle energy data is not found.</p>
+</section>
+<section id="setting-number-of-simulation-per-ranks">
+<h3>Setting Number Of Simulation Per Ranks<a class="headerlink" href="#setting-number-of-simulation-per-ranks" title="Link to this heading"></a></h3>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">RunAndScoreData</span><span class="o">/</span><span class="n">setSimNumOnRanks</span> <span class="p">[</span><span class="n">one</span> <span class="ow">or</span> <span class="n">multi</span> <span class="n">simulations</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>[Simulation Number] can be : one(o) , multi(m)</p>
+<p>ex : /RunAndScoreData/setSimNumOnRanks o</p>
+</section>
+<section id="setting-number-of-threads">
+<h3>Setting Number Of threads<a class="headerlink" href="#setting-number-of-threads" title="Link to this heading"></a></h3>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">RunAndScoreData</span><span class="o">/</span><span class="n">setNumberOfThreads</span> <span class="p">[</span><span class="n">Number</span> <span class="n">Of</span> <span class="n">Threads</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /RunAndScoreData/setNumberOfThreads 4</p>
+</section>
+<section id="setting-additional-related-quantities-data">
+<h3>Setting Additional Related Quantities Data<a class="headerlink" href="#setting-additional-related-quantities-data" title="Link to this heading"></a></h3>
+<p>To set the particle-energy radiation factor, if not set, the default DoseCalcs values will be used.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">RunAndScoreData</span><span class="o">/</span><span class="n">setRadiationFactors</span> <span class="p">[</span><span class="n">Particle1</span><span class="p">]</span> <span class="p">[</span><span class="n">Energy1</span><span class="p">]</span> <span class="p">[</span><span class="n">Wr1</span><span class="p">]</span> <span class="o">...</span> <span class="p">[</span><span class="n">Particlen</span><span class="p">]</span> <span class="p">[</span><span class="n">Energyn</span><span class="p">]</span> <span class="p">[</span><span class="n">Wrn</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>[Wr] : particle-energy radiation factor</p>
+<p>ex : /RunAndScoreData/setRadiationFactors gamma 1 1 gamma 0.511 1 alpha 2 20</p>
+<p>To set the organ (or tissue) factor, if not set, the default DoseCalcs values will be used.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">RunAndScoreData</span><span class="o">/</span><span class="n">setTissueFactors</span> <span class="p">[</span><span class="n">Organ1</span><span class="p">]</span> <span class="p">[</span><span class="n">Wt1</span><span class="p">]</span> <span class="o">...</span> <span class="p">[</span><span class="n">Organn</span><span class="p">]</span> <span class="p">[</span><span class="n">Wtn</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>[Wt] : tissue factor of organ</p>
+<p>ex : /RunAndScoreData/setTissueFactors Legs 0.12 Skin 0.01</p>
+<p>To set the radiotracer data</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">RunAndScoreData</span><span class="o">/</span><span class="n">setRadioTracerData</span> <span class="p">[</span><span class="n">RadioTracer</span><span class="p">]</span> <span class="p">[</span><span class="n">Energy</span> <span class="n">Unit</span><span class="p">]</span> <span class="p">[</span><span class="n">Particle1</span><span class="p">]</span> <span class="p">[</span><span class="n">Energy1</span><span class="p">]</span> <span class="p">[</span><span class="n">Yield1</span><span class="p">]</span> <span class="o">...</span> <span class="p">[</span><span class="n">Particlen</span><span class="p">]</span> <span class="p">[</span><span class="n">Energyn</span><span class="p">]</span> <span class="p">[</span><span class="n">Yieldn</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>[Particle] : emitted particle from radiotracer</p>
+<p>[Energy] : energy of emitted particle</p>
+<p>[Yield] : yield of emitted particle</p>
+<p>ex : /RunAndScoreData/setRadioTracerData 18-FDG MeV e+ 0.6335 96.73 e- 0.000502 2.89 e- 0.0000143 0.229</p>
+<p>The absorbed energy result file (AE&#64;For&#64;Rank&#64;i&#64;Thread&#64;j&#64;SourceOrgan&#64;Particle&#64;Energy) must exist for this command to generate results (AE, AF, SAF, AD, S, DR, H, and E) of radiotracer, which is a number of emitted particles each with its own awn yield. Note that the radiotracer particle-energy is presented in single particle simulation for each simulated source. The results of the Quantities (AD, H, and E) are based on emission rather than all simulated events.</p>
+<p>The radiotracer data to retrieve the results for a source-target combination include radiotracer name, which is regarded a particle name, the radiotracer maximal emitted energy, and 100 as the yield if the user simulated the whole radiotracer particle spectrum. The following is an example of a command:</p>
+<blockquote>
+<div><p>/RunAndScoreData/setRadioTracerData I131 MeV I131 0.722911 100</p>
+</div></blockquote>
+<p>To calculate absorbed dose, equivalent dose, and effective dose in all body defined regions as a result of a givin injected activity, set the radiotracer biokinetic.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">RunAndScoreData</span><span class="o">/</span><span class="n">setRadioTracerBiokinetic</span> <span class="p">[</span><span class="n">RadioTracer</span><span class="p">]</span> <span class="p">[</span><span class="n">InjectedActivity</span><span class="p">]</span> <span class="p">[</span><span class="n">InjectedActivity</span> <span class="n">Unit</span><span class="p">]</span> <span class="p">[</span><span class="n">As1</span><span class="o">/</span><span class="n">A0</span> <span class="n">Unit</span><span class="p">]</span> <span class="p">[</span><span class="n">SourceOrgan1</span><span class="p">]</span> <span class="p">[</span><span class="n">As1</span><span class="o">/</span><span class="n">A0</span><span class="p">]</span> <span class="p">[</span><span class="n">SourceOrgan2</span><span class="p">]</span> <span class="p">[</span><span class="n">As2</span><span class="o">/</span><span class="n">A0</span><span class="p">]</span> <span class="o">...</span> <span class="p">[</span><span class="n">SourceOrgann</span><span class="p">]</span> <span class="p">[</span><span class="n">Asn</span><span class="o">/</span><span class="n">A0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>[InjectedActivity] : injected activity of radiotracer (should be set in MBq)</p>
+<p>[InjectedActivity Unit] can be : Bq, kBq, MBq and GBq. Default is Bq.</p>
+<p>[As/A0 Unit] can be : s, min, h, d and y. Default is s.</p>
+<p>[SourceOrgan1] : the organ or tissue simulated as a source of radiotracer</p>
+<p>[As/A0] : cumulated activity in organ or tissue s per unit of injected activity A0</p>
+<p>ex : /RunAndScoreData/setRadioTracerBiokinetic 18-FDG 500 MBq h Brain 0.21 Heart_wall 0.11 Lungs 0.079 Liver 0.13 Urinary_bladder_contents 0.26 Other 1.7</p>
+<p>When a radiotracer activity is provided, this command is used to generate AD, H, and E from all body organs or tissues. The command should be used after setting /setRadioTracerData, as the results are based on the previous command’s results.</p>
+<p>To set the quantities units produced in [ResultsData].</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">RunAndScoreData</span><span class="o">/</span><span class="n">setQuantitiesUnits</span> <span class="p">[</span><span class="n">Quantity1</span><span class="p">]</span> <span class="p">[</span><span class="n">Unit1</span><span class="p">]</span> <span class="o">...</span> <span class="p">[</span><span class="n">Quantityn</span><span class="p">]</span> <span class="p">[</span><span class="n">Unitn</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>[Quantity] can be : AE, SAF, AD, S, H and E</p>
+<p>[Unit] can be : for AE (MeV, J) , SAF (kg-1, g-1), AD (MeV/kg, Gy, mGy), S (MeV/kg, Gy, mGy), H (MeV/kg, Gy, mGy, Sv, mSv) and E (MeV/kg, Gy, mGy, Sv, mSv)</p>
+<p>ex : /RunAndScoreData/setQuantitiesUnits AE MeV SAF kg-1 AD MeV/kg S MeV/kg H MeV/kg E MeV/kg</p>
+<p>The default units are for AE (MeV) , SAF (kg-1), AD (MeV/kg), S (MeV/kg), H (MeV/kg) and E (MeV/kg).</p>
+<p>Results units :</p>
+<p>When the results are given for single particles, the AD, H, and E per particle emission from the source, and for radiotracers, the AD, H, and E per decay of radio isotope in the radiotracer
+.. Where AD, H and E results for radiotracer based on administered activity are given without Bq unit.</p>
+</section>
+</section>
+<section id="analysis-using-root">
+<h2>Analysis using ROOT<a class="headerlink" href="#analysis-using-root" title="Link to this heading"></a></h2>
+<p>Before starting the DoseCalcs analysis methods, it is important to note that the  and [ResultsData] files contain region names, particle names, and energies. When using reference files written in a specific format, the user should double-check that the region names, particle names, and energies are consistent across all of these files. Furthermore, the analysis result files will only be generated for the particle names specified in the [macros] file.</p>
+<section id="setting-graphs-parameters">
+<h3>Setting Graphs Parameters<a class="headerlink" href="#setting-graphs-parameters" title="Link to this heading"></a></h3>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">AnalysisData</span><span class="o">/</span><span class="n">setGraphsParameters</span> <span class="p">[</span><span class="n">Use</span> <span class="n">Log</span> <span class="k">for</span> <span class="n">E</span> <span class="n">axis</span><span class="p">]</span> <span class="p">[</span><span class="n">Use</span> <span class="n">Log</span> <span class="k">for</span> <span class="n">Variable</span> <span class="n">axis</span><span class="p">]</span> <span class="p">[</span><span class="n">Use</span> <span class="n">Grid</span> <span class="n">XY</span><span class="p">]</span> <span class="p">[</span><span class="n">Print</span> <span class="n">Title</span><span class="p">]</span> <span class="p">[</span><span class="n">Legend</span> <span class="n">Position</span><span class="p">]</span> <span class="p">[</span><span class="n">Legend</span> <span class="n">X</span> <span class="n">Width</span><span class="p">]</span> <span class="p">[</span><span class="n">Legend</span> <span class="n">Y</span> <span class="n">Height</span><span class="p">]</span> <span class="p">[</span><span class="n">Use</span> <span class="n">Error</span> <span class="n">Bar</span><span class="p">]</span> <span class="p">[</span><span class="n">Graphs</span> <span class="n">Extension</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>[Use Log for E axis] can be : yes, no.</p>
+<p>[Use Log for Variable axis] can be : yes, no.</p>
+<p>[Use Grid XY] can be : yes, no.</p>
+<p>[Print Title] can be : yes, no.</p>
+<p>[Legend Position] can be : RightBottom, LeftBottom, RightTop, LeftTop, MiddleBottom, MiddleTop .</p>
+<p>[Legend X Width] : double Value</p>
+<p>[Legend Y Height] : double Value</p>
+<p>[Use Error Bar] can be : yes, no.</p>
+<p>[Graphs Extension] can be : .root , .pdf , .ps , .png , .jpeg .</p>
+<p>ex : /AnalysisData/setGraphsParameters yes no yes yes RightTop 0.15 0.23 yes .pdf</p>
+</section>
+<section id="generate-self-and-cross-graphs">
+<h3>Generate Self and Cross Graphs<a class="headerlink" href="#generate-self-and-cross-graphs" title="Link to this heading"></a></h3>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">AnalysisData</span><span class="o">/</span><span class="n">generateSelfCrossGraphs</span> <span class="p">[</span><span class="n">Graphs</span> <span class="n">Data</span><span class="p">]</span> <span class="p">[</span><span class="n">Compare</span> <span class="n">Type</span><span class="p">]</span> <span class="p">[</span><span class="n">Reference</span> <span class="n">Name</span><span class="p">]</span> <span class="p">[</span><span class="n">Reference</span> <span class="n">File</span> <span class="n">Path</span><span class="p">]</span> <span class="p">[</span><span class="n">Reference</span> <span class="n">Name2</span><span class="p">]</span> <span class="p">[</span><span class="n">Reference</span> <span class="n">File</span> <span class="n">Path2</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /AnalysisData/generateSelfCrossGraphs Reference_Result Self_Cross .pdf MIRD /home/User/DoseCalcs/Results/MIRDReferenceData.txt</p>
+<p>[Graphs Data] can be : Result , Reference_Result.</p>
+<p>[Compare Type] can be : Self, Cross, Self_Cross .</p>
+</section>
+<section id="generate-relative-error-graph">
+<h3>Generate Relative Error Graph<a class="headerlink" href="#generate-relative-error-graph" title="Link to this heading"></a></h3>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">AnalysisData</span><span class="o">/</span><span class="n">generateRelativeErrGraph</span> <span class="p">[</span><span class="n">Comparison</span> <span class="n">Factor</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>[Comparison Factor] can be : RA (Ratio), RD (Relative Difference) or LRD (Logarithmic Relative Difference),</p>
+</section>
+<section id="generate-relative-standard-deviation-graph">
+<h3>Generate Relative Standard Deviation Graph<a class="headerlink" href="#generate-relative-standard-deviation-graph" title="Link to this heading"></a></h3>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">AnalysisData</span><span class="o">/</span><span class="n">generateRelativeSDevGraph</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="generate-variable-region-graph">
+<h3>Generate Variable-Region Graph<a class="headerlink" href="#generate-variable-region-graph" title="Link to this heading"></a></h3>
+<p>The user can generate a graph of a quantity, such as SAF, in function of either volume, mass, or density of the targets, by using the /AnalysisData/generateVariableRegionGraph command, which takes the variable name (i.e. Mass, Volume, and Density) as a parameter in the context of data analysis for internal dosimetry. This will demonstrate how the value of a dosimetry quantity varies across targets and sources, as well as provide information about the parameters that influence this scored quantity.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">AnalysisData</span><span class="o">/</span><span class="n">generateVariableRegionGraph</span> <span class="p">[</span><span class="n">Parameter</span> <span class="n">Name</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /AnalysisData/generateVariableRegionGraph Volume</p>
+<p>[Parameter Name] can be : Volume, Mass, Density, Distance.</p>
+</section>
+<section id="generate-events-data-histograms">
+<h3>Generate Events Data Histograms<a class="headerlink" href="#generate-events-data-histograms" title="Link to this heading"></a></h3>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">AnalysisData</span><span class="o">/</span><span class="n">generateEventsDataHisto</span> <span class="p">[</span><span class="n">Initial</span> <span class="n">Positions</span> <span class="n">file</span> <span class="n">Path</span><span class="p">]</span> <span class="p">[</span><span class="n">Initial</span> <span class="n">Energies</span> <span class="n">file</span> <span class="n">Path</span><span class="p">]</span> <span class="p">[</span><span class="n">Initial</span> <span class="n">Momentum</span> <span class="n">Directions</span> <span class="n">file</span> <span class="n">Path</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="generate-results-in-csv-and-latex-format">
+<h3>Generate results in .csv and Latex format<a class="headerlink" href="#generate-results-in-csv-and-latex-format" title="Link to this heading"></a></h3>
+<p>[CrossSectionData] is generated directly from [simulate] executable, [RegionsLatexTables] is generated by [analysis] executable and contains tables of all scored quantities in all scored regions with comparison to the first reference data, and [ResRefLatexTables] is generated by [analysis] executable and contains tables of all scored quantities in all scored regions with comparison to the first reference data.</p>
+</section>
+<section id="analysis-input-and-output-examples">
+<h3>[analysis] input and output examples<a class="headerlink" href="#analysis-input-and-output-examples" title="Link to this heading"></a></h3>
+<p>The files of self-cross irradiation and statistical unsertanties graphs, latex and .csv tables in this section are generated based on [macros] and [ResultsData] files. Also the relative differences between DoseCalcs and the results of other study (the data should be written in a specific format). The needed files are:</p>
+<p><a class="reference download internal" download="" href="_downloads/333f879d3ab4a6e3f36eaa7988e8709d/AnalysisMacros.mac"><code class="xref download docutils literal notranslate"><span class="pre">macros</span> <span class="pre">file</span></code></a>.
+<a class="reference download internal" download="" href="_downloads/d786802b06306a1446cfafd90da8a162/ResultsData"><code class="xref download docutils literal notranslate"><span class="pre">ResultsData</span> <span class="pre">file</span></code></a>.
+<a class="reference download internal" download="" href="_downloads/06add33e95dbba9b9f97452ea49ba9d1/StylizedORNL1987SAFData.txt"><code class="xref download docutils literal notranslate"><span class="pre">Reference</span> <span class="pre">or</span> <span class="pre">another</span> <span class="pre">results</span> <span class="pre">file</span></code></a>.</p>
+<p>The analysis commands in the [macros] file used for this tasks are:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="o">....</span>
+<span class="linenos">2</span><span class="o">..</span>
+<span class="linenos">3</span><span class="o">/</span><span class="n">AnalysisData</span><span class="o">/</span><span class="n">generateSelfCrossGraphs</span> <span class="n">Reference_Result</span> <span class="n">Self_Cross</span> <span class="n">ICRP</span> <span class="o">/</span><span class="n">home</span><span class="o">/../</span><span class="n">Results</span><span class="o">/</span><span class="n">References</span>
+<span class="linenos">4</span><span class="o">/</span><span class="n">AnalysisData</span><span class="o">/</span><span class="n">generateRelativeSDevGraph</span>
+<span class="linenos">5</span><span class="o">/</span><span class="n">AnalysisData</span><span class="o">/</span><span class="n">generateRelativeErrGraph</span> <span class="n">RA</span>
+</pre></div>
+</div>
+<p>Examples of the generated files for self-cross of the DoseCalcs result and compared to the ORNL reference data, standard deviation, and comparison factors, are shown below:</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><figure class="align-default" id="id4">
+<img alt="_images/Cross_Result_SAF_ORNLAdultMale_Liver_gamma.png" src="_images/Cross_Result_SAF_ORNLAdultMale_Liver_gamma.png" />
+<figcaption>
+<p><span class="caption-text">Results Cross Irradiation Graph</span><a class="headerlink" href="#id4" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+</tr>
+<tr class="row-even"><td><figure class="align-default" id="id5">
+<img alt="_images/Cross_ReferenceResult_SAF_ORNLAdultMale_gamma_Liver_Kidneys_DoseCalcs_With_Comparison.png" src="_images/Cross_ReferenceResult_SAF_ORNLAdultMale_gamma_Liver_Kidneys_DoseCalcs_With_Comparison.png" />
+<figcaption>
+<p><span class="caption-text">Results and Reference (ORNL Adult Male Data) Cross Irradiation Graph from Spleen to Liver</span><a class="headerlink" href="#id5" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+</tr>
+<tr class="row-odd"><td><figure class="align-default" id="id6">
+<img alt="_images/Self_Result_SAF_ORNLAdultMale_gamma.png" src="_images/Self_Result_SAF_ORNLAdultMale_gamma.png" />
+<figcaption>
+<p><span class="caption-text">Results Self Absorption Graph</span><a class="headerlink" href="#id6" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+</tr>
+<tr class="row-even"><td><figure class="align-default" id="id7">
+<img alt="_images/Self_ReferenceResult_SAF_ORNLAdultMale_gamma_Liver_DoseCalcs_With_Comparison.png" src="_images/Self_ReferenceResult_SAF_ORNLAdultMale_gamma_Liver_DoseCalcs_With_Comparison.png" />
+<figcaption>
+<p><span class="caption-text">Results and Reference For Liver Self Irradiation Graph</span><a class="headerlink" href="#id7" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+</tr>
+<tr class="row-odd"><td><figure class="align-default" id="id8">
+<img alt="_images/RelativeSDv_SelfSAF_ORNLAdultMale_.png" src="_images/RelativeSDv_SelfSAF_ORNLAdultMale_.png" />
+<figcaption>
+<p><span class="caption-text">Self Relative SDv Graph</span><a class="headerlink" href="#id8" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+</tr>
+<tr class="row-even"><td><figure class="align-default" id="id9">
+<img alt="_images/RelativeSDv_CrossSAF_ORNLAdultMale_Liver.png" src="_images/RelativeSDv_CrossSAF_ORNLAdultMale_Liver.png" />
+<figcaption>
+<p><span class="caption-text">Cross Relative SDv Graph</span><a class="headerlink" href="#id9" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+</tr>
+<tr class="row-odd"><td><figure class="align-default" id="id10">
+<img alt="_images/RelativeDifference_Self_SAF_ORNLAdultMale_DoseCalcs_vs_ORNLAdultMale.png" src="_images/RelativeDifference_Self_SAF_ORNLAdultMale_DoseCalcs_vs_ORNLAdultMale.png" />
+<figcaption>
+<p><span class="caption-text">Self Relative differences Graph</span><a class="headerlink" href="#id10" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+</tr>
+<tr class="row-even"><td><figure class="align-default" id="id11">
+<img alt="_images/RelativeDifference_Cross_SAF_ORNLAdultMale_Liver_DoseCalcs_With_Comparison.png" src="_images/RelativeDifference_Cross_SAF_ORNLAdultMale_Liver_DoseCalcs_With_Comparison.png" />
+<figcaption>
+<p><span class="caption-text">Liver Cross Relative differences Graph</span><a class="headerlink" href="#id11" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The cross-section graphs based on [CrossSectionData], which is generated using the command in [macros]:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="o">....</span>
+<span class="linenos">2</span><span class="o">..</span>
+<span class="linenos">3</span><span class="o">/</span><span class="n">PhysicsData</span><span class="o">/</span><span class="n">generateCrossSectionFor</span> <span class="n">gamma</span> <span class="n">MeV</span> <span class="mf">0.01</span> <span class="mf">0.015</span> <span class="mf">0.02</span> <span class="mf">0.03</span> <span class="mf">0.05</span> <span class="mf">0.1</span> <span class="mf">0.2</span> <span class="mf">0.5</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>This command is used by the [simulate] executable to generate the macroscopic cross-section tables in the [CrossSectionData] file (containing data in text and latex format). Then, the [analysis] executable gets the flag from this command to generate the macroscopic cross-section using the data in the [CrossSectionData] file.</p>
+<p>The cross-section graphs examples:</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><figure class="align-default" id="id12">
+<img alt="_images/Macroscopic_Cross_Section_for_gamma_in_material_Skeleton.png" src="_images/Macroscopic_Cross_Section_for_gamma_in_material_Skeleton.png" />
+<figcaption>
+<p><span class="caption-text">Macroscopic Cross Section Graph in Skeleton material</span><a class="headerlink" href="#id12" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+</tr>
+<tr class="row-even"><td><figure class="align-default" id="id13">
+<img alt="_images/Macroscopic_Cross_Section_for_gamma_in_material_SoftTissue1.png" src="_images/Macroscopic_Cross_Section_for_gamma_in_material_SoftTissue1.png" />
+<figcaption>
+<p><span class="caption-text">Macroscopic Cross Section Graph in SoftTissue material</span><a class="headerlink" href="#id13" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The initial energy, initial momentum direction and initial position histograms based on initial events data binary files are generated by [analysis] executable using the commands below :</p>
+<p>The cross-section graphs based on [CrossSectionData], which is generated using the command in [macros]:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="o">....</span>
+<span class="linenos">2</span><span class="o">..</span>
+<span class="linenos">3</span><span class="o">/</span><span class="n">AnalysisData</span><span class="o">/</span><span class="n">generateEventsDataHisto</span> <span class="o">../../</span><span class="n">Pos_Path</span><span class="o">.</span><span class="n">bin</span> <span class="o">../../</span><span class="n">Ene_Path</span><span class="o">.</span><span class="n">bin</span> <span class="o">../../</span><span class="n">Mom_Path</span><span class="o">.</span><span class="n">bin</span>
+</pre></div>
+</div>
+<p>As an exampe, the [analysis] results of histograms are shown below:</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><figure class="align-default" id="id14">
+<img alt="_images/Energy_Spatial_Histo.png" src="_images/Energy_Spatial_Histo.png" />
+<figcaption>
+<p><span class="caption-text">Initial energy with Rayleigh distribution, and initial energy-spatial distribution in the left kidney region</span><a class="headerlink" href="#id14" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+</tr>
+<tr class="row-even"><td><figure class="align-default" id="id15">
+<img alt="_images/Spatial_Histo.png" src="_images/Spatial_Histo.png" />
+<figcaption>
+<p><span class="caption-text">Initial positions distribution in the left kidney region</span><a class="headerlink" href="#id15" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+</tr>
+<tr class="row-odd"><td><figure class="align-default" id="id16">
+<img alt="_images/Momentum_Direction_Histo.png" src="_images/Momentum_Direction_Histo.png" />
+<figcaption>
+<p><span class="caption-text">Initial momentum direction in the isotropic distribution</span><a class="headerlink" href="#id16" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Also, the [analysis] executable produces the data files containing latex format tables of target regions’ data (<a class="reference download internal" download="" href="_downloads/90b9af3579e3eb7dc6e5cd6c907a2d0b/RegionsLatexTables"><code class="xref download docutils literal notranslate"><span class="pre">Latex</span> <span class="pre">scored</span> <span class="pre">regions</span> <span class="pre">data</span></code></a>), to generate data for all regions, the <a class="reference download internal" download="" href="_downloads/d786802b06306a1446cfafd90da8a162/ResultsData"><code class="xref download docutils literal notranslate"><span class="pre">ResultsData</span> <span class="pre">file</span></code></a>  should contatins the results in all regions as targets; macroscopic cross-section data in latex format (<a class="reference download internal" download="" href="_downloads/744172ccd6bd0fc8f686e1b125eb927f/CrossSectionData"><code class="xref download docutils literal notranslate"><span class="pre">CrossSectionData</span></code></a>); in addition to the self-cross results with standard deviation and compared to other results in latex format (<a class="reference download internal" download="" href="_downloads/47b20d097eaa9b93a7c951a989caddf1/ResRefLatexTables"><code class="xref download docutils literal notranslate"><span class="pre">latex</span> <span class="pre">tesults</span></code></a>) and .csv format (<a class="reference download internal" download="" href="_downloads/98f6e6c1469cd32507596148aa467c7d/DoseCalcs-ORNLAdultMale_Particles_SAF.csv"><code class="xref download docutils literal notranslate"><span class="pre">.csv</span> <span class="pre">results</span></code></a>).</p>
+<p>All the given files in this section and others can be found in the (<a class="reference download internal" download="" href="_downloads/e2c93830e6960bb6dbf3bcaee9c217ed/AnaInOut.tar.xz"><code class="xref download docutils literal notranslate"><span class="pre">[analysis]</span> <span class="pre">inputs</span> <span class="pre">and</span> <span class="pre">outputs</span> <span class="pre">zip</span> <span class="pre">file</span></code></a>). To regenerate these files, one should make sure that you alter the paths of files on your local machine.</p>
+<p>After downloading (<a class="reference download internal" download="" href="_downloads/e2c93830e6960bb6dbf3bcaee9c217ed/AnaInOut.tar.xz"><code class="xref download docutils literal notranslate"><span class="pre">[analysis]</span> <span class="pre">inputs</span> <span class="pre">and</span> <span class="pre">outputs</span> <span class="pre">zip</span> <span class="pre">file</span></code></a>), unpack it in the build directory where the [analysis] executable is, in the terminal type:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>$ cd /../DoseCalcs_build
+<span class="linenos">2</span>$ ./analysis AnaInOut/AnalysisMacros.mac
+</pre></div>
+</div>
+<p>The graphs and tables are generated according to the geometries, particles, source regions, and target regions defined in result files generated by [merge] executable and existed in the result directory. Thus, to generate a graph that contains a specific geometry, particle, and source region data, the other result files that contain the unneeded geometries, particles, and source region should be moved from the result directory.</p>
+<p>In addition, all the ROOT graph parameters in the generated graphs by [analysis] can be edited in the ROOT Browser interface as shown below. This can be done only if the generated files are in the .root extension. To run the ROOT Browser, first, you should locate the root binary and run it. Then, in the terminal type:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>$ /../root -e &quot;TBrowser x&quot;
+</pre></div>
+</div>
+<p>In the Browser, navigate to the [analysis] generated root file (in .root extension), for example the macroscopic cross-section graph in Browser will be shown as:</p>
+<blockquote>
+<div><img alt="_images/TBrowserROOT.png" src="_images/TBrowserROOT.png" />
+</div></blockquote>
+<p>For more about root and TBrowser, the user should use the root documentation in <a class="reference external" href="https://root.cern/doc/master/">https://root.cern/doc/master/</a></p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="GeneralConcept.html" class="btn btn-neutral float-left" title="DoseCalcs-Core Simulations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Applications.html" class="btn btn-neutral float-right" title="DoseCalcs-Core Applications" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Tarik El Ghalbzouri.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

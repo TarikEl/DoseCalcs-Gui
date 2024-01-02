@@ -1,0 +1,41 @@
+#######################################################  Materials  ###########################
+#######################################################  world volume ########################
+
+/GeometryData/createWorld ORNLPhantom.gdml
+# or /GeometryData/createVolume ORNLPhantom.gdml
+#######################################################  Volumes  ############################
+/GeometryData/createVolume Thyroid.geom Head 0 -3.91 -4.05 0 0 180 cm degree
+/GeometryData/createVolume Brain.c++ Head 0 0 8.25 0 0 0 cm degree
+/GeometryData/createVolume Testes.ast SoftTissue MaleGenitalia 0 3 0 90 0 0 cm degree
+/GeometryData/createSolid Ellipsoid SpleenSol 3.2 2.3 5.7 cm
+/GeometryData/createVolume Spleen SpleenSol SoftTissue Trunk 10.79 2.94 1.8 0 0 0 cm degree
+
+#######################################################  Physics  ############################
+/PhysicsData/setPhysicsData EMS3
+/PhysicsData/setCutsData 0.1 1 mm keV
+#/PhysicsData/generateCrossSectionFor gamma MeV 0.01 0.015 0.02 0.03 0.05 0.1 0.2 0.5 1
+
+#######################################################  Source  ############################
+/SourceData/setEventsParticleNameData gamma
+/SourceData/setEventsInitialPosData cm Volume  Thyroid 2. 2.1 2.2 Liver 15. 8. 8. Kidneys 16.1 2. 5. 
+/SourceData/setEventsInitialEneData MeV Mono 0.01 0.015 0.02 0.03 0.05 0.1 0.2 0.5 1
+/SourceData/setEventsInitialMomDirData degree Isotropic
+#/SourceData/useDataGenerationFiles save
+
+#/SourceData/showSourceBox
+#/SourceData/testEventsInitialPositions
+
+#######################################################  Score  ############################
+/RunAndScoreData/setVolumesToScore Liver Adrenals Kidneys
+/RunAndScoreData/setQuantitiesToScore SAF
+/RunAndScoreData/setSimNumOnRanks m
+/RunAndScoreData/setNumberOfThreads 27
+
+#######################################################  Analysis  ############################
+/AnalysisData/generateSelfCrossGraphs Reference_Result Self_Cross ORNL Results/References/StylizedORNL1987SAFData.txt ICRP Results/References/VoxelizedMaleICRPRefData.txt
+/AnalysisData/generateRelativeErrGraph
+/AnalysisData/generateRelativeSDevGraph
+/AnalysisData/generateVariableRegionGraph Mass
+/AnalysisData/generateEventsDataHisto
+/AnalysisData/setGraphsParameters yes no yes yes RightTop 0.15 0.23 yes .pdf
+

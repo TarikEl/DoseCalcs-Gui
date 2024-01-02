@@ -1,0 +1,36 @@
+#######################################################  Geometry  ############################
+
+/GeometryData/createVolume GDML Scripts/PhantomVol.gdml
+
+#######################################################  Physics  ############################
+
+/PhysicsData/setPhysicsData EMS3
+/PhysicsData/setCutsData 0.1 1. mm keV
+/PhysicsData/generateCrossSectionFor gamma MeV 0.01 0.015 0.02 0.03 0.05 0.1 0.2 0.5 1
+
+#######################################################  Source  ############################
+
+/SourceData/setEventsParticleNameData gamma
+/SourceData/setEventsInitialPosData cm Volume Liver 15. 8. 8. Adrenal 10.5 0.5 4.96 Kidney 16. 2. 5.
+/SourceData/setEventsInitialEneData MeV Mono 0.01 0.015 0.02 0.03 0.05 0.1 0.2 0.5 1
+/SourceData/setEventsInitialMomDirData degree Isotropic
+/SourceData/useDataGenerationFiles 40000000 yes yes yes
+
+#/SourceData/testEventsInitialPositions
+#/SourceData/showSourceBox
+
+#######################################################  Run And Score  ############################
+
+/RunAndScoreData/setVolumesToScore Liver Kidney Adrenal
+/RunAndScoreData/setQuantitiesToScore SAF
+/RunAndScoreData/setSimNumOnRanks m
+
+#######################################################  Analysis  ############################
+
+/AnalysisData/generateSelfCrossGraphs Reference_Result Self_Cross MIRD /home/tarik/Desktop/WorkSpace/Projects/DoseCalcsCore/Results/ReferenceData.txt
+/AnalysisData/generateRelativeErrGraph
+/AnalysisData/generateRelativeSDevGraph
+/AnalysisData/generateVariableRegionGraph Mass
+/AnalysisData/generateEventsDataHisto
+/AnalysisData/setGraphsParameters yes no yes yes RightTop .pdf
+

@@ -1,0 +1,140 @@
+
+Table gamma G4_AIR Density: 1.20479 mg/cm3 RadiationLength 303.921 m  Sigma in (cm-1), Range Cut in (mm), Energy Cut in (MeV)
+
+Energy(MeV)      phot             compt            conv             Rayl             total            Range Cut gamma  Range Cut e-     Range Cut e+     Energy Cut gamma Energy Cut e-    Energy Cut e+    
+0.01             0.00570552       0.000158717      0                0.000271072      0.00613531       0.1              0.1              0.1              0.001            0.001            0.001            
+0.02             0.000648999      0.000188047      0                0.000106152      0.000943199      0.1              0.1              0.1              0.001            0.001            0.001            
+0.05             3.28817e-05      0.000194498      0                2.29256e-05      0.000250306      0.1              0.1              0.1              0.001            0.001            0.001            
+0.1              3.41616e-06      0.00017587       0                6.30327e-06      0.000185589      0.1              0.1              0.1              0.001            0.001            0.001            
+0.2              3.65181e-07      0.000146513      0                1.63267e-06      0.000148511      0.1              0.1              0.1              0.001            0.001            0.001            
+0.5              2.40709e-08      0.000104591      0                2.6393e-07       0.000104879      0.1              0.1              0.1              0.001            0.001            0.001            
+1                4.70911e-09      7.64512e-05      0                6.61583e-08      7.6522e-05       0.1              0.1              0.1              0.001            0.001            0.001            
+2                1.36502e-09      5.29893e-05      4.72129e-07      1.65493e-08      5.34794e-05      0.1              0.1              0.1              0.001            0.001            0.001            
+
+Latex Table 
+
+\begin{table}[H] 
+\centering 
+\caption{Cross section per Volume (cm$^{-1}$) for gamma interaction with material G4_AIR of density 1.20479 mg/cm3. } 
+\begin{tabular}{llllll} \hline 
+\textbf{Energy(MeV)}           & \textbf{phot}           & \textbf{compt}           & \textbf{conv}           & \textbf{Rayl}           & \textbf{total}                  \\\hline
+0.01      & 0.00570552      & 0.000158717      & 0      & 0.000271072      & 0.00613531             \\\hline
+0.02      & 0.000648999      & 0.000188047      & 0      & 0.000106152      & 0.000943199             \\\hline
+0.05      & 3.28817e-05      & 0.000194498      & 0      & 2.29256e-05      & 0.000250306             \\\hline
+0.1      & 3.41616e-06      & 0.00017587      & 0      & 6.30327e-06      & 0.000185589             \\\hline
+0.2      & 3.65181e-07      & 0.000146513      & 0      & 1.63267e-06      & 0.000148511             \\\hline
+0.5      & 2.40709e-08      & 0.000104591      & 0      & 2.6393e-07      & 0.000104879             \\\hline
+1      & 4.70911e-09      & 7.64512e-05      & 0      & 6.61583e-08      & 7.6522e-05             \\\hline
+2      & 1.36502e-09      & 5.29893e-05      & 4.72129e-07      & 1.65493e-08      & 5.34794e-05      \\ \hline
+\end{tabular} 
+\label{CrossSectioPerVolumeInMaterialG4_AIR}
+\end{table}
+
+
+
+
+
+Table gamma SoftTissue Density: 1.04 g/cm3  RadiationLength 36.1284 cm Sigma in (cm-1), Range Cut in (mm), Energy Cut in (MeV)
+
+Energy(MeV)      phot             compt            conv             Rayl             total            Range Cut gamma  Range Cut e-     Range Cut e+     Energy Cut gamma Energy Cut e-    Energy Cut e+    
+0.01             4.70517          0.160608         0                0.22492          5.0907           0.1              0.1              0.1              0.00110303       0.0868689        0.0856846        
+0.02             0.533234         0.184447         0                0.0865664        0.804247         0.1              0.1              0.1              0.00110303       0.0868689        0.0856846        
+0.05             0.0265948        0.186681         0                0.0187158        0.231992         0.1              0.1              0.1              0.00110303       0.0868689        0.0856846        
+0.1              0.00275417       0.167985         0                0.00514485       0.175884         0.1              0.1              0.1              0.00110303       0.0868689        0.0856846        
+0.2              0.000294399      0.139766         0                0.00133361       0.141394         0.1              0.1              0.1              0.00110303       0.0868689        0.0856846        
+0.5              1.93484e-05      0.0997288        0                0.000215627      0.0999638        0.1              0.1              0.1              0.00110303       0.0868689        0.0856846        
+1                3.78068e-06      0.0728901        0                5.40613e-05      0.072948         0.1              0.1              0.1              0.00110303       0.0868689        0.0856846        
+2                1.0975e-06       0.0505215        0.000386045      1.3523e-05       0.0509221        0.1              0.1              0.1              0.00110303       0.0868689        0.0856846        
+
+Latex Table 
+
+\begin{table}[H] 
+\centering 
+\caption{Cross section per Volume (cm$^{-1}$) for gamma interaction with material SoftTissue of density 1.04 g/cm3 . } 
+\begin{tabular}{llllll} \hline 
+\textbf{Energy(MeV)}           & \textbf{phot}           & \textbf{compt}           & \textbf{conv}           & \textbf{Rayl}           & \textbf{total}                  \\\hline
+0.01      & 4.70517      & 0.160608      & 0      & 0.22492      & 5.0907             \\\hline
+0.02      & 0.533234      & 0.184447      & 0      & 0.0865664      & 0.804247             \\\hline
+0.05      & 0.0265948      & 0.186681      & 0      & 0.0187158      & 0.231992             \\\hline
+0.1      & 0.00275417      & 0.167985      & 0      & 0.00514485      & 0.175884             \\\hline
+0.2      & 0.000294399      & 0.139766      & 0      & 0.00133361      & 0.141394             \\\hline
+0.5      & 1.93484e-05      & 0.0997288      & 0      & 0.000215627      & 0.0999638             \\\hline
+1      & 3.78068e-06      & 0.0728901      & 0      & 5.40613e-05      & 0.072948             \\\hline
+2      & 1.0975e-06      & 0.0505215      & 0.000386045      & 1.3523e-05      & 0.0509221      \\ \hline
+\end{tabular} 
+\label{CrossSectioPerVolumeInMaterialSoftTissue}
+\end{table}
+
+
+
+
+
+Table gamma Skeleton Density: 1.4 g/cm3  RadiationLength 22.9851 cm Sigma in (cm-1), Range Cut in (mm), Energy Cut in (MeV)
+
+Energy(MeV)      phot             compt            conv             Rayl             total            Range Cut gamma  Range Cut e-     Range Cut e+     Energy Cut gamma Energy Cut e-    Energy Cut e+    
+0.01             21.0559          0.200928         0                0.438887         21.6957          0.1              0.1              0.1              0.00139351       0.0999631        0.0984637        
+0.02             2.74614          0.234922         0                0.172701         3.15377          0.1              0.1              0.1              0.00139351       0.0999631        0.0984637        
+0.05             0.158373         0.241344         0                0.0382602        0.437978         0.1              0.1              0.1              0.00139351       0.0999631        0.0984637        
+0.1              0.0180682        0.218523         0                0.0107784        0.24737          0.1              0.1              0.1              0.00139351       0.0999631        0.0984637        
+0.2              0.00204765       0.182297         0                0.00283951       0.187184         0.1              0.1              0.1              0.00139351       0.0999631        0.0984637        
+0.5              0.000140751      0.13023          0                0.000464122      0.130835         0.1              0.1              0.1              0.00139351       0.0999631        0.0984637        
+1                2.79282e-05      0.0952071        0                0.000116542      0.0953515        0.1              0.1              0.1              0.00139351       0.0999631        0.0984637        
+2                8.03399e-06      0.0659957        0.000650069      2.91671e-05      0.0666829        0.1              0.1              0.1              0.00139351       0.0999631        0.0984637        
+
+Latex Table 
+
+\begin{table}[H] 
+\centering 
+\caption{Cross section per Volume (cm$^{-1}$) for gamma interaction with material Skeleton of density 1.4 g/cm3 . } 
+\begin{tabular}{llllll} \hline 
+\textbf{Energy(MeV)}           & \textbf{phot}           & \textbf{compt}           & \textbf{conv}           & \textbf{Rayl}           & \textbf{total}                  \\\hline
+0.01      & 21.0559      & 0.200928      & 0      & 0.438887      & 21.6957             \\\hline
+0.02      & 2.74614      & 0.234922      & 0      & 0.172701      & 3.15377             \\\hline
+0.05      & 0.158373      & 0.241344      & 0      & 0.0382602      & 0.437978             \\\hline
+0.1      & 0.0180682      & 0.218523      & 0      & 0.0107784      & 0.24737             \\\hline
+0.2      & 0.00204765      & 0.182297      & 0      & 0.00283951      & 0.187184             \\\hline
+0.5      & 0.000140751      & 0.13023      & 0      & 0.000464122      & 0.130835             \\\hline
+1      & 2.79282e-05      & 0.0952071      & 0      & 0.000116542      & 0.0953515             \\\hline
+2      & 8.03399e-06      & 0.0659957      & 0.000650069      & 2.91671e-05      & 0.0666829      \\ \hline
+\end{tabular} 
+\label{CrossSectioPerVolumeInMaterialSkeleton}
+\end{table}
+
+
+
+
+
+Table gamma LungMat Density: 296 mg/cm3 RadiationLength 1.23326 m  Sigma in (cm-1), Range Cut in (mm), Energy Cut in (MeV)
+
+Energy(MeV)      phot             compt            conv             Rayl             total            Range Cut gamma  Range Cut e-     Range Cut e+     Energy Cut gamma Energy Cut e-    Energy Cut e+    
+0.01             1.49366          0.0452776        0                0.0678842        1.60682          0.1              0.1              0.1              0.001            0.0419411        0.0415142        
+0.02             0.169959         0.05209          0                0.0260515        0.248101         0.1              0.1              0.1              0.001            0.0419411        0.0415142        
+0.05             0.00851443       0.0528913        0                0.00565173       0.0670575        0.1              0.1              0.1              0.001            0.0419411        0.0415142        
+0.1              0.00088471       0.0476442        0                0.00155674       0.0500856        0.1              0.1              0.1              0.001            0.0419411        0.0415142        
+0.2              9.475e-05        0.0396589        0                0.000404044      0.0401577        0.1              0.1              0.1              0.001            0.0419411        0.0415142        
+0.5              6.23488e-06      0.0283028        0                6.53512e-05      0.0283744        0.1              0.1              0.1              0.001            0.0419411        0.0415142        
+1                1.21911e-06      0.020687         0                1.63858e-05      0.0207046        0.1              0.1              0.1              0.001            0.0419411        0.0415142        
+2                3.5386e-07       0.0143388        0.000114268      4.09885e-06      0.0144575        0.1              0.1              0.1              0.001            0.0419411        0.0415142        
+
+Latex Table 
+
+\begin{table}[H] 
+\centering 
+\caption{Cross section per Volume (cm$^{-1}$) for gamma interaction with material LungMat of density 296 mg/cm3. } 
+\begin{tabular}{llllll} \hline 
+\textbf{Energy(MeV)}           & \textbf{phot}           & \textbf{compt}           & \textbf{conv}           & \textbf{Rayl}           & \textbf{total}                  \\\hline
+0.01      & 1.49366      & 0.0452776      & 0      & 0.0678842      & 1.60682             \\\hline
+0.02      & 0.169959      & 0.05209      & 0      & 0.0260515      & 0.248101             \\\hline
+0.05      & 0.00851443      & 0.0528913      & 0      & 0.00565173      & 0.0670575             \\\hline
+0.1      & 0.00088471      & 0.0476442      & 0      & 0.00155674      & 0.0500856             \\\hline
+0.2      & 9.475e-05      & 0.0396589      & 0      & 0.000404044      & 0.0401577             \\\hline
+0.5      & 6.23488e-06      & 0.0283028      & 0      & 6.53512e-05      & 0.0283744             \\\hline
+1      & 1.21911e-06      & 0.020687      & 0      & 1.63858e-05      & 0.0207046             \\\hline
+2      & 3.5386e-07      & 0.0143388      & 0.000114268      & 4.09885e-06      & 0.0144575      \\ \hline
+\end{tabular} 
+\label{CrossSectioPerVolumeInMaterialLungMat}
+\end{table}
+
+
+
+
