@@ -386,9 +386,9 @@ Generation Initial Positions
 
  .. code-block::
 
-    /SourceData/setEventsInitialPosData [Length Unit] [Generate Type] [Parameters Case 1] [Parameters Case 2] ...
+    /SourceData/setEventsInitialPosData [Length Unit] [Generate Type] [Parameters 1] [Parameters 2] ...
 
-2. Volume Generate Type
+2. Volume, Voxels, and TET Sources Types
 
  .. code-block::
 
@@ -404,10 +404,101 @@ ex1 : /SourceData/setEventsInitialPosData cm Volume AllRegions 3 Liver Brain Spl
 
 The values "20 20 90" is "Allregions" X, Y, and Y half dimensions, they should not exced the World hammf dimensions.
 
+ .. code-block::
+
+    /SourceData/setEventsInitialPosData [Length Unit] Voxels [VolumeName1] [VolumeName2] ... [VolumeNameN] 
+
+ex : /SourceData/setEventsInitialPosData cm Volume Vol1 Vol2 Vol3 Vol4 
+
+ .. code-block::
+
+    /SourceData/setEventsInitialPosData [Length Unit] TET [VolumeName1] [VolumeName2] ... [VolumeNameN] 
+
+ex : /SourceData/setEventsInitialPosData cm TET Vol1 Vol2 Vol3 Vol4 
+
 For "Voxels" and "TET" source types:
 
 ex2 : /SourceData/setEventsInitialPosData cm Voxels AllRegions 3 Liver Brain Spleen Liver Brain Spleen
 
+3. Other Sources Types
+
+ .. code-block::
+
+    /SourceData/setEventsInitialPosData [Length Unit] Point [SourceName] [x y z]
+
+ex : /SourceData/setEventsInitialPosData cm Point Source1 10 5 8
+
+ .. code-block::
+
+    /SourceData/setEventsInitialPosData [Length Unit] Beam [SourceName] [x y z] [BeamSDev]
+
+ex : /SourceData/setEventsInitialPosData cm Plane Source1 10 5 8 2
+
+ .. code-block::
+
+    /SourceData/setEventsInitialPosData [Length Unit] Plane [SourceName] [x y z] Square [Axis] [HalfX]
+
+ex : /SourceData/setEventsInitialPosData cm Plane Source1 10 5 8 Square X 16
+
+ .. code-block::
+
+    /SourceData/setEventsInitialPosData [Length Unit] Plane [SourceName] [x y z] Rectangle [Axis] [HalfX] [HalfY]
+
+ex : /SourceData/setEventsInitialPosData cm Plane Source1 10 5 8 Rectangle X 11 12
+
+ .. code-block::
+
+    /SourceData/setEventsInitialPosData [Length Unit] Plane [SourceName] [x y z] Circle [Axis] [Radius]
+
+ex : /SourceData/setEventsInitialPosData cm Plane Source1 10 5 8 Circle X 16
+
+ .. code-block::
+
+    /SourceData/setEventsInitialPosData [Length Unit] Plane [SourceName] [x y z] Ellipse [Axis] [HalfX] [HalfY]
+
+ex : /SourceData/setEventsInitialPosData cm Plane Source1 10 5 8 Ellipse X 11 12
+
+ .. code-block::
+
+    /SourceData/setEventsInitialPosData [Length Unit] Surface [SourceName] [x y z] Sphere [Radius]
+
+ex : /SourceData/setEventsInitialPosData cm Surface Source1 10 5 8 Sphere 11
+
+ .. code-block::
+
+    /SourceData/setEventsInitialPosData [Length Unit] Surface [SourceName] [x y z] Ellipsoid [HalfX] [HalfY] [HalfZ]
+
+ex : /SourceData/setEventsInitialPosData cm Surface Source1 10 5 8 Ellipsoid 11 13 5
+
+ .. code-block::
+
+    /SourceData/setEventsInitialPosData [Length Unit] Solid [SourceName] [x y z] Para [HalfX] [HalfY] [HalfZ]
+
+ex : /SourceData/setEventsInitialPosData cm Solid Source1 10 5 8 Para 11 13 5
+
+ .. code-block::
+
+    /SourceData/setEventsInitialPosData [Length Unit] Solid [SourceName] [x y z] EllipticCylinder [HalfX] [HalfY] [HalfZ]
+
+ex : /SourceData/setEventsInitialPosData cm Solid Source1 10 5 8 EllipticCylinder 11 13 5
+
+ .. code-block::
+
+    /SourceData/setEventsInitialPosData [Length Unit] Solid [SourceName] [x y z] Cylinder [Radius] [HalfZ]
+
+ex : /SourceData/setEventsInitialPosData cm Solid Source1 10 5 8 Cylinder 11 13
+
+ .. code-block::
+
+    /SourceData/setEventsInitialPosData [Length Unit] Solid [SourceName] [x y z] Sphere [Radius]
+
+ex : /SourceData/setEventsInitialPosData cm Solid Source1 10 5 8 Sphere 11
+
+ .. code-block::
+
+    /SourceData/setEventsInitialPosData [Length Unit] Solid [SourceName] [x y z] Ellipsoid [HalfX] [HalfY] [HalfZ]
+
+ex : /SourceData/setEventsInitialPosData cm Solid Source1 10 5 8 Ellipsoid 11 13 5
 
 .. When using DICOM geometry with region segmentation, the events' initial locations are derived from a source region. The command /useVoxelAccumulatedActivity simulates events from all the PET imaging data, with each voxel emitting a number of events based on the voxel's accumulated activity. As a consequence, the deposited energy, absorbed dose, and equivalent dosage for each voxel are computed, and the final data for the simulated phantom is determined by accumulating voxel data. 
 .. code-block: :

@@ -481,12 +481,12 @@ The user must use the C++ Geant4 syntax to code the world physical volume as wel
 <li><p>General Command</p></li>
 </ol>
 <blockquote>
-<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialPosData</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="p">[</span><span class="n">Generate</span> <span class="n">Type</span><span class="p">]</span> <span class="p">[</span><span class="n">Parameters</span> <span class="n">Case</span> <span class="mi">1</span><span class="p">]</span> <span class="p">[</span><span class="n">Parameters</span> <span class="n">Case</span> <span class="mi">2</span><span class="p">]</span> <span class="o">...</span>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialPosData</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="p">[</span><span class="n">Generate</span> <span class="n">Type</span><span class="p">]</span> <span class="p">[</span><span class="n">Parameters</span> <span class="mi">1</span><span class="p">]</span> <span class="p">[</span><span class="n">Parameters</span> <span class="mi">2</span><span class="p">]</span> <span class="o">...</span>
 </pre></div>
 </div>
 </div></blockquote>
 <ol class="arabic simple" start="2">
-<li><p>Volume Generate Type</p></li>
+<li><p>Volume, Voxels, and TET Sources Types</p></li>
 </ol>
 <blockquote>
 <div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialPosData</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="n">Volume</span> <span class="p">[</span><span class="n">VolumeName1</span> <span class="n">hx</span> <span class="n">hy</span> <span class="n">hz</span><span class="p">(</span><span class="n">surrends</span> <span class="n">box</span> <span class="n">half</span> <span class="n">sizes</span><span class="p">)]</span> <span class="p">[</span><span class="n">VolumeName2</span> <span class="n">hx2</span> <span class="n">hy2</span> <span class="n">hz2</span><span class="p">(</span><span class="n">surrends</span> <span class="n">box</span> <span class="n">half</span> <span class="n">sizes</span><span class="p">)]</span> <span class="o">...</span>
@@ -498,8 +498,101 @@ The user must use the C++ Geant4 syntax to code the world physical volume as wel
 <p>For “Volume” source type:</p>
 <p>ex1 : /SourceData/setEventsInitialPosData cm Volume AllRegions 3 Liver Brain Spleen 20 20 90 Brain 6.58 9 6.5 Spleen 3.2 2.3 5.7 Liver 15. 8. 8.</p>
 <p>The values “20 20 90” is “Allregions” X, Y, and Y half dimensions, they should not exced the World hammf dimensions.</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialPosData</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="n">Voxels</span> <span class="p">[</span><span class="n">VolumeName1</span><span class="p">]</span> <span class="p">[</span><span class="n">VolumeName2</span><span class="p">]</span> <span class="o">...</span> <span class="p">[</span><span class="n">VolumeNameN</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /SourceData/setEventsInitialPosData cm Volume Vol1 Vol2 Vol3 Vol4</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialPosData</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="n">TET</span> <span class="p">[</span><span class="n">VolumeName1</span><span class="p">]</span> <span class="p">[</span><span class="n">VolumeName2</span><span class="p">]</span> <span class="o">...</span> <span class="p">[</span><span class="n">VolumeNameN</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /SourceData/setEventsInitialPosData cm TET Vol1 Vol2 Vol3 Vol4</p>
 <p>For “Voxels” and “TET” source types:</p>
 <p>ex2 : /SourceData/setEventsInitialPosData cm Voxels AllRegions 3 Liver Brain Spleen Liver Brain Spleen</p>
+<ol class="arabic simple" start="3">
+<li><p>Other Sources Types</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialPosData</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="n">Point</span> <span class="p">[</span><span class="n">SourceName</span><span class="p">]</span> <span class="p">[</span><span class="n">x</span> <span class="n">y</span> <span class="n">z</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /SourceData/setEventsInitialPosData cm Point Source1 10 5 8</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialPosData</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="n">Beam</span> <span class="p">[</span><span class="n">SourceName</span><span class="p">]</span> <span class="p">[</span><span class="n">x</span> <span class="n">y</span> <span class="n">z</span><span class="p">]</span> <span class="p">[</span><span class="n">BeamSDev</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /SourceData/setEventsInitialPosData cm Plane Source1 10 5 8 2</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialPosData</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="n">Plane</span> <span class="p">[</span><span class="n">SourceName</span><span class="p">]</span> <span class="p">[</span><span class="n">x</span> <span class="n">y</span> <span class="n">z</span><span class="p">]</span> <span class="n">Square</span> <span class="p">[</span><span class="n">Axis</span><span class="p">]</span> <span class="p">[</span><span class="n">HalfX</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /SourceData/setEventsInitialPosData cm Plane Source1 10 5 8 Square X 16</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialPosData</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="n">Plane</span> <span class="p">[</span><span class="n">SourceName</span><span class="p">]</span> <span class="p">[</span><span class="n">x</span> <span class="n">y</span> <span class="n">z</span><span class="p">]</span> <span class="n">Rectangle</span> <span class="p">[</span><span class="n">Axis</span><span class="p">]</span> <span class="p">[</span><span class="n">HalfX</span><span class="p">]</span> <span class="p">[</span><span class="n">HalfY</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /SourceData/setEventsInitialPosData cm Plane Source1 10 5 8 Rectangle X 11 12</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialPosData</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="n">Plane</span> <span class="p">[</span><span class="n">SourceName</span><span class="p">]</span> <span class="p">[</span><span class="n">x</span> <span class="n">y</span> <span class="n">z</span><span class="p">]</span> <span class="n">Circle</span> <span class="p">[</span><span class="n">Axis</span><span class="p">]</span> <span class="p">[</span><span class="n">Radius</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /SourceData/setEventsInitialPosData cm Plane Source1 10 5 8 Circle X 16</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialPosData</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="n">Plane</span> <span class="p">[</span><span class="n">SourceName</span><span class="p">]</span> <span class="p">[</span><span class="n">x</span> <span class="n">y</span> <span class="n">z</span><span class="p">]</span> <span class="n">Ellipse</span> <span class="p">[</span><span class="n">Axis</span><span class="p">]</span> <span class="p">[</span><span class="n">HalfX</span><span class="p">]</span> <span class="p">[</span><span class="n">HalfY</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /SourceData/setEventsInitialPosData cm Plane Source1 10 5 8 Ellipse X 11 12</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialPosData</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="n">Surface</span> <span class="p">[</span><span class="n">SourceName</span><span class="p">]</span> <span class="p">[</span><span class="n">x</span> <span class="n">y</span> <span class="n">z</span><span class="p">]</span> <span class="n">Sphere</span> <span class="p">[</span><span class="n">Radius</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /SourceData/setEventsInitialPosData cm Surface Source1 10 5 8 Sphere 11</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialPosData</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="n">Surface</span> <span class="p">[</span><span class="n">SourceName</span><span class="p">]</span> <span class="p">[</span><span class="n">x</span> <span class="n">y</span> <span class="n">z</span><span class="p">]</span> <span class="n">Ellipsoid</span> <span class="p">[</span><span class="n">HalfX</span><span class="p">]</span> <span class="p">[</span><span class="n">HalfY</span><span class="p">]</span> <span class="p">[</span><span class="n">HalfZ</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /SourceData/setEventsInitialPosData cm Surface Source1 10 5 8 Ellipsoid 11 13 5</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialPosData</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="n">Solid</span> <span class="p">[</span><span class="n">SourceName</span><span class="p">]</span> <span class="p">[</span><span class="n">x</span> <span class="n">y</span> <span class="n">z</span><span class="p">]</span> <span class="n">Para</span> <span class="p">[</span><span class="n">HalfX</span><span class="p">]</span> <span class="p">[</span><span class="n">HalfY</span><span class="p">]</span> <span class="p">[</span><span class="n">HalfZ</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /SourceData/setEventsInitialPosData cm Solid Source1 10 5 8 Para 11 13 5</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialPosData</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="n">Solid</span> <span class="p">[</span><span class="n">SourceName</span><span class="p">]</span> <span class="p">[</span><span class="n">x</span> <span class="n">y</span> <span class="n">z</span><span class="p">]</span> <span class="n">EllipticCylinder</span> <span class="p">[</span><span class="n">HalfX</span><span class="p">]</span> <span class="p">[</span><span class="n">HalfY</span><span class="p">]</span> <span class="p">[</span><span class="n">HalfZ</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /SourceData/setEventsInitialPosData cm Solid Source1 10 5 8 EllipticCylinder 11 13 5</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialPosData</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="n">Solid</span> <span class="p">[</span><span class="n">SourceName</span><span class="p">]</span> <span class="p">[</span><span class="n">x</span> <span class="n">y</span> <span class="n">z</span><span class="p">]</span> <span class="n">Cylinder</span> <span class="p">[</span><span class="n">Radius</span><span class="p">]</span> <span class="p">[</span><span class="n">HalfZ</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /SourceData/setEventsInitialPosData cm Solid Source1 10 5 8 Cylinder 11 13</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialPosData</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="n">Solid</span> <span class="p">[</span><span class="n">SourceName</span><span class="p">]</span> <span class="p">[</span><span class="n">x</span> <span class="n">y</span> <span class="n">z</span><span class="p">]</span> <span class="n">Sphere</span> <span class="p">[</span><span class="n">Radius</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /SourceData/setEventsInitialPosData cm Solid Source1 10 5 8 Sphere 11</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">SourceData</span><span class="o">/</span><span class="n">setEventsInitialPosData</span> <span class="p">[</span><span class="n">Length</span> <span class="n">Unit</span><span class="p">]</span> <span class="n">Solid</span> <span class="p">[</span><span class="n">SourceName</span><span class="p">]</span> <span class="p">[</span><span class="n">x</span> <span class="n">y</span> <span class="n">z</span><span class="p">]</span> <span class="n">Ellipsoid</span> <span class="p">[</span><span class="n">HalfX</span><span class="p">]</span> <span class="p">[</span><span class="n">HalfY</span><span class="p">]</span> <span class="p">[</span><span class="n">HalfZ</span><span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>ex : /SourceData/setEventsInitialPosData cm Solid Source1 10 5 8 Ellipsoid 11 13 5</p>
 </section>
 <section id="generation-initial-energies">
 <h3>Generation Initial Energies<a class="headerlink" href="#generation-initial-energies" title="Link to this heading"></a></h3>
