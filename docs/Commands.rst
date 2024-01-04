@@ -286,6 +286,14 @@ Another useful command is /setPixelsCompression, which is used to compress xy vo
 
 The number of voxels in voxelized geometry created with VoxIDs methods might be huge, requiring a high-quality computation resource for visualization. This entails the visualization of voxelized geometry parts (planes), which is aided by the command above.
 
+To visualize just a specific regions: 
+
+ .. code-block::
+
+    /GeometryData/visualizeVoxelizedPlanes regions [Region Number N] [Region 1] ... [Region N]  
+
+ex : /GeometryData/visualizeVoxelizedPlanes regions 3 Livre Brain Thyroid  
+
 .. or DICOM 
 
 To choose voxels based on x, y, and z limits, as well as material IDs and density intervals, to construct a region:
@@ -351,6 +359,14 @@ To set the TET phantom limits:
     /GeometryData/setTETPhantomLimits xy -5 5 
 
 Means that phantom will be composed by tetrahedrons from -5 mm to 5 mm in the z axis.
+
+To visualize just a specific regions: 
+
+ .. code-block::
+
+    /GeometryData/setTETPhantomLimits regions [Region Number N] [Region 1] ... [Region N]  
+
+ex : /GeometryData/setTETPhantomLimits regions 3 Livre Brain Thyroid  
 
 To create a new region data based on material density:
 
