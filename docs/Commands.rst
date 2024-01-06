@@ -358,33 +358,33 @@ To set the TET phantom limits:
 
     /GeometryData/setTETPhantomLimits xy -5 5 
 
-Means that phantom will be composed by tetrahedrons from -5 mm to 5 mm in the z axis.
+Means that the phantom will be composed of tetrahedrons from -5 mm to 5 mm in the z axis.
 
-To visualize just a specific regions: 
+To visualize just a specific regions: 
 
- .. code-block::
+ .. code-block::
 
-    /GeometryData/setTETPhantomLimits regions [Region Number N] [Region 1] ... [Region N]  
+    /GeometryData/setTETPhantomLimits regions [Region Number N] [Region 1] ... [Region N]  
 
-ex : /GeometryData/setTETPhantomLimits regions 3 Livre Brain Thyroid  
+ex : /GeometryData/setTETPhantomLimits regions 3 Liver Brain Thyroid  
 
 To create a new region data based on material density:
 
- .. code-block::
+ .. code-block::
 
-    /GeometryData/setTETRegionData [Region Name] [Min Density] [Max Density] [Density Unit] 
+    /GeometryData/setTETRegionData [Region Name] [Min Density] [Max Density] [Density Unit] 
 
-[Region Name] : the name to be assigned to the selected tetrahedrons, the name is used in the source specification and results
+[Region Name] : the name to be assigned to the selected tetrahedrons, the name is used in the source specification and results.
 
-[Min Density] [Max Density] : the tetrahedrons are selected only if the contained material has a density in the set interval
+[Min Density] [Max Density] : The tetrahedrons are selected only if the contained material has a density in the set interval.
 
- .. code-block::
+ .. code-block::
 
-    /GeometryData/setTETRegionData skeleton 1.3 null g/cm3 
+    /GeometryData/setTETRegionData skeleton 1.3 null g/cm3 
 
 In this case, all tetrahedrons with a density greater or equal to 1.3 g/cm3 will be selected to belong to the "skeleton" region.
 
-For VoxIDs and TET methods, the user can use the default created regions based on read material IDs from files "material name as region name". In this case, the user shouldn't create new regions, and this is activated by:
+For VoxIDs and TET methods, the user can use the default regions created based on read material IDs from files "material name as region name". In this case, the user shouldn't create new regions, and this is activated by:
 
  .. code-block::
 
