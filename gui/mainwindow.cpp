@@ -5589,8 +5589,14 @@ void MainWindow::showConstructVoxelizedCommandsFrame(){
 
     // fourth row
 
-    LimitsPlan = new QComboBox(); QStringList DcmElem=(QStringList()<<"all"<<"xy"<<"xz"<<"yz"); LimitsPlan->addItems(DcmElem);
+    LimitsPlan = new QComboBox(); QStringList DcmElem=(QStringList()<<"all"<<"xy"<<"xz"<<"yz"<<"regions"); LimitsPlan->addItems(DcmElem);
+    connect(LimitsPlan, SIGNAL(textActivated(QString)), this, SLOT(on_LimitsPlan_textActivated(QString)));
+
     LimitsValues = new QLineEdit(); LimitsValues->setPlaceholderText("add min and max plan IDs (i.e. 134 146)");
+
+    RegionToVisualizeComb = new QComboBox(); for (int kk =0 ;kk < ui->comboBoxSourceRegionProposed->count() ; kk++) {RegionToVisualizeComb->addItem(ui->comboBoxSourceRegionProposed->itemText(kk));}
+    connect(RegionToVisualizeComb, SIGNAL(textActivated(QString)), this, SLOT(on_comboBoxRegionToVisualize_textActivated(QString)));
+
     btnAddVisualizationLimits = new QPushButton(); btnAddVisualizationLimits->setText("Add Visualization Limits"); connect(btnAddVisualizationLimits, SIGNAL(clicked()), this, SLOT(btnAddVisualizationLimits_slot()));btnAddVisualizationLimits->setToolTip("Add min slice ID and max slice ID over the selected axis for voxelized geometry.Instead, add min and max position in mm over the selected axis");
 
     QStringList InputsVals;
@@ -5600,12 +5606,33 @@ void MainWindow::showConstructVoxelizedCommandsFrame(){
         InputsVals = getArgumentOfACommandFromText(VOXELCommands[9], 5);
     }
 
-    if(InputsVals.size() == 3){
-        if(InputsVals[0] == "xy" || "yx"){LimitsPlan->setCurrentIndex(0);}
-        if(InputsVals[0] == "xz" || "zx"){LimitsPlan->setCurrentIndex(1);}
-        if(InputsVals[0] == "yz" || "zy"){LimitsPlan->setCurrentIndex(2);}
-        LimitsValues->setText(InputsVals[1] + " " + InputsVals[2]);
+    if(InputsVals.size() > 0){
+        InputsVals[0].toLower();
+        if(InputsVals[0] == "regions"){
+            if(InputsVals.size() > 0){
+            }
+        }
+    }
+
+    if(InputsVals.size() > 2){
+        InputsVals[0].toLower();
+        if(InputsVals[0] == "regions"){
+            RegionToVisualizeComb->setVisible(true);
+            LimitsPlan->setCurrentIndex(4);
+            QString ttt = "";
+            for (int kk =0 ;kk < InputsVals.size() ; kk++) {
+                ttt += InputsVals[kk] + " ";
+            }
+            LimitsValues->setText(ttt);
+        }else{
+            RegionToVisualizeComb->setVisible(false);
+            if(InputsVals[0] == "xy" || "yx"){LimitsPlan->setCurrentIndex(0);}
+            if(InputsVals[0] == "xz" || "zx"){LimitsPlan->setCurrentIndex(1);}
+            if(InputsVals[0] == "yz" || "zy"){LimitsPlan->setCurrentIndex(2);}
+            LimitsValues->setText(InputsVals[1] + " " + InputsVals[2]);
+        }
     }else{
+        RegionToVisualizeComb->setVisible(false);
         LimitsPlan->setCurrentIndex(0);
     }
 
@@ -5625,6 +5652,7 @@ void MainWindow::showConstructVoxelizedCommandsFrame(){
     ii = 0; jj++;
     framLay->addWidget(LimitsPlan, jj,ii,1,1);
     framLay->addWidget(LimitsValues, jj,++ii,1,1);
+    framLay->addWidget(RegionToVisualizeComb, jj,++ii,1,1);
     framLay->addWidget(btnAddVisualizationLimits, jj,++ii,1,1);
 
     ui->fraHelpGUIInput->setLayout(framLay);
@@ -5862,6 +5890,28 @@ void MainWindow::CheckBoxFracNum_slot(){
         EleFraOrNumInMat->setPlaceholderText("Fraction");
     }else{
         EleFraOrNumInMat->setPlaceholderText("Number");
+    }
+}
+void MainWindow::on_LimitsPlan_textActivated(QString arg)
+{
+    if(arg == "regions"){
+        RegionToVisualizeComb->setVisible(true);
+    }else{
+        RegionToVisualizeComb->setVisible(false);
+    }
+}
+
+void MainWindow::on_comboBoxRegionToVisualize_textActivated(QString arg)
+{
+    bool IsIn = false;
+    QStringList args = LimitsValues->text().split(QRegExp("(\\s|\\n|\\r)+"), QString::SkipEmptyParts);
+    for(int dd=0; dd < args.size();dd++){ if(args[dd] == RegionToVisualizeComb->currentText()){ IsIn = true;}}
+    if(IsIn == false){
+
+        if(RegionToVisualizeComb->currentText() != ""){
+            QString nn = LimitsValues->text();
+            LimitsValues->setText(nn + " " + RegionToVisualizeComb->currentText());
+        }
     }
 }
 void MainWindow::btnAddVoxelsRegionData_slot(){

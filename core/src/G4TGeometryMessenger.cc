@@ -541,19 +541,22 @@ void G4TGeometryMessenger::SetNewValue(G4UIcommand* command,G4String newValue){
         GeometryConstruction->setPlanesToVisualize(planes);
         if(planes != "all"){
             if(planes == "regions"){
-                int numb = StoI(next());
-                for(G4int ds = 0 ; ds < numb ; ds++){
-                    GeometryConstruction->setRegionsToVisualize(next());
+
+                G4String VolName = next();
+                while (!VolName.empty()) {
+                    GeometryConstruction->setRegionsToVisualize(VolName);
+                    VolName = next();
                 }
             }else{
                 GeometryConstruction->setMinPlaneID(StoI(next()));
                 GeometryConstruction->setMaxPlaneID(StoI(next()));
             }
         }
-        G4String nn = next() ; nn.toLower();
-        if(nn == "yes"){
-            GeometryConstruction->setForcedSolid(true);
-        }
+
+//      G4String nn = next() ; nn.toLower();
+//      if(nn == "yes"){
+//          GeometryConstruction->setForcedSolid(true);
+//      }
 
         //G4cout << " - plane " << planes << G4endl;
 
@@ -566,9 +569,10 @@ void G4TGeometryMessenger::SetNewValue(G4UIcommand* command,G4String newValue){
         GeometryConstruction->setPlanesToVisualize(planes);
         if(planes != "all"){
             if(planes == "regions"){
-                int numb = StoI(next());
-                for(G4int ds = 0 ; ds < numb ; ds++){
-                    GeometryConstruction->setRegionsToVisualize(next());
+                G4String VolName = next();
+                while (!VolName.empty()) {
+                    GeometryConstruction->setRegionsToVisualize(VolName);
+                    VolName = next();
                 }
             }else{
                 G4double a = StoD(next());
@@ -576,10 +580,10 @@ void G4TGeometryMessenger::SetNewValue(G4UIcommand* command,G4String newValue){
                 GeometryConstruction->setTETPhantomLimits(a,b);
             }
         }
-        G4String nn = next() ; nn.toLower();
-        if(nn == "yes"){
-            GeometryConstruction->setForcedSolid(true);
-        }
+        //      G4String nn = next() ; nn.toLower();
+        //      if(nn == "yes"){
+        //          GeometryConstruction->setForcedSolid(true);
+        //      }
 
         //G4cout << " - plane " << planes << G4endl;
 

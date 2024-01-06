@@ -48,6 +48,7 @@ Highlighter::Highlighter(QTextDocument *parent) : QSyntaxHighlighter(parent) {
         QStringLiteral("\\bEMS4\\b"), QStringLiteral("\\bConstruct\\b"),
 
         QStringLiteral("\\bnumb\\b"), QStringLiteral("\\bfrac\\b"),
+        QStringLiteral("\\bregions\\b"),
 
         QStringLiteral("\\bVoxels\\b"), QStringLiteral("\\bVolume\\b"),QStringLiteral("\\bTET\\b"),
         QStringLiteral("\\bPoint\\b"), QStringLiteral("\\bBeam\\b"),

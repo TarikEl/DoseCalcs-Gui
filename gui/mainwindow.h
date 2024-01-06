@@ -126,6 +126,7 @@ private:
     QLineEdit *MaterialEleNumber;
     QCheckBox *NumFraCheckBox;
     QComboBox *ElemComb;
+    QComboBox *RegionToVisualizeComb;
     QLineEdit *EleFraOrNumInMat;
     QPushButton *btnAddElem;
     QPushButton *btnAddMat;
@@ -466,6 +467,8 @@ private slots:
     void btnAddMat_slot();
     void btnAddNistMat_slot();
     void CheckBoxFracNum_slot();
+    void on_comboBoxRegionToVisualize_textActivated(QString);
+    void on_LimitsPlan_textActivated(QString);
     void btnAddVoxelsRegionData_slot();
     void UseMaterialsAsRegionNames_slot();
     void btnAddVoxelsData_slot();
