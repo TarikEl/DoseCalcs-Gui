@@ -83,6 +83,9 @@
 //namespace {G4Mutex	mutex = G4MUTEX_INITIALIZER;}
 //#endif
 
+
+#include "G4Sphere.hh"
+
 #include "G4TDCMHandler.hh"
 #ifdef DCMTK_USE
 #include "DicomFileMgr.hh"
@@ -460,9 +463,10 @@ void G4TVolumeConstruction::GenerateDataFromTETPhantomFiles()
     // for tetrahedral always = true because we use materials ID in Stepping and HitMap for estimating edep
     MaterialNameAsRegionName = true;
 
+
     tetData = new G4TTETModelImport();
 
-    tetData->setIdNameMap(MaterialIDName);
+    tetData->setIdNameMap(MaterialIDName); // readed from macros file and not from materials files as it is given in the mesh-type phantom example data files
     tetData->setNameMatMap(CreatedMaterials);
 
     tetData->setRegionSegmentationDataVectors(DcmRegionsNames,
@@ -2681,10 +2685,20 @@ G4VPhysicalVolume* G4TVolumeConstruction::ConstructVoxeDcmGeometry(){
 
             //G4PVParameterised* phantom_phys = new G4PVParameterised("TETVoxelContainer",voxel_logic,ContLogicalVoll, kXAxis, VoxXNumber*VoxYNumber*VoxZNumber, param1);
             //phantom_phys->SetRegularStructureId(1); // if not set, G4VoxelNavigation will be used instead
-
         }
     }
+/*
+    G4double radius = 10.0 * cm;  // Set your desired radius
+    G4double startPhi = 0.0;      // Starting phi angle in radians
+    G4double deltaPhi = 2.0 * M_PI; // Delta phi angle in radians (360 degrees)
+    G4double startTheta = 0.0;    // Starting theta angle in radians
+    G4double deltaTheta = M_PI;   // Delta theta angle in radians (180 degrees)
 
+    // Create a G4Sphere
+    G4Sphere* RadioSphereSol = new G4Sphere("RadioSphereSol", 0.0, radius, startPhi, deltaPhi, startTheta, deltaTheta);
+    G4LogicalVolume* RadioSphereLV = new G4LogicalVolume(RadioSphereSol,defaultMat,"RadioSphereLV");
+    G4VPhysicalVolume* RadioSpherePV = new G4PVPlacement(0,G4ThreeVector(0,0,0), RadioSphereLV, "RadioSpherePV", WorldPhysicalVolume->GetLogicalVolume(), 0, false, 0);              // Copy number
+*/
     return WorldPhysicalVolume;
 }
 void G4TVolumeConstruction::VisualizationVoxelizedGeometry(){
@@ -2693,94 +2707,131 @@ void G4TVolumeConstruction::VisualizationVoxelizedGeometry(){
 
     G4String axis = "z";
     voxel_solid = new G4Box( "Voxel", VoxXHalfSize, VoxYHalfSize, VoxZHalfSize);
+    int NumberOfVisualizedCN;
+    int* VisualizedCN;
+    G4int TotalVoxelsNumber = VoxXNumber*VoxYNumber*VoxZNumber;
 
-    G4int VoxNumbAxis1 = VoxYNumber; G4int VoxNumbAxis2 = VoxXNumber;
 
-    if(PlanesToVisualize == "xy" || PlanesToVisualize == "yx"){
-        if(MaxPlaneID > VoxZNumber){MaxPlaneID = VoxZNumber - 1 ;
-            //G4cout << " The set ID number " << MaxPlaneID << " exceeds the plane maximum index across Z axis " << VoxZNumber-1  << ". The new Z-Plane ID is " << VoxZNumber-1 << G4endl;
+
+
+    if(RegionsToVisualize.size() != 0){
+
+        std::vector<int> CPNumbs;
+
+        for (int i = 0; i < RegionsToVisualize.size(); i++) {
+
+            for (int n = 0; n < TotalVoxelsNumber; n++) {
+
+                if(CopyNumberRegionNameMap[n] == RegionsToVisualize[i]){
+                    //G4cout << RegionsToVisualize[i] << G4endl;
+                    CPNumbs.push_back(n);
+                }
+            }
         }
-        if(MinPlaneID > VoxZNumber){MinPlaneID = VoxZNumber - 1 ;
-            //G4cout << " The set ID number " << MinPlaneID << " exceeds the plane maximum index across Z axis " << VoxZNumber-1  << ". The new Z-Plane ID is " << VoxZNumber-1 << G4endl;
+        NumberOfVisualizedCN = CPNumbs.size();
+        VisualizedCN = new int[NumberOfVisualizedCN];
+
+        for (int n = 0; n < NumberOfVisualizedCN; n++) {
+            VisualizedCN[n] = CPNumbs[n];
         }
-
-        axis = "z";
-
-        VoxNumbAxis1 = VoxYNumber;
-        VoxNumbAxis2 = VoxXNumber;
-        //PlanePosition = -((VoxZNumber*VoxZHalfSize) - VoxZHalfSize) + VoxContainerPos.getZ() + PlaneID * 2 * VoxZHalfSize;
-    }
-    else if(PlanesToVisualize == "xz" || PlanesToVisualize == "zx"){
-        if(MaxPlaneID > VoxYNumber){MaxPlaneID = VoxYNumber - 1 ;
-            //G4cout << " The set ID number " << MaxPlaneID << " exceeds the plane maximum index across Y axis " << VoxYNumber-1  << ". The new Y-Plane ID is " << VoxYNumber-1 << G4endl;
-        }
-        if(MinPlaneID > VoxYNumber){MinPlaneID = VoxYNumber - 1 ;
-            //G4cout << " The set ID number " << MinPlaneID << " exceeds the plane maximum index across Y axis " << VoxYNumber-1  << ". The new Y-Plane ID is " << VoxYNumber-1 << G4endl;
-        }
-
-        axis = "y";
-
-        VoxNumbAxis1 = VoxZNumber;
-        VoxNumbAxis2 = VoxXNumber;
-        //PlanePosition = -((VoxYNumber*VoxYHalfSize) - VoxYHalfSize) + VoxContainerPos.getY() + PlaneID * 2 * VoxYHalfSize;
-    }
-    else if(PlanesToVisualize == "yz" || PlanesToVisualize == "zy"){
-        if(MaxPlaneID > VoxXNumber){MaxPlaneID = VoxXNumber - 1 ;
-            //G4cout << " The set ID number " << MaxPlaneID << " exceeds the plane maximum index across X axis " << VoxXNumber-1  << ". The new X-Plane ID is " << VoxXNumber-1 << G4endl;
-        }
-        if(MinPlaneID > VoxXNumber){MinPlaneID = VoxXNumber - 1 ;
-            //G4cout << " The set ID number " << MinPlaneID << " exceeds the plane maximum index across X axis " << VoxXNumber-1  << ". The new X-Plane ID is " << VoxXNumber-1 << G4endl;
-        }
-
-        axis = "x";
-
-        VoxNumbAxis1 = VoxZNumber;
-        VoxNumbAxis2 = VoxYNumber;
-        //PlanePosition = -((VoxXNumber*VoxXHalfSize) - VoxXHalfSize) + VoxContainerPos.getX() + PlaneID * 2 * VoxXHalfSize;
-    }
-
-    std::vector<G4int> RelativeCNNumbersForAxisPlanes; //
-
-    if(MinPlaneID == MaxPlaneID){ // MinCol lk=1 and maxCol lk=2
-        RelativeCNNumbersForAxisPlanes.push_back(MinPlaneID);
-    }else{
-        G4int nn = MinPlaneID;
-        for(nn ; nn < MaxPlaneID+1 ; nn++){RelativeCNNumbersForAxisPlanes.push_back(nn);}
-    }
-
-    int NumberOfVisualizedCN = RelativeCNNumbersForAxisPlanes.size()*VoxNumbAxis1*VoxNumbAxis2;
 
 #if VERBOSE_USE
-    G4cout << " - Number of " << PlanesToVisualize << " plans " << RelativeCNNumbersForAxisPlanes.size() << " from " << axis<< "=" << MinPlaneID << " to " << axis<< "=" << MaxPlaneID << G4endl;
-    G4cout << " - Total number of visualized voxels " << NumberOfVisualizedCN << G4endl;
+        G4cout << " - Number of regions to visualize: " << RegionsToVisualize.size() << ": ";
+        for (int i = 0; i < RegionsToVisualize.size(); i++) {
+            G4cout << RegionsToVisualize[i] << " - ";
+        }
+        G4cout << G4endl;
+        G4cout << " - Total number of visualized voxels is "<< NumberOfVisualizedCN << G4endl;
 #endif
 
-    int* VisualizedCN = new int[NumberOfVisualizedCN];
-    int cn=0;
-    int inc=0;
+    }else {
 
-    for(size_t f = 0; f < VoxZNumber ;f++ ){
-        for(size_t g = 0; g < VoxYNumber ;g++ ){
-            for(size_t d = 0; d < VoxXNumber ;d++ ){
+        G4int VoxNumbAxis1 = VoxYNumber; G4int VoxNumbAxis2 = VoxXNumber;
 
-                for(size_t m = 0; m < RelativeCNNumbersForAxisPlanes.size() ;m++ ){
+        if(PlanesToVisualize == "xy" || PlanesToVisualize == "yx"){
+            if(MaxPlaneID > VoxZNumber){MaxPlaneID = VoxZNumber - 1 ;
+                //G4cout << " The set ID number " << MaxPlaneID << " exceeds the plane maximum index across Z axis " << VoxZNumber-1  << ". The new Z-Plane ID is " << VoxZNumber-1 << G4endl;
+            }
+            if(MinPlaneID > VoxZNumber){MinPlaneID = VoxZNumber - 1 ;
+                //G4cout << " The set ID number " << MinPlaneID << " exceeds the plane maximum index across Z axis " << VoxZNumber-1  << ". The new Z-Plane ID is " << VoxZNumber-1 << G4endl;
+            }
 
-                    if(PlanesToVisualize == "xy" && RelativeCNNumbersForAxisPlanes[m] == f){
-                        VisualizedCN[inc] = cn;
-                        inc++;
+            axis = "z";
+
+            VoxNumbAxis1 = VoxYNumber;
+            VoxNumbAxis2 = VoxXNumber;
+            //PlanePosition = -((VoxZNumber*VoxZHalfSize) - VoxZHalfSize) + VoxContainerPos.getZ() + PlaneID * 2 * VoxZHalfSize;
+        }
+        else if(PlanesToVisualize == "xz" || PlanesToVisualize == "zx"){
+            if(MaxPlaneID > VoxYNumber){MaxPlaneID = VoxYNumber - 1 ;
+                //G4cout << " The set ID number " << MaxPlaneID << " exceeds the plane maximum index across Y axis " << VoxYNumber-1  << ". The new Y-Plane ID is " << VoxYNumber-1 << G4endl;
+            }
+            if(MinPlaneID > VoxYNumber){MinPlaneID = VoxYNumber - 1 ;
+                //G4cout << " The set ID number " << MinPlaneID << " exceeds the plane maximum index across Y axis " << VoxYNumber-1  << ". The new Y-Plane ID is " << VoxYNumber-1 << G4endl;
+            }
+
+            axis = "y";
+
+            VoxNumbAxis1 = VoxZNumber;
+            VoxNumbAxis2 = VoxXNumber;
+            //PlanePosition = -((VoxYNumber*VoxYHalfSize) - VoxYHalfSize) + VoxContainerPos.getY() + PlaneID * 2 * VoxYHalfSize;
+        }
+        else if(PlanesToVisualize == "yz" || PlanesToVisualize == "zy"){
+            if(MaxPlaneID > VoxXNumber){MaxPlaneID = VoxXNumber - 1 ;
+                //G4cout << " The set ID number " << MaxPlaneID << " exceeds the plane maximum index across X axis " << VoxXNumber-1  << ". The new X-Plane ID is " << VoxXNumber-1 << G4endl;
+            }
+            if(MinPlaneID > VoxXNumber){MinPlaneID = VoxXNumber - 1 ;
+                //G4cout << " The set ID number " << MinPlaneID << " exceeds the plane maximum index across X axis " << VoxXNumber-1  << ". The new X-Plane ID is " << VoxXNumber-1 << G4endl;
+            }
+
+            axis = "x";
+
+            VoxNumbAxis1 = VoxZNumber;
+            VoxNumbAxis2 = VoxYNumber;
+            //PlanePosition = -((VoxXNumber*VoxXHalfSize) - VoxXHalfSize) + VoxContainerPos.getX() + PlaneID * 2 * VoxXHalfSize;
+        }
+
+        std::vector<G4int> RelativeCNNumbersForAxisPlanes; //
+
+        if(MinPlaneID == MaxPlaneID){ // MinCol lk=1 and maxCol lk=2
+            RelativeCNNumbersForAxisPlanes.push_back(MinPlaneID);
+        }else{
+            G4int nn = MinPlaneID;
+            for(nn ; nn < MaxPlaneID+1 ; nn++){RelativeCNNumbersForAxisPlanes.push_back(nn);}
+        }
+
+        NumberOfVisualizedCN = RelativeCNNumbersForAxisPlanes.size()*VoxNumbAxis1*VoxNumbAxis2;
+
+#if VERBOSE_USE
+        G4cout << " - Number of " << PlanesToVisualize << " plans " << RelativeCNNumbersForAxisPlanes.size() << " from " << axis<< "=" << MinPlaneID << " to " << axis<< "=" << MaxPlaneID << G4endl;
+        G4cout << " - Total number of visualized voxels " << NumberOfVisualizedCN << G4endl;
+#endif
+
+       VisualizedCN = new int[NumberOfVisualizedCN];
+        int cn=0;
+        int inc=0;
+
+        for(size_t f = 0; f < VoxZNumber ;f++ ){
+            for(size_t g = 0; g < VoxYNumber ;g++ ){
+                for(size_t d = 0; d < VoxXNumber ;d++ ){
+
+                    for(size_t m = 0; m < RelativeCNNumbersForAxisPlanes.size() ;m++ ){
+
+                        if(PlanesToVisualize == "xy" && RelativeCNNumbersForAxisPlanes[m] == f){
+                            VisualizedCN[inc] = cn;
+                            inc++;
+                        }
+                        else if(PlanesToVisualize == "xz" && RelativeCNNumbersForAxisPlanes[m] == g){
+                            VisualizedCN[inc] = cn;
+                            inc++;
+                        }
+                        else if(PlanesToVisualize == "yz" && RelativeCNNumbersForAxisPlanes[m] == d){
+                            VisualizedCN[inc] = cn;
+                            inc++;
+                        }
                     }
-                    else if(PlanesToVisualize == "xz" && RelativeCNNumbersForAxisPlanes[m] == g){
-                        VisualizedCN[inc] = cn;
-                        inc++;
-                    }
-                    else if(PlanesToVisualize == "yz" && RelativeCNNumbersForAxisPlanes[m] == d){
-                        VisualizedCN[inc] = cn;
-                        inc++;
-                    }
+                    cn++;
                 }
-
-                cn++;
-
             }
         }
     }
@@ -2791,20 +2842,19 @@ void G4TVolumeConstruction::VisualizationVoxelizedGeometry(){
         voxel_logic = new G4LogicalVolume(voxel_solid,VoxelsMaterials[MateIDs[VisualizedCN[inc]]],"VoxelLogical", 0,0,0);
         G4ThreeVector VoxPosition;
 
-        if(PlanesToVisualize == "xy" || PlanesToVisualize == "yx"){VoxPosition = G4ThreeVector(CopyNumberXPos[VisualizedCN[inc]],CopyNumberYPos[VisualizedCN[inc]],CopyNumberZPos[VisualizedCN[inc]]);}
-        else if(PlanesToVisualize == "xz" || PlanesToVisualize == "zx"){VoxPosition = G4ThreeVector(CopyNumberXPos[VisualizedCN[inc]],CopyNumberYPos[VisualizedCN[inc]],CopyNumberZPos[VisualizedCN[inc]]);}
-        else if(PlanesToVisualize == "yz" || PlanesToVisualize == "zy"){VoxPosition = G4ThreeVector(CopyNumberXPos[VisualizedCN[inc]],CopyNumberYPos[VisualizedCN[inc]],CopyNumberZPos[VisualizedCN[inc]]);}
+        //if(PlanesToVisualize == "xy" || PlanesToVisualize == "yx"){VoxPosition =      G4ThreeVector(CopyNumberXPos[VisualizedCN[inc]],CopyNumberYPos[VisualizedCN[inc]],CopyNumberZPos[VisualizedCN[inc]]);}
+        //else if(PlanesToVisualize == "xz" || PlanesToVisualize == "zx"){VoxPosition = G4ThreeVector(CopyNumberXPos[VisualizedCN[inc]],CopyNumberYPos[VisualizedCN[inc]],CopyNumberZPos[VisualizedCN[inc]]);}
+        //else if(PlanesToVisualize == "yz" || PlanesToVisualize == "zy"){VoxPosition = G4ThreeVector(CopyNumberXPos[VisualizedCN[inc]],CopyNumberYPos[VisualizedCN[inc]],CopyNumberZPos[VisualizedCN[inc]]);}
 
+        VoxPosition = G4ThreeVector(CopyNumberXPos[VisualizedCN[inc]],CopyNumberYPos[VisualizedCN[inc]],CopyNumberZPos[VisualizedCN[inc]]);
         new G4PVPlacement( new G4RotationMatrix() ,VoxPosition, "PhysVox" , voxel_logic , ContPhysicalVoll , false , 0 , false );
 
         G4VisAttributes* voxvis = new G4VisAttributes(RegionNameColour[CopyNumberRegionNameMap[VisualizedCN[inc]]]);
         voxvis->SetVisibility(true); voxvis->SetForceSolid(true);
         voxel_logic->SetVisAttributes(voxvis);
 
-        //G4cout << " CN ID " << VisualizedCN[inc] << "  Colour " << egionCopyNumberColour[VisualizedCN[inc]] << " Material name " << VoxelsMaterials[MateIDs[VisualizedCN[inc]]]->GetName() << G4endl;
-
+        //G4cout << " CN ID " << VisualizedCN[inc] << " Position " << VoxPosition << "  Colour " << RegionNameColour[CopyNumberRegionNameMap[VisualizedCN[inc]]] << " Material name " << VoxelsMaterials[MateIDs[VisualizedCN[inc]]]->GetName() << G4endl;
     }
-
 #if VERBOSE_USE
     G4cout << G4endl;
 #endif

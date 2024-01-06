@@ -204,6 +204,7 @@ extern G4String TETNodeDataFile, TETEleDataFile, TETMatDataFile;
 extern G4double MinTETPhantom;
 extern G4double MaxTETPhantom;
 extern bool MaterialNameAsRegionName;
+extern std::vector<G4String> RegionsToVisualize;
 
 
 // Physics
@@ -230,6 +231,8 @@ extern G4String IonIonisationModel;
 extern G4bool GenerateCrossSectionTableFlag;
 extern G4String ParticleForCrossSection;
 extern std::vector<G4double> EnergiesForCrossSectionValues;
+
+extern std::map<G4int,G4String> MaterialIDName;
 
 class G4VPhysicalVolume;
 class G4TVolumeConstruction : public G4VUserDetectorConstruction
@@ -718,7 +721,7 @@ public:
 private:
 
     G4String MaterialName, FracOrNum; G4int MaterialCompNumber;
-    std::map<G4int,G4String> MaterialIDName;
+    //std::map<G4int,G4String> MaterialIDName;
 
 public:
     std::map<G4int,G4String> getMaterialIDName  ()const {return MaterialIDName;}
@@ -790,6 +793,9 @@ public:
 
     void setMinPlaneID(G4int n){    MinPlaneID = n ;}
     void setMaxPlaneID(G4int n){    MaxPlaneID = n ;}
+
+    void setRegionsToVisualize(G4String n){    RegionsToVisualize.push_back(n);}
+
 
     void setVoxContainerPos(G4ThreeVector n){    VoxContainerPos = n ;}
     void setVoxContainerRot(G4ThreeVector n){    VoxContainerRot = n ;}

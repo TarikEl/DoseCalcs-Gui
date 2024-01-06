@@ -193,12 +193,15 @@ G4String GenerateVoxelsResuls;
 
 G4String GeometrySymbol ;
 
+std::vector<G4String> RegionsToVisualize;
+
 G4String PlanesToVisualize;
 G4int MinPlaneID;
 G4int MaxPlaneID;
 G4int TotalNumberOfSimulations;
 
 G4String TETNodeDataFile, TETEleDataFile, TETMatDataFile;
+std::map<G4int,G4String> MaterialIDName;
 
 G4double MinTETPhantom;
 G4double MaxTETPhantom;

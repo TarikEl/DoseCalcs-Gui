@@ -540,10 +540,16 @@ void G4TGeometryMessenger::SetNewValue(G4UIcommand* command,G4String newValue){
         G4String planes = next(); planes.toLower();
         GeometryConstruction->setPlanesToVisualize(planes);
         if(planes != "all"){
-            GeometryConstruction->setMinPlaneID(StoI(next()));
-            GeometryConstruction->setMaxPlaneID(StoI(next()));
+            if(planes == "regions"){
+                int numb = StoI(next());
+                for(G4int ds = 0 ; ds < numb ; ds++){
+                    GeometryConstruction->setRegionsToVisualize(next());
+                }
+            }else{
+                GeometryConstruction->setMinPlaneID(StoI(next()));
+                GeometryConstruction->setMaxPlaneID(StoI(next()));
+            }
         }
-
         G4String nn = next() ; nn.toLower();
         if(nn == "yes"){
             GeometryConstruction->setForcedSolid(true);
@@ -554,18 +560,22 @@ void G4TGeometryMessenger::SetNewValue(G4UIcommand* command,G4String newValue){
     }
 
     if( command == setTETPhantomLimitsCMD )
-    if( command == setTETPhantomLimitsCMD )
     {
         G4Tokenizer next(newValue);
         G4String planes = next(); planes.toLower();
         GeometryConstruction->setPlanesToVisualize(planes);
         if(planes != "all"){
-            G4double a = StoD(next());
-            G4double b = StoD(next());
-
-            GeometryConstruction->setTETPhantomLimits(a,b);
+            if(planes == "regions"){
+                int numb = StoI(next());
+                for(G4int ds = 0 ; ds < numb ; ds++){
+                    GeometryConstruction->setRegionsToVisualize(next());
+                }
+            }else{
+                G4double a = StoD(next());
+                G4double b = StoD(next());
+                GeometryConstruction->setTETPhantomLimits(a,b);
+            }
         }
-
         G4String nn = next() ; nn.toLower();
         if(nn == "yes"){
             GeometryConstruction->setForcedSolid(true);

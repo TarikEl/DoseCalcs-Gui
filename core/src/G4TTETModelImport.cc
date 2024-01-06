@@ -36,6 +36,7 @@ extern G4String PlanesToVisualize;
 extern G4String TETNodeDataFile, TETEleDataFile, TETMatDataFile;
 extern G4double MinTETPhantom;
 extern G4double MaxTETPhantom;
+extern std::vector<G4String> RegionsToVisualize;
 
 extern G4String* CopyNumberRegionNameMap;
 extern G4float* CopyNumberMassSize;
@@ -44,6 +45,7 @@ extern std::map<G4String, G4Colour> RegionNameColour;
 extern bool MaterialNameAsRegionName;
 
 extern bool UseVoxelsColour;
+extern std::map<G4int,G4String> MaterialIDName;
 
 G4TTETModelImport::G4TTETModelImport()
 {
@@ -159,7 +161,8 @@ void G4TTETModelImport::DataRead(G4String eleFile, G4String nodeFile)
         for(G4int j=0;j<4;j++){
             ifpEle >> tempInt;
             ele[j]=tempInt;
-            if(PlanesToVisualize != "all"){  // for each point a vector (xyz)
+
+            if(PlanesToVisualize != "all" && PlanesToVisualize != "regions"){  // for each point a vector (xyz)
                 if(PlanesToVisualize == "xy" || PlanesToVisualize == "yx"){
                     //G4cout << " MinTETPhantom " << MinTETPhantom << " zPos " << vertexVector[tempInt].getZ() << " MaxTETPhantom " << MaxTETPhantom <<G4endl;
                     if (vertexVector[tempInt].getZ() < MinTETPhantom || vertexVector[tempInt].getZ() > MaxTETPhantom){isOut = true;}
@@ -179,13 +182,29 @@ void G4TTETModelImport::DataRead(G4String eleFile, G4String nodeFile)
         if(isOut == true){continue;}
         //G4cout << " Is IN " << " tempInt " << tempInt <<G4endl;
 
+        // filter for a specific regions
+        bool isInn = true;
+        if(RegionsToVisualize.size() != 0){
+            bool bbbb = false;
+            for (int i = 0; i < RegionsToVisualize.size(); i++) {
+                //G4cout << " tempInt " << tempInt << " MatIDNameMap[tempInt] " << MaterialIDName[tempInt] << " RegionsToVisualize[i] " << RegionsToVisualize[i] <<G4endl;
+                if(MaterialIDName[tempInt] == RegionsToVisualize[i]){
+                    bbbb = true;
+                    break;
+                }
+            }
+            if(bbbb == true){isInn = true;}else{isInn = false;}
+        }
+        if(isInn == false){continue;}
+
+        tetVector.push_back(new G4Tet("Tet_Solid",vertexVector[ele[0]],vertexVector[ele[1]],vertexVector[ele[2]],vertexVector[ele[3]])); //for each line (tet) a Solid Tet
         eleVector.push_back(ele);
         materialVector.push_back(tempInt); // for each line (tet) a material id
-        // save the element (tetrahedron) data as the form of std::vector<G4Tet*>
-        tetVector.push_back(new G4Tet("Tet_Solid",vertexVector[ele[0]],vertexVector[ele[1]],vertexVector[ele[2]],vertexVector[ele[3]])); //for each line (tet) a Solid Tet
+        //G4cout << " 1 " <<G4endl;
 
         // calculate the total volume and the number of tetrahedrons for each organ
         std::map<G4int, G4double>::iterator FindIter = volumeMap.find(materialVector[SavedEle]);
+        //G4cout << " 2 " <<G4endl;
 
         if(FindIter!=volumeMap.end()){
             FindIter->second += tetVector[SavedEle]->GetCubicVolume();
@@ -197,6 +216,8 @@ void G4TTETModelImport::DataRead(G4String eleFile, G4String nodeFile)
         }
 
         SavedEle++;
+        //G4cout << " 3 " <<G4endl;
+
     }
 
     ifpEle.close();
