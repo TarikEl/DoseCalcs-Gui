@@ -428,6 +428,7 @@ private:
     void ConstructOtherTissuesSource();
     void CreateNewSourceRegion(QString);
 
+    bool ReadNeutronSpectrum;
     double  GenerateTissueFactor(QString);
     QMap<QString,QMap<QString,QMap<QString,QMap<double,QMap<QString,QMap<QString,double>>>>>> ICRPSAFs ;
     QMap<QString,QMap<QString,QMap<double,double>>> ICRPRadioNuclideData ; // RadioNuclide Particle MonoOrSpectrum MonoEnergyOrSpectumEnergy YieldForMonoEnergyOrSpectumEnergy
@@ -446,6 +447,8 @@ private:
     QVector<QPair<double,QString>> RadionuclideValuePairVectorValuesDescending; // Radionuclide, QuantityValue
     std::map<QString,std::map<QString, std::vector<double>>> SourceParticleEnergyValues ;
     std::map<QString,double> TissueFactorMap ;
+    std::map<QString,double> EnergyIDRadionuclideForNeutronSAF ;
+
     //std::map<QString,std::map<double,double>> RadiationFactorMap ;
     QMap<QString,QVector<QString>> RadionuclidesParticles ;
     QMap<QString,QMap<QString,QMap<QString,double>>> RadioTracerSourceOrganResidenceTime;

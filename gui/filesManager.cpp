@@ -250,6 +250,8 @@ QMap<QString,QMap<QString,QMap<QString,QMap<QString,QMap<QString,QMap<double,dou
 
             if (word == "******" && isADataLines == false) {
 
+                particleEnergies.clear();
+
                 LineString >> Quantity1 >> QuantityUnit >> SrcRegionName1 >> ParticleName1;
                 //G4cout << " SrcRegionName " << SrcRegionName << " ParticleName " << ParticleName  << G4"\n" ;
                 SrcRegionName = QString::fromStdString(SrcRegionName1);

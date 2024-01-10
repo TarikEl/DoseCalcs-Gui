@@ -71,7 +71,7 @@
              <enum>Qt::LeftToRight</enum>
             </property>
             <property name="currentIndex">
-             <number>1</number>
+             <number>3</number>
             </property>
             <property name="usesScrollButtons">
              <bool>true</bool>
@@ -2751,7 +2751,7 @@
                        <item>
                         <widget class="QCheckBox" name="RadPhotonCheckBox">
                          <property name="text">
-                          <string>g</string>
+                          <string>g and X</string>
                          </property>
                         </widget>
                        </item>
@@ -2764,6 +2764,9 @@
                        </item>
                        <item>
                         <widget class="QCheckBox" name="RadPositronCheckBox">
+                         <property name="toolTip">
+                          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The check state is considered when you read ICRP 107 radiation data without spectrum data for beta particles. Else, e+ are considered e- with spectrum defined in beta spectrum file.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                         </property>
                          <property name="text">
                           <string>e+</string>
                          </property>
@@ -2780,6 +2783,16 @@
                         <widget class="QCheckBox" name="RadNeutronCheckBox">
                          <property name="text">
                           <string>n</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QCheckBox" name="RadFFCheckBox">
+                         <property name="toolTip">
+                          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Fission fragment&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                         </property>
+                         <property name="text">
+                          <string>FF</string>
                          </property>
                         </widget>
                        </item>
@@ -3012,13 +3025,50 @@
                      <number>0</number>
                     </property>
                     <item>
-                     <widget class="QPushButton" name="pushButtonReadICRP107128">
-                      <property name="toolTip">
-                       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Read ICRP radionuclides data such as radionuclides half lives, particles, energies and yields from ICRP Publication 107&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                     <widget class="QFrame" name="frame_39">
+                      <property name="frameShape">
+                       <enum>QFrame::NoFrame</enum>
                       </property>
-                      <property name="text">
-                       <string>Read ICRP Radiation data</string>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
                       </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_42">
+                       <property name="spacing">
+                        <number>0</number>
+                       </property>
+                       <property name="leftMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="topMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="rightMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="bottomMargin">
+                        <number>0</number>
+                       </property>
+                       <item>
+                        <widget class="QCheckBox" name="checkBoxReadSpectrum">
+                         <property name="toolTip">
+                          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Check to read beta (e- and e+) spectrums. For neutrons, the simulations are already performed for neutron spectrum of spontaneous fission radionuclides. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                         </property>
+                         <property name="text">
+                          <string/>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QPushButton" name="pushButtonReadICRP107128">
+                         <property name="toolTip">
+                          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Read ICRP radionuclides data such as radionuclides half lives, particles, energies and yields from ICRP Publication 107&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                         </property>
+                         <property name="text">
+                          <string>Read ICRP Radiation data</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
                      </widget>
                     </item>
                     <item>
