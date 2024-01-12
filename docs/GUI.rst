@@ -33,7 +33,7 @@ When the user download the DoseCalcs package and unpack it under Ubuntu, the Dos
 
 - [PreDefinedGeometry] directory, which contains several [macros] files and the corresponding geometry files. These files are used when the user would use a geometry from this provided list, which covers all DoseCalcs geometry methods.
 
-The [ICRPDATA] and [PreDefinedGeometry] do not come with DoseCalcs-Gui package, they can be downloaded from (`Download ICRPDATA and PreDefinedGeometry Zip file. <//https://drive.google.com/file/d/1tqapOVKg4wpQMKNPSoPUhnJqpHnb9TNO/view?usp=sharing>`_) in the form of a zip file (DoseCalcsSupplementary.tar.xz), then unzipped in the PackagesAndFiles directory before building the DoseCalcs-Gui package. Or you can just click on "Download DoseCalcs Supplementary Files" button in DoseCalcs-Gui Installations window, and the ICRPDATA and PreDefinedGeometry will be downloaded and added to PackagesAndFiles directory in the DoseCalcs-Gui build directory.
+The [ICRPDATA] and [PreDefinedGeometry] do not come with DoseCalcs-Gui package, they can be downloaded from (`Download ICRPDATA and PreDefinedGeometry Zip file. <//https://drive.google.com/file/d/1arU9aJpi7M5VehO1lPKOSM1JkyRe7j2k/view?usp=drive_link>`_) in the form of a zip file (DoseCalcsSupplementary.tar.xz), then unzipped in the PackagesAndFiles directory before building the DoseCalcs-Gui package. Or you can just click on "Download DoseCalcs Supplementary Files" button in DoseCalcs-Gui Installations window, and the ICRPDATA and PreDefinedGeometry will be downloaded and added to PackagesAndFiles directory in the DoseCalcs-Gui build directory.
 
 Installing the DoseCalcs-Gui component
 -------------------------------------------

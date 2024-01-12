@@ -1520,13 +1520,13 @@ void InstallationDialog::on_pushButtonDownloadSupplement_clicked()
 {
     if(QMessageBox::Yes == QMessageBox::question(this, tr("DoseCalcs Supplementaries installation"), "When you click on \"Yes\", the .tar.xz file containing the ICRPDATA and PreDefinedGeometry directories will be downloaded from Google Drive. Then, it will be unziped under the directory "+
                                                  GUIPackagesAndFilesDirPath+", the download and unzip will be done on terminal. After finishing, please check the files in "+ GUIPackagesAndFilesDirName +" directory.")){
-        //https://drive.google.com/file/d/1arU9aJpi7M5VehO1lPKOSM1JkyRe7j2k/view?usp=sharing from imttarikk not work
-        //https://drive.google.com/file/d/1tqapOVKg4wpQMKNPSoPUhnJqpHnb9TNO/view?usp=sharing from telghabzouri@uae.ac.ma work good
+        //https://drive.google.com/file/d/1arU9aJpi7M5VehO1lPKOSM1JkyRe7j2k/view?usp=drive_link from imttarikk
+        //https://drive.google.com/file/d/1SMKv5_AlP2zwMg6QOT6BldR-y02fGVXj/view?usp=drive_link from telghabzouri@uae.ac.ma
         QString text_shFile =
                 "cd "+GUIPackagesAndFilesDirPath+"\n"+
                 "rm -r "+ GUIPackagesAndFilesDirPath+"/DoseCalcsSupplementaries.tar.xz"+ +"\n"
                 //"wget -O DoseCalcsSupplementaries.tar.xz --no-check-certificate -r 'https://drive.google.com/uc?export=download&id=1arU9aJpi7M5VehO1lPKOSM1JkyRe7j2k' \n"+
-                "wget --load-cookies /tmp/cookies.txt \"https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1tqapOVKg4wpQMKNPSoPUhnJqpHnb9TNO' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\\1\\n/p')&id=1tqapOVKg4wpQMKNPSoPUhnJqpHnb9TNO\" -O DoseCalcsSupplementaries.tar.xz && rm -rf /tmp/cookies.txt \n"+
+                "wget --load-cookies /tmp/cookies.txt \"https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1arU9aJpi7M5VehO1lPKOSM1JkyRe7j2k' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\\1\\n/p')&id=1arU9aJpi7M5VehO1lPKOSM1JkyRe7j2k\" -O DoseCalcsSupplementaries.tar.xz && rm -rf /tmp/cookies.txt \n"+
                 //"wget "+ Supplementary_Url_String +"\n"+
                 "tar xvf "+ GUIPackagesAndFilesDirPath+"/DoseCalcsSupplementaries.tar.xz"+ +"\n"
                 ;
