@@ -81,9 +81,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
+        <y>-377</y>
         <width>1090</width>
-        <height>694</height>
+        <height>783</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -230,7 +230,7 @@
              <item>
               <widget class="QPushButton" name="pushButtonDownloadSupplement">
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#008000;&quot;&gt;When you click on &amp;quot;Yes&amp;quot;, the .tar.xz file containing the ICRPDATA and PreDefinedGeometry directories will be downloaded from GoogleDrive. Then, it will be unziped under the directory &lt;/span&gt;&lt;span style=&quot; font-family:'monospace'; color:#ce5c00;&quot;&gt;PackagesAndFiles, &lt;/span&gt;&lt;span style=&quot; font-family:'monospace'; color:#008000;&quot;&gt;the download and unzip will be done on terminal. After finishing, please check the files in &lt;/span&gt;&lt;span style=&quot; font-family:'monospace'; color:#ce5c00;&quot;&gt;PackagesAndFiles&lt;/span&gt;&lt;span style=&quot; font-family:'monospace'; color:#008000;&quot;&gt; directory&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#008000;&quot;&gt;This button is used to download the data for use of pre-defined geometries and phantoms, and  data for radionuclides and SAF to be used in &amp;quot;Nuclear Medicine Dosimetry&amp;quot; window and .When you click on &amp;quot;Yes&amp;quot;, the .tar.xz file containing the ICRPDATA and PreDefinedGeometry directories will be downloaded from GoogleDrive. Then, it will be unziped under the directory &lt;/span&gt;&lt;span style=&quot; font-family:'monospace'; color:#ce5c00;&quot;&gt;PackagesAndFiles, &lt;/span&gt;&lt;span style=&quot; font-family:'monospace'; color:#008000;&quot;&gt;the download and unzip will be done on terminal. After finishing, please check the files in &lt;/span&gt;&lt;span style=&quot; font-family:'monospace'; color:#ce5c00;&quot;&gt;PackagesAndFiles&lt;/span&gt;&lt;span style=&quot; font-family:'monospace'; color:#008000;&quot;&gt; directory&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="text">
                 <string>Download DoseCalcs Supplementary Files </string>
@@ -723,6 +723,105 @@
               </widget>
              </item>
             </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFrame" name="frame_13">
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_16">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>401</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>401</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QPushButton" name="pushButtonBuildRunGeant4ExampleShow">
+            <property name="text">
+             <string>Build, Run Geant4 application &lt;</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_4">
+         <property name="title">
+          <string/>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_15">
+          <item>
+           <widget class="QPushButton" name="pushButtonAppSourceDir">
+            <property name="text">
+             <string>Geant4 Example Source Dir</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonAppBuildDir">
+            <property name="text">
+             <string>Geant4 Example Build Dir</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonGenerateShellFileForExampleBuilding">
+            <property name="text">
+             <string>Generate</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonLoadInstaller">
+            <property name="text">
+             <string>Load Installer</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonBuildExample">
+            <property name="text">
+             <string>Build</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonOpenBuildDir">
+            <property name="text">
+             <string>Open Build Dir</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonEditAFile">
+            <property name="text">
+             <string>Edit File</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButtonRunExample">
+            <property name="text">
+             <string>Run</string>
+            </property>
            </widget>
           </item>
          </layout>

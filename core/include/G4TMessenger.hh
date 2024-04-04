@@ -73,6 +73,7 @@ private:
     G4UIcmdWithAString*          AccuracyCalculationLevelCMD ;
     G4UIcmdWithAString*			 SimNumOnRanksCMD;
     G4UIcmdWithoutParameter*     GenerateVoxelsResulsCMD;
+    G4UIcommand*     SimulationIntExtNeutDet;
 
     G4UIcmdWithAString*			 ResultDirectoryPathCMD;
 

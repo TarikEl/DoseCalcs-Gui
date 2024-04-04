@@ -63,6 +63,10 @@
 #include "G4ParticleTable.hh"
 #include "G4Timer.hh"
 
+
+extern G4String GeometryFileType;
+extern G4String GenerateVoxelsResuls;
+
 extern  G4String* CopyNumberRegionNameMap;
 extern  G4float* CopyNumberXPos;
 extern  G4float* CopyNumberYPos;
@@ -77,22 +81,49 @@ extern G4String SourceType;
 extern G4String EnergyDistribution;
 extern G4String UseGeneratedData ;
 extern G4String ResultDirectoryPath ;
-extern G4String GenerateVoxelsResuls;
 extern G4String DataDirectoryPath;
+
+extern G4int NumberOfEventInBatch;
+extern G4int NumberOfBatch;
+extern G4String DataFilesExtension;
 
 extern std::vector<G4String> NewRankSourceParticlesNamesValues;
 extern std::vector<G4String> NewRankSourceRegionsNamesValues;
 extern std::vector<G4double> NewRankSourceEnergiesValues;
 extern std::vector<G4String> NewRankSourceMomDirsValues;
 
+
+extern std::map<unsigned int,G4double* >      EnergyListForCriticality;
+extern std::map<unsigned int,G4ThreeVector* > PositionsListForCriticality;
+extern std::map<unsigned int,G4ParticleMomentum* > MomDirecsListForCriticality;
+
+extern std::map<G4int,std::map<G4int,std::vector<G4double>>> FissionCapturesOfThreadsRanks;
+extern std::map<G4int,std::map<G4String,std::map<G4String,G4int>>> OpticalPhotonInteractionRate;
+
+extern std::vector<G4double> KeffectiveInEachBatch;
+extern std::map<G4int,std::map<G4int,G4bool>> TerminatedThreadBatch;
+
 #ifdef G4MULTITHREADED
+G4ThreadLocal std::ofstream G4TRunAction::CriticalityFile;
+G4ThreadLocal std::map<G4int,std::vector<G4double>>      G4TRunAction::NewNeutronFissionEnergyList;
+G4ThreadLocal std::map<G4int,std::vector<G4ThreeVector>> G4TRunAction::NewNeutronFissionPositionsList;
+G4ThreadLocal std::map<G4int,std::vector<G4ParticleMomentum>> G4TRunAction::NewNeutronFissionMomDirecsList;
+G4ThreadLocal unsigned long long int*    G4TRunAction::FluxParticlePosX   ;
+G4ThreadLocal unsigned long long int*    G4TRunAction::FluxParticlePosY   ;
+G4ThreadLocal unsigned long long int*    G4TRunAction::FluxParticlePosZ   ;
+G4ThreadLocal unsigned long long *       G4TRunAction::FluxParticleEnergy ;
+G4ThreadLocal std::map<G4int,std::map<G4String,G4int>> G4TRunAction::ParticleProduction;
+G4ThreadLocal std::map<G4int,std::map<unsigned int,G4double>> G4TRunAction::VoxelsFluence ;
 G4ThreadLocal std::map<G4int,std::map<unsigned int,G4double>> G4TRunAction::VoxelsED_Total ;
 G4ThreadLocal std::map<G4int,std::map<unsigned int,G4double>> G4TRunAction::VoxelsED2_Total ;
 G4ThreadLocal std::map<G4int,std::map<unsigned int,unsigned long long int>> G4TRunAction::VoxelsNOfValues ;
 G4ThreadLocal std::map<G4int,std::map<G4String,unsigned long long int>> G4TRunAction::NOfValues;
 G4ThreadLocal std::map<G4int,std::map<G4String,G4double>> G4TRunAction::ED_Total ;
+G4ThreadLocal std::map<G4int,std::map<G4String,G4double>> G4TRunAction::Fluence ;
 G4ThreadLocal std::map<G4int,std::map<G4String,G4double>> G4TRunAction::ED2_Total ;
-G4ThreadLocal G4int G4TRunAction::rank, G4TRunAction::thread, G4TRunAction::DataID, G4TRunAction::EventIndex, G4TRunAction::NumberOfRanksThreads, G4TRunAction::TotalEventNumber;
+G4ThreadLocal G4int G4TRunAction::rank, G4TRunAction::thread, G4TRunAction::DataID, G4TRunAction::CurrentBatch, G4TRunAction::NumberOfRanksThreads, G4TRunAction::TotalEventNumber;
+//G4ThreadLocal G4double G4TRunAction::Keffective;
+//G4ThreadLocal G4int G4TRunAction::NumberOfFissionNeutrons, G4TRunAction::NumberOfFission, G4TRunAction::NumberOfCapture,
 G4ThreadLocal G4double G4TRunAction::EnergyEmittedPerThread, G4TRunAction::ParticleSourceEnergy, G4TRunAction::ExecutionTimeInMin, G4TRunAction::OneEventExecutionTimeInMs;
 G4ThreadLocal std::chrono::steady_clock::time_point G4TRunAction::start, G4TRunAction::end ;
 #endif
@@ -101,6 +132,11 @@ G4ThreadLocal std::chrono::steady_clock::time_point G4TRunAction::start, G4TRunA
 //G4ThreadLocal G4double G4TRunAction::StepEnergy;
 //G4ThreadLocal G4String G4TRunAction::StepRegion;
 
+//namespace
+//{
+//G4Mutex	mutex = G4MUTEX_INITIALIZER;
+//}
+
 G4TRunAction::G4TRunAction()
 {
     // get the name of the working directory
@@ -108,6 +144,7 @@ G4TRunAction::G4TRunAction()
     //ResultDirectoryPath = appBuildDir+"/Results";
 }
 G4TRunAction::~G4TRunAction(){
+    G4MUTEXDESTROY(mutex);
     //G4cout << "\n\n\n\n\n\n from function : " << "G4TRunAction::~G4TRunAction()"<< G4endl;
 }
 
@@ -480,6 +517,8 @@ void G4TRunAction::BeginOfRunAction(const G4Run* aRun) {
 
 #else
 
+    std::cout <<  " GeometryFileType " << GeometryFileType <<  " GenerateVoxelsResuls " << GenerateVoxelsResuls << std::endl ;
+
     if(G4Threading::IsMultithreadedApplication()){ // normal multiThreaded mode
 
         ExecutionMode = "MT";
@@ -488,7 +527,7 @@ void G4TRunAction::BeginOfRunAction(const G4Run* aRun) {
         //TotalEventNumber = aRun->GetNumberOfEvent();
 
         if(G4Threading::IsWorkerThread()){
-            std::cout <<  "\n " << Time << " ========= MT mode : "<<__FUNCTION__<<" from Worker Thread " << G4Threading::G4GetThreadId() << "/" <<G4Threading::GetNumberOfRunningWorkerThreads() << ". Start of " << TotalEventNumber << " events simulation loop using " << GeometrySymbol <<" geometry -Source Data: " << NewRankSourceParticlesNamesValues[DataID] << ", " << SourceType << ", " << NewRankSourceRegionsNamesValues[DataID] << ", "  << EnergyDistribution << " " << NewRankSourceEnergiesValues[DataID] << ", " << NewRankSourceMomDirsValues[DataID] << std::endl ;
+            std::cout <<  "\n " << Time << " ========= MT mode : "<<__FUNCTION__<<  " " << GeometryFileType  << " " << " GenerateVoxelsResuls:" << GenerateVoxelsResuls << " from Worker Thread " << G4Threading::G4GetThreadId() << "/" <<G4Threading::GetNumberOfRunningWorkerThreads() << ". Start of " << TotalEventNumber << " events simulation loop using " << GeometrySymbol <<" geometry -Source Data: " << NewRankSourceParticlesNamesValues[DataID] << ", " << SourceType << ", " << NewRankSourceRegionsNamesValues[DataID] << ", "  << EnergyDistribution << " " << NewRankSourceEnergiesValues[DataID] << ", " << NewRankSourceMomDirsValues[DataID] << std::endl ;
 
         }
         else if(G4Threading::IsMasterThread()){
@@ -509,20 +548,39 @@ void G4TRunAction::BeginOfRunAction(const G4Run* aRun) {
     const G4TVolumeConstruction* TConstruction2 = static_cast<const G4TVolumeConstruction*> (G4RunManager::GetRunManager()->GetUserDetectorConstruction());
     OneOrMultiSimulations = TConstruction2->getMPISimulationNum();
 
-
     // to initialize the arrays ED_Total ;
     OrgansNameVector = TConstruction2->GetOrganNamesVector();
     for(G4int nn = 0;nn < (G4int)OrgansNameVector.size();nn++){
+        Fluence[DataID][OrgansNameVector[nn]]=0.;
         ED_Total[DataID][OrgansNameVector[nn]]=0.;
         ED2_Total[DataID][OrgansNameVector[nn]]=0.;
     }
     ED_Total[DataID]["World"]=0.;
 
-    EventIndex = 0;
-
     useTime(0); // "0" for setting the begining time befor a loop, "1" it get the end time and calculate consumed time by a loop and show the difference, the loop should not have a setting or getting time inside it
 
     G4RunManager::GetRunManager()->SetPrintProgress(TotalEventNumber*0.1);
+
+    CurrentBatch = 0;
+    NumberOfEventInBatch = 300;
+    NumberOfBatch = 10;
+
+    //NumberOfFission = 0;
+    //NumberOfFissionNeutrons = 0;
+    //NumberOfCapture = 0;
+    //Keffective = 0.;
+    for (G4int iLV = 0; iLV < NumberOfBatch; iLV++ ) {
+        if(FissionCapturesOfThreadsRanks[DataID][iLV].size() == 3){
+        }else{
+            FissionCapturesOfThreadsRanks[DataID][iLV].push_back(0.);
+            FissionCapturesOfThreadsRanks[DataID][iLV].push_back(0.);
+            FissionCapturesOfThreadsRanks[DataID][iLV].push_back(0.);
+        }
+        if(KeffectiveInEachBatch.size() == NumberOfBatch){
+        }else{
+            KeffectiveInEachBatch.push_back(0.);
+        }
+    }
 
     //std::cout << "\n\n\n\n\n\n 11111111111111 \n\n\n\n\n\n "<< std::endl;
 }
@@ -535,6 +593,7 @@ void G4TRunAction::EndOfRunAction(const G4Run* aRun)
     G4Timer* t; G4String Time = t->GetClockTime();
     std::cout << __FUNCTION__ << " : " << Time << " " ;
     useTime(1); // "0" for setting the begining time befor a loop, "1" it get the end time and calculate consumed time by a loop and show the difference, the loop should not have a setting or getting time inside it
+
 
 
     if(UseGeneratedData == "read"){
@@ -583,8 +642,25 @@ void G4TRunAction::EndOfRunAction(const G4Run* aRun)
     }
 #endif
 
-    CreateThreadRegionResultFile();
-/*
+    ShowOpticalPhotonInteractionData();
+
+
+    if(GeometryFileType == "VoxIDs" || GeometryFileType == "VOXEL" || GeometryFileType == "DICOM"){
+        if(GenerateVoxelsResuls == "yes"){
+            CreateThreadVoxelsResultsFiles();
+        }else{
+            CreateThreadRegionResultFile();
+        }
+    }else{
+        CreateThreadRegionResultFile();
+    }
+
+
+
+
+
+
+    /*
     if(SourceType == "Voxels"){
         if(GenerateVoxelsResuls == "yes"){
             CreateThreadVoxelsResultsFiles();
@@ -598,35 +674,27 @@ void G4TRunAction::CreateThreadVoxelsResultsFiles(){
 
     //G4cout << "\n\n\n\n\n" << __FUNCTION__ << G4endl ;
 
-#if VERBOSE_USE
-    G4cout << " Creating result file of worker thread or rank for " <<  VoxelsED_Total[DataID].size() << " scored voxels. ";
-#endif
-
     std::ostringstream fname;
 
     //G4cout << __FUNCTION__ << G4endl ;
 
     const G4TVolumeConstruction* VolumeConstruction1 = static_cast<const G4TVolumeConstruction*> (G4RunManager::GetRunManager()->GetUserDetectorConstruction());
-    fname << ResultDirectoryPath <<"/AE_Voxel_for_Rank_"<<rank<<"_Thread_"<< thread << "_" << NewRankSourceParticlesNamesValues[DataID] << "_" << NewRankSourceRegionsNamesValues[DataID] << "_" << NewRankSourceEnergiesValues[DataID];
+    fname << ResultDirectoryPath <<"/AE@Voxel@for@Rank@"<<rank<<"@Thread@"<< thread<<"@" << GeometrySymbol <<"@" << NewRankSourceParticlesNamesValues[DataID] << "@" << NewRankSourceRegionsNamesValues[DataID] << "@" << NewRankSourceEnergiesValues[DataID];
+    std::cout << " Creating voxels result file of worker thread or rank " << fname.str().c_str()<< std::endl;
 
     std::ofstream file(fname.str().c_str(), std::ios_base::binary);
 
     //G4cout << "Voxels Scored " << VoxelsED_Total[DataID].size() << G4endl ;
-    file << VoxelsED_Total[DataID].size() << "\n";
+    file << VoxelsED_Total[DataID].size()
+         << " " << VoxXNumber
+         << " " << VoxYNumber
+         << " " << VoxZNumber
+         << " " << VoxXHalfSize
+         << " " << VoxYHalfSize
+         << " " << VoxZHalfSize
+         << "\n";
 
-    //size_t* B = VolumeConstruction1->getCNZSize();     //G4cout << "1" << G4endl ;
-    //size_t* C = VolumeConstruction1->getCNYSize();     //G4cout << "2" << G4endl ;
-    //size_t* D = VolumeConstruction1->getCNXSize();     //G4cout << "3" << G4endl ;
-    //G4float* VCNM = VolumeConstruction1->getCopyNumberMassSize();    //G4cout << "4" << G4endl ;
-    //G4float* XP = VolumeConstruction1->getCopyNumberXPos();    //G4cout << "4" << G4endl ;
-    //G4float* YP = VolumeConstruction1->getCopyNumberYPos();    //G4cout << "4" << G4endl ;
-    //G4float* ZP = VolumeConstruction1->getCopyNumberZPos();    //G4cout << "4" << G4endl ;
-
-    //std::map<unsigned int, G4String> CNRN= VolumeConstruction1->GetCopyNumberRegionNameMap();
-    //size_t* VCNP = VolumeConstruction1->getCopyNumberPositionMap();    //G4cout << "5" << G4endl ;
-    //size_t* VCNN = VolumeConstruction1->GetCopyNumberRegionNameSize();    //G4cout << "6" << G4endl ;
-
-    G4cout << "VoxelsED_Total[DataID].size() " << VoxelsED_Total[DataID].size() << G4endl ;
+    //G4cout << "VoxelsED_Total[DataID].size() " << VoxelsED_Total[DataID].size() << G4endl ;
 
     for ( auto it = VoxelsED_Total[DataID].begin(); it != VoxelsED_Total[DataID].end(); ++it  )
     {
@@ -636,9 +704,11 @@ void G4TRunAction::CreateThreadVoxelsResultsFiles(){
              << CopyNumberZPos[it->first] << " "
              << CopyNumberRegionNameMap[it->first] << " "
              << VoxelsED_Total[DataID][it->first] << " "
-             << VoxelsED2_Total[DataID][it->first]
-             << " " << VoxelsNOfValues[DataID][it->first] << " "
-             << CopyNumberMassSize[it->first] << "\n" ;
+             << VoxelsED2_Total[DataID][it->first] << " "
+             << VoxelsNOfValues[DataID][it->first] << " "
+             << CopyNumberMassSize[it->first] << " "
+             << VoxelsFluence[DataID][it->first]/(8*VoxXNumber*VoxXHalfSize*VoxYNumber*VoxYHalfSize*VoxZNumber*VoxZHalfSize) << " "
+             << "\n" ;
     }
     //G4cout << "7" << G4endl ;
 
@@ -684,7 +754,8 @@ void G4TRunAction::CreateThreadRegionResultFile(){
     << std::setw(15) << std::left << "Steps Number" << " "
     << std::setw(20) << std::left << "Mass(kg)"<< " "
     << std::setw(20) << std::left << "Volume(cm3)"<< " "
-    << std::setw(20) << std::left << "Density(g/cm3)" << "\n";
+    << std::setw(20) << std::left << "Density(g/cm3)" << " "
+    << std::setw(20) << std::left << "Fluence(1/cm2)" << "\n";
 
     for(G4int jk = 0 ; jk < (G4int)OrgansNameVector.size() ; jk++){ // each line for an organ name
         file << std::setw(SZ) << std::left << OrgansNameVector[jk] << " "
@@ -694,9 +765,14 @@ void G4TRunAction::CreateThreadRegionResultFile(){
 
              << std::setw(20) << std::left << TConstruction2->GetOrganNameMassMap()[OrgansNameVector[jk]]<< " "
              << std::setw(20) << std::left << TConstruction2->GetOrganNameVolumeMap()[OrgansNameVector[jk]]<< " "
-             << std::setw(20) << std::left << TConstruction2->GetOrganNameDensityMap()[OrgansNameVector[jk]]
+             << std::setw(20) << std::left << TConstruction2->GetOrganNameDensityMap()[OrgansNameVector[jk]]<< " ";
+        if(TConstruction2->GetOrganNameVolumeMap()[OrgansNameVector[jk]] == 0. || __isinf(TConstruction2->GetOrganNameVolumeMap()[OrgansNameVector[jk]]) || __isnan(TConstruction2->GetOrganNameVolumeMap()[OrgansNameVector[jk]])){
+            file << std::setw(20) << std::left << 0 << " ";
+        }else{
+            file << std::setw(20) << std::left << Fluence[DataID][OrgansNameVector[jk]]/TConstruction2->GetOrganNameVolumeMap()[OrgansNameVector[jk]] << " ";
+        }
 
-             << "\n";
+        file << "\n";
         //G4cout  << OrgansNameVector[jk] << "  " << ED_Total[DataID][OrgansNameVector[jk]] << "  " << G4endl;
     }
 
@@ -886,12 +962,28 @@ void G4TRunAction::FillRegionStepHits(G4String StepRegion, G4double StepEnergy){
 
     //G4cout << DataID << " " << StepRegion << " " << ED_Total[DataID][StepRegion] << " " << ED2_Total[DataID][StepRegion] << G4endl;
 }
+void G4TRunAction::FillRegionLenghts(G4String StepRegion, G4double StepEnergy){
+
+    //G4cout << N << " " << E << " "<< E*E<< G4endl;
+
+    Fluence[DataID][StepRegion] += StepEnergy ;
+
+    //G4cout << DataID << " " << StepRegion << " " << Fluence[DataID][StepRegion] << G4endl;
+}
 void G4TRunAction::FillVoxelStepHits(unsigned int StepCN, G4double StepEnergy){
-    //G4cout << N << " " << E << G4endl;
+
+    //G4cout << DataID << StepCN << " " << StepEnergy << G4endl;
 
     VoxelsED_Total[DataID][StepCN] += StepEnergy ;
     VoxelsED2_Total[DataID][StepCN] += StepEnergy*StepEnergy;
     VoxelsNOfValues[DataID][StepCN]++;
+
+}
+void G4TRunAction::FillVoxelLenghts(unsigned int StepCN, G4double StepEnergy){
+
+    //G4cout << DataID << StepCN << " " << StepEnergy << G4endl;
+
+    VoxelsFluence[DataID][StepCN] += StepEnergy ;
 
 }
 // for Voxelized geometry , called for each event
@@ -945,12 +1037,267 @@ void G4TRunAction::pushVolumeHitsNumber(std::map<G4String, unsigned int> StepsMa
     }
 }
 
+
+void G4TRunAction::CountFission() {
+    //G4cout << "Fission" << G4endl;
+    //NumberOfFission++;
+    FissionCapturesOfThreadsRanks[DataID][CurrentBatch][2]++ ;
+}
+void G4TRunAction::CountAbsorption() {
+    //G4cout << "Capture" << G4endl;
+    //NumberOfCapture++;
+    FissionCapturesOfThreadsRanks[DataID][CurrentBatch][1]++;
+}
+void G4TRunAction::SetPoxEneForBatch(G4double X,G4double Y,G4double Z,G4double MX,G4double MY,G4double MZ,G4double E) {
+    NewNeutronFissionEnergyList[DataID].push_back(E);
+    NewNeutronFissionPositionsList[DataID].push_back(G4ThreeVector(X,Y,Z));
+    NewNeutronFissionMomDirecsList[DataID].push_back(G4ParticleMomentum(MX,MY,MZ));
+    //NumberOfFissionNeutrons++;
+    FissionCapturesOfThreadsRanks[DataID][CurrentBatch][0]++;
+    //G4cout << " DataID " << DataID  << " E " << E<< " X "<< X<< " Y "<< Y<< " Z "<< Z<< " MX "<< MX<< " MY "<< MY<< " MZ "<< MZ<< G4endl;
+
+    //NewNeutronFissionMomDirecsList[DataID].push_back(G4ThreeVector(X,Y,Z));
+}
+void G4TRunAction::CountParticleProductionByNeutron(G4String n){
+    ParticleProduction[DataID][n]++;
+}
+
+void G4TRunAction::IntializeBatchData() {
+
+    TerminatedThreadBatch[DataID][CurrentBatch] = true;
+
+    //G4AutoLock l(&mutex);
+
+    //G4cout << " DataID " << DataID << " CurrentBatch "<< CurrentBatch << " NumberOfEventInBatch "<< NumberOfEventInBatch
+    //       //<< " CurrentBatch*NumberOfEventInBatch+nn "<< CurrentBatch*NumberOfEventInBatch+nn
+    //       << " NewNeutronFissionEnergyList[DataID].size() "<< NewNeutronFissionEnergyList[DataID].size()
+    //       << " NewNeutronFissionPositionsList[DataID].size() "<< NewNeutronFissionPositionsList[DataID].size()
+    //       << " NewNeutronFissionMomDirecsList[DataID].size() "<< NewNeutronFissionMomDirecsList[DataID].size()
+    //       << G4endl;
+
+
+    //G4cout << " DataID " << DataID << " CurrentBatch "<< CurrentBatch << " FissionCapturesOfThreadsRanks[DataID][CurrentBatch][0] "<< FissionCapturesOfThreadsRanks[DataID][CurrentBatch][0] << G4endl;
+
+
+
+    //G4cout << " 0 --------- " << G4endl;
+
+
+    G4double NumCap = 0., NumFiss = 0.,NumFissN = 0.;
+
+    //for ( auto it = FissionCapturesOfThreadsRanks.begin(); it != FissionCapturesOfThreadsRanks.end(); ++it  ){
+    //    if(it->first == -1){ continue;}
+    //    //G4cout << "***************** DataID = " << it->first << " NumberOfFissionN " << it->second[0] << " NumCaptures " << it->second[1]  << " NumFission " << it->second[2] << G4endl;
+    //    NumFissN += it->second[0];
+    //    NumCap   += it->second[1];
+    //    NumFiss  += it->second[2];
+    //}
+
+    CurrentBatch++;// the first batch is simulated from neutron source chosen by user
+
+    //1- calculate batch Keff, should be the first in this function
+    for (G4int  BatchInc = 0;  BatchInc < NumberOfBatch;  BatchInc++ ) {
+        //G4cout << "AAA NumberOfBatch = " << NumberOfBatch << "  BatchInc " <<  BatchInc  << " KeffectiveInEachBatch[ BatchInc] " << KeffectiveInEachBatch[ BatchInc] << G4endl;
+
+        NumFissN= 0;
+        NumCap  = 0;
+        NumFiss = 0;
+
+        bool isready = true;
+        if(KeffectiveInEachBatch[ BatchInc] <= 0){
+            for ( auto it = FissionCapturesOfThreadsRanks.begin(); it != FissionCapturesOfThreadsRanks.end(); ++it  ){
+
+                if(it->first == -1){ continue;}
+
+                //G4cout << "BBB For Thread = " << it->first << " For BatchInc = " << BatchInc << " IsTerminated? "<< TerminatedThreadBatch[it->first][BatchInc] << " NumberOfFissionN " << it->second[ BatchInc][0] << " NumCaptures " << it->second[ BatchInc][1] << " NumFission " << it->second[ BatchInc][2] << G4endl;
+
+                if(TerminatedThreadBatch[it->first][BatchInc] == false){
+                    isready = false;
+                    break;
+                }
+                NumFissN += it->second[ BatchInc][0];
+                NumCap   += it->second[ BatchInc][1];
+                NumFiss  += it->second[ BatchInc][2];
+            }
+            //G4cout << "CCC Total for :     For BatchInc = " << BatchInc << " NumberOfFissionN " << NumFissN << " NumCaptures " << NumCap  << " NumFission " << NumFiss << G4endl;
+
+        }else{
+            continue;
+        }
+
+        if(isready){
+
+            //G4cout << "***************** Total for : NumberOfFissionN = " << NumFissN << " NumCaptures " << NumCap  << " NumFission " << NumFiss << G4endl;
+
+            //G4double keff = static_cast<G4double>(RunAction->getNumberOfFissionNeutrons()/(RunAction->getNumberOfFission()+4.94066e-324)) * static_cast<G4double>(RunAction->getNumberOfFission()/ (RunAction->getNumberOfCapture() +4.94066e-324)); // Avoid division by zero
+            G4double keff = static_cast<G4double>(NumCap/(NumFiss+4.94066e-324)) * static_cast<G4double>(NumFiss/ (NumFissN +4.94066e-324)); // Avoid division by zero
+
+            if( BatchInc == 0){
+                G4cout << "***************** Batch " << BatchInc+1<<"/"<< NumberOfBatch << " , "<< NumberOfEventInBatch << "Event/Batch" << " , " << NumCap << " Captures, " << NumFiss << " Fissions, " << NumFissN << " FissionNeutrons, "<< " k-eff = " << keff << G4endl;
+            }else if( BatchInc > 0){
+                G4double relative_error = abs((keff - KeffectiveInEachBatch[ BatchInc-1]) / keff);
+                G4cout << "***************** Batch " << BatchInc+1<<"/"<< NumberOfBatch << " , "<< NumberOfEventInBatch << "Event/Batch" << " , " << NumCap << " Captures, " << NumFiss << " Fissions, " << NumFissN << " FissionNeutrons, "<< " k-eff = " << keff << " +/- " << relative_error << G4endl;
+            }
+
+            KeffectiveInEachBatch[ BatchInc] = keff;
+        }else {
+            break;
+        }
+    }
+
+    bool WriteData = true;
+    //2- write the criticality calculation data in the last thread and batch
+    if(CurrentBatch == NumberOfBatch && CurrentBatch*NumberOfEventInBatch >= TotalEventNumber){
+        if(KeffectiveInEachBatch[CurrentBatch-1] != 0){
+            for (G4int  nn = 0;  nn < KeffectiveInEachBatch.size();  nn++ ) {
+                if(KeffectiveInEachBatch[nn] == 0.){
+                    WriteData = false;
+                }
+            }
+        }else{
+            WriteData = false;
+        }
+
+        //G4cout << " DataID " << DataID << " CurrentBatch "<< CurrentBatch << " WriteData " << WriteData << G4endl;
+
+        //G4cout << " Last Call --------- " << G4endl;
+
+        if(WriteData == true){
+
+            //G4cout << " 1 --------- " << G4endl;
+
+            std::ostringstream c ;
+            c << DataDirectoryPath  << "/CriticalityDataFile_"<< GeometrySymbol <<"_" <</*DataID*/0<< ".txt";//DataFilesExtension;
+            CriticalityFile.open(c.str().c_str() , std::ios_base::binary); // , std::ios_base::out | std::ios_base::binary
+
+            CriticalityFile << "NumOfBatchs "    << NumberOfBatch << "\n";
+            CriticalityFile << "NumOfEventsPerBatch "    << NumberOfEventInBatch<< "\n";
+            CriticalityFile << "NumOfFissionNeutrons "    <<     FissionCapturesOfThreadsRanks[DataID][CurrentBatch-1][0] << "\n";
+            //CriticalityFile << "NumOfFissions "  << NumberOfFission<< "\n";
+            //CriticalityFile << "NumOfCaptures "  << NumberOfCapture<< "\n";
+            CriticalityFile << "k-eff "    << KeffectiveInEachBatch[CurrentBatch-1] << "\n";
+            //G4cout << " 2 --------- " << G4endl;
+
+            //std::cout << "Secondary particle and the production number"  << std::endl ;
+            for ( auto it = ParticleProduction[DataID].begin(); it != ParticleProduction[DataID].end(); ++it  ){
+                if(it->first == "nCapture"){
+                    CriticalityFile << "NumOf"<< it->first << " " << FissionCapturesOfThreadsRanks[DataID][CurrentBatch-1][1]  << "\n" ;
+                }else if (it->first == "nFission"){
+                    CriticalityFile << "NumOf"<< it->first << " " << FissionCapturesOfThreadsRanks[DataID][CurrentBatch-1][2]  << "\n" ;
+                }
+                else{
+                    CriticalityFile << "NumOf"<< it->first << " " << it->second  << "\n" ;
+                }
+            }
+            //G4cout << " 3 --------- " << G4endl;
+
+            G4int max = NewNeutronFissionEnergyList[DataID].size();
+            if(NewNeutronFissionEnergyList[DataID].size() < NumberOfEventInBatch ){
+                max = NewNeutronFissionEnergyList[DataID].size() ;
+            }else{
+                max = NumberOfEventInBatch ;
+            }
+
+            CriticalityFile << "SimulatedNeutronSourceData ("<< max <<") E X Y Z MX MY MZ\n";
+
+            //for(G4int nn = NumberOfEventInBatch ;nn < TotalEventNumber ;nn++){ // to discard the first batch which is the user source configuration and not the reel source in the reactor code
+            for(G4int nn = 0 ;nn < max ;nn++){
+
+                CriticalityFile << NewNeutronFissionEnergyList   [DataID][nn]       << " "
+                                << NewNeutronFissionPositionsList[DataID][nn].getX()<< " "
+                                << NewNeutronFissionPositionsList[DataID][nn].getY()<< " "
+                                << NewNeutronFissionPositionsList[DataID][nn].getZ()<< " "
+                                << NewNeutronFissionMomDirecsList[DataID][nn].getX()<< " "
+                                << NewNeutronFissionMomDirecsList[DataID][nn].getY()<< " "
+                                << NewNeutronFissionMomDirecsList[DataID][nn].getZ()<< "\n"  ;
+                //MomDirecsListForCriticality[DataID][currentEvent*NumberOfEventInBatch+nn] = NewNeutronFissionMomDirecsList[DataID][nn];
+            }
+
+            CriticalityFile.close();
+            return;
+        }
+    }
+
+    //3- update the neutron fisson data for the next batch
+    if(CurrentBatch < NumberOfBatch){// calculated previously
+
+        //G4cout << " DataID " << DataID << " CurrentBatch "<< CurrentBatch << " CurrentBatch < NumberOfBatch , Generate Data" << G4endl;
+
+        // update the neutron fisson data for the next batch
+        for(G4int nn = 0 ;nn < NumberOfEventInBatch ;nn++){
+
+            G4int rnd = G4UniformRand()*NewNeutronFissionEnergyList[DataID].size();
+            G4int evntIc = CurrentBatch*NumberOfEventInBatch+nn;
+
+            //G4cout << " 1 --------- " << G4endl;
+
+            //G4cout << " 1 -------- NumberOfEventInBatch "<< NumberOfEventInBatch
+            //       << " nn "<< nn
+            //       << " rnd "<< rnd
+            //       << " evntIc "<< evntIc
+            //       << " NewNeutronFissionEnergyList[DataID].size() "<< NewNeutronFissionEnergyList[DataID].size()
+            //       << " NewNeutronFissionEnergyList[DataID][rnd]    "<< NewNeutronFissionEnergyList[DataID][rnd]
+            //       << " NewNeutronFissionPositionsList[DataID][rnd] "<< NewNeutronFissionPositionsList[DataID][rnd]
+            //       << " NewNeutronFissionMomDirecsList[DataID][rnd] "<< NewNeutronFissionMomDirecsList[DataID][rnd]
+            //       << G4endl;
+            //G4cout << " 2 --------- " << evntIc << G4endl;
+            EnergyListForCriticality[DataID][evntIc]    = NewNeutronFissionEnergyList[DataID][rnd];
+            PositionsListForCriticality[DataID][evntIc] = NewNeutronFissionPositionsList[DataID][rnd];
+            MomDirecsListForCriticality[DataID][evntIc] = NewNeutronFissionMomDirecsList[DataID][rnd];
+            //G4cout << " 3 --------- " << G4endl;
+
+        }
+
+        ////FissionCapturesOfThreadsRanks[DataID][CurrentBatch][0] += NumberOfFissionNeutrons;
+        ////FissionCapturesOfThreadsRanks[DataID][CurrentBatch][1] += NumberOfCapture;
+        ////FissionCapturesOfThreadsRanks[DataID][CurrentBatch][2] += NumberOfFission;
+        //NumberOfFissionNeutrons = FissionCapturesOfThreadsRanks[DataID][CurrentBatch][0];
+        //NumberOfCapture         = FissionCapturesOfThreadsRanks[DataID][CurrentBatch][1];
+        //NumberOfFission         = FissionCapturesOfThreadsRanks[DataID][CurrentBatch][2];
+        NewNeutronFissionEnergyList[DataID].clear();
+        NewNeutronFissionPositionsList[DataID].clear();
+        NewNeutronFissionMomDirecsList[DataID].clear();
+
+    }
+    //G4cout << " 3 --------- " << G4endl;
+
+    //l.unlock();
+    //G4cout << "Capture" << G4endl;
+}
+void G4TRunAction::SetPoxEneOfFluxParticle(G4double X,G4double Y,G4double Z,G4double MX,G4double MY,G4double MZ,G4double E) {
+    //G4cout << "Capture" << G4endl;
+}
+
+
+
+
+
+
+
+void G4TRunAction::CountOpticalInteractions(G4String n, G4String m ){
+    OpticalPhotonInteractionRate[DataID][n][m]++;
+
+    //for ( auto it = OpticalPhotonInteractionRate[DataID].begin(); it != OpticalPhotonInteractionRate[DataID].end(); ++it  ){
+    //    G4cout << " DataID " << DataID  << " Interaction " << it->first << " Number "<<it->second << G4endl;
+    //}
+
+}
+
+void G4TRunAction::ShowOpticalPhotonInteractionData(){
+
+    G4cout << G4endl;
+
+    for ( auto it = OpticalPhotonInteractionRate[DataID].begin(); it != OpticalPhotonInteractionRate[DataID].end(); ++it  ){
+        for ( auto it2 = it->second.begin(); it2 != it->second.end(); ++it2  ){
+            G4cout << " DataID " << DataID  << " Particle " << it->first << " Interaction " << it2->first << " Number "<<it2->second << G4endl;
+        }
+    }
+
+}
+
 // called from endOfeventfrom event class , it get a vector of event absorbed energy by all organs
 void G4TRunAction::useTime(G4int set_get_for)
 {
-
-
-
     if( set_get_for == 0){
         start = std::chrono::steady_clock::now();
     }
@@ -991,5 +1338,4 @@ void G4TRunAction::useTime(G4int set_get_for)
         //printf(text.str().c_str());
 
     }
-
 }

@@ -40,18 +40,9 @@
 #include "G4TUserPhysicsList.hh"
 #include "G4TNeutronPhysicsList.hh"
 
-//#include "G4TRunAction.hh"
-//#include "G4TDirectPrimaryGeneratorAction.hh"
-//#include "G4TReadPrimaryGeneratorAction.hh"
-
 #include "G4TActionInitialization.hh"
 
 #include "G4PhysListFactory.hh"
-//#include "G4EmStandardPhysics.hh"
-//#include "G4HadronElasticPhysics.hh"
-//#include "G4HadronInelasticQBBC.hh"
-//#include "G4RadioactiveDecayPhysics.hh"
-//#include "G4StepLimiterPhysics.hh"
 
 #include "G4RunManagerFactory.hh"
 
@@ -87,6 +78,10 @@
 #include <unistd.h>         // readlink
 #include <linux/limits.h>   // PATH_MAX
 
+
+#include "G4EmStandardPhysics_option4.hh"
+#include "G4OpticalPhysics.hh"
+
 size_t* MateIDs; // index of material of each voxel unsigned int* fMateIDs; // index of material of each voxel
 G4String* CopyNumberRegionNameMap;
 std::map<G4String, G4Colour> RegionNameColour;
@@ -96,6 +91,17 @@ G4float* CopyNumberYPos;
 G4float* CopyNumberZPos;
 G4float* CopyNumberMassSize;
 double* CumulativeActivities;
+
+std::map<unsigned int,G4double* >      EnergyListForCriticality;
+std::map<unsigned int,G4ThreeVector* > PositionsListForCriticality;
+std::map<unsigned int,G4ParticleMomentum* > MomDirecsListForCriticality;
+std::map<G4int,std::map<G4int,std::vector<G4double>>> FissionCapturesOfThreadsRanks;
+std::map<G4int,std::map<G4String,std::map<G4String,G4int>>> OpticalPhotonInteractionRate;
+std::map<G4int,std::map<G4int,G4bool>> TerminatedThreadBatch;
+std::vector<G4double> KeffectiveInEachBatch;
+
+G4int NumberOfEventInBatch;
+G4int NumberOfBatch;
 
 G4double AllGeometryVolume;
 G4double AllGeometryMass;
@@ -118,11 +124,24 @@ G4String SourceAxis;
 G4double Radius;
 G4double RadiusIn;
 G4double BeamSDev;
+G4double RotTheta;
+G4double RotPhi;
+G4String RotPosAxis;
 G4double HalfX, HalfY, HalfZ;
 G4double ThetaMin;
 G4double ThetaMax;
 G4double PhiMin;
 G4double PhiMax;
+G4String DirectedParallelAxis;
+G4String SimulationIntExtNeutDet;
+
+G4double ToVolumeX;
+G4double ToVolumeY;
+G4double ToVolumeZ;
+G4double DirectedToX;
+G4double DirectedToY;
+G4double DirectedToZ;
+G4String MomDirDirectedHow; // Volume, Point, ParallelToAxis
 G4ThreeVector SourceRotVector1;
 G4ThreeVector SourceRotVector2;
 
@@ -424,7 +443,8 @@ int main(int argc,char** argv){
         if(ParticlePysics.contains("FACTORY")){
         //if(ParticleName == "neutron" && ParticlePysics.contains("FACTORY")){
             std::vector<std::string> RefPhyLists;
-            RefPhyLists.push_back("FACTORY_FTFP_BERT"); RefPhyLists.push_back("FACTORY_FTFP_BERT_ATL"); RefPhyLists.push_back("FACTORY_FTFP_BERT_TRV"); RefPhyLists.push_back("FACTORY_QGSP_FTFP_BERT"); RefPhyLists.push_back("FACTORY_QGSP_BERT"); RefPhyLists.push_back("FACTORY_QGSP_BERT_HP"); RefPhyLists.push_back("FACTORY_QGSP_BIC"); RefPhyLists.push_back("FACTORY_QGSP_BIC_AllHP"); RefPhyLists.push_back("FACTORY_INCLXX"); RefPhyLists.push_back("FACTORY_Shielding"); RefPhyLists.push_back("FACTORY_ShieldingLEND");
+            RefPhyLists.push_back("FACTORY_FTFP_BERT"); RefPhyLists.push_back("FACTORY_FTFP_BERT_ATL"); RefPhyLists.push_back("FACTORY_FTFP_BERT_TRV"); RefPhyLists.push_back("FACTORY_QGSP_FTFP_BERT"); RefPhyLists.push_back("FACTORY_QGSP_BERT"); RefPhyLists.push_back("FACTORY_QGSP_BERT_HP"); RefPhyLists.push_back("FACTORY_QGSP_BIC"); RefPhyLists.push_back("FACTORY_QGSP_BIC_AllHP"); RefPhyLists.push_back("FACTORY_Shielding"); RefPhyLists.push_back("FACTORY_ShieldingLEND");
+            //RefPhyLists.push_back("FACTORY_INCLXX");
             bool isIn = false; for ( int df = 0 ; df < RefPhyLists.size(); df++  ){ if(ParticlePysics == RefPhyLists[df] ){ isIn = true; }}
 
             if(isIn == false ){
@@ -650,7 +670,8 @@ int main(int argc,char** argv){
         if(ParticlePysics.contains("FACTORY")){
         //if(ParticleName == "neutron" && ParticlePysics.contains("FACTORY")){
             std::vector<std::string> RefPhyLists;
-            RefPhyLists.push_back("FACTORY_FTFP_BERT"); RefPhyLists.push_back("FACTORY_FTFP_BERT_ATL"); RefPhyLists.push_back("FACTORY_FTFP_BERT_TRV"); RefPhyLists.push_back("FACTORY_QGSP_FTFP_BERT"); RefPhyLists.push_back("FACTORY_QGSP_BERT"); RefPhyLists.push_back("FACTORY_QGSP_BERT_HP"); RefPhyLists.push_back("FACTORY_QGSP_BIC"); RefPhyLists.push_back("FACTORY_QGSP_BIC_AllHP"); RefPhyLists.push_back("FACTORY_INCLXX"); RefPhyLists.push_back("FACTORY_Shielding"); RefPhyLists.push_back("FACTORY_ShieldingLEND");
+            RefPhyLists.push_back("FACTORY_FTFP_BERT"); RefPhyLists.push_back("FACTORY_FTFP_BERT_ATL"); RefPhyLists.push_back("FACTORY_FTFP_BERT_TRV"); RefPhyLists.push_back("FACTORY_QGSP_FTFP_BERT"); RefPhyLists.push_back("FACTORY_QGSP_BERT"); RefPhyLists.push_back("FACTORY_QGSP_BERT_HP"); RefPhyLists.push_back("FACTORY_QGSP_BIC"); RefPhyLists.push_back("FACTORY_QGSP_BIC_AllHP"); RefPhyLists.push_back("FACTORY_Shielding"); RefPhyLists.push_back("FACTORY_ShieldingLEND");
+            //RefPhyLists.push_back("FACTORY_INCLXX");
             bool isIn = false; for ( int df = 0 ; df < RefPhyLists.size(); df++  ){ if(ParticlePysics == RefPhyLists[df] ){ isIn = true; }}
 
             if(isIn == false ){
@@ -709,6 +730,8 @@ int main(int argc,char** argv){
             runManager->SetUserInitialization(new G4TUserPhysicsList());
         }
 
+        //G4VModularPhysicsList* physicsList = new G4TNeutronPhysicsList("NeutronHP");
+        //runManager->SetUserInitialization(physicsList);
 
         // depend on the input to the VolumeConstructor then it called after ExecuteMacroFile(MacrosStartingFile.c_str());
         runManager->SetUserInitialization(new G4TActionInitialization());
@@ -756,7 +779,8 @@ int main(int argc,char** argv){
     if(ParticlePysics.contains("FACTORY")){
     //if(ParticleName == "neutron" && ParticlePysics.contains("FACTORY")){
         std::vector<std::string> RefPhyLists;
-        RefPhyLists.push_back("FACTORY_FTFP_BERT"); RefPhyLists.push_back("FACTORY_FTFP_BERT_ATL"); RefPhyLists.push_back("FACTORY_FTFP_BERT_TRV"); RefPhyLists.push_back("FACTORY_QGSP_FTFP_BERT"); RefPhyLists.push_back("FACTORY_QGSP_BERT"); RefPhyLists.push_back("FACTORY_QGSP_BERT_HP"); RefPhyLists.push_back("FACTORY_QGSP_BIC"); RefPhyLists.push_back("FACTORY_QGSP_BIC_AllHP"); RefPhyLists.push_back("FACTORY_INCLXX"); RefPhyLists.push_back("FACTORY_Shielding"); RefPhyLists.push_back("FACTORY_ShieldingLEND");
+        RefPhyLists.push_back("FACTORY_FTFP_BERT"); RefPhyLists.push_back("FACTORY_FTFP_BERT_ATL"); RefPhyLists.push_back("FACTORY_FTFP_BERT_TRV"); RefPhyLists.push_back("FACTORY_QGSP_FTFP_BERT"); RefPhyLists.push_back("FACTORY_QGSP_BERT"); RefPhyLists.push_back("FACTORY_QGSP_BERT_HP"); RefPhyLists.push_back("FACTORY_QGSP_BIC"); RefPhyLists.push_back("FACTORY_QGSP_BIC_AllHP"); RefPhyLists.push_back("FACTORY_Shielding"); RefPhyLists.push_back("FACTORY_ShieldingLEND");
+        //RefPhyLists.push_back("FACTORY_INCLXX");
         bool isIn = false; for ( int df = 0 ; df < RefPhyLists.size(); df++  ){ if(ParticlePysics == RefPhyLists[df] ){ isIn = true; }}
 
         if(isIn == false ){
@@ -812,6 +836,15 @@ int main(int argc,char** argv){
         }
         runManager->SetUserInitialization(physicsList);
     }else{
+
+        //G4PhysListFactory* physFactory = new G4PhysListFactory();
+        //G4VModularPhysicsList* physicsList = physFactory->GetReferencePhysList("FTFP_BERT");
+        //physicsList->ReplacePhysics(new G4EmStandardPhysics_option4());
+        ////physicsList->RemovePhysics(new G4EmStandardPhysics_option4());
+        //G4OpticalPhysics* opticalPhysics = new G4OpticalPhysics();
+        //physicsList->RegisterPhysics(opticalPhysics);
+        //runManager->SetUserInitialization(physicsList);
+
         runManager->SetUserInitialization(new G4TUserPhysicsList());
     }
 

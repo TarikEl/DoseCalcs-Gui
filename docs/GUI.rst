@@ -49,13 +49,13 @@ Qt5 packages and xterm are required to install DoseCalcs-Gui. If the user will i
 
  .. code-block:: bash
 
-   $ sudo apt-get install -y build-essential qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libqt5charts5-dev qttools5-dev xterm openssh-client openssh-server 
+   $ sudo apt-get install -y build-essential qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libqt5charts5-dev qttools5-dev xterm curl openssh-client openssh-server 
 
 On CentOs, you can use "yum".
 
  .. code-block:: bash
 
-   $ sudo yum install -y build-essential qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libqt5charts5-dev qttools5-dev xterm openssh-clients openssh
+   $ sudo yum install -y build-essential qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libqt5charts5-dev qttools5-dev xterm curl openssh-clients openssh
 
 .. The DoseCalcs application uses the Qt network library for automatic download of prerequisites, and the Qt Painter library for saving data to pdf files; this necessitates the full Qt5 installation by online or offline method.
 
@@ -67,11 +67,20 @@ After having installed the prerequisite packages, download DoseCalcs from: https
 Unpack the DoseCalcs source package "DoseCalcs.XX.tar.gz" to a location of your choice. For illustration only, this guide will assume it's been unpacked in a directory named, for example, /home/User/Desktop, so that the DoseCalcs source package sits in a subdirectory (DoseCalcs.XX means the version of DoseCalcs). The unpacked source is now in /home/User/Desktop/DoseCalcs.XX
 
  .. code-block:: bash
+
+  $ cd /home/User/Desktop
+  $ wget https://github.com/TarikEl/DoseCalcs-Gui/archive/main.tar.gz
+  $ tar -xvf main.tar.gz
+  
+then, 
+
+ .. code-block:: bash
   
   $ cd /home/User/Desktop
   $ mkdir DoseCalcs_install
   $ cd /home/User/Desktop/DoseCalcs_install
   $ qmake /home/User/Desktop/DoseCalcs.XX/DoseCalcs.pro
+  $ make -j4
 
 Now, to run the DoseCalcs-Gui application, from terminal /home/User/Desktop/DoseCalcs_install, run:  
 

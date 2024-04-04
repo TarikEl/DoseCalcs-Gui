@@ -6,6 +6,9 @@ int NumberOfCPUCores;
 
 qint64 pidOfPreviousNotKilled;
 
+QString ExampleGeant4Code_source_dir_path ;
+QString ExampleGeant4Code_build_dir_path ;
+QString ExampleGeant4Code_ExecutionCommand ;
 QString DoseCalcsCore_source_dir_path ;
 QString DoseCalcsGui_source_dir_path ;
 QString DoseCalcsCore_build_dir_path;

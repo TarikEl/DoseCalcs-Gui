@@ -57,7 +57,7 @@ int main(int argc,char** argv){
     //G4cout << "\n========= DoseCalcs Build Directory "<< appBuildDir << " ========= "<< "\n" << G4endl;
 
     G4TResultCalculation* ResultCalculation = new G4TResultCalculation();
-    ResultCalculation->setExeFromMerge(true);
+    //ResultCalculation->setExeFromMerge(true);
     ResultCalculation->setUseAllResultsFiles(true);
 
     //G4cout << argv[1] << " argc " << argc << " - " << G4endl;

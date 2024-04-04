@@ -71,21 +71,22 @@ G4TNeutronPhysicsList::~G4TNeutronPhysicsList()
 void G4TNeutronPhysicsList::ConstructParticle()
 {
 
+    G4Neutron::NeutronDefinition();
+
     //G4cout << "from function : " << __FUNCTION__<< G4endl;
 
-    G4BosonConstructor* Boson = new G4BosonConstructor();
-    G4LeptonConstructor* Lepton = new G4LeptonConstructor();
-    G4MesonConstructor* Meson = new G4MesonConstructor();
-    G4BaryonConstructor* Baryon = new G4BaryonConstructor();
-    G4IonConstructor* Ion = new G4IonConstructor();
-    G4ShortLivedConstructor* ShortLived = new G4ShortLivedConstructor();
-
-    Boson->ConstructParticle();
-    Lepton->ConstructParticle();
-    Meson->ConstructParticle();
-    Baryon->ConstructParticle();
-    Ion->ConstructParticle();
-    ShortLived->ConstructParticle();
+    //G4BosonConstructor* Boson = new G4BosonConstructor();
+    //G4LeptonConstructor* Lepton = new G4LeptonConstructor();
+    //G4MesonConstructor* Meson = new G4MesonConstructor();
+    //G4BaryonConstructor* Baryon = new G4BaryonConstructor();
+    //G4IonConstructor* Ion = new G4IonConstructor();
+    //G4ShortLivedConstructor* ShortLived = new G4ShortLivedConstructor();
+    //Boson->ConstructParticle();
+    //Lepton->ConstructParticle();
+    //Meson->ConstructParticle();
+    //Baryon->ConstructParticle();
+    //Ion->ConstructParticle();
+    //ShortLived->ConstructParticle();
 
     SetCutsWithDefault();
 
@@ -180,48 +181,49 @@ void G4TNeutronPhysicsList::ConstructProcess()
     process4->RegisterMe(model4);
 
 
+
     //G4ProcessManager* pmanager = G4Neutron::NeutronDefinition()->GetProcessManager();
     //pmanager->AddProcess(new G4UserSpecialCuts(),-1,-1,1);
 
     //pmanager = G4Proton::ProtonDefinition()->GetProcessManager();
     //pmanager->AddProcess(new G4UserSpecialCuts(),-1,-1,1);
 
-    G4VPhysicsConstructor* G4VEmPhysicsConstructorObj = new G4EmStandardPhysics(verbose);
+    //G4VPhysicsConstructor* G4VEmPhysicsConstructorObj = new G4EmStandardPhysics(verbose);
 
-    if (ParticlePysics == "EMS") {
-        G4VEmPhysicsConstructorObj = new G4EmStandardPhysics(verbose);
-    }
-    else if(ParticlePysics == "EMS1"){
-        //G4cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n EMS1 Physics " << G4endl;
+    //if (ParticlePysics == "EMS") {
+    //    G4VEmPhysicsConstructorObj = new G4EmStandardPhysics(verbose);
+    //}
+    //else if(ParticlePysics == "EMS1"){
+    //    //G4cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n EMS1 Physics " << G4endl;
 
-        G4VEmPhysicsConstructorObj = new G4EmStandardPhysics_option1(verbose);
-    }
-    else if(ParticlePysics == "EMS2"){
-        //G4cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n EMS2 Physics " << G4endl;
+    //    G4VEmPhysicsConstructorObj = new G4EmStandardPhysics_option1(verbose);
+    //}
+    //else if(ParticlePysics == "EMS2"){
+    //    //G4cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n EMS2 Physics " << G4endl;
 
-        G4VEmPhysicsConstructorObj = new G4EmStandardPhysics_option2(verbose);
-    }
-    else if(ParticlePysics == "EMS3"){
-        //G4cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n EMS3 Physics " << G4endl;
+    //    G4VEmPhysicsConstructorObj = new G4EmStandardPhysics_option2(verbose);
+    //}
+    //else if(ParticlePysics == "EMS3"){
+    //    //G4cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n EMS3 Physics " << G4endl;
 
-        G4VEmPhysicsConstructorObj = new G4EmStandardPhysics_option3(verbose);
-    }
-    else if(ParticlePysics == "EMS4"){
-        //G4cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n EMS4 Physics " << G4endl;
+    //    G4VEmPhysicsConstructorObj = new G4EmStandardPhysics_option3(verbose);
+    //}
+    //else if(ParticlePysics == "EMS4"){
+    //    //G4cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n EMS4 Physics " << G4endl;
 
-        G4VEmPhysicsConstructorObj = new G4EmStandardPhysics_option4(verbose);
-    }
-    else if(ParticlePysics == "Livermore"){
-        //G4cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Livermore Physics " << G4endl;
+    //    G4VEmPhysicsConstructorObj = new G4EmStandardPhysics_option4(verbose);
+    //}
+    //else if(ParticlePysics == "Livermore"){
+    //    //G4cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Livermore Physics " << G4endl;
 
-        G4VEmPhysicsConstructorObj = new G4EmLivermorePhysics(verbose);
-    }
-    else if(ParticlePysics == "Penelope"){
-        //G4cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n penelope Physics " << G4endl;
+    //    G4VEmPhysicsConstructorObj = new G4EmLivermorePhysics(verbose);
+    //}
+    //else if(ParticlePysics == "Penelope"){
+    //    //G4cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n penelope Physics " << G4endl;
 
-        G4VEmPhysicsConstructorObj = new G4EmPenelopePhysics(verbose);
-    }
-    G4VEmPhysicsConstructorObj->ConstructProcess();
+    //    G4VEmPhysicsConstructorObj = new G4EmPenelopePhysics(verbose);
+    //}
+    //G4VEmPhysicsConstructorObj->ConstructProcess();
 
     AddTransportation();
 

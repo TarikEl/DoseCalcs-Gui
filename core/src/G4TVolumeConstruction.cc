@@ -78,6 +78,8 @@
 #include <fstream>
 #include <ios>
 
+#include "G4TNuclearReactorGeometry.hh"
+
 //#ifdef G4MPI_USE
 //#include "G4AutoLock.hh"
 //namespace {G4Mutex	mutex = G4MUTEX_INITIALIZER;}
@@ -239,6 +241,10 @@ G4VPhysicalVolume* G4TVolumeConstruction::ConstructVolumes(){
     else if(GeometryFileType == "Construct"){
 
     }
+    //else if(GeometryFileType == "NR"){
+    //    G4TNuclearReactorGeometry* NucRea = new G4TNuclearReactorGeometry();
+    //    WorldPhysicalVolume = NucRea->ConstructNuclearReactor();
+    //}
 
     CreateVolumesData();
 

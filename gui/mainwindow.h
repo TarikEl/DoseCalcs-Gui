@@ -107,6 +107,7 @@ private:
     QString AnyOpenedFilePath;
 
     QStringList AngleUnits;
+    QStringList AngleSizeUnits;
     QStringList SizeUnits;
     QStringList EnergyUnits;
 
@@ -159,6 +160,9 @@ private:
     bool FirstTimeAdd = true;
 
     QComboBox * LimitsPlan ;
+    QComboBox * ListNodes ;
+    QLineEdit* Textnodes;
+
     QLineEdit* LimitsValues;
     QPushButton * btnAddVisualizationLimits ;
 
@@ -177,6 +181,11 @@ private:
     QString DcmNumbMatsAndMatsCommands;
     QString RegionDataCommands;
     QString MatCommandToAddElem;
+
+    QVector<QString> *MacrosNamesForBatch;
+    QVector<QString> * ChosenEnergiesVector;
+    QVector<QString> *ChosenRegionVector;
+    QVector<QString> *ChosenParticlesVector;
 
     QComboBox *ComboxSolidType;
     QLineEdit *SolidSpecications;
@@ -261,6 +270,7 @@ private:
 
     QByteArray bytes;
     void showResultsOutput(QString , int);
+    QString SetToASpecificMPIRank();
 
     //QVector <QString> organNamesToChooseArray = {"Head","Brain","Thyroid","SkullCheckBox","UpperSpine","Trunk","Arm","ArmBone","Heart","Lung","Kidney","Liver","Pancreas","Spleen","UrinaryBladder","StomachCheckBox"+"Pelvis","MiddleLowerSpine","LargeIntestine","Uterus","Ovary","Breast","MaleGenitalia","Legs","Leg","LegBone"};
 
@@ -404,6 +414,7 @@ private:
     QLayoutItem* LayItem;
     QWidget* HelpGUIMatVoxWDG;
 
+    void GenerateMacrosFilesForBatch();
     QString ConstructDoseCalcsJobName();
     void ShowTerminal(QString);
     QString CreateMaterialAndGeometryDataFromMacrosFile(QString);
@@ -472,6 +483,8 @@ private slots:
     void CheckBoxFracNum_slot();
     void on_comboBoxRegionToVisualize_textActivated(QString);
     void on_LimitsPlan_textActivated(QString);
+    void on_ListNodes_textActivated(QString);
+    void runTerminalCommandSlot();
     void btnAddVoxelsRegionData_slot();
     void UseMaterialsAsRegionNames_slot();
     void btnAddVoxelsData_slot();
@@ -693,6 +706,8 @@ private slots:
     void on_comboBoxPhantom_textActivated(const QString &arg1);
 
     void on_comboBoxRadioPharmaceutiques_textActivated(const QString &arg1);
+
+    void on_checkBoxVoxelOrRegionLevel_stateChanged(int arg1);
 
 private:
 

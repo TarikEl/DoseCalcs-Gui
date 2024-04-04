@@ -33,7 +33,7 @@
 #include "G4RunManager.hh"
 #include "G4RunManager.hh"
 
-extern G4String GenerateVoxelsResuls;
+//extern G4String GenerateVoxelsResuls;
 extern G4String* CopyNumberRegionNameMap;
 
 //G4ThreadLocal G4double G4TParamSteppingAction::edep;
@@ -52,6 +52,13 @@ void G4TParamSteppingAction::UserSteppingAction(const G4Step* step)
     if (edep == 0.) return;
     G4int CN = step->GetPreStepPoint()->GetTouchable()->GetCopyNumber();
     RunAction->FillRegionStepHits(CopyNumberRegionNameMap[CN], edep);
+
+    //RunAction->FillVoxelStepHits(CN, edep);
+
+
+
+
+
 
     //else stepCounter=0;
 

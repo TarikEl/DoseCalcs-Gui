@@ -110,6 +110,10 @@ extern G4double PhiMin;
 extern G4double PhiMax;
 extern G4ThreeVector SourceRotVector1;
 extern G4ThreeVector SourceRotVector2;
+extern G4double RotTheta;
+extern G4double RotPhi;
+extern G4String RotPosAxis;
+
 
 extern G4String EnergyDistribution;
 extern G4double GaussSDev;
@@ -128,9 +132,18 @@ extern std::vector<unsigned int> RadioNuclidePartNameVec;
 extern std::vector<unsigned int> RadioNuclideSpectrumOrDiscreteVec;
 extern std::vector<double*> RadioNuclideEneVec;
 
+extern G4String SimulationIntExtNeutDet;
 extern G4String MomDirDistribution;
 extern G4double Theta;
 extern G4double Phi;
+extern G4String DirectedParallelAxis;
+extern G4double ToVolumeX;
+extern G4double ToVolumeY;
+extern G4double ToVolumeZ;
+extern G4double DirectedToX;
+extern G4double DirectedToY;
+extern G4double DirectedToZ;
+extern G4String MomDirDirectedHow; // Volume, Point, ParallelToAxis
 
 extern G4String GeneratePosFlag ;
 extern G4String GenerateEneFlag ;
@@ -483,6 +496,8 @@ public:
     G4String getEnergyDistribution() const { return EnergyDistribution;}
     G4double getTheta() const { return Theta ;}
     G4double getPhi() const { return Phi ;}
+
+
     G4double getGaussSDev() const { return GaussSDev ;}
     G4double getUniformEmin() const { return UniformEmin ;}
     G4double getUniformEmax() const { return UniformEmax ;}
@@ -505,6 +520,10 @@ public:
     void setSourceSurface(G4String nn ){    SourceSurface = nn;}
     void setSourceAxis(G4String nn ){    SourceAxis = nn;}
 
+    void setRotTheta(G4double nn ){ RotTheta = nn;}
+    void setRotPhi(G4double nn ){ RotPhi = nn;}
+    void setRotPosAxis(G4String nn ){ RotPosAxis = nn;}
+
     void setSourceRotation(G4ThreeVector nn ){    SourceRotation = nn;}
     void setRadius(G4double nn ){ Radius = nn;}
     void setHalfX(G4double nn ){ HalfX = nn;}
@@ -515,6 +534,7 @@ public:
     void setThetaMax(G4double nn ){ ThetaMax = nn;}
     void setPhiMin(G4double nn ){ PhiMin = nn;}
     void setPhiMax(G4double nn ){ PhiMax = nn;}
+
 
     void setRadiusIn(G4double nn ){ RadiusIn = nn;}
     void setBeamSDev(G4double nn ){ BeamSDev = nn;}
@@ -548,6 +568,17 @@ public:
     void setInitialDirectionModel(G4String nn){   MomDirDistribution = nn ;}
     void setPhi(G4double nn){   Phi = nn;}
     void setTheta(G4double nn){   Theta = nn;}
+    void setMomDirDirectedHow(G4String nn){   MomDirDirectedHow = nn ;}
+    void setDirectedParallelAxis(G4String nn){   DirectedParallelAxis = nn ;}
+    void setSimulationIntExtNeutDet(G4String nn){   SimulationIntExtNeutDet = nn ;}
+
+    void setDirectedToX(G4double nn){   DirectedToX = nn;}
+    void setDirectedToY(G4double nn){   DirectedToY = nn;}
+    void setDirectedToZ(G4double nn){   DirectedToZ = nn;}
+    void setToVolumeX(G4double nn){   ToVolumeX = nn;}
+    void setToVolumeY(G4double nn){   ToVolumeY = nn;}
+    void setToVolumeZ(G4double nn){   ToVolumeZ = nn;}
+
     void setEnergyDistribution(G4String nn){   EnergyDistribution = nn ;}
     void setGaussMean(G4double nn){   GaussMean = nn ;}
     void setGaussSDev(G4double nn){    GaussSDev = nn ;}

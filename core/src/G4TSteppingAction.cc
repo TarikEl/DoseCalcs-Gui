@@ -40,9 +40,18 @@ G4TSteppingAction::G4TSteppingAction(G4TRunAction* ra):G4UserSteppingAction(),Ru
 
 G4TSteppingAction::~G4TSteppingAction(){}
 
-
 void G4TSteppingAction::UserSteppingAction(const G4Step* step)
 {
+
+    //G4String Particlename = step->GetTrack()->GetParticleDefinition()->GetParticleName();
+    //if(step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName() == "nFission"){
+    //    std::cout << " EventID " << G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID()
+    //          << " TrackID " << step->GetTrack()->GetTrackID()
+    //          << " Particlename " << Particlename
+    //          << " ProcessName " << step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName()
+    //          << std::endl;
+    //}
+
     auto edep = step->GetTotalEnergyDeposit();
 
     //std::cout <<" edep:" << edep << " @@@@@@@@@@@@@@@@@@@@@@@" << std::endl;

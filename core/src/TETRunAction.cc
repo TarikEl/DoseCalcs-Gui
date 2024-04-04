@@ -73,6 +73,7 @@ G4ThreadLocal std::map<G4int,std::map<unsigned int,unsigned long long int>> TETR
 G4ThreadLocal std::map<G4int,std::map<G4String,unsigned long long int>> TETRunAction::NOfValues;
 G4ThreadLocal std::map<G4int,std::map<G4String,G4double>> TETRunAction::ED_Total ;
 G4ThreadLocal std::map<G4int,std::map<G4String,G4double>> TETRunAction::ED2_Total ;
+G4ThreadLocal std::map<G4int,std::map<G4String,G4double>> TETRunAction::Fluence ;
 G4ThreadLocal G4int TETRunAction::rank, TETRunAction::thread, TETRunAction::DataID, TETRunAction::EventIndex, TETRunAction::NumberOfRanksThreads, TETRunAction::TotalEventNumber;
 G4ThreadLocal G4double TETRunAction::EnergyEmittedPerThread, TETRunAction::ParticleSourceEnergy, TETRunAction::ExecutionTimeInMin, TETRunAction::OneEventExecutionTimeInMs;
 G4ThreadLocal std::chrono::steady_clock::time_point TETRunAction::start, TETRunAction::end ;
@@ -197,6 +198,7 @@ void TETRunAction::BeginOfRunAction(const G4Run* aRun)
     for(G4int nn = 0;nn < (G4int)OrgansNameVector.size();nn++){
         ED_Total[DataID][OrgansNameVector[nn]]=0.;
         ED2_Total[DataID][OrgansNameVector[nn]]=0.;
+        Fluence[DataID][OrgansNameVector[nn]]=0.;
     }
     ED_Total[DataID]["World"]=0.;
 
@@ -273,7 +275,7 @@ void TETRunAction::EndOfRunAction(const G4Run* aRun)
     MatIDNameMap = TConstruction2->getMaterialIDName();
 
     for ( auto it3 = edepMap.begin(); it3 != edepMap.end(); ++it3  ){
-        ED_Total[DataID][MatIDNameMap[it3->first]] = it3->second.first;
+        ED_Total [DataID][MatIDNameMap[it3->first]] = it3->second.first;
         ED2_Total[DataID][MatIDNameMap[it3->first]] = it3->second.second;
         NOfValues[DataID][MatIDNameMap[it3->first]] = numstepsMap[it3->first];
         //std::cout << " | " << it3->first << " | "  << MatIDNameMap[it3->first]  << " | " << ED_Total[DataID][MatIDNameMap[it3->first]]  << " | "  << ED2_Total[DataID][MatIDNameMap[it3->first]] << " | "  << NOfValues[DataID][MatIDNameMap[it3->first]] << std::endl;
@@ -281,6 +283,14 @@ void TETRunAction::EndOfRunAction(const G4Run* aRun)
 
     CreateThreadRegionResultFile();
 
+}
+void TETRunAction::FillRegionLenghts(G4String StepRegion, G4double StepEnergy){
+
+    //G4cout << N << " " << E << " "<< E*E<< G4endl;
+
+    Fluence[DataID][StepRegion] += StepEnergy ;
+
+    //G4cout << DataID << " " << StepRegion << " " << Fluence[DataID][StepRegion] << G4endl;
 }
 void TETRunAction::CreateThreadRegionResultFile(){
 
@@ -303,7 +313,8 @@ void TETRunAction::CreateThreadRegionResultFile(){
     << std::setw(15) << std::left << "Steps Number" << " "
     << std::setw(20) << std::left << "Mass(kg)"<< " "
     << std::setw(20) << std::left << "Volume(cm3)"<< " "
-    << std::setw(20) << std::left << "Density(g/cm3)" << "\n";
+    << std::setw(20) << std::left << "Density(g/cm3)" << " "
+    << std::setw(20) << std::left << "Fluence(1/cm2)" << "\n";
 
     for(G4int jk = 0 ; jk < (G4int)OrgansNameVector.size() ; jk++){ // each line for an organ name
         file << std::setw(SZ) << std::left << OrgansNameVector[jk] << " "
@@ -312,10 +323,15 @@ void TETRunAction::CreateThreadRegionResultFile(){
              << std::setw(15) << std::left << NOfValues[DataID][OrgansNameVector[jk]] << " "
 
              << std::setw(20) << std::left << TConstruction2->GetOrganNameMassMap()[OrgansNameVector[jk]]<< " "
-             << std::setw(20) << std::left << TConstruction2->GetOrganNameVolumeMap()[OrgansNameVector[jk]]<< " "
-             << std::setw(20) << std::left << TConstruction2->GetOrganNameDensityMap()[OrgansNameVector[jk]]
+             << std::setw(20) << std::left << TConstruction2->GetOrganNameVolumeMap()[OrgansNameVector[jk]]/1000<< " "
+             << std::setw(20) << std::left << TConstruction2->GetOrganNameDensityMap()[OrgansNameVector[jk]]*1000<< " ";
+        if(TConstruction2->GetOrganNameVolumeMap()[OrgansNameVector[jk]] == 0. || __isinf(TConstruction2->GetOrganNameVolumeMap()[OrgansNameVector[jk]]) || __isnan(TConstruction2->GetOrganNameVolumeMap()[OrgansNameVector[jk]])){
+            file << std::setw(20) << std::left << 0 << " ";
+        }else{
+            file << std::setw(20) << std::left << Fluence[DataID][OrgansNameVector[jk]]/(TConstruction2->GetOrganNameVolumeMap()[OrgansNameVector[jk]]/1000) << " ";
+        }
 
-             << "\n";
+        file << "\n";
         //G4cout  << OrgansNameVector[jk] << "  " << ED_Total[DataID][OrgansNameVector[jk]] << "  " << G4endl;
     }
 

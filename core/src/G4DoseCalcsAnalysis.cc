@@ -625,7 +625,6 @@ void G4DoseCalcsAnalysis::ReadSimulationData(){
                 GenerateCrossSectionGraph = "yes";
                 std::cout << " GenerateCrossSectionGraph " << GenerateCrossSectionGraph << std::endl ;
             }
-            
             else if(ParameterName =="/AnalysisData/generateEventsDataHisto"){// to evaluate the last 4 lines
                 LineString >> PositionDataFile >> EnergyDataFile >> MomDirDataFile ;
                 EventsDataHistograms = "yes";
@@ -3988,6 +3987,16 @@ void G4DoseCalcsAnalysis::GenerateVoxel2DGraphs(){
     
     std::cout << "\n\n                                                          ========= "<< __FUNCTION__ << " ========= "<< "\n" << std::endl;
     
+    std::ostringstream filename1;
+    filename1 << ResultDirectoryPath << "/VoxelsResults" ;
+    std::ifstream file(filename1.str().c_str() , std::ios::binary);
+    if(!file.is_open()){
+        std::cout << "The voxelized results will not be analyzed, cannot open the file " << filename1.str().c_str() << std::endl ;
+        return;
+    }
+
+    ReadVoxelsResult();
+
     if( SliceFor2DGraph != "none" ){
         for (int gg = 0 ; gg < QuantityNamesToScore.size() ; gg++) {
             
@@ -4000,7 +4009,7 @@ void G4DoseCalcsAnalysis::GenerateVoxel2DGraphs(){
     else{
         std::cout <<" SliceFor2DGraph = none !!!!!!!!!!!!!!"<< std::endl;
     }
-    
+
     CreatePercentageDepthDoseGraph();
     CreateDoseProfile();
     
@@ -8956,6 +8965,7 @@ void G4DoseCalcsAnalysis::ReadVoxelsResult(){
 
         while(file.peek()!=EOF){
 
+            file >> X ; //CN
             file >> X ;
             file >> Y ;
             file >> Z ;
@@ -8992,9 +9002,7 @@ void G4DoseCalcsAnalysis::ReadVoxelsResult(){
 
         file.close();
     }
-    else{
-        std::cout << "cannot open the file " << filename1.str().c_str() << std::endl ;
-    }
+
 
     double Voxel0PosX = -((VoxXNumber*VoxXHalfSize) - VoxXHalfSize);
     double Voxel0PosY = -((VoxYNumber*VoxYHalfSize) - VoxYHalfSize);
@@ -9011,12 +9019,13 @@ void G4DoseCalcsAnalysis::ReadVoxelsResult(){
         ZPos[k] = Voxel0PosZ + k * 2 * VoxZHalfSize;
     }
 
+
 }
 void G4DoseCalcsAnalysis::CreatePercentageDepthDoseGraph(){
 
     std::cout << "\n\n                                                          ========= "<< __FUNCTION__ << " ========= "<< "\n" << std::endl;
 
-    TCanvas* PDDCanvas1 = new TCanvas("PDDCanvas1", "PDD");;
+    TCanvas* PDDCanvas1 = new TCanvas("PercentageDepthDose", "PercentageDepthDose");;
     std::string histTitle1 = "Percentage Depth("+BeamAxis+") Dose Curve; Depth(mm); Relative Absorbed Dose(%)";
 
     double minn=0, maxx=10; int numbint = 10;
@@ -9061,9 +9070,101 @@ void G4DoseCalcsAnalysis::CreatePercentageDepthDoseGraph(){
     gPad->SetRightMargin(0.13);
     gPad->SetLeftMargin(0.13);
 
-    std::string FileName1 = GraphsDirectoryPath+"HistPDD"+GraphsExt;
+    std::string FileName1 = GraphsDirectoryPath+"PercentageDepthDose"+GraphsExt;
     PDDCanvas1->Print(FileName1.c_str());
     delete PDDCanvas1;
+
+
+
+
+
+
+
+
+    // ////////////////////////////////////////////// Dose Profile ///////////////////////////////////////////
+
+
+
+
+    PDDCanvas1 = new TCanvas("DoseProfile", "DoseProfile");;
+
+    minn=0, maxx=10; numbint = 10;
+    if(BeamAxis == "X"){ numbint = VoxYNumber; minn = -VoxYHalfSize*VoxYNumber; maxx = VoxYHalfSize*VoxYNumber;}
+    if(BeamAxis == "Y"){ numbint = VoxZNumber; minn = -VoxZHalfSize*VoxZNumber; maxx = VoxZHalfSize*VoxZNumber;}
+    if(BeamAxis == "Z"){ numbint = VoxXNumber; minn = -VoxXHalfSize*VoxXNumber; maxx = VoxXHalfSize*VoxXNumber;}
+
+    TH1F* histDP = new TH1F ("DoseProfile", "", numbint, minn, maxx);
+
+    //std::cout << "VoxZNumber " << VoxZNumber<<  " VoxYNumber " << VoxYNumber << " VoxXNumber " << VoxXNumber << " BeamAxis "<< BeamAxis<<  std::endl;
+
+
+    std::map<double,double> values;
+
+    for ( auto it = QuantVals[DoseProfilQuantity].begin(); it != QuantVals[DoseProfilQuantity].end(); ++it  ){
+        X = it->first;
+        for ( auto it2 = it->second.begin(); it2 != it->second.end(); ++it2  ){
+            Y = it2->first;
+            for ( auto it3 = it2->second.begin(); it3 != it2->second.end(); ++it3  ){
+                Z = it3->first;
+                values[X] += it3->second;
+                values[Y] += it3->second;
+                values[Z] += it3->second;
+                //std::cout << Z << " " << val << std::endl;
+
+                //if(BeamAxis == "X"){histDP->Fill(X, val/MaximalDoseVal);}
+                //else if(BeamAxis == "Y"){histDP->Fill(Y, val/MaximalDoseVal);}
+                //else if(BeamAxis == "Z"){histDP->Fill(Z, val/MaximalDoseVal);}
+            }
+        }
+    }
+
+    double voxelvol = 8*VoxXHalfSize*VoxYHalfSize*VoxZHalfSize;
+    //double X,Y,Z, val;
+
+    if(BeamAxis == "Z"){
+        histTitle1 = "Dose Profile for beam axis ("+BeamAxis+"); X(mm); (Absorbed Dose)/mm";
+        for (unsigned int i = 0; i < VoxXNumber; i++) {
+            histDP->Fill(XPos[i], values[XPos[i]]/voxelvol);
+            //std::cout << " i "  << i <<" XPos[i] " << XPos[i] << std::endl ;
+        }
+    }
+    else if(BeamAxis == "X"){
+        histTitle1 = "Dose Profile for beam axis ("+BeamAxis+"); Y(mm); (Absorbed Dose)/mm";
+        for (unsigned int i = 0; i < VoxYNumber; i++) {
+            histDP->Fill(YPos[i], values[YPos[i]]/voxelvol);
+            //std::cout << " i "  << i <<" XPos[i] " << XPos[i] << std::endl ;
+        }
+    }
+    else if(BeamAxis == "Y"){
+        histTitle1 = "Dose Profile for beam axis ("+BeamAxis+"); Z(mm); (Absorbed Dose)/mm";
+        for (unsigned int i = 0; i < VoxZNumber; i++) {
+            histDP->Fill(ZPos[i], values[ZPos[i]]/voxelvol);
+            //std::cout << " i "  << i <<" XPos[i] " << XPos[i] << std::endl ;
+        }
+    }
+
+
+    if(UseGridXY=="yes"){
+        gPad->SetGridx();
+        gPad->SetGridy();
+    }
+
+    histDP->SetTitle(const_cast<char*>(histTitle1.c_str()));
+    histDP->GetXaxis()->CenterTitle(true);
+    histDP->GetYaxis()->CenterTitle(true);
+    histDP->GetXaxis()->SetTitleOffset(1.3);
+    histDP->SetFillStyle(3001);
+    histDP->SetFillColor(kBlue);
+    histDP->Draw("hist same");
+
+    gPad->SetRightMargin(0.13);
+    gPad->SetLeftMargin(0.13);
+
+    FileName1 = GraphsDirectoryPath+"DoseProfile"+GraphsExt;
+    PDDCanvas1->Print(FileName1.c_str());
+    delete PDDCanvas1;
+
+
 
 }
 void G4DoseCalcsAnalysis::CreateDoseProfile(){
@@ -9074,7 +9175,7 @@ void G4DoseCalcsAnalysis::CreateDoseProfile(){
 
     std::stringstream GraphName, fileName ;
 
-    TCanvas *DoseProMap = new TCanvas("2D Dose Profile","2D Dose Profile");
+    TCanvas *DoseProMap = new TCanvas("2D Dose Heat Map","2D Dose Heat Map");
     TH2F *ProfDoseHist;
 
     double minnX = -VoxXHalfSize*VoxXNumber; double maxxX = VoxXHalfSize*VoxXNumber;
@@ -9084,7 +9185,7 @@ void G4DoseCalcsAnalysis::CreateDoseProfile(){
     double X,Y,Z, val;
     if(SliceFor2DGraph == "XY" || SliceFor2DGraph == "YX"){
 
-        GraphName << "Dose Profile in "<< SliceFor2DGraph.c_str() <<" Plane ; X(mm) ; Y(mm)"  ;
+        GraphName << "Dose Heat Map in "<< SliceFor2DGraph.c_str() << "-Slice(" << SliceID <<") Plane ; X(mm) ; Y(mm)"  ;
         ProfDoseHist = new TH2F("2D Dose", GraphName.str().c_str(),  VoxXNumber, minnX , maxxX ,  VoxYNumber, minnY, maxxY);
 
         for ( auto it = QuantVals[DoseProfilQuantity].begin(); it != QuantVals[DoseProfilQuantity].end(); ++it  ){
@@ -9100,7 +9201,7 @@ void G4DoseCalcsAnalysis::CreateDoseProfile(){
         }
     }
     else if(SliceFor2DGraph == "ZX" || SliceFor2DGraph == "XZ"){
-        GraphName << "Dose Profile in "<< SliceFor2DGraph.c_str() <<" Plane ; Z(mm) ; X(mm)"  ;
+        GraphName << "Dose Heat Map in "<< SliceFor2DGraph.c_str() << "-Slice(" << SliceID <<") Plane ; Z(mm) ; X(mm)"  ;
         ProfDoseHist = new TH2F("2D Dose", GraphName.str().c_str(),  VoxZNumber, minnZ , maxxZ ,  VoxXNumber, minnX, maxxX);
         for ( auto it = QuantVals[DoseProfilQuantity].begin(); it != QuantVals[DoseProfilQuantity].end(); ++it  ){
             X = it->first;
@@ -9115,7 +9216,7 @@ void G4DoseCalcsAnalysis::CreateDoseProfile(){
         }
     }
     else if(SliceFor2DGraph == "ZY" || SliceFor2DGraph == "YZ"){
-        GraphName << "Dose Profile in "<< SliceFor2DGraph.c_str() <<" Plane ; Z(mm) ; Y(mm)"  ;
+        GraphName << "Dose Heat Map in "<< SliceFor2DGraph.c_str() << "-Slice(" << SliceID <<") Plane ; Z(mm) ; Y(mm)"  ;
         ProfDoseHist = new TH2F("2D Dose", GraphName.str().c_str(),  VoxZNumber, minnZ , maxxZ ,  VoxYNumber, minnY, maxxY);
         for ( auto it = QuantVals[DoseProfilQuantity].begin(); it != QuantVals[DoseProfilQuantity].end(); ++it  ){
             X = it->first;
@@ -9129,6 +9230,7 @@ void G4DoseCalcsAnalysis::CreateDoseProfile(){
             }
         }
     }
+
 
     /*
 
@@ -9317,7 +9419,7 @@ void G4DoseCalcsAnalysis::CreateHeatMap(){
 
     graph2D->Draw("COLZ");
 
-    fileName << GraphsDirectoryPath << QuantitiesToScore << "_" << GeometrySymbol<< "_" << SliceFor2DGraph << "_Slice" << SliceID << GraphsExt;
+    fileName << GraphsDirectoryPath << "HeatMap_"<< QuantitiesToScore << "_" << GeometrySymbol<< "_" << SliceFor2DGraph << "_Slice" << SliceID << GraphsExt;
     Can2DMap->Print(fileName.str().c_str());//,GraphsExt.c_str());  // create PS file in the dir were this code executed
 
     delete graph2D ;

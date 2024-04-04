@@ -122,6 +122,7 @@ G4TMessenger::~G4TMessenger()
     delete RegionToScoreCMD;
     delete QuantitiesToScoreCMD;
     delete GenerateVoxelsResulsCMD;
+    delete SimulationIntExtNeutDet;
 
     delete RadiationFactorsCMD;
     delete QuantitiesUnitsCMD;
@@ -393,6 +394,12 @@ void G4TMessenger::SetNewValue(G4UIcommand* command,G4String newValue){
         VolumeConst->setAccuracyCalculationLevel(newValue);
     }
 
+    if( command == SimulationIntExtNeutDet )
+    {
+        G4Tokenizer next(newValue);
+
+        VolumeConst->setSimulationIntExtNeutDet(next());
+    }
     if( command == GenerateVoxelsResulsCMD )
     {
         VolumeConst->setGenerateVoxelsResuls("yes");
@@ -447,7 +454,12 @@ void G4TMessenger::CommandsForRunAndScore(){
     SimNumOnRanksCMD->SetCandidates(" o m ");
     SimNumOnRanksCMD->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-    GenerateVoxelsResulsCMD = new G4UIcmdWithoutParameter("/RunAndScoreData/generateVoxelsResuls",this);
+    SimulationIntExtNeutDet = new G4UIcommand("/RunAndScoreData/RunFor" ,this);
+    param = new G4UIparameter("RunFor",'s', false);
+    SimulationIntExtNeutDet->SetParameter(param);
+
+
+    GenerateVoxelsResulsCMD = new G4UIcmdWithoutParameter("/RunAndScoreData/generateVoxelsResults",this);
     GenerateVoxelsResulsCMD->SetGuidance("set the command without parameter to generate results at the voxel level");
     GenerateVoxelsResulsCMD->AvailableForStates(G4State_PreInit,G4State_Idle);
 

@@ -53,7 +53,8 @@ G4TResultCalculation::G4TResultCalculation(){
     RankID = 0;
 
     DoseCalcsQuantities.push_back("AE");DoseCalcsQuantities.push_back("AF");DoseCalcsQuantities.push_back("SAF"); DoseCalcsQuantities.push_back("DR");
-    DoseCalcsQuantities.push_back("AD");DoseCalcsQuantities.push_back("S");DoseCalcsQuantities.push_back("H");DoseCalcsQuantities.push_back("E");DoseCalcsQuantities.push_back("ER");
+    DoseCalcsQuantities.push_back("AD");DoseCalcsQuantities.push_back("S");DoseCalcsQuantities.push_back("H");DoseCalcsQuantities.push_back("E");
+    DoseCalcsQuantities.push_back("ER");DoseCalcsQuantities.push_back("DCC");
 
     /*
     TissueFactorMap["World"]=1;
@@ -83,6 +84,10 @@ G4TResultCalculation::G4TResultCalculation(){
     Gy_to_Sv = 1. ;
     Bq_to_MBq = 1e-6 ;
     
+    //GenerateVoxelsResuls = true;
+    VOX_USE = true;
+    GETVOXELDATA = false;
+
     // Default code values
     // AE MeV
     // Mass kg
@@ -97,6 +102,7 @@ G4TResultCalculation::G4TResultCalculation(){
     // S Gy/Bq
     // H Sv
     // E Sv
+    // DCC pGy/cm2
 
     AEUnitFactor = 1.;
     AFUnitFactor = 1.;
@@ -105,6 +111,9 @@ G4TResultCalculation::G4TResultCalculation(){
     ADUnitFactor = 1.;
     HUnitFactor = 1.;
     EUnitFactor = 1.;
+    DCCUnitFactor = MeV_to_J*1e+12 /*0.16021773*/;
+
+    //G4cout << "DCCUnitFactor : " << DCCUnitFactor << G4endl;
 
     AEUnit = "MeV";
     AFUnit = "";
@@ -113,7 +122,8 @@ G4TResultCalculation::G4TResultCalculation(){
     SUnit = "MeV/kg";
     HUnit = "MeV/kg";
     EUnit = "MeV/kg";
-    
+    DCCUnit = "pGy/cm2";
+
     UnitPerParticle = "Particle";
     UnitPerDecay = "Decay";
     
@@ -146,44 +156,46 @@ void G4TResultCalculation::Initialization(){
     ED_Total.clear();
     ED2_Total.clear();
     NOfValues.clear();
+    Fluence.clear();
     ReadedResultFilesPaths.clear();
     
     if(SourceType == "Voxels"){
         VOX_USE = true;
     }
-    
+
     if(VOX_USE && GenerateVoxelsResuls){
         
         TotVoxNum = VoxXNumber * VoxYNumber * VoxZNumber;
         
         //CNID = new unsigned int [TotVoxNum];
         
-        if (ExeFromMerge){
-            
-            if(V)G4cout << "\n-------- " << "The array CopyNumberMassSize is not defined. Execution comes from merge executable " << "\n" << G4endl ;
-            if(V)G4cout << "\n-------- for " << TotVoxNum << " voxel, the array CopyNumberMassSize is not defined yet. Execution comes from ./merge executable " << "\n" << G4endl ;
-            
-            CopyNumberZPos = new G4double [TotVoxNum];
-            CopyNumberYPos = new G4double [TotVoxNum];
-            CopyNumberXPos = new G4double [TotVoxNum];
-            CopyNumberMassSize = new G4double [TotVoxNum];
-            CopyNumberRegionNameMap = new G4String [TotVoxNum];
-            
-            for( G4int C = 0 ; C < TotVoxNum ; C++ ){
-                CopyNumberZPos[C] = 0;
-                CopyNumberYPos[C] = 0;
-                CopyNumberXPos[C] = 0 ;
-                CopyNumberMassSize[C] = 0;
-                CopyNumberRegionNameMap[C] = "VOXEL";
-            }
-        }else{
-            if(V)G4cout << "\n-------- " << "The array CopyNumberMassSize is already defined. Execution comes from ./simulate executable " << "\n" << G4endl ;
+        //if (ExeFromMerge){
+
+        if(V)G4cout << "\n-------- " << "The array CopyNumberMassSize is not defined. Execution comes from merge executable " << "\n" << G4endl ;
+        if(V)G4cout << "\n-------- for " << TotVoxNum << " voxel, the array CopyNumberMassSize is not defined yet. Execution comes from ./merge executable " << "\n" << G4endl ;
+
+        CopyNumberZPos = new G4double [TotVoxNum];
+        CopyNumberYPos = new G4double [TotVoxNum];
+        CopyNumberXPos = new G4double [TotVoxNum];
+        CopyNumberMassSize = new G4double [TotVoxNum];
+        CopyNumberRegionNameMap = new G4String [TotVoxNum];
+
+        for( G4int C = 0 ; C < TotVoxNum ; C++ ){
+            CopyNumberZPos[C] = 0;
+            CopyNumberYPos[C] = 0;
+            CopyNumberXPos[C] = 0 ;
+            CopyNumberMassSize[C] = 0;
+            CopyNumberRegionNameMap[C] = "VOXEL";
         }
+        //}else{
+        //    if(V)G4cout << "\n-------- " << "The array CopyNumberMassSize is already defined. Execution comes from ./simulate executable " << "\n" << G4endl ;
+        //}
         
         VoxED_Total = new G4double  [TotVoxNum];
         VoxED2_Total = new G4double [TotVoxNum];
         VoxNOfValues  = new unsigned long long int[TotVoxNum];
-        
+        VoxFluence  = new unsigned long long int[TotVoxNum];
+
         VoxED_Mean = new G4double [TotVoxNum];
         VoxED2_Mean = new G4double [TotVoxNum];
         VoxED_Var = new G4double [TotVoxNum];
@@ -201,7 +213,8 @@ void G4TResultCalculation::Initialization(){
             VoxED_Total[C] = 0;
             VoxED2_Total[C] = 0;
             VoxNOfValues[C] = 0 ;
-            
+            VoxFluence[C] = 0 ;
+
             VoxED_Mean[C] = 0;
             VoxED2_Mean[C] = 0;
             VoxED_Var[C] = 0;
@@ -217,6 +230,71 @@ void G4TResultCalculation::Initialization(){
         }
     }
     //SourceParticleEnergyValues[GeometrySymbol].clear();SourceParticleEnergyValues[GeometrySymbol].empty();
+}
+
+void G4TResultCalculation::InitializeVoxelizedData(){
+
+    TotVoxNum = VoxXNumber * VoxYNumber * VoxZNumber;
+
+    //CNID = new unsigned int [TotVoxNum];
+
+    if(V)G4cout << "\n-------- " << "The array CopyNumberMassSize is not defined. Execution comes from merge executable " << "\n" << G4endl ;
+    if(V)G4cout << "\n-------- for " << TotVoxNum << " voxel, the array CopyNumberMassSize is not defined yet. Execution comes from ./merge executable " << "\n" << G4endl ;
+
+    CopyNumberZPos = new G4double [TotVoxNum];
+    CopyNumberYPos = new G4double [TotVoxNum];
+    CopyNumberXPos = new G4double [TotVoxNum];
+    CopyNumberMassSize = new G4double [TotVoxNum];
+    CopyNumberRegionNameMap = new G4String [TotVoxNum];
+
+    for( G4int C = 0 ; C < TotVoxNum ; C++ ){
+        CopyNumberZPos[C] = 0;
+        CopyNumberYPos[C] = 0;
+        CopyNumberXPos[C] = 0 ;
+        CopyNumberMassSize[C] = 0;
+        CopyNumberRegionNameMap[C] = "VOXEL";
+    }
+
+    VoxED_Total = new G4double  [TotVoxNum];
+    VoxED2_Total = new G4double [TotVoxNum];
+    VoxNOfValues  = new unsigned long long int[TotVoxNum];
+    VoxFluence  = new unsigned long long int[TotVoxNum];
+
+    VoxED_Mean = new G4double [TotVoxNum];
+    VoxED2_Mean = new G4double [TotVoxNum];
+    VoxED_Var = new G4double [TotVoxNum];
+    VoxED_SDev = new G4double [TotVoxNum];
+    VoxED_RelS_D = new G4double [TotVoxNum];
+
+    VoxAF_Total = new G4double [TotVoxNum];
+    VoxSAF_Total = new G4double [TotVoxNum];
+    VoxAD_Total = new G4double [TotVoxNum];
+    VoxS_Total = new G4double [TotVoxNum];
+    VoxH_Total = new G4double [TotVoxNum];
+    VoxE_Total = new G4double [TotVoxNum];
+
+    for( G4int C = 0 ; C < TotVoxNum ; C++ ){
+        VoxED_Total[C] = 0;
+        VoxED2_Total[C] = 0;
+        VoxNOfValues[C] = 0 ;
+        VoxFluence[C] = 0 ;
+
+        VoxED_Mean[C] = 0;
+        VoxED2_Mean[C] = 0;
+        VoxED_Var[C] = 0;
+        VoxED_SDev[C] = 0;
+        VoxED_RelS_D[C] = 0;
+
+        VoxAF_Total[C] = 0;
+        VoxSAF_Total[C] = 0;
+        VoxAD_Total[C] = 0;
+        VoxS_Total[C] = 0;
+        VoxH_Total[C] = 0;
+        VoxE_Total[C] = 0;
+    }
+
+    GETVOXELDATA = true;
+
 }
 
 void G4TResultCalculation::G4TCoutReset(){
@@ -377,19 +455,22 @@ void G4TResultCalculation::MergeSimulationsData(){
                             }
 
 
-                            //if(V)G4cout << "Vox_use "<< VOX_USE<< G4endl ;
+                            //if(V)
+                            //G4cout << "Vox_use "<< VOX_USE<< G4endl ;
                             if(VOX_USE && GenerateVoxelsResuls){
 
                                 std::ostringstream name2;
-                                name2 << ResultDirectoryPath << "/AE@Voxel@for@Rank@" << rankid << "@Thread@"<< threadid<<"@" << Particle << "@" << SourceReg << "@" << Energy ;
+                                name2 << ResultDirectoryPath << "/AE@Voxel@for@Rank@" << rankid << "@Thread@"<< threadid<<"@" << GeometrySymbol <<"@" << Particle << "@" << SourceReg << "@" << Energy ;
 
                                 vfm = name2.str().c_str();
                                 if(V)G4cout << "\nThe file to read: " << vfm << G4endl ;
+                                //G4cout << "Vox_use "<< VOX_USE<< G4endl ;
 
                                 ReadThreadVoxelResultFile(vfm);
+                                //G4cout << "Vox_use "<< VOX_USE<< G4endl ;
+
                             }
                         }
-
                     }
                     
                     for (G4int r = 0 ; r < ReadedResultFilesPaths[GeometrySymbol].size() ; r++) { // calculate data just if the file is readed
@@ -460,6 +541,16 @@ void G4TResultCalculation::MergeSimulationsData(){
                     E_SDev.clear();
                     E_RelS_D.clear();
 
+                    DCC_Total.clear();
+                    DCC2_Total.clear();
+                    DCC_Mean.clear();
+                    DCC2_Mean.clear();
+                    DCC_Var.clear();
+                    DCC_SDev.clear();
+                    DCC_RelS_D.clear();
+
+
+
                     DR_Total.clear();
                     ER_Total.clear();
 
@@ -469,6 +560,7 @@ void G4TResultCalculation::MergeSimulationsData(){
                     ChosenVariableTotal.clear();
 
                     NOfValues.clear();
+                    Fluence.clear();
 
 
                 }
@@ -584,7 +676,7 @@ void G4TResultCalculation::MergeSimulationsData(){
                                     if(VOX_USE && GenerateVoxelsResuls){
 
                                         std::ostringstream name2;
-                                        name2 << ResultDirectoryPath << "/AE@Voxel@for@Rank@" << rankid << "@Thread@"<< threadid<<"@" << Particle << "@" << SourceReg << "@" << Energy ;
+                                        name2 << ResultDirectoryPath << "/AE@Voxel@for@Rank@" << rankid << "@Thread@"<< threadid<<"@" << GeometrySymbol <<"@" << Particle << "@" << SourceReg << "@" << Energy ;
 
                                         vfm = name2.str().c_str();
                                         if(V)G4cout << "\nThe file to read: " << vfm << G4endl ;
@@ -676,6 +768,7 @@ void G4TResultCalculation::MergeSimulationsData(){
                     ChosenVariableTotal.clear();
 
                     NOfValues.clear();
+                    Fluence.clear();
 
                 }
             }
@@ -702,9 +795,7 @@ void G4TResultCalculation::MergeSimulationsData(){
         VolumeNameDensityMap.clear();
         // ////////////////////////////////////////////////////////////
     }
-
     // ////////////////////////////////////////////////////
-
 }
 
 // are called from constructor to read the data
@@ -812,6 +903,7 @@ void G4TResultCalculation::ReadSimulationData(){
                         QuantityNamesToScore.push_back("H");
                         QuantityNamesToScore.push_back("E");
                         QuantityNamesToScore.push_back("DR");
+                        QuantityNamesToScore.push_back("DCC");
                         break;
                     }
                     else {
@@ -1047,10 +1139,10 @@ void G4TResultCalculation::ReadSimulationData(){
             else if(ParameterName =="/RunAndScoreData/setRadiationFactors"){// to evaluate the last 4 lines
                 //G4double Ene, Fac; G4String pn;
                 //while(LineString >> pn ){
-                    //LineString >> Ene;
-                    //LineString >> Fac;
-                    //RadiationFactorMap[pn][Ene] = Fac;
-                    //if(V)G4cout << " pn " << pn << " Ene " << Ene << " Fac " << Fac << G4endl ;
+                //LineString >> Ene;
+                //LineString >> Fac;
+                //RadiationFactorMap[pn][Ene] = Fac;
+                //if(V)G4cout << " pn " << pn << " Ene " << Ene << " Fac " << Fac << G4endl ;
                 //}
             }
             else if(ParameterName =="/RunAndScoreData/setTissueFactors"){// to evaluate the last 4 lines
@@ -1203,15 +1295,25 @@ void G4TResultCalculation::ReadSimulationData(){
                         }
                         if(V)G4cout << " Quantity " << Quant << " unit " << uni << " EUnitFactor " << EUnitFactor << G4endl ;
                     }
+                    else if(Quant == "DCC"){
+                        if(uni == "pGy/cm2"){
+                            DCCUnit = "pGy/cm2";
+                            DCCUnitFactor = MeV_to_J*1e+12 /*0.16021773*/;
+                        }else {
+                            DCCUnit = "pGy/cm2";
+                            DCCUnitFactor = MeV_to_J*1e+12 /*0.16021773*/;
+                        }
+                        if(V)G4cout << " Quantity " << Quant << " unit " << uni << " SAFUnitFactor " << SAFUnitFactor << G4endl ;
+                    }
                 }
             }
             else if(ParameterName =="/GeometryData/setVoxelsData"){
                 LineString >> VoxZNumber >> VoxYNumber >> VoxZNumber >> word >> word >> VoxXHalfSize >> VoxYHalfSize >> VoxZHalfSize ;
                 if(V)G4cout << " VoxXNumber " << VoxXNumber << " VoxYNumber " << VoxYNumber << " VoxZNumber " << VoxZNumber << " VoxXHalfSize " << VoxXHalfSize << " VoxYHalfSize " << VoxYHalfSize << " VoxZHalfSize " << VoxZHalfSize << G4endl ;
             }
-            else if(ParameterName =="/RunAndScoreData/generateVoxelsResuls"){
+            else if(ParameterName =="/RunAndScoreData/generateVoxelsResults"){
                 GenerateVoxelsResuls = true;
-                if(V)G4cout << " GenerateVoxelsResuls " << GenerateVoxelsResuls << G4endl ;
+                if(V)G4cout << " GenerateVoxelsResults " << GenerateVoxelsResuls << G4endl ;
             }
             else if(ParameterName =="ExecutionMode"){
                 LineString >> ExecutionMode;
@@ -1238,7 +1340,7 @@ void G4TResultCalculation::ReadThreadVoxelResultFile(G4String fm){
     G4double nnn = 0, bbb = 0;
     std::ifstream file(fm , std::ios::binary);
     if(file.is_open()){
-        
+
         //if(V)G4cout << "\nReading file  " << fm << G4endl ;
         
         unsigned int LineNum, CN, NOFVal;
@@ -1249,31 +1351,38 @@ void G4TResultCalculation::ReadThreadVoxelResultFile(G4String fm){
         //VoxED_Total[jj] = 0.;
         //}
         
-        file >> LineNum;
-        //if(V)G4cout << " LineNum " << LineNum << G4endl ;
+        file >> LineNum >> VoxXNumber >> VoxYNumber >> VoxZNumber >> VoxXHalfSize >> VoxYHalfSize >> VoxZHalfSize;
+
+        if(GETVOXELDATA==false){
+            InitializeVoxelizedData();
+        }
+        //if(V)
+        //G4cout << " LineNum " << LineNum << G4endl ;
         
         for( unsigned int jj = 0 ; jj < LineNum ; jj++ ){
             
-            if (ExeFromMerge){
-                file >> CN    ;  //CNID[CN] = CN;
-                file >> X     ;  CopyNumberXPos[CN]=X;
-                file >> Y     ;  CopyNumberYPos[CN]=Y;
-                file >> Z     ;  CopyNumberZPos[CN]=Z;
-                file >> word  ;  CopyNumberRegionNameMap[CN] = word;
-                file >> val   ;  VoxED_Total[CN] = VoxED_Total[CN] + val;
-                file >> val   ;  VoxED2_Total[CN] = VoxED2_Total[CN] + val;
-                file >> NOFVal;  VoxNOfValues[CN] = VoxNOfValues[CN] + NOFVal;
-                file >> mass  ;  CopyNumberMassSize[CN] = mass;
-                //if(V)G4cout << CN << " Steps " << NOFVal << " TotalSteps " << VoxNOfValues[CN] << " Region="<<word << " AE="<< val << " AETotal="<< VoxED_Total[CN] << G4endl ;
-                
-            }else{
-                file >> CN >> X >> X >> X >> word  ;
-                file >> val   ;  VoxED_Total[CN] = VoxED_Total[CN] + val;
-                file >> val   ;  VoxED2_Total[CN] = VoxED2_Total[CN] + val;
-                file >> NOFVal;  VoxNOfValues[CN] = VoxNOfValues[CN] + NOFVal;
-                file >> X ;
-                //if(V)G4cout << CN << " Steps " << NOFVal << " TotalSteps " << VoxNOfValues[CN] << " AE Total="<< VoxED_Total[CN] << G4endl ;
-            }
+            //if (ExeFromMerge){
+            file >> CN    ;  //CNID[CN] = CN;
+            file >> X     ;  CopyNumberXPos[CN]=X;
+            file >> Y     ;  CopyNumberYPos[CN]=Y;
+            file >> Z     ;  CopyNumberZPos[CN]=Z;
+            file >> word  ;  CopyNumberRegionNameMap[CN] = word;
+            file >> val   ;  VoxED_Total[CN] = VoxED_Total[CN] + val;
+            file >> val   ;  VoxED2_Total[CN] = VoxED2_Total[CN] + val;
+            file >> NOFVal;  VoxNOfValues[CN] = VoxNOfValues[CN] + NOFVal;
+            file >> mass  ;  CopyNumberMassSize[CN] = mass;
+            file >> val   ;  VoxFluence[CN] = VoxFluence[CN] + val;
+
+            //if(V)G4cout << CN << " Steps " << NOFVal << " TotalSteps " << VoxNOfValues[CN] << " Region="<<word << " AE="<< val << " AETotal="<< VoxED_Total[CN] << G4endl ;
+
+            //}else{
+            //    file >> CN >> X >> X >> X >> word  ;
+            //    file >> val   ;  VoxED_Total[CN] = VoxED_Total[CN] + val;
+            //    file >> val   ;  VoxED2_Total[CN] = VoxED2_Total[CN] + val;
+            //    file >> NOFVal;  VoxNOfValues[CN] = VoxNOfValues[CN] + NOFVal;
+            //    file >> X ;
+            //    //if(V)G4cout << CN << " Steps " << NOFVal << " TotalSteps " << VoxNOfValues[CN] << " AE Total="<< VoxED_Total[CN] << G4endl ;
+            //}
             //if(V)G4cout << CN << " Steps " << NOFVal << " TotalSteps " << VoxNOfValues[CN] << " Region="<<word << " AE="<< val << " AETotal="<< VoxED_Total[CN] << G4endl ;
             //if(V)G4cout << " " << VoxNOfValues[CN] << "\n" << G4endl ;
             
@@ -1284,13 +1393,14 @@ void G4TResultCalculation::ReadThreadVoxelResultFile(G4String fm){
             //if(V)G4cout << CN << " " << Z << " " << Y << " " << X << " " << CopyNumberRegionNameMap[CN] << " " << VoxED_Total[CN] << " "<< VoxED2_Total[CN] << " " << VoxNOfValues[CN] << " " << CopyNumberMassSize[CN] << "\n" << G4endl ;
         }
         
+        G4cout << " LineNum " << LineNum << G4endl ;
+
         file.close();
     }
     else{
         G4cout << "cannot open the file " << fm << G4endl ;
     }
     //if(V)G4cout << "Steps " << nnn << " ED " << bbb << G4endl ;
-    
 }
 void G4TResultCalculation::VoxelQuantitiesCalculation(){
     
@@ -1302,6 +1412,8 @@ void G4TResultCalculation::VoxelQuantitiesCalculation(){
     TotalNumberOfSteps = 0;
     TotalAbsorbedEnergy = 0.;
     
+    TotVoxNum = VoxXNumber * VoxYNumber * VoxZNumber;
+
     //G4double jjj = 0, TotalMass = 0.;
     for(unsigned int gg = 0 ; gg < TotVoxNum ; gg++){
         
@@ -1311,11 +1423,12 @@ void G4TResultCalculation::VoxelQuantitiesCalculation(){
         }
         
         VoxAFCte[gg]  = 1./(double)TotalEmittedEnergy;
-        VoxSAFCte[gg] = 1./((double)TotalEmittedEnergy*CopyNumberMassSize[gg]);
-        VoxADCte[gg]  = (1./(CopyNumberMassSize[gg]))*MeV_to_J ;
-        VoxSCte[gg]   = 1./(double)TotalEventNumber;
-        VoxHCte[gg]   = GenerateRadiationFactor(ParticleName,ParticleSourceEnergy)*Gy_to_Sv;
-        VoxECte[gg]   = (double)TissueFactorMap[CopyNumberRegionNameMap[gg]] ;
+        VoxSAFCte[gg] = SAFUnitFactor/((double)TotalEmittedEnergy*CopyNumberMassSize[gg]);
+        VoxADCte[gg]  = (ADUnitFactor/(CopyNumberMassSize[gg])) ;
+        VoxSCte[gg]   = SUnitFactor/(double)TotalEventNumber;
+        VoxHCte[gg]   = HUnitFactor*GenerateRadiationFactor(ParticleName,ParticleSourceEnergy);
+        VoxECte[gg]   = EUnitFactor*(double)TissueFactorMap[CopyNumberRegionNameMap[gg]] ;
+        VoxDCCCte[gg] = DCCUnitFactor/(CopyNumberMassSize[gg]*VoxFluence[gg]);
         //std::fprintf(stdout,"%-15u%-15u%-15e%-15e%-15e%-15e%-15e%-15e\n", gg , VoxNOfValues[gg], VoxAFCte[gg] , VoxSAFCte[gg] , VoxADCte[gg] , VoxSCte[gg], VoxHCte[gg] , VoxECte[gg]);
         
         //if(V)G4cout << "VoxHCte[gg]: " << VoxHCte[gg]<< G4endl;
@@ -1336,40 +1449,14 @@ void G4TResultCalculation::VoxelQuantitiesCalculation(){
         
         //if(V)G4cout << "VoxED_Total[gg] " << VoxED_Total[gg] << G4endl;
         
-        VoxAF_Total[gg]  = VoxAFCte[gg] * VoxED_Total[gg] ;
+        VoxAF_Total[gg]  = VoxAFCte[gg]  * VoxED_Total[gg] ;
         VoxSAF_Total[gg] = VoxSAFCte[gg] * VoxED_Total[gg] ;
-        VoxAD_Total[gg]  = VoxADCte[gg] * VoxED_Total[gg] ;
-        VoxS_Total[gg]   = VoxSCte[gg] * VoxAD_Total[gg] ;
-        VoxH_Total[gg]   = VoxHCte[gg] * VoxAD_Total[gg] ;
-        VoxE_Total[gg]   = VoxECte[gg] * VoxH_Total[gg];
-        
-        //VoxAF_Mean[gg]  = VoxAF_Total[gg]/VoxNOfValues[gg] ;
-        //VoxSAF_Mean[gg] = VoxSAF_Total[gg]/VoxNOfValues[gg] ;
-        //VoxAD_Mean[gg]  = VoxAD_Total[gg]/VoxNOfValues[gg] ;
-        //VoxS_Mean[gg]   = VoxS_Total[gg]/VoxNOfValues[gg] ;
-        //VoxH_Mean[gg]   = VoxH_Total[gg]/VoxNOfValues[gg] ;
-        //VoxE_Mean[gg]   = VoxE_Total[gg]/VoxNOfValues[gg] ;
-        
-        //VoxAF_Var[gg]  = VoxAFCte[gg] * VoxAFCte[gg] * VoxED_Var[gg] ;
-        //VoxSAF_Var[gg] = VoxSAFCte[gg] * VoxSAFCte[gg] * VoxED_Var[gg] ;
-        //VoxAD_Var[gg]  = VoxADCte[gg] * VoxADCte[gg] * VoxED_Var[gg] ;
-        //VoxS_Var[gg]   = VoxSCte[gg] * VoxSCte[gg] * VoxAD_Var[gg] ;
-        //VoxH_Var[gg]   = VoxHCte[gg] * VoxHCte[gg] * VoxAD_Var[gg] ;
-        //VoxE_Var[gg]   = VoxECte[gg] * VoxECte[gg] * VoxH_Var[gg] ;
-        
-        //VoxAF_SDev[gg] = std::sqrt(std::abs(VoxAF_Var[gg]));
-        //VoxSAF_SDev[gg] = std::sqrt(std::abs(VoxSAF_Var[gg]));
-        //VoxAD_SDev[gg] = std::sqrt(std::abs(VoxAD_Var[gg]));
-        //VoxS_SDev[gg] = std::sqrt(std::abs(VoxS_Var[gg]));
-        //VoxH_SDev[gg] = std::sqrt(std::abs(VoxH_Var[gg]));
-        //VoxE_SDev[gg] = std::sqrt(std::abs(VoxE_Var[gg]));
-        
-        //jjj += VoxH_Total[gg];
-        //if(V)G4cout << VoxED_Total[gg] << " " << VoxAF_Total[gg] << " " << VoxSAF_Total[gg] << " " << VoxAD_Total[gg] << " " << VoxS_Total[gg] << " ------- " << VoxHCte[gg] << " " << CopyNumberRegionNameMap[gg] << " VoxH_Total[gg]: " << VoxH_Total[gg] << " " << jjj << G4endl;
-        
-        //std::ostringstream text;
-        //text << "\r" << gg+1 << "/" << CNID.size() << " " ;  // You could try using \r and \b. The first moves the cursor back to the start of the line, the latter back one character. Neither erase the exisiting text, so you've got to supply enough chars to erase all the old ones.
-        //printf(text.str().c_str());
+        VoxAD_Total[gg]  = VoxADCte[gg]  * VoxED_Total[gg] ;
+        VoxS_Total[gg]   = VoxSCte[gg]   * VoxAD_Total[gg] ;
+        VoxH_Total[gg]   = VoxHCte[gg]   * VoxAD_Total[gg] ;
+        VoxE_Total[gg]   = VoxECte[gg]   * VoxH_Total[gg]  ;
+        VoxDCC_Total[gg] = VoxDCCCte[gg] * VoxED_Total[gg] ;
+
     }
     //std::fprintf(stdout,"----------------------------------------------------------------------------------------------------------------------\n");
     
@@ -1389,6 +1476,8 @@ void G4TResultCalculation::GenerateVoxelsResultFiles(){
     
     int WW = 15;
     
+    //G4cout << " TotVoxNum "<< TotVoxNum << G4endl;
+
     //if(V)G4cout << "Total Voxels Number " << TotVoxNum << G4endl;
     
     for(unsigned int dd = 0 ; dd < TotVoxNum; dd++){
@@ -1454,7 +1543,8 @@ void G4TResultCalculation::GenerateVoxelsResultFiles(){
         
         G4cout << "\n2) Calculated Voxelized Data(just header):\n\n" << aastr.str().c_str()<< G4endl;
         
-        aastr << std::setw(WW) << std::left << "# XPos(mm)"
+        aastr << std::setw(WW) << std::left << "CN"
+              << std::setw(WW) << std::left << "# XPos(mm)"
               << std::setw(WW) << std::left << "# YPos(mm)"
               << std::setw(WW) << std::left << "# ZPos(mm)"
               << std::setw(WW) << std::left << "# Mass[kg]"
@@ -1467,7 +1557,7 @@ void G4TResultCalculation::GenerateVoxelsResultFiles(){
               << std::setw(WW) << std::left << "# E(Sv)"
               << std::setw(WW) << std::left << "# RelSDv(MeV)"
               << "\n\n";
-        
+
         //file1 << aastr.str().c_str();
         //if(V)G4cout << aastr.str().c_str()<< G4endl;
         
@@ -1483,8 +1573,9 @@ void G4TResultCalculation::GenerateVoxelsResultFiles(){
             
             //if(V)G4cout << "ED " << VoxED_Total[dd] << " " << CopyNumberMassSize[dd] << G4endl;
             
-            table << std::setw(WW) << std::left << CopyNumberXPos[dd]
+            table << std::setw(WW) << std::left << dd
                      << std::setw(WW) << std::left << CopyNumberXPos[dd]
+                     << std::setw(WW) << std::left << CopyNumberYPos[dd]
                         << std::setw(WW) << std::left << CopyNumberZPos[dd]
                            << std::setw(WW) << std::left << CopyNumberMassSize[dd]
                               << std::setw(WW) << std::left << VoxED_Total[dd]
@@ -1512,21 +1603,24 @@ void G4TResultCalculation::GenerateVoxelsResultFiles(){
 // for step and event level
 bool G4TResultCalculation::ReadThreadRegionResultFile(G4String fm){
     
-    //if(V)G4cout << "\n-------- " << __FUNCTION__ << G4endl ;
+    //if(V) G4cout << "\n-------- " << __FUNCTION__ << G4endl ;
 
     bool IsRegionsAreRead = false;
 
     std::ifstream file(fm , std::ios::binary);
     if(file.is_open()){
-        
+
         // ///////////////////////////////////////////////////////////////////////////////////
-        
+        //G4cout << "\n-------- is open " << G4endl ;
+
         G4double val = 0; unsigned long long int ival = 0;
         G4String line , ParameterName;
         while (getline(file, line)) {
             
             std::istringstream LineString(line);
             LineString >> ParameterName;
+
+            //G4cout << LineString.str() << G4endl ;
 
             if(V)G4cout << "\nParameterName " << ParameterName << G4endl ;
             if(ParameterName.empty() || ParameterName == "RegionName" || ParameterName == "RegionsData"){ IsRegionsAreRead = true ; continue; }
@@ -1548,7 +1642,7 @@ bool G4TResultCalculation::ReadThreadRegionResultFile(G4String fm){
                 }
                 ExecutionTimeInMin += val ;
                 
-                if(V)G4cout << " ExecutionTimeInMin " << ExecutionTimeInMin << G4endl ;                
+                if(V)G4cout << " ExecutionTimeInMin " << ExecutionTimeInMin << G4endl ;
             }
             else if(ParameterName =="OneEventExecutionTimeInMs"){
                 LineString >> val; OneEventExecutionTimeInMs+=val ;
@@ -1590,7 +1684,7 @@ bool G4TResultCalculation::ReadThreadRegionResultFile(G4String fm){
                 LineString >> val ; ED_Total[VolumeName] += val ;
                 LineString >> val ; ED2_Total[VolumeName] += val ;
                 LineString >> ival ; NOfValues[VolumeName] += ival ;
-                
+
                 bool IsIn = false;
                 for (int gg = 0 ; gg < OrgansNameVector.size() ; gg++) { if(OrgansNameVector[gg] == VolumeName){ IsIn = true; break; } }
                 if(IsIn == false){
@@ -1598,10 +1692,17 @@ bool G4TResultCalculation::ReadThreadRegionResultFile(G4String fm){
                     LineString >> val ; VolumeNameMassMap[VolumeName] = val ;
                     LineString >> val ; VolumeNameVolumeMap[VolumeName] = val ;
                     LineString >> val ; VolumeNameDensityMap[VolumeName] = val ;
+                    LineString >> val ; Fluence[VolumeName] += val ;
+
+                }else{
+                    LineString >> val>> val>> val>> val ; Fluence[VolumeName] += val ;
+
                 }
                 if(TissueFactorMap[VolumeName] == 0.){
                     //TissueFactorMap[VolumeName] = 0.12;
                 }
+
+                //G4cout << LineString.str() << G4endl ;
 
                 //G4cout << VolumeName << " " << ED_Total[VolumeName] <<  " " << ED2_Total[VolumeName] <<  " " << NOfValues[VolumeName] <<  " " << VolumeNameMassMap[VolumeName] <<  " " << VolumeNameVolumeMap[VolumeName] <<  " " << VolumeNameDensityMap[VolumeName] <<  " " << TissueFactorMap[VolumeName] << G4endl ;
 
@@ -1609,7 +1710,7 @@ bool G4TResultCalculation::ReadThreadRegionResultFile(G4String fm){
         }
         
         //if(GenerateRadiationFactor(ParticleName,ParticleSourceEnergy) == 0.){
-          //  RadiationFactorMap[ParticleName][ParticleSourceEnergy] = 1;
+        //  RadiationFactorMap[ParticleName][ParticleSourceEnergy] = 1;
         //}
 
         bool IsIn = false;
@@ -1666,6 +1767,7 @@ void G4TResultCalculation::RegionQuantitiesCalculation(){
             ED_Total[it->first] = 0. ;
             ED2_Total[it->first] = 0. ;
             NOfValues[it->first] = 0. ;
+            Fluence[it->first] = 0. ;
         }else{
             continue;
         }
@@ -1684,9 +1786,9 @@ void G4TResultCalculation::RegionQuantitiesCalculation(){
             }
             if(IsIn == true){ //if exist means that its data existe
                 //if(TissueFactorMap[it->second[gg]] != 0 ){
-                  //  if(TissueFactorMap[it->second[gg]] > TissueFactorMap[it->first] ){
-                    //    TissueFactorMap[it->first] = TissueFactorMap[it->second[gg]];
-                    //}
+                //  if(TissueFactorMap[it->second[gg]] > TissueFactorMap[it->first] ){
+                //    TissueFactorMap[it->first] = TissueFactorMap[it->second[gg]];
+                //}
                 //}
 
                 VolumeNameMassMap[it->first] += VolumeNameMassMap[it->second[gg]] ;
@@ -1695,6 +1797,7 @@ void G4TResultCalculation::RegionQuantitiesCalculation(){
                 ED_Total[it->first] += ED_Total[it->second[gg]];
                 ED2_Total[it->first] += ED2_Total[it->second[gg]];
                 NOfValues[it->first] += NOfValues[it->second[gg]];
+                Fluence[it->first] += Fluence[it->second[gg]];
 
                 // to eliminate the initial regions data which affect data in DR and ER ratios which depends on the sum of dose
                 //ED_Total[it->second[gg]] = 0;
@@ -1808,14 +1911,26 @@ void G4TResultCalculation::RegionQuantitiesCalculation(){
         SCte[OrgansNameVector[gg]]   = SUnitFactor    /(VolumeNameMassMap[OrgansNameVector[gg]]*(double)TotalEventNumber);
         HCte[OrgansNameVector[gg]]   = HUnitFactor*(1./(VolumeNameMassMap[OrgansNameVector[gg]]*(double)TotalEventNumber))*GenerateRadiationFactor(ParticleName,ParticleSourceEnergy);
         ECte[OrgansNameVector[gg]]   = EUnitFactor*(1./(VolumeNameMassMap[OrgansNameVector[gg]]*(double)TotalEventNumber))*GenerateRadiationFactor(ParticleName,ParticleSourceEnergy)*TissueFactorMap[OrgansNameVector[gg]];
-        
+        DCCCte[OrgansNameVector[gg]] = DCCUnitFactor  /(VolumeNameMassMap[OrgansNameVector[gg]]*Fluence[OrgansNameVector[gg]]);
+
         AF_Total[OrgansNameVector[gg]]  = ED_Total[OrgansNameVector[gg]]*AFCte[OrgansNameVector[gg]];
         SAF_Total[OrgansNameVector[gg]] = ED_Total[OrgansNameVector[gg]]*SAFCte[OrgansNameVector[gg]]; ;
         AD_Total[OrgansNameVector[gg]]  = ED_Total[OrgansNameVector[gg]]*ADCte[OrgansNameVector[gg]];
         S_Total[OrgansNameVector[gg]]   = ED_Total[OrgansNameVector[gg]]*SCte[OrgansNameVector[gg]];
         H_Total[OrgansNameVector[gg]]   = ED_Total[OrgansNameVector[gg]]*HCte[OrgansNameVector[gg]];
         E_Total[OrgansNameVector[gg]]   = ED_Total[OrgansNameVector[gg]]*ECte[OrgansNameVector[gg]];
-        
+        DCC_Total[OrgansNameVector[gg]]   = ED_Total[OrgansNameVector[gg]]*DCCCte[OrgansNameVector[gg]];
+
+        //G4cout << " OrgansNameVector[gg] " << OrgansNameVector[gg]
+        //       << " DCCUnitFactor " << DCCUnitFactor
+        //       << " Mass " << VolumeNameMassMap[OrgansNameVector[gg]]
+        //       << " Fluence " << Fluence[OrgansNameVector[gg]]
+
+        //       << " ED " << ED_Total[OrgansNameVector[gg]]
+        //       << " DCC " << DCCCte[OrgansNameVector[gg]]
+        //       << " DCC_Total " << DCC_Total[OrgansNameVector[gg]]
+        //       <<G4endl;
+
         /*
                 AF_Total[OrgansNameVector[gg]]  = AFCte[OrgansNameVector[gg]] * ED_Total[OrgansNameVector[gg]] ;
                 SAF_Total[OrgansNameVector[gg]] = SAFCte[OrgansNameVector[gg]] * ED_Total[OrgansNameVector[gg]] ;
@@ -1833,7 +1948,8 @@ void G4TResultCalculation::RegionQuantitiesCalculation(){
         ResultTable["S"  ][ParticleName][ParticleSourceEnergy][SourceRegionName][OrgansNameVector[gg]] = S_Total  [OrgansNameVector[gg]];
         ResultTable["H"  ][ParticleName][ParticleSourceEnergy][SourceRegionName][OrgansNameVector[gg]] = H_Total  [OrgansNameVector[gg]];
         ResultTable["E"  ][ParticleName][ParticleSourceEnergy][SourceRegionName][OrgansNameVector[gg]] = E_Total  [OrgansNameVector[gg]];
-        
+        ResultTable["DCC"][ParticleName][ParticleSourceEnergy][SourceRegionName][OrgansNameVector[gg]] = DCC_Total[OrgansNameVector[gg]];
+
         if( __isnan(NOfValues[OrgansNameVector[gg]]) && __isinf(NOfValues[OrgansNameVector[gg]]) && NOfValues[OrgansNameVector[gg]] == 0 && NOfValues[OrgansNameVector[gg]] == NULL){
             G4cout << "\n\n !!!!!!!!!!!!!!!!!!!!!!!!!! " << OrgansNameVector[gg] << " total number of steps is not defined (" << TotalNumberOfSteps << ")\n";
         }else{
@@ -1857,13 +1973,15 @@ void G4TResultCalculation::RegionQuantitiesCalculation(){
         S_Mean[OrgansNameVector[gg]]   = S_Total[OrgansNameVector[gg]]/NOfValues[OrgansNameVector[gg]] ;
         H_Mean[OrgansNameVector[gg]]   = H_Total[OrgansNameVector[gg]]/NOfValues[OrgansNameVector[gg]] ;
         E_Mean[OrgansNameVector[gg]]   = E_Total[OrgansNameVector[gg]]/NOfValues[OrgansNameVector[gg]] ;
-        
+        DCC_Mean[OrgansNameVector[gg]]   = DCC_Total[OrgansNameVector[gg]]/NOfValues[OrgansNameVector[gg]] ;
+
         AF_Var[OrgansNameVector[gg]]  = AFCte[OrgansNameVector[gg]] * AFCte[OrgansNameVector[gg]] * ED_Var[OrgansNameVector[gg]] ;
         SAF_Var[OrgansNameVector[gg]] = SAFCte[OrgansNameVector[gg]] * SAFCte[OrgansNameVector[gg]] * ED_Var[OrgansNameVector[gg]] ;
         AD_Var[OrgansNameVector[gg]]  = ADCte[OrgansNameVector[gg]] * ADCte[OrgansNameVector[gg]] * ED_Var[OrgansNameVector[gg]] ;
         S_Var[OrgansNameVector[gg]]   = SCte[OrgansNameVector[gg]] * SCte[OrgansNameVector[gg]] * AD_Var[OrgansNameVector[gg]] ;
         H_Var[OrgansNameVector[gg]]   = HCte[OrgansNameVector[gg]] * HCte[OrgansNameVector[gg]] * AD_Var[OrgansNameVector[gg]] ;
         E_Var[OrgansNameVector[gg]]   = ECte[OrgansNameVector[gg]] * ECte[OrgansNameVector[gg]] * H_Var[OrgansNameVector[gg]] ;
+        DCC_Var[OrgansNameVector[gg]]   = DCCCte[OrgansNameVector[gg]] * DCCCte[OrgansNameVector[gg]] * H_Var[OrgansNameVector[gg]] ;
 
         AF_SDev[OrgansNameVector[gg]] = std::sqrt(AF_Var[OrgansNameVector[gg]]);
         SAF_SDev[OrgansNameVector[gg]] = std::sqrt(SAF_Var[OrgansNameVector[gg]]);
@@ -1871,6 +1989,7 @@ void G4TResultCalculation::RegionQuantitiesCalculation(){
         S_SDev[OrgansNameVector[gg]] = std::sqrt(S_Var[OrgansNameVector[gg]]);
         H_SDev[OrgansNameVector[gg]] = std::sqrt(H_Var[OrgansNameVector[gg]]);
         E_SDev[OrgansNameVector[gg]] = std::sqrt(E_Var[OrgansNameVector[gg]]);
+        DCC_SDev[OrgansNameVector[gg]] = std::sqrt(DCC_Var[OrgansNameVector[gg]]);
 
         StandardDeviation["AE"][ParticleName][ParticleSourceEnergy][SourceRegionName][OrgansNameVector[gg]] = ED_SDev[OrgansNameVector[gg]];
         StandardDeviation["AF"][ParticleName][ParticleSourceEnergy][SourceRegionName][OrgansNameVector[gg]] = AF_SDev[OrgansNameVector[gg]];
@@ -1879,6 +1998,7 @@ void G4TResultCalculation::RegionQuantitiesCalculation(){
         StandardDeviation["S"][ParticleName][ParticleSourceEnergy][SourceRegionName][OrgansNameVector[gg]] = S_SDev[OrgansNameVector[gg]];
         StandardDeviation["H"][ParticleName][ParticleSourceEnergy][SourceRegionName][OrgansNameVector[gg]] = H_SDev[OrgansNameVector[gg]];
         StandardDeviation["E"][ParticleName][ParticleSourceEnergy][SourceRegionName][OrgansNameVector[gg]] = E_SDev[OrgansNameVector[gg]];
+        StandardDeviation["DCC"][ParticleName][ParticleSourceEnergy][SourceRegionName][OrgansNameVector[gg]] = DCC_SDev[OrgansNameVector[gg]];
 
         TotalAEForRadiotracerRSD["AE"][ParticleName][ParticleSourceEnergy][SourceRegionName][OrgansNameVector[gg]] = ED_Total[OrgansNameVector[gg]];
 
@@ -1996,7 +2116,6 @@ void G4TResultCalculation::GenerateRegionResultFile(){
             file << headerText.c_str();
             G4cout << headerText.c_str();
 
-
             G4String Quantity_NAME_UNIT = "";
             
             if(QuantityNamesToScore[ikl] == "AE" ){
@@ -2061,6 +2180,13 @@ void G4TResultCalculation::GenerateRegionResultFile(){
                 ChosenVariableMean = E_Mean;
                 ChosenVariablevariance = E_Var;
                 ChosenVariableStandardDeviation = E_SDev;
+            }
+            else if(QuantityNamesToScore[ikl] == "DCC"){
+                Quantity_NAME_UNIT = "DCC[(" + DCCUnit+ ")]";
+                ChosenVariableTotal = DCC_Total;
+                ChosenVariableMean = DCC_Mean;
+                ChosenVariablevariance = DCC_Var;
+                ChosenVariableStandardDeviation = DCC_SDev;
             }
             else{
                 
@@ -2278,7 +2404,7 @@ void G4TResultCalculation::GenerateRegionResultForRadioTracer(){
                         }
                     }
                 }
-            }            
+            }
         }
         RadiTracerParticleEnergyDataString[RadioTracer_NAME] << " | ";
         RadiTracerDataForTotalDoseString[RadioTracer_NAME] << " | ";

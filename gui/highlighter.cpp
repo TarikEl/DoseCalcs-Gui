@@ -63,6 +63,10 @@ Highlighter::Highlighter(QTextDocument *parent) : QSyntaxHighlighter(parent) {
 
         QStringLiteral("\\bIsotropic\\b"), QStringLiteral("\\bUniform\\b"),
         QStringLiteral("\\bDirected\\b"),
+        QStringLiteral("\\bThetaPhi\\b"),
+        QStringLiteral("\\bParallelTo\\b"),
+        QStringLiteral("\\bToPoint\\b"),
+        QStringLiteral("\\bToVolume\\b"),
 
         QStringLiteral("\\bgamma\\b"), QStringLiteral("\\be-\\b"),
         QStringLiteral("\\be+\\b"), QStringLiteral("\\bproton\\b"),
@@ -72,7 +76,7 @@ Highlighter::Highlighter(QTextDocument *parent) : QSyntaxHighlighter(parent) {
         QStringLiteral("\\bAE\\b"), QStringLiteral("\\bAD\\b"),
         QStringLiteral("\\bS\\b"), QStringLiteral("\\bAD\\b"),
         QStringLiteral("\\bDR\\b"), QStringLiteral("\\bE\\b"),
-        QStringLiteral("\\bH\\b"),
+        QStringLiteral("\\bH\\b"), QStringLiteral("\\bDCC\\b"),
 
         QStringLiteral("\\bsource\\b"), QStringLiteral("\\btarget\\b"),
 
@@ -86,6 +90,9 @@ Highlighter::Highlighter(QTextDocument *parent) : QSyntaxHighlighter(parent) {
         QStringLiteral("\\bCross\\b"), QStringLiteral("\\bRA\\b"),
         QStringLiteral("\\bRD\\b"), QStringLiteral("\\bLRD\\b"),
 
+        QStringLiteral("\\bInternalDosimetry\\b"), QStringLiteral("\\bExternalDosimetry\\b"),
+        QStringLiteral("\\bMyCPPSteppingAction\\b"),
+        QStringLiteral("\\bNeutronic\\b"), QStringLiteral("\\bDetector\\b"),
         QStringLiteral("\\bRightBottom\\b"), QStringLiteral("\\bLeftBottom\\b"),
         QStringLiteral("\\bRightTop\\b"), QStringLiteral("\\bLeftTop\\b"),
         QStringLiteral("\\bMiddleBottom\\b"), QStringLiteral("\\bMiddleTop\\b"),
@@ -207,11 +214,13 @@ Highlighter::Highlighter(QTextDocument *parent) : QSyntaxHighlighter(parent) {
         QStringLiteral("\\bsetRadiationFactors\\b"),
         QStringLiteral("\\bsetEventNumberPerThread\\b"),
         QStringLiteral("\\bsetSimNumOnRanks\\b"),
+        QStringLiteral("\\bRunFor\\b"),
         QStringLiteral("\\bsetRadioTracerData\\b"),
         QStringLiteral("\\bsetTissueFactors\\b"),
         QStringLiteral("\\bsetResultDirectoryPath\\b"),
         QStringLiteral("\\bsetRadioTracerBiokinetic\\b"),
         QStringLiteral("\\bgenerateSelfCrossGraphs\\b"),
+        QStringLiteral("\\bgenerateVoxelsResuls\\b"),
         QStringLiteral("\\bgenerateRelativeErrGraph\\b"),
         QStringLiteral("\\bgenerateRelativeSDevGraph\\b"),
         QStringLiteral("\\bgenerateVariableRegionGraph\\b"),
@@ -220,6 +229,8 @@ Highlighter::Highlighter(QTextDocument *parent) : QSyntaxHighlighter(parent) {
         QStringLiteral("\\bsetBeamAxis\\b"),
         QStringLiteral("\\bsetSliceID\\b"),
         QStringLiteral("\\bsetGraphsParameters\\b"),
+        QStringLiteral("\\bgenerateVoxelsResults\\b"),
+        QStringLiteral("\\bgenerateVoxelizedHistograms\\b"),
         QStringLiteral("\\b*****\\b"),
         QStringLiteral("\\bDWITH_GDML_USE*\\b"),
         QStringLiteral("\\bDWITH_MPI_USE*\\b"),

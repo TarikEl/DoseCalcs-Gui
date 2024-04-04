@@ -88,15 +88,19 @@ void G4TDirectPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     particleGun->SetParticleEnergy(ENERGY);
     particleGun->SetParticleMomentumDirection(G4ParticleMomentum(XMOMD, YMOMD, ZMOMD));
 
-    //std::cout << EvInc << " ENERGY=" << ENERGY << " X=" << X << " Y=" << Y << " Z=" << Z << " " << NewRankSourceRegionsBoxDimValues[DataID] << " " << particleDefinition->GetParticleName() << std::endl;
+    //std::cout << EvInc << " ENERGY=" << ENERGY << " X=" << X << " Y=" << Y << " Z=" << Z << " XMOMD=" << XMOMD << " YMOMD=" << YMOMD << " ZMOMD=" << ZMOMD << " " << NewRankSourceRegionsBoxDimValues[DataID] << " " << particleDefinition->GetParticleName() << std::endl;
 
     //if(WriteSourceDataToFiles == 1){SaveGeneratedDataToFiles();}
 
     particleGun->GeneratePrimaryVertex(anEvent);
+    //std::cout << " particleGun->GeneratePrimaryVertex(anEvent) " << std::endl;
+
 
 }
 
 void G4TDirectPrimaryGeneratorAction::GenerateEventsPosition(){
+
+    //std::cout << "G4TDirectPrimaryGeneratorAction::GenerateEventsPosition()" << std::endl;
 
     if(PositionTypeNum == 1){
 
@@ -134,7 +138,7 @@ void G4TDirectPrimaryGeneratorAction::GenerateEventsPosition(){
                     }
                 }
 
-                //std::cout << "DataID "<< DataID << " SourceType=" << SourceType << " NewRankSourceRegionsNamesValues[DataID]=" << NewRankSourceRegionsNamesValues[DataID] << " " << G4ThreeVector(X,Y,Z) << " is in " << aNavigator->LocateGlobalPointAndSetup(G4ThreeVector(X,Y,Z))->GetLogicalVolume()->GetName() << std::endl;
+                //std::cout << "while:  DataID "<< DataID << " SourceType=" << SourceType << " NewRankSourceRegionsNamesValues[DataID]=" << NewRankSourceRegionsNamesValues[DataID] << " " << G4ThreeVector(X,Y,Z) << " is in " << aNavigator->LocateGlobalPointAndSetup(G4ThreeVector(X,Y,Z))->GetLogicalVolume()->GetName() << std::endl;
 
             }
 
@@ -254,6 +258,14 @@ void G4TDirectPrimaryGeneratorAction::GenerateEventsPosition(){
             Y = std::sin(theta)*std::sin(phi);
             Z = std::cos(theta);
         }
+        else if(SourceSurface == "Cylinder"){
+
+            G4double phi = G4UniformRand() * twopi; // Random angle
+            //G4double theta = G4UniformRand() * twopi; // Random angle
+            X = HalfX * cos(phi);
+            Y = HalfX * sin(phi);
+            Z = ((G4UniformRand()*2.*HalfY) - HalfY); // Random z-coordinate within the height of the cylinder
+        }
 
         X = X+SourcePosition.getX(), Y = Y+SourcePosition.getY() , Z = Z + SourcePosition.getZ();
         //return G4ThreeVector(X+SourcePosition.getX(), Y+SourcePosition.getY(), Z + SourcePosition.getZ());
@@ -263,6 +275,8 @@ void G4TDirectPrimaryGeneratorAction::GenerateEventsPosition(){
 
         G4double A = G4RandGauss::shoot(0.0,BeamSDev);
         G4double B = G4RandGauss::shoot(0.0,BeamSDev);
+
+        //std::cout << " BeamSDev " << BeamSDev << " A "<< A  << " B "<< B << " SourceAxis "<< SourceAxis << std::endl;
 
         if(SourceAxis == "Z"){
             X = A+SourcePosition.getX(), Y = B+SourcePosition.getY() , Z = SourcePosition.getZ();
@@ -280,15 +294,17 @@ void G4TDirectPrimaryGeneratorAction::GenerateEventsPosition(){
 
         G4double A, B, HalfA, HalfB;
 
-        if(SourceAxis == "Z"){
-            HalfA = HalfX, HalfB = HalfY;
-        }
-        else if (SourceAxis == "Y") {
-            HalfA = HalfX, HalfB = HalfZ;
-        }
-        else if (SourceAxis == "X") {
-            HalfA = HalfY, HalfB = HalfZ;
-        }
+        //if(SourceAxis == "Z"){
+        //    HalfA = HalfX, HalfB = HalfY;
+        //}
+        //else if (SourceAxis == "Y") {
+        //    HalfA = HalfX, HalfB = HalfZ;
+        //}
+        //else if (SourceAxis == "X") {
+        //    HalfA = HalfY, HalfB = HalfZ;
+        //}
+
+        HalfA = HalfX, HalfB = HalfY;
 
         if(SourcePlane == "Circle")
         {
@@ -333,15 +349,65 @@ void G4TDirectPrimaryGeneratorAction::GenerateEventsPosition(){
         }
 
         if(SourceAxis == "Z"){
-            X = A+SourcePosition.getX(), Y = B+SourcePosition.getY() , Z = SourcePosition.getZ();
+            X = A+SourcePosition.getX(), Y = B+SourcePosition.getY(), Z = SourcePosition.getZ();
         }
         else if (SourceAxis == "Y") {
-            X = A+SourcePosition.getX(), Z = B+SourcePosition.getZ() , Y = SourcePosition.getY();
+            Z = A+SourcePosition.getZ(), X = B+SourcePosition.getX(), Y = SourcePosition.getY();
         }
         else if (SourceAxis == "X") {
-            Y = A+SourcePosition.getY(), Z = B+SourcePosition.getZ() , X = SourcePosition.getX();
+            Y = A+SourcePosition.getY(), Z = B+SourcePosition.getZ(), X = SourcePosition.getX();
         }
         //return G4ThreeVector(X, Y, Z);
+
+
+        //// Rotation angle around Z-axis in degrees
+        //double r = sqrt(X*X + Y*Y + Z*Z);
+        //double theta1 = acos(Z / r); // inclination angle
+        //double phi1 = atan2(Y, X); // azimuthal angle
+
+        //double Theta2 = 15*degree;
+        //double Phi2   = phi1;
+
+        //X = r * sin(theta1) * cos(phi1+0*degree);
+        //Y = r * sin(theta1) * sin(phi1+0*degree);
+        //Z = r * cos(theta1+300*degree);
+
+
+
+        //// Rotation angle around Y-axis in degrees
+        //G4double angle = 135*degree;
+
+
+
+
+
+
+
+
+
+        //double radius = 100.0;
+
+        //// Define the range of angles for the plane
+        //double minTheta = 0.0;  // Minimum inclination angle (from the z-axis)
+        //double maxTheta = M_PI / 2.0;  // Maximum inclination angle (from the z-axis)
+        //double minPhi = 0.0;  // Minimum azimuthal angle (around the z-axis)
+        //double maxPhi = 2.0 * M_PI;  // Maximum azimuthal angle (around the z-axis)
+
+        //// Generate a random angle within the specified range
+
+        //double theta1 = minTheta + G4UniformRand()*(maxTheta-minTheta);
+        //double phi1 = minPhi + G4UniformRand()*(maxPhi-minPhi);
+
+        //// Convert spherical coordinates to Cartesian coordinates
+        //double x, y, z;
+        //X = radius * sin(theta1) * cos(phi1);
+        //Y = radius * sin(theta1) * sin(phi1);
+        //Z = radius * cos(theta1);
+
+
+
+
+
 
     }
     else if(PositionTypeNum == 6){
@@ -404,6 +470,30 @@ void G4TDirectPrimaryGeneratorAction::GenerateEventsPosition(){
         Y = pos.getY();
         Z = pos.getZ();
 
+    }
+    else if(PositionTypeNum == 9){
+
+        G4bool insideChk(false);
+        G4ThreeVector pos;
+        do{
+            pos = G4ThreeVector(NewRankTETBoxMinOfSourceRegion[DataID].getX()+NewRankTETBoxDimOfSourceRegion[DataID].getX()*G4UniformRand(),
+                                NewRankTETBoxMinOfSourceRegion[DataID].getY()+NewRankTETBoxDimOfSourceRegion[DataID].getY()*G4UniformRand(),
+                                NewRankTETBoxMinOfSourceRegion[DataID].getZ()+NewRankTETBoxDimOfSourceRegion[DataID].getZ()*G4UniformRand());
+
+            for(auto tet:NewRankTETOfSourceRegion[DataID]){
+                if(tet->Inside(pos) == kOutside) continue;
+                insideChk = true;
+                break;
+            }
+        }while(!insideChk);
+
+        X = pos.getX();
+        Y = pos.getY();
+        Z = pos.getZ();
+    }
+
+    if(!RotPosAxis.empty() && RotTheta != 0.){
+        RotatePosition();
     }
 
     particleGun->SetParticlePosition(G4ThreeVector(X, Y, Z));

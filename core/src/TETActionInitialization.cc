@@ -28,8 +28,13 @@
 // \author Haegin Han
 //
 
+
 #include "G4TVolumeConstruction.hh"
 #include "TETActionInitialization.hh"
+#include "TETSteppingActionTETExternal.hh"
+#include "G4TModifiedSteppingAction.hh"
+
+extern G4String SimulationIntExtNeutDet;
 
 TETActionInitialization::TETActionInitialization()
  : G4VUserActionInitialization()
@@ -46,8 +51,19 @@ void TETActionInitialization::BuildForMaster() const
 void TETActionInitialization::Build() const
 {
 	// initialise UserAction classes
-    SetUserAction(new TETRunAction());
-	SetUserAction(new TETSteppingAction);
+
+    TETRunAction* runAction = new TETRunAction;
+    SetUserAction(runAction);
+
+    if(SimulationIntExtNeutDet == "InternalDosimetry"){
+        SetUserAction(new TETSteppingAction);
+    } else if(SimulationIntExtNeutDet == "ExternalDosimetry"){
+        SetUserAction(new TETSteppingActionTETExternal(runAction));
+    }else if (SimulationIntExtNeutDet == "MyCPPSteppingAction"){
+        G4cout << " \n  -- G4TModifiedSteppingAction" << G4endl;
+
+        //SetUserAction(new G4TModifiedSteppingAction(runAction));
+    }
 
     const G4TVolumeConstruction* TConstruction2 = static_cast<const G4TVolumeConstruction*> (G4RunManager::GetRunManager()->GetUserDetectorConstruction());
     if( TConstruction2->getUseGeneratedData() == "read"){

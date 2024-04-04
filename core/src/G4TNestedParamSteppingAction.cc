@@ -31,7 +31,7 @@
 #include "G4TRunAction.hh"
 #include "G4Step.hh"
 
-extern G4String GenerateVoxelsResuls;
+//extern G4String GenerateVoxelsResuls;
 extern G4String* CopyNumberRegionNameMap;
 
 extern G4int VoxXNumber;
@@ -53,12 +53,16 @@ void G4TNestedParamSteppingAction::UserSteppingAction(const G4Step* step)
 
     auto edep = step->GetTotalEnergyDeposit();
 
+    //std::cout << "TrackID: "<< step->GetTrack()->GetTrackID() << " ParticleName: " << step->GetTrack()->GetParticleDefinition()->GetParticleName() << " Length "<< step->GetTrack()->GetTrackLength() << " Energy(MeV): "<< edep << std::endl;
+
     if (edep == 0.) return;
 
     if(step->GetPreStepPoint()->GetTouchable()->GetHistoryDepth()!=0){
 
         const G4VTouchable* touchable = step->GetPreStepPoint()->GetTouchable();
         RunAction->FillRegionStepHits(CopyNumberRegionNameMap[touchable->GetReplicaNumber(1) + VoxXNumber*touchable->GetReplicaNumber(2) + VoxXNumber*VoxYNumber*touchable->GetReplicaNumber(0)], edep);
+
+        //RunAction->FillVoxelStepHits(touchable->GetReplicaNumber(1) + VoxXNumber*touchable->GetReplicaNumber(2) + VoxXNumber*VoxYNumber*touchable->GetReplicaNumber(0), edep);
 
         //std::cout << "TrackID: "<< step->GetTrack()->GetTrackID() << " ParticleName: " << step->GetTrack()->GetParticleDefinition()->GetParticleName() << " Length "<< step->GetTrack()->GetTrackLength() << " Energy(MeV): "<< edep << std::endl;
 
@@ -76,7 +80,6 @@ void G4TNestedParamSteppingAction::UserSteppingAction(const G4Step* step)
                 //std::cout << " ix " << ix << " iy " << iy << " iz " << iz << " cp " << cp <<  " reg " << reg << std::endl;
                 //RunAction->FillRegionStepHits(reg, edep);
                 */
-
         /*
         if(GenerateVoxelsResuls == "yes"){
             //auto CN = step->GetPreStepPoint()->GetTouchable()->GetCopyNumber();

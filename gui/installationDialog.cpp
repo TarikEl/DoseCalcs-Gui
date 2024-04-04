@@ -9,6 +9,7 @@
 #include<QThread>
 #include<QInputDialog>
 #include<QStringListModel>
+#include<QDialogButtonBox>
 #include<gui/terminal.h>
 //#include <QMessageBox>
 
@@ -20,6 +21,9 @@ extern QString MPI_Lib_dir_path ;
 extern QString CMAKE_Lib_dir_path ;
 extern QString Root_Lib_dir_path ;
 extern QString DoseCalcsCore_source_dir_path ;
+extern QString ExampleGeant4Code_source_dir_path ;
+extern QString ExampleGeant4Code_build_dir_path ;
+extern QString ExampleGeant4Code_ExecutionCommand ;
 extern QString DoseCalcsCore_build_dir_path;
 extern QString DoseCalcs_build_dir_name;
 
@@ -110,9 +114,12 @@ InstallationDialog::InstallationDialog(QWidget *parent) : QDialog(parent), ui(ne
     Root_sh_path = GUIPackagesAndFilesDirPath+"/Root_installer.sh";
     DCMTK_sh_path  = GUIPackagesAndFilesDirPath+"/DCMTK_installer.sh";
     App_sh_path = GUIPackagesAndFilesDirPath+"/App_installer.sh";
+    Geant4Example_sh_path = GUIPackagesAndFilesDirPath+"/Geant4Example_installer.sh";
     AllPackagesInstall_sh_path  = GUIPackagesAndFilesDirPath+"/AllPackages_installer.sh";
 
     ui->groupBox_2->setVisible(false);
+    ui->groupBox_4->setVisible(false);
+
     highlighter = new Highlighter(ui->textEditInput->document());
 
     showResultsOutput("Installation dir : " + GUIPackagesAndFilesDirPath , 0);
@@ -151,6 +158,13 @@ void InstallationDialog::getConfigurationDataForInstallation(){
         DoseCalcsCore_source_dir_path = GUIPackagesAndFilesDirPath+"/DoseCalcsCore";
         showResultsOutput("Default DoseCalcs source directory " + DoseCalcsCore_source_dir_path + " is used", 4);
     }
+
+    ExampleGeant4Code_source_dir_path = lines["Geant4Example_SOURCE_DIR"];
+    ExampleGeant4Code_build_dir_path  = lines["Geant4Example_BUILD_DIR"];
+    ExampleGeant4Code_ExecutionCommand  = lines["Geant4Example_EXECUTION_COMMAND"];
+    ui->pushButtonAppBuildDir->setToolTip(ExampleGeant4Code_build_dir_path);
+    ui->pushButtonAppSourceDir->setToolTip(ExampleGeant4Code_source_dir_path);
+    ui->pushButtonRunExample->setToolTip(ExampleGeant4Code_ExecutionCommand);
 
     QDir dir = QDir(QCoreApplication::applicationDirPath());
     DoseCalcsCore_build_dir_path = dir.absolutePath()+"/"+DoseCalcs_build_dir_name;
@@ -712,6 +726,75 @@ void InstallationDialog::create_AppInstall_sh_file(){
             "make -j" + QString::number(NumberOfCPUCores) +"\n"+
             ""+"\n";
 }
+void InstallationDialog::create_Geant4ExampleInstall_sh_file(){
+
+    //getPathsFromEditLines();
+
+    if(!QFile::exists(ExampleGeant4Code_source_dir_path)){ // create install dir for DCMTK
+        PackageName = "Example Geant4 Code Source";
+        ExampleGeant4Code_source_dir_path = GetChoosenDirFromDialog(1);
+    }
+
+    if(!QFile::exists(ExampleGeant4Code_build_dir_path)){ // create install dir for DCMTK
+
+        QDir(QCoreApplication::applicationDirPath()).mkdir(ExampleGeant4Code_build_dir_path);
+        showResultsOutput("Geant4 Example build directory " + ExampleGeant4Code_build_dir_path + " is created, but you can't run until you build the Geant4 example code", 4);
+    }
+
+    QString PackagesToAdd = "";
+    QString PathToAdd = "";
+    if(ui->checkBox->isChecked()){
+        PackagesToAdd += " -DWITH_G4MPI_USE=ON -DCMAKE_CXX_COMPILER=" + MPI_Lib_dir_path+"/mpicxx -DCMAKE_C_COMPILER=" + MPI_Lib_dir_path+"/mpicc ";
+        //+ " -DMPI_DIR=" + MPI_Lib_dir_path
+    }
+    else{
+        PackagesToAdd += " -DWITH_G4MPI_USE=OFF ";
+    }
+
+    if(ui->checkBox_2->isChecked()){
+        PackagesToAdd += " -DWITH_ANALYSIS_USE=ON -DROOT_DIR="+ Root_Lib_dir_path + " ";
+        PathToAdd +=  "\ncd " +Root_Lib_dir_path +"\n" + ". ./thisroot.sh \n";
+    }
+    else{
+        PackagesToAdd += " -DWITH_ANALYSIS_USE=OFF ";
+    }
+
+    if(ui->checkBox_3->isChecked()){
+        PackagesToAdd += " -DWITH_DCMTK_USE=ON -DDCMTK_DIR="+DCMTK_Lib_dir_path + " ";
+    }
+    else{
+        PackagesToAdd += " -DWITH_DCMTK_USE=OFF ";
+    }
+
+    if(ui->checkBox_4->isChecked()){
+        PackagesToAdd += " -DWITH_VERBOSE_USE=ON ";
+    }
+    else{
+        PackagesToAdd += " -DWITH_VERBOSE_USE=OFF ";
+    }
+
+    if(ui->checkBox_5->isChecked()){
+        PackagesToAdd += " -DWITH_GDML_USE=ON ";
+    }
+    else{
+        PackagesToAdd += " -DWITH_GDML_USE=OFF ";
+    }
+
+
+    Cmake_Command = cmakeTruePath + " "
+            //+ PackagesToAdd
+            + ExampleGeant4Code_source_dir_path ;
+
+    Geant4Example_text_shFile =
+            PathToAdd +
+            "\ncd " +geant4_Lib_dir_path +
+            "\n. ./geant4.sh\n" +
+            "cd "+ ExampleGeant4Code_build_dir_path +
+            "\n#make clean \n#rm -r * \n"+
+            Cmake_Command + "\n"+
+            "make -j" + QString::number(NumberOfCPUCores) +"\n"+
+            ""+"\n";
+}
 
 // for generate/install buttons
 void InstallationDialog::on_installXercesButton_clicked()
@@ -950,12 +1033,12 @@ void InstallationDialog::DownloadFileToDirectory(QString Dow_dir, QString URL)
 {
 
 
-//#if QT_NETWORK_LIB
-//    HttpDownloadObj = new HttpDownload(this);
-//    HttpDownloadObj->setDownloadDir(Dow_dir);
-//    HttpDownloadObj->setUrl(URL);
-//    HttpDownloadObj->show();
-//#endif
+#if QT_NETWORK_LIB
+    HttpDownloadObj = new HttpDownload(this);
+    HttpDownloadObj->setDownloadDir(Dow_dir);
+    HttpDownloadObj->setUrl(URL);
+    HttpDownloadObj->show();
+#endif
 
 }
 void InstallationDialog::on_DownloadGeant4Button_clicked()
@@ -1173,12 +1256,15 @@ void InstallationDialog::on_pushButton_7_clicked()
     
     ConfigDataText =
             "\nCMAKE_INSTALL_DIR      "+ CMAKE_Lib_dir_path +"\n"+
-            "GEANT4_INSTALL_DIR     "+ geant4_Lib_dir_path +"\n"+
-            "MPI_INSTALL_DIR        "+ MPI_Lib_dir_path +"\n"+
-            "ROOT_INSTALL_DIR       "+ Root_Lib_dir_path +"\n"+
-            "DCMTK_INSTALL_DIR      "+ DCMTK_Lib_dir_path +"\n"+
-            "DoseCalcs_SOURCE_DIR   "+ DoseCalcsCore_source_dir_path +"\n\n"+
-            
+            "GEANT4_INSTALL_DIR       "+ geant4_Lib_dir_path +"\n"+
+            "MPI_INSTALL_DIR          "+ MPI_Lib_dir_path +"\n"+
+            "ROOT_INSTALL_DIR         "+ Root_Lib_dir_path +"\n"+
+            "DCMTK_INSTALL_DIR        "+ DCMTK_Lib_dir_path +"\n"+
+            "DoseCalcs_SOURCE_DIR     "+ DoseCalcsCore_source_dir_path +"\n\n"+
+            "Geant4Example_SOURCE_DIR "+ ExampleGeant4Code_source_dir_path+"\n"+
+            "Geant4Example_BUILD_DIR  "+ ExampleGeant4Code_build_dir_path+"\n"+
+            "Geant4Example_EXECUTION_COMMAND  "+ ExampleGeant4Code_ExecutionCommand+"\n\n"+
+
             "DEFAULT_DoseCalcs_INPUTS     "+ ui->lineEdit_11->text() +"\n\n"
 
             "CMAKE_DOWNLOAD_URL     "+ CMAKE_Url_String +"\n"+
@@ -1375,6 +1461,12 @@ void InstallationDialog::on_pushButtonSaveInput_clicked()
     else if (EditFlag == 7){ // exe.sh file text saving
         filesManagerObj->WriteTextToFile( App_sh_path , ui->textEditInput->toPlainText());
     }
+    else if (EditFlag == 10){ // exe.sh file text saving
+        filesManagerObj->WriteTextToFile( Geant4Example_sh_path , ui->textEditInput->toPlainText());
+    }
+    else if (EditFlag == 11){ // exe.sh file text saving
+        filesManagerObj->WriteTextToFile( Geant4Example_MacrosFile_path , ui->textEditInput->toPlainText());
+    }
     else if (EditFlag == 8){ // exe.sh file text saving
         filesManagerObj->WriteTextToFile( AllPackagesInstall_sh_path , ui->textEditInput->toPlainText());
     }
@@ -1467,7 +1559,9 @@ void InstallationDialog::on_ClearTerButton_clicked()
 
         filesManagerObj->WriteTextToFile( DoseCalcsCore_build_dir_path+"/"+DoseCalcsExecutingFileName , BashCommandsForExecuting);
         execShProcess(DoseCalcsCore_build_dir_path+"/"+DoseCalcsExecutingFileName);
-    }else{
+    }else if( ui->tabWidget->currentIndex() == 1){
+        ui->textEditInput->clear();
+    }else if( ui->tabWidget->currentIndex() == 2){
         ui->installationDialogTextOutput->clear();
     }
 
@@ -1520,13 +1614,19 @@ void InstallationDialog::on_pushButtonDownloadSupplement_clicked()
 {
     if(QMessageBox::Yes == QMessageBox::question(this, tr("DoseCalcs Supplementaries installation"), "When you click on \"Yes\", the .tar.xz file containing the ICRPDATA and PreDefinedGeometry directories will be downloaded from Google Drive. Then, it will be unziped under the directory "+
                                                  GUIPackagesAndFilesDirPath+", the download and unzip will be done on terminal. After finishing, please check the files in "+ GUIPackagesAndFilesDirName +" directory.")){
+
+        //DownloadFileToDirectory(GUIPackagesAndFilesDirPath, "https://drive.google.com/file/d/1arU9aJpi7M5VehO1lPKOSM1JkyRe7j2k/view?usp=sharing");
+
         //https://drive.google.com/file/d/1arU9aJpi7M5VehO1lPKOSM1JkyRe7j2k/view?usp=drive_link from imttarikk
         //https://drive.google.com/file/d/1SMKv5_AlP2zwMg6QOT6BldR-y02fGVXj/view?usp=drive_link from telghabzouri@uae.ac.ma
         QString text_shFile =
                 "cd "+GUIPackagesAndFilesDirPath+"\n"+
                 "rm -r "+ GUIPackagesAndFilesDirPath+"/DoseCalcsSupplementaries.tar.xz"+ +"\n"
                 //"wget -O DoseCalcsSupplementaries.tar.xz --no-check-certificate -r 'https://drive.google.com/uc?export=download&id=1arU9aJpi7M5VehO1lPKOSM1JkyRe7j2k' \n"+
-                "wget --load-cookies /tmp/cookies.txt \"https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1arU9aJpi7M5VehO1lPKOSM1JkyRe7j2k' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\\1\\n/p')&id=1arU9aJpi7M5VehO1lPKOSM1JkyRe7j2k\" -O DoseCalcsSupplementaries.tar.xz && rm -rf /tmp/cookies.txt \n"+
+                //"wget --load-cookies /tmp/cookies.txt \"https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1arU9aJpi7M5VehO1lPKOSM1JkyRe7j2k' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\\1\\n/p')&id=1arU9aJpi7M5VehO1lPKOSM1JkyRe7j2k\" -O DoseCalcsSupplementaries.tar.xz && rm -rf /tmp/cookies.txt \n"+
+                "sudo apt-get install -y curl\n"
+                "curl -L \"https://drive.usercontent.google.com/download?id=1arU9aJpi7M5VehO1lPKOSM1JkyRe7j2k&export=download&confirm=y\" -o \"DoseCalcsSupplementaries.tar.xz\"\n"
+
                 //"wget "+ Supplementary_Url_String +"\n"+
                 "tar xvf "+ GUIPackagesAndFilesDirPath+"/DoseCalcsSupplementaries.tar.xz"+ +"\n"
                 ;
@@ -1538,5 +1638,168 @@ void InstallationDialog::on_pushButtonDownloadSupplement_clicked()
     }else{
 
     }
+}
+
+
+void InstallationDialog::on_pushButtonBuildRunGeant4ExampleShow_clicked()
+{
+    if(ui->groupBox_4->isVisible()){
+        ui->groupBox_4->setVisible(false);
+        ui->pushButtonBuildRunGeant4ExampleShow->setText("Build, Run Geant4 application < ");
+    }else{
+        ui->groupBox_4->setVisible(true);
+        ui->pushButtonBuildRunGeant4ExampleShow->setText("Build, Run Geant4 application > ");
+    }
+}
+void InstallationDialog::on_pushButtonAppSourceDir_clicked()
+{
+    PackageName = "Geant4 Example Source ";
+    QString a = GetChoosenDirFromDialog(1);
+    if(a != ""){
+        ExampleGeant4Code_source_dir_path = a;
+        ui->pushButtonAppSourceDir->setToolTip(ExampleGeant4Code_source_dir_path);
+    }
+
+    QDir* SourceDirectory = new QDir(ExampleGeant4Code_source_dir_path);
+
+    if(SourceDirectory->exists()){
+        QDir* dir = new QDir(ExampleGeant4Code_source_dir_path) ; dir->cdUp();
+        DoseCalcsCore_build_dir_path = dir->absolutePath()+"/"+DoseCalcs_build_dir_name;
+        if(!QFile::exists(DoseCalcsCore_build_dir_path)){ // create install dir for DCMTK
+            QDir* dir = new QDir(DoseCalcsCore_source_dir_path) ; dir->cdUp();
+            dir->mkdir(DoseCalcs_build_dir_name);
+            showResultsOutput("DoseCalcs build directory " + DoseCalcsCore_build_dir_path + " is created", 4);
+        }
+        else{
+            showResultsOutput("DoseCalcs build directory " + DoseCalcsCore_build_dir_path + " is already existed", 4);
+        }
+    }
+}
+void InstallationDialog::on_pushButtonAppBuildDir_clicked()
+{
+    PackageName = "Geant4 Example Build ";
+    QString a = GetChoosenDirFromDialog(1);
+    if(a != ""){
+        ExampleGeant4Code_build_dir_path = a;
+        ui->pushButtonAppBuildDir->setToolTip(ExampleGeant4Code_build_dir_path);
+    }
+}
+void InstallationDialog::on_pushButtonGenerateShellFileForExampleBuilding_clicked()
+{
+    EditFlag = 10;
+
+    create_Geant4ExampleInstall_sh_file();
+    filesManagerObj->WriteTextToFile(Geant4Example_sh_path,Geant4Example_text_shFile);
+    ui->textEditInput->setPlainText(filesManagerObj->ReadTextFromFileInOneString(Geant4Example_sh_path));
+    ui->tabWidget->setCurrentIndex(1);
+    ui->tabWidget->setTabText(1,"Geant4 Example Builder");
+}
+void InstallationDialog::on_pushButtonLoadInstaller_clicked()
+{
+    EditFlag = 10;
+
+    ui->textEditInput->setPlainText(filesManagerObj->ReadTextFromFileInOneString(Geant4Example_sh_path));
+    ui->tabWidget->setCurrentIndex(1);
+    ui->tabWidget->setTabText(1,"Geant4 Example Builder");
+}
+void InstallationDialog::on_pushButtonBuildExample_clicked()
+{
+    if(!QFile::exists(Geant4Example_sh_path)){
+        create_Geant4ExampleInstall_sh_file();
+        filesManagerObj->WriteTextToFile(Geant4Example_sh_path,Geant4Example_text_shFile);
+    }
+
+    if(QFile::exists(Geant4Example_sh_path)){
+        //ui->lineEdit_5->setText(App_sh_path);
+        showResultsOutput("Installation file : " + Geant4Example_sh_path + " is created." , 4);
+
+        execShProcess( Geant4Example_sh_path);
+
+    }
+
+}
+void InstallationDialog::on_pushButtonRunExample_clicked()
+{
+
+    QDialog * d = new QDialog(); d->setWindowTitle("Geant4Example Execution Command");
+
+    QGridLayout* GraphLayout = new QGridLayout;
+
+    QLineEdit * lineStyles = new QLineEdit();
+    lineStyles->setText(ExampleGeant4Code_ExecutionCommand);
+    lineStyles->setToolTip("Add command to Run Geant4 Example");
+
+    int ii = 0, jj=0;
+    GraphLayout->addWidget(lineStyles, jj,ii,1,1);
+
+    QDialogButtonBox * buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    QObject::connect(buttonBox, SIGNAL(accepted()), d, SLOT(accept()));
+    QObject::connect(buttonBox, SIGNAL(rejected()), d, SLOT(reject()));
+
+    GraphLayout->addWidget(buttonBox);
+
+    d->setLayout(GraphLayout);
+
+    int result = d->exec();
+
+    if(result == QDialog::Accepted)
+    {
+        ExampleGeant4Code_ExecutionCommand = lineStyles->text();
+    }else{
+        return;
+    }
+
+
+    if(ExampleGeant4Code_ExecutionCommand =="" ||ExampleGeant4Code_ExecutionCommand.isEmpty() ){
+        return;
+    }
+
+
+    QString BashCommandsForExecuting = "#! /bin/bash \n cd "
+            +geant4_Lib_dir_path +"\n"+
+            + ". ./geant4.sh\n cd "
+            + ExampleGeant4Code_build_dir_path + "\n"
+            + ExampleGeant4Code_ExecutionCommand
+            + "\n bash \n";
+
+    showResultsOutput("Writing Run Commands : \n", 0);
+    showResultsOutput(BashCommandsForExecuting , 0);
+    showResultsOutput("to --> " + DoseCalcsCore_build_dir_path+"/"+DoseCalcsExecutingFileName , 4);
+    filesManagerObj->WriteTextToFile( DoseCalcsCore_build_dir_path+"/"+DoseCalcsExecutingFileName , BashCommandsForExecuting);
+
+    if(QFile::exists(DoseCalcsCore_build_dir_path+"/"+DoseCalcsExecutingFileName)){
+
+        showResultsOutput("Computation Run" , 1);
+        execShProcess(DoseCalcsCore_build_dir_path+"/"+DoseCalcsExecutingFileName);
+    }
+    else{
+        showResultsOutput("Cannot find file containing execution commands "+ DoseCalcsCore_build_dir_path+"/"+DoseCalcsExecutingFileName + " , you should build example or something else.." , 3);
+    }
+
+}
+void InstallationDialog::on_pushButtonOpenBuildDir_clicked()
+{
+    QString command = ExampleGeant4Code_build_dir_path;
+    QProcess process;
+    QStringList qsl = {command};
+    process.startDetached("nautilus", qsl);
+}
+
+void InstallationDialog::on_pushButtonEditAFile_clicked()
+{
+
+    Geant4Example_MacrosFile_path = QFileDialog::getOpenFileName(this,tr("Geant4Example File"), ExampleGeant4Code_build_dir_path, "All files (*.*)");
+
+    if(Geant4Example_MacrosFile_path != ""){
+        ui->pushButtonEditAFile->setToolTip(Geant4Example_MacrosFile_path);
+    }else{
+        return;
+    }
+
+    EditFlag = 11;
+    ui->textEditInput->setPlainText(filesManagerObj->ReadTextFromFileInOneString(Geant4Example_MacrosFile_path));
+    ui->tabWidget->setCurrentIndex(1);
+    ui->tabWidget->setTabText(1,"Geant4Example File");
+
 }
 

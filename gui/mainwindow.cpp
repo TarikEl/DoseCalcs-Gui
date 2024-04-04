@@ -226,16 +226,17 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
                              <<"HADRON_FTFP_BERT"<<"HADRON_FTFP_BERT_ATL"<<"HADRON_FTFP_BERT_TRV"<<"HADRON_QGSP_FTFP_BERT"<<"HADRON_QGSP_BERT"
                              <<"HADRON_QGSP_BERT_HP"<<"HADRON_QGSP_BIC"<<"HADRON_QGSP_BIC_AllHP"<<"HADRON_INCLXX"<<"HADRON_Shielding"<<"HADRON_ShieldingLEND"
                              <<"FACTORY_FTFP_BERT"<<"FACTORY_FTFP_BERT_ATL"<<"FACTORY_FTFP_BERT_TRV"<<"FACTORY_QGSP_FTFP_BERT"<<"FACTORY_QGSP_BERT"
-                             <<"FACTORY_QGSP_BERT_HP"<<"FACTORY_QGSP_BIC"<<"FACTORY_QGSP_BIC_AllHP"<<"FACTORY_INCLXX"<<"FACTORY_Shielding"<<"FACTORY_ShieldingLEND");
+                             <<"FACTORY_QGSP_BERT_HP"<<"FACTORY_QGSP_BIC"<<"FACTORY_QGSP_BIC_AllHP"<<"FACTORY_Shielding"<<"FACTORY_ShieldingLEND");
 
     ui->SourceComboBoxPhysUsed->addItems(Physicslist);
 
     AngleUnits=(QStringList()<<"degree"<<"rad");
+    AngleSizeUnits=(QStringList()<<"degree"<<"rad"<<"mm"<<"cm"<<"m");
     SizeUnits=(QStringList()<<"mm"<<"cm"<<"m");
     EnergyUnits=(QStringList()<<"eV"<<"keV"<<"MeV");
 
     ui->comboBoxSizeUnit->addItems(SizeUnits);
-    ui->comboBoxAngleUnit->addItems(AngleUnits);
+    ui->comboBoxAngleUnit->addItems(AngleSizeUnits);
     ui->comboBoxEnergyUnit->addItems(EnergyUnits);
     ui->comboBoxWorldSizeUnit->addItems(SizeUnits);
     ui->comboBoxEnergyUnitsForCrossSection->addItems(EnergyUnits);
@@ -457,9 +458,20 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
                                <<""
                                <<"read"
                                <<"save"
-                               <<"generate");
+                               <<"generate"
+                               <<"MyCPPGenerator");
 
     ui->UseDataFilesFor->addItems(DataFilesUses);
+
+    QStringList RunForList=(QStringList()
+                               <<"InternalDosimetry"
+                               <<"ExternalDosimetry"
+                               <<"MyCPPSteppingAction"
+                               //<<"Neutronic"
+                               //<<"Detector"
+                               );
+
+    ui->comboBoxSimulationRunFor->addItems(RunForList);
 
     ElementsSymbolSym["1-H-1.008"]="H";     ElementsSymbolZ["1-H-1.008"]="1";ElementsSymbolA["1-H-1.008"]="1.008";ElementsSymbolName["1-H-1.008"]="Hydrogen";
     ElementsSymbolSym["2-He-4.003"]="He";   ElementsSymbolZ["2-He-4.003"]="2";ElementsSymbolA["2-He-4.003"]="4.003";ElementsSymbolName["2-He-4.003"]="Helium";
@@ -1022,6 +1034,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->comboBoxNohupFiles->setVisible(false);
     ui->pushButtonShowOutputs->setVisible(false);
 
+    if(ui->radioButtonDICOM->isChecked() || ui->radioButtonVoxel->isChecked() || ui->radioButtonVoxIDs->isChecked()){
+        ui->checkBoxVoxelOrRegionLevel->setVisible(true);
+        ui->checkBoxVoxelOrRegionLevel->setChecked(true);
+    }
+
     ui->checkBoxInterpolationType->setChecked(true);
     setCompleters();
 
@@ -1032,6 +1049,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
                                "bash \n ";
     fileManagerObject->WriteTextToFile( DoseCalcsCore_build_dir_path+"/"+DoseCalcsExecutingFileName , BashCommandsForExecuting);
     ShowTerminal(DoseCalcsCore_build_dir_path+"/"+DoseCalcsExecutingFileName);
+
+    updateApplicationTabs();
 
 }
 MainWindow::~MainWindow()
@@ -1286,6 +1305,8 @@ void MainWindow::CommandsInitialization(){
     RunAndScoreCommands.push_back("/RunAndScoreData/setRadiationFactors");
     RunAndScoreCommands.push_back("/RunAndScoreData/setResultDirectoryPath");
     RunAndScoreCommands.push_back("/RunAndScoreData/setTissueFactors");
+    RunAndScoreCommands.push_back("/RunAndScoreData/generateVoxelsResults");
+    RunAndScoreCommands.push_back("/RunAndScoreData/RunFor");
 
     // Analysis commands
 
@@ -1298,6 +1319,7 @@ void MainWindow::CommandsInitialization(){
     AnalysisCommands.push_back("/AnalysisData/setBeamAxis");
     AnalysisCommands.push_back("/AnalysisData/setSliceID");
     AnalysisCommands.push_back("/AnalysisData/setGraphsParameters");
+    AnalysisCommands.push_back("/AnalysisData/generateVoxelizedHistograms");
 
     /*
     for(int cc=0; cc < MaterialCommands.size();cc++){
@@ -1461,7 +1483,7 @@ void MainWindow::setCompleters(){
     completer->setCaseSensitivity(Qt::CaseInsensitive);
     ui->AnalysisLineEditVarToScore->setCompleter(completer);
 
-    VarToScorellist=(QStringList()<<"AE"<<"AD"<<"AF"<<"SAF"<<"S"<<"H"<<"E"<<"DR");
+    VarToScorellist=(QStringList()<<"AE"<<"AD"<<"AF"<<"SAF"<<"S"<<"H"<<"E"<<"DR"<<"DCC");
     completer = new QCompleter(VarToScorellist, this);
     completer->setCaseSensitivity(Qt::CaseInsensitive);
     ui->AnalysisLineEditVarToScore->setCompleter(completer);
@@ -1589,7 +1611,7 @@ void MainWindow::setCompleters(){
                       "AE" << "AD" <<
                       "S" << "AD" <<
                       "DR" << "E" <<
-                      "H" <<
+                      "H" <<"DCC"<<
 
                       "all" << "All" <<
                       "m" << "o" <<
@@ -1850,8 +1872,16 @@ void MainWindow::on_RunButton_clicked()
 
     if(ui->checkBoxRocks->isChecked()){
 
+        QString SpecificNodes = SetToASpecificMPIRank();
+
         BashCommandsForExecuting = "#! /bin/bash \ncd " + DoseCalcsCore_build_dir_path
-                + "\n qsub "+DoseCalcsCore_build_dir_path+"/"+ExeFileName;
+                + "\n qsub "+ SpecificNodes +" "+ DoseCalcsCore_build_dir_path+"/"+ExeFileName;
+
+        if(false){
+            BashCommandsForExecuting = "#! /bin/bash \ncd " + DoseCalcsCore_build_dir_path
+                    + "\n sbatch "+ SpecificNodes +" "+ DoseCalcsCore_build_dir_path+"/"+ExeFileName;
+        }
+
         BashCommandsForExecuting += "\n bash \n";
 
         showResultsOutput("Writing Run Commands : \n", 0);
@@ -2327,6 +2357,20 @@ void MainWindow::on_pushButtonGenerateExe_clicked()
                                                                                                      ". "+geant4_Lib_dir_path+"/geant4.sh \n"+
             MPI_Lib_dir_path + "/mpirun -np "+ numbOfRanks + " " + DoseCalcsCore_build_dir_path+"/"+DoseCalcsExecutableName + " B " + QsubSeparatedMacroFilePath + " " + Execution_setEventNumber +" \n";
 
+    if(false){
+        ExeDataText = "#!/bin/bash \n"
+                  "#SBATCH --job-name=" + DoseCalcsJobName + " \n"
+                  "#SBATCH --ntasks=1 --nodes=1 \n"
+                  "# #SBATCH --mem-per-cpu=5G \n"
+                  "# #SBATCH --partition=defq \n"
+                  "# #SBATCH --time=12:00:00 \n"
+                  //"#$ -pe mpi "+ Execution_setNumberOfRanksOrThreads + " \n"
+                  //"#$ -M imttarikk@gmail.com \n"
+                  ". "+geant4_Lib_dir_path+"/geant4.sh \n"+
+            //MPI_Lib_dir_path + "/mpirun -np "+ numbOfRanks + " " + DoseCalcsCore_build_dir_path+"/"+DoseCalcsExecutableName + " B " + QsubSeparatedMacroFilePath + " " + Execution_setEventNumber +" \n";
+            DoseCalcsCore_build_dir_path+"/"+DoseCalcsExecutableName + " -p "+ numbOfRanks + " B " + QsubSeparatedMacroFilePath + " " + Execution_setEventNumber +" \n";
+    }
+
     ui->tabWidget->setTabText(0,ExeFileName);
     ui->GeometryFileTextEdit->clear();
     showResultsOutput("getting exe.sh data", 4);
@@ -2388,8 +2432,12 @@ void MainWindow::getRockcsDoseCalcsJobs()
         showResultsOutput("DoseCalcs Job File Name "+ InputsVals[0] , 1);
     }
 
-    // list of runing job
 
+    QStringList InputsVals;
+    QVector<QString> Commlines;
+
+
+    // read runing job names by file interface
     terminal *term = new terminal;
     term->scroll(20, 20);
     BashCommandsForExecuting = "#! /bin/bash \ncd " + DoseCalcsCore_build_dir_path + "\n";
@@ -2397,15 +2445,34 @@ void MainWindow::getRockcsDoseCalcsJobs()
     BashCommandsForExecuting += "\n bash \n";
     fileManagerObject->WriteTextToFile( DoseCalcsCore_build_dir_path+"/"+DoseCalcsExecutingFileName , BashCommandsForExecuting);
     term->executeLocalCommand(DoseCalcsCore_build_dir_path+"/"+DoseCalcsExecutingFileName);
-
-    QStringList InputsVals;
-    QVector<QString> Commlines = fileManagerObject->ReadTextFromFile(DoseCalcsCore_build_dir_path+"/F");
-
+    Commlines = fileManagerObject->ReadTextFromFile(DoseCalcsCore_build_dir_path+"/F");
+    // remove the file interface
     BashCommandsForExecuting = "#! /bin/bash \ncd " + DoseCalcsCore_build_dir_path + "\n";
     BashCommandsForExecuting += "rm -r " + DoseCalcsCore_build_dir_path+"/F" + "\n";
     BashCommandsForExecuting += "\n bash \n";
     fileManagerObject->WriteTextToFile( DoseCalcsCore_build_dir_path+"/"+DoseCalcsExecutingFileName , BashCommandsForExecuting);
     term->executeLocalCommand(DoseCalcsCore_build_dir_path+"/"+DoseCalcsExecutingFileName);
+
+    //QTextStream(stdout) << " \n\n\n\n\n -------------------------------------- " << "\n";
+    //// read runing job names by process output read
+    //QProcess process;
+    //process.start("ls");
+    ////if (!process.waitForFinished()) {
+    ////    //qDebug() << "Error: Unable to execute Rocks command.";
+    ////    //return nodes;
+    ////}
+    //QString output = process.readAllStandardOutput();
+    //QTextStream(stdout) << " output " << output << "\n";
+
+    //QStringList lines = output.split("\n", Qt::SkipEmptyParts);
+    //for(int dd=0; dd < lines.size();dd++){
+    //    Commlines.push_back(lines[dd]);
+    //    QTextStream(stdout) << " lines[dd] " << lines[dd] << "\n";
+
+    //}
+
+
+
 
     listOfRun.empty();listOfRun.clear();
     listOfRunIDs.empty();listOfRunIDs.clear();
@@ -2706,6 +2773,77 @@ QString MainWindow::ConstructDoseCalcsJobName(){
     //DoseCalcsJobName = "DoseCalcs_"+ ui->lineEditGeometrySymbole->text()+"_"+Execution_setNumberOfRanksOrThreads;
 
     return DoseCalcsJobName;
+}
+
+void MainWindow::GenerateMacrosFilesForBatch(){
+
+    MacrosNamesForBatch->clear();
+    ChosenEnergiesVector->clear();
+    ChosenRegionVector->clear();
+    ChosenParticlesVector->clear();
+
+    QStringList InputsVals0,InputsVals1,InputsVals2,InputsVals3;
+
+    InputsVals0 = ui->SourcelineEditParName->text().split(QRegExp("(\\s|\\n|\\r)+"), QString::SkipEmptyParts); // "/SourceData/setSourceGenerationData"
+
+    if(ui->comboBoxTypeOfSources->currentText() == "Voxels" || ui->comboBoxTypeOfSources->currentText() == "TET"){
+        for(int qq=0; qq < InputsVals1.size();qq++){
+            ChosenRegionVector->push_back(InputsVals1[qq]);
+        }
+    }
+    else if(ui->comboBoxTypeOfSources->currentText() == "Volume"){
+
+        QStringList InputsVals11 = ui->lineEditChosenSourceTypeData->text().split(QRegExp("(\\s|\\n|\\r)+"), QString::SkipEmptyParts); // "/SourceData/setSourceGenerationData"
+        if(InputsVals11.size()>0){
+            int nnn = 0;
+            while( nnn < InputsVals11.size() ){
+                ChosenRegionVector->push_back(InputsVals11[nnn]);
+                //QTextStream(stdout) << " nnn " << nnn << " -- " << InputsVals11[nnn] << "\n";
+
+                nnn = nnn + 4;
+            }
+        }
+    }
+
+    if(ui->SourceComboBoxEnergyDist->currentText() != "File"){
+        for(int qq=0; qq < InputsVals2.size();qq++){
+            ChosenEnergiesVector->push_back(InputsVals2[qq]);
+        }
+    }
+
+    for(int qq=0; qq < InputsVals0.size();qq++){
+        ChosenParticlesVector->push_back(InputsVals0[qq]);
+    }
+
+    Geometry_setGeometrySymbole = ui->lineEditGeometrySymbole->text();
+    Execution_setEventNumber = ui->lineEditNumberOfEvent->text();
+    Execution_setNumberOfRanksOrThreads = ui->lineEditNumberOfRanksOrThreads->text();
+
+    if(ui->lineEditGeometrySymbole->text()==""){ ui->lineEditGeometrySymbole->setText("phantom0") ; Geometry_setGeometrySymbole = "phantom0";}
+    if(ui->lineEditNumberOfRanksOrThreads->text()==""){ ui->lineEditNumberOfRanksOrThreads->setText("3") ; Execution_setNumberOfRanksOrThreads = "3";}
+    if(ui->lineEditNumberOfEvent->text()==""){ ui->lineEditNumberOfEvent->setText("10000") ; Execution_setEventNumber = "10000";}
+
+
+    if(ValuesOfInputs[ui->ScoreCombobowSimNumOnRanksLineEdit->currentText()] == "o"){
+
+    }else{
+
+        for(int a=0; a < ChosenParticlesVector->size(); a++){
+            for(int b=0; b < ChosenEnergiesVector->size();b++){
+                for(int c=0; c < ChosenRegionVector->size();c++){
+
+                    initializeVariable();
+                    SaveDataFromInputComponents(); // get the same componenet data but the four under variable values are related to the SaveEnePharOrgLists() data that is called one time when the the run in pushed
+                    CreateUserCommands(); //fill the variables with all values to save it to user file and not inputFile executed by the geant4 application core
+
+                    QsubSeparatedMacroFilePath = DoseCalcsCore_build_dir_path+"/Macros"+ConstructDoseCalcsJobName().remove("DoseCalcs")+".mac";
+                    fileManagerObject->WriteTextToFile(QsubSeparatedMacroFilePath , generateInputUserTextForinputFile());
+
+                }
+            }
+        }
+    }
+
 }
 
 void MainWindow::ShowTerminal(QString Command){
@@ -3510,6 +3648,14 @@ void MainWindow::on_actionVisualization_triggered()
                     //RunAndScoreCommands[4] + " " + Execution_setEventNumber + "\n" +
                     RunAndScoreCommands[5] + " " + ValuesOfInputs[Score_setSimNumOnRanksLineEdit] + "\n\n" ;
 
+            if(ui->radioButtonDICOM->isChecked() || ui->radioButtonVoxel->isChecked() || ui->radioButtonVoxIDs->isChecked()){
+                if(!ui->checkBoxVoxelOrRegionLevel->isChecked()){
+                    commandsText += "\n" + RunAndScoreCommands[12] + "\n";
+                }
+            }
+
+            commandsText += "\n" + RunAndScoreCommands[13] + " " + ui->comboBoxSimulationRunFor->currentText()+"\n";
+
             fileManagerObject->WriteTextToFile(MacrosFilePath , commandsText);
 
             ui->outputTextConsole->clear();
@@ -3569,7 +3715,11 @@ void MainWindow::on_actionClear_Output_triggered()
                                    "bash \n ";
         fileManagerObject->WriteTextToFile( DoseCalcsCore_build_dir_path+"/"+DoseCalcsExecutingFileName , BashCommandsForExecuting);
         ShowTerminal(DoseCalcsCore_build_dir_path+"/"+DoseCalcsExecutingFileName);
-    }else{
+    }
+    else if( ui->tabWidget->currentIndex() == 0){
+        ui->outputTextConsole->clear();
+    }
+    else if( ui->tabWidget->currentIndex() == 1){
         ui->outputTextConsole->clear();
     }
 
@@ -4329,6 +4479,7 @@ int MainWindow::FillComponentsFromInputsFile(QString FilePathString){
             if(InputsVals[cc] == "S"){ cc++; ui->comboBoxSUnits->setCurrentText(InputsVals[cc]);}
             if(InputsVals[cc] == "H"){ cc++; ui->comboBoxHUnits->setCurrentText(InputsVals[cc]);}
             if(InputsVals[cc] == "E"){ cc++; ui->comboBoxEUnits->setCurrentText(InputsVals[cc]);}
+            if(InputsVals[cc] == "DCC"){ cc++; ui->comboBoxEUnits->setCurrentText(InputsVals[cc]);}
         }
 
         //ui->radiationEnergyFactor->setText(lines[RunAndScoreCommands[9]]);
@@ -4588,6 +4739,14 @@ QString MainWindow::generateInputUserTextForinputFile(){
             //RunAndScoreCommands[9] + " " + Score_setRadiationFactors + "\n" +
             ;
 
+    if(ui->radioButtonDICOM->isChecked() || ui->radioButtonVoxel->isChecked() || ui->radioButtonVoxIDs->isChecked()){
+        if(!ui->checkBoxVoxelOrRegionLevel->isChecked()){
+            ScoreData += "\n" + RunAndScoreCommands[12] + "\n";
+        }
+    }
+
+    ScoreData += "\n" + RunAndScoreCommands[13] + " " + ui->comboBoxSimulationRunFor->currentText()+"\n";
+
     if(Score_setTissueFactors != "" ){
         ScoreData += RunAndScoreCommands[11] + " " + Score_setTissueFactors + "\n" ;
     }
@@ -4629,14 +4788,16 @@ QString MainWindow::generateInputUserTextForinputFile(){
             Analysis_LegendPos + " " +
             Analysis_LegendWidth + " " +
             Analysis_AddErrorBar + " " +
-            Analysis_setGraphsExt
+            Analysis_setGraphsExt + "\n"
             ;
 
-    //AnalysisData += AnalysisCommands[0] + " " + Analysis_setSliceFor2DGraph + "\n" +
-    //AnalysisData += AnalysisCommands[0] + " " + Analysis_setBeamAxis + "\n" +
-    //AnalysisData += AnalysisCommands[0] + " " + Analysis_setSliceID ;
-    //}
+    AnalysisData += AnalysisCommands[9]
+            + " " + Score_setVariableToScore
+            + " " + Analysis_setBeamAxis
+            + " " + Analysis_setSliceFor2DGraph
+            + " " + Analysis_setSliceID;
 
+    //}
 
     QString commandsText = "\n"+
             MaterialsAndWorldData + "\n\n" +
@@ -4894,9 +5055,15 @@ bool MainWindow::TestSimulateExecutableInputsToRun(){
 
     if(ui->SourceComboBoxAngleDist->currentText()=="Directed"){
         InputsVals = ui->lineEditSpecialAngulatDistributionParameter->text().split(QRegExp("(\\s|\\n|\\r)+"), QString::SkipEmptyParts); // "/GeometryData/createWorld"
-        if(InputsVals.size() < 2){
+        if(InputsVals.size() > 2){
+            if(InputsVals[0] != "ToPoint" && InputsVals[0] != "ThetaPhi" && InputsVals[0] != "ParallelTo" && InputsVals[0] != "ToVolume"){
+                ui->Tab->setCurrentIndex(1);
+                QMessageBox::information(this, tr(""), "Add how directed momentum distribution is (i.e. ThetaPhi 90 270)");
+                return false;
+            }
+        }else{
             ui->Tab->setCurrentIndex(1);
-            QMessageBox::information(this, tr(""), "Add theta and phi values for directed momentum distribution (i.e. Liver)");
+            QMessageBox::information(this, tr(""), "Add Directed momentum distribution Data");
             return false;
         }
     }
@@ -4952,7 +5119,6 @@ bool MainWindow::TestMergeExecutableInputsToRun(){
         QMessageBox::information(this, tr(""), "Please add \"source\" word followed by source volumes, and \"target\" word followed by target volumes");
         return false;
     }
-
 
     InputsVals = ui->AnalysisLineEditVarToScore->text().split(QRegExp("(\\s|\\n|\\r)+"), QString::SkipEmptyParts); // "/GeometryData/createWorld"
     if(InputsVals.size() < 1){
@@ -5168,6 +5334,85 @@ void MainWindow::showResultsOutput(QString text, int level){
     }
 
 }
+QString MainWindow::SetToASpecificMPIRank(){
+
+
+
+    //QProcess process;
+
+    //// Run the Rocks command to list hosts
+    ////process.start("rocks list host");
+    //process.start("ls");
+
+    //if (!process.waitForFinished()) {
+    //    //qDebug() << "Error: Unable to execute Rocks command.";
+    //    //return nodes;
+    //}
+
+    //// Read the output from the process
+    //QString output = process.readAllStandardOutput();
+
+    //// Split the output into lines
+    //QStringList lines = output.split("\n", Qt::SkipEmptyParts);
+    //QStringList nodesstringlist;
+
+    ////QTextStream(stdout) << " lines size " << lines.size() << "\n";
+
+    //// Display the hostnames
+    ////qDebug() << "List of Hostnames:";
+    //for(int dd=0; dd < lines.size();dd++){
+    //    QStringList fields = lines[dd].split(QRegExp("(\\s|\\n|\\r)+"), QString::SkipEmptyParts);
+    //    if (fields.length() > 0) {
+    //        //qDebug() << " fields.at(1) " << fields.at(0) << "\n";
+    //        nodesstringlist.push_back(fields.at(0));
+    //    }
+    //}
+    //ListNodes = new QComboBox(); ListNodes->addItems(nodesstringlist);
+    //ListNodes->setToolTip("Choose a node from the listed nodes");
+    //ListNodes->setCurrentText("");
+    //connect(ListNodes, SIGNAL(textActivated(QString)), this, SLOT(on_ListNodes_textActivated(QString)));
+    //GraphLayout->addWidget(ListNodes, jj,++ii,1,1);
+
+    QDialog * d = new QDialog(); d->setWindowTitle("Specify hostnames \"i.e., node-0-2\"");
+
+    QGridLayout* GraphLayout = new QGridLayout;
+
+    Textnodes = new QLineEdit(); Textnodes->setToolTip("Add specific hostnames");
+    QPushButton* qstatfbutton = new QPushButton(); qstatfbutton->setText("List hostnames");
+    qstatfbutton->setToolTip("List all nodes (hostnames) in Terminal ");
+    connect(qstatfbutton, SIGNAL(clicked()), this, SLOT(runTerminalCommandSlot()));
+
+
+    int ii = 0, jj=0;
+    GraphLayout->addWidget(Textnodes, jj,ii,1,1);
+    GraphLayout->addWidget(qstatfbutton, jj,++ii,1,1);
+
+    QDialogButtonBox * buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    QObject::connect(buttonBox, SIGNAL(accepted()), d, SLOT(accept()));
+    QObject::connect(buttonBox, SIGNAL(rejected()), d, SLOT(reject()));
+
+    GraphLayout->addWidget(buttonBox);
+
+    d->setLayout(GraphLayout);
+
+    int result = d->exec();
+    QString nodes = "";
+
+    if(result == QDialog::Accepted)
+    {
+        nodes = Textnodes->text();
+
+        if(nodes.isEmpty() || nodes == " "|| nodes == "  " || nodes == "   "){
+            return "";
+        }else{
+            return " -l hostname="+nodes;
+        }
+    }else{
+        return "";
+    }
+
+
+}
 
 // world
 void MainWindow::on_checkBoxWorldConst_clicked(bool checked)
@@ -5321,10 +5566,17 @@ void MainWindow::on_GeometryDataShowButton_clicked()
 }
 void MainWindow::on_comboBoxPreDefinedGeom_currentTextChanged(const QString &arg1)
 {
-
     if(ui->checkBoxUsePreDefinedGeom->isChecked()){
         MacroFilePath = GUIPackagesAndFilesDirPath+"/PreDefinedGeometry/macros"+PreDefinedGeomMap[arg1]+".mac";
         FillComponentsFromInputsFile(MacroFilePath);
+    }
+
+    if(ui->radioButtonDICOM->isChecked() || ui->radioButtonVoxel->isChecked() || ui->radioButtonVoxIDs->isChecked()){
+        ui->checkBoxVoxelOrRegionLevel->setVisible(true);
+        ui->checkBoxVoxelOrRegionLevel->setChecked(true);
+    }else{
+        ui->checkBoxVoxelOrRegionLevel->setVisible(false);
+        ui->checkBoxVoxelOrRegionLevel->setChecked(true);
     }
 
 }
@@ -5901,7 +6153,34 @@ void MainWindow::on_LimitsPlan_textActivated(QString arg)
         RegionToVisualizeComb->setVisible(false);
     }
 }
+void MainWindow::runTerminalCommandSlot()
+{
+    BashCommandsForExecuting = "#! /bin/bash \n "
+                               "qstat -f\n"
+                               //"ls \n"
+                               "bash \n ";
+    fileManagerObject->WriteTextToFile( DoseCalcsCore_build_dir_path+"/"+DoseCalcsExecutingFileName , BashCommandsForExecuting);
+    ShowTerminal(DoseCalcsCore_build_dir_path+"/"+DoseCalcsExecutingFileName);
 
+}
+void MainWindow::on_ListNodes_textActivated(QString arg)
+{
+    bool IsIn = false;
+    QStringList args = Textnodes->text().split(QRegExp("(\\s|\\n|\\r)+"), QString::SkipEmptyParts);
+    for(int dd=0; dd < args.size();dd++){ if(args[dd] == ListNodes->currentText()){ IsIn = true;}}
+    if(IsIn == false){
+        if(ListNodes->currentText() != ""){
+            QString nn = Textnodes->text();
+            nn.replace(" ","");
+            if(nn == ""){
+                Textnodes->setText(ListNodes->currentText());
+            }
+            else{
+                Textnodes->setText(nn + "+" + ListNodes->currentText());
+            }
+        }
+    }
+}
 void MainWindow::on_comboBoxRegionToVisualize_textActivated(QString arg)
 {
     bool IsIn = false;
@@ -5969,7 +6248,11 @@ void MainWindow::UseMaterialsAsRegionNames_slot(){
 
 void MainWindow::btnAddVoxelsData_slot(){
 
-    ui->GeometryFileTextEdit->setPlainText(changeArgumentOfACommandFromText(ui->GeometryFileTextEdit->toPlainText(),VOXELCommands[0], VOXELCommands[0] + " " + XYZVoxelsNumb->text() + " " + ValuesOfInputs[ParamType->currentText()] + " " + LogVolMatName->currentText() + " " + XYZVoxelsHalfSize->text()));
+    if(LogVolMatName->count() != 0){
+        ui->GeometryFileTextEdit->setPlainText(changeArgumentOfACommandFromText(ui->GeometryFileTextEdit->toPlainText(),VOXELCommands[0], VOXELCommands[0] + " " + XYZVoxelsNumb->text() + " " + ValuesOfInputs[ParamType->currentText()] + " " + LogVolMatName->currentText() + " " + XYZVoxelsHalfSize->text()));
+    }else{
+        QMessageBox::information(this, tr("Voxels default material"),"Cannot create voxels data command. Build a material to be added as a default material to voxels");
+    }
     ui->GeometryFileTextEdit->setPlainText(changeArgumentOfACommandFromText(ui->GeometryFileTextEdit->toPlainText(),VOXELCommands[1], VOXELCommands[1] + " " + VoxContainerPos->text()));
     ui->GeometryFileTextEdit->setPlainText(changeArgumentOfACommandFromText(ui->GeometryFileTextEdit->toPlainText(),VOXELCommands[2], VOXELCommands[2] + " " + VoxContainerRot->text()));
 
@@ -6142,13 +6425,19 @@ void MainWindow::btnAddVol_slot(){
 
         QString VolumeCommandToAdd;
         if(fe == "stl" || fe == "ast"){
-            VolumeCommandToAdd = GeometryCommands[2]
-                    + " " + PhyVolName->text()
-                    + " " + LogVolMatName->currentText()
-                    + " " + ComboxMotherVol->currentText()
-                    + " " + PhyVolPos->text()
-                    + " " + PhyVolRot->text()
-                    + " " + PosRotUnits->text();
+            if(LogVolMatName->count() != 0){
+
+                VolumeCommandToAdd = GeometryCommands[2]
+                        + " " + PhyVolName->text()
+                        + " " + LogVolMatName->currentText()
+                        + " " + ComboxMotherVol->currentText()
+                        + " " + PhyVolPos->text()
+                        + " " + PhyVolRot->text()
+                        + " " + PosRotUnits->text();
+            }else{
+                QMessageBox::information(this, tr("No material found"),"Cannot create volume command. Build a material first to fill the STL solid");
+            }
+
         }
         else if(fe == "gdml" || fe == "geom" || fe == "c++" || fe == "cpp"){
             VolumeCommandToAdd = GeometryCommands[2]
@@ -6933,12 +7222,15 @@ void MainWindow::on_pushButtonChooseVoxIDsFile_clicked()
 void MainWindow::on_radioButtonTET_clicked()
 {
     ui->comboBoxTypeOfSources->setCurrentText("TET");
+    ui->checkBoxVoxelOrRegionLevel->setVisible(false);
 }
 void MainWindow::on_radioButtonVoxel_clicked(bool checked)
 {
     if(checked == true){
 
         ui->frame_19->setVisible(false);
+        ui->checkBoxVoxelOrRegionLevel->setVisible(true);
+        ui->checkBoxVoxelOrRegionLevel->setChecked(true);
 
         ui->comboBoxTypeOfSources->setCurrentText("TET");
         //ui->PhantomWorldMaterialLineEdit->setEnabled(true);
@@ -6961,6 +7253,8 @@ void MainWindow::on_radioButtonDICOM_clicked(bool checked)
     if(checked == true){
 
         ui->frame_19->setVisible(false);
+        ui->checkBoxVoxelOrRegionLevel->setVisible(true);
+        ui->checkBoxVoxelOrRegionLevel->setChecked(true);
 
         ui->comboBoxTypeOfSources->setCurrentText("Voxels");
         //ui->frame_World->setEnabled(true);
@@ -6978,6 +7272,8 @@ void MainWindow::on_radioButtonVoxIDs_clicked(bool checked)
     if(checked == true){
 
         ui->frame_19->setVisible(true);
+        ui->checkBoxVoxelOrRegionLevel->setVisible(true);
+        ui->checkBoxVoxelOrRegionLevel->setChecked(true);
 
         ui->comboBoxTypeOfSources->setCurrentText("Voxels");
         //ui->frame_World->setEnabled(true);
@@ -6997,6 +7293,7 @@ void MainWindow::on_radioButtonConstruct_clicked(bool checked)
         ui->frame_19->setVisible(false);
 
         ui->comboBoxTypeOfSources->setCurrentText("Volume");
+        ui->checkBoxVoxelOrRegionLevel->setVisible(false);
         //ui->frame_World->setEnabled(true);
         //ui->frame_materials->setEnabled(true);
         //ui->GeometryFilePathLineEdit->setVisible(false);
@@ -7014,6 +7311,8 @@ void MainWindow::on_radioButtonGDML_clicked(bool checked)
 
         ui->comboBoxTypeOfSources->setCurrentText("Volume");
         ui->frame_19->setVisible(false);
+        ui->checkBoxVoxelOrRegionLevel->setVisible(false);
+
         //ui->frame_World->setEnabled(false);
         //ui->frame_materials->setEnabled(false);
         //ui->GeometryFilePathLineEdit->setVisible(true);
@@ -7027,6 +7326,7 @@ void MainWindow::on_radioButtonTEXT_clicked(bool checked)
     if(checked == true){
 
         ui->frame_19->setVisible(false);
+        ui->checkBoxVoxelOrRegionLevel->setVisible(false);
 
         ui->comboBoxTypeOfSources->setCurrentText("Volume");
         //ui->frame_World->setEnabled(false);
@@ -7043,6 +7343,7 @@ void MainWindow::on_radioButtonCpp_clicked(bool checked)
     if(checked == true){
 
         ui->frame_19->setVisible(false);
+        ui->checkBoxVoxelOrRegionLevel->setVisible(false);
 
         ui->comboBoxTypeOfSources->setCurrentText("Volume");
         //ui->frame_World->setEnabled(true);
@@ -7060,6 +7361,7 @@ void MainWindow::on_radioButtonSTL_clicked(bool checked)
     if(checked == true){
 
         ui->frame_19->setVisible(false);
+        ui->checkBoxVoxelOrRegionLevel->setVisible(false);
 
         ui->comboBoxTypeOfSources->setCurrentText("Volume");
         //ui->frame_World->setEnabled(true);
@@ -7122,32 +7424,62 @@ void MainWindow::on_comboBoxTypeOfSources_currentIndexChanged(const QString &arg
 
 
     if(ui->comboBoxTypeOfSources->currentText() == "Volume"){
-        ui->lineEditChosenSourceTypeData->setPlaceholderText("VolumeName1 hx hy hz VolumeName2 hx2 hy2 hz2 ... ");
-        ui->lineEditChosenSourceTypeData->setToolTip("VolumeName1 hx hy hz VolumeName2 hx2 hy2 hz2 ... ");
+        ui->lineEditChosenSourceTypeData->setPlaceholderText("VolumeName1 hx hy hz VolumeName2 hx2 hy2 hz2 ... \n");
+        ui->lineEditChosenSourceTypeData->setToolTip("VolumeName1 hx hy hz VolumeName2 hx2 hy2 hz2 VolumeName2 hx3 hy3 hz3... :\n"
+                                                     "Liver 15. 8. 8. Thyroid 5 4 3.5 Brain 12 14 13.5)"
+                                                     );
     }
     else if(ui->comboBoxTypeOfSources->currentText() == "Voxels"){
-        ui->lineEditChosenSourceTypeData->setPlaceholderText("RegionName1 RegionName2 ...");
-        ui->lineEditChosenSourceTypeData->setToolTip("RegionName1 RegionName2 ...");
+        ui->lineEditChosenSourceTypeData->setPlaceholderText("RegionName1 RegionName2 RegionName3 ...\n");
+        ui->lineEditChosenSourceTypeData->setToolTip("RegionName1 RegionName2 RegionName3 ... :\n"
+                                                     "Liver Thyroid Brain \n"
+                                                     );
+    }
+    else if(ui->comboBoxTypeOfSources->currentText() == "TET"){
+        ui->lineEditChosenSourceTypeData->setPlaceholderText("RegionName1 RegionName2 RegionName3 ...\n");
+        ui->lineEditChosenSourceTypeData->setToolTip("RegionName1 RegionName2 RegionName3 ... :\n"
+                                                     "Liver Thyroid Brain \n"
+                                                     );
     }
     else if(ui->comboBoxTypeOfSources->currentText() == "Point"){
-        ui->lineEditChosenSourceTypeData->setPlaceholderText("SourceName SourcePosition(X Y Z) ");
-        ui->lineEditChosenSourceTypeData->setToolTip("SourceName SourcePosition(X Y Z) ");
+        ui->lineEditChosenSourceTypeData->setPlaceholderText("SourceName SourcePosition(X Y Z) RotationAxis RotationAngle");
+        ui->lineEditChosenSourceTypeData->setToolTip("SourceName SourcePosition(X Y Z) RotationAxis RotationAngle: "
+                                                     "P1 2 15 3.2 Z 45"
+                                                     );
     }
     else if(ui->comboBoxTypeOfSources->currentText() == "Beam"){
-        ui->lineEditChosenSourceTypeData->setPlaceholderText("SourceName SourcePosition(X Y Z)");
-        ui->lineEditChosenSourceTypeData->setToolTip("SourceName SourcePosition(X Y Z)");
+        ui->lineEditChosenSourceTypeData->setPlaceholderText("SourceName SourcePosition(X Y Z) BeamSDev RotationAxis RotationAngle");
+        ui->lineEditChosenSourceTypeData->setToolTip("SourceName SourcePosition(X Y Z) BeamAxis BeamSDev RotationAxis RotationAngle:\n"
+                                                     "B1 10 5 8 Z 2 Y 45\n"
+                                                     );
     }
     else if(ui->comboBoxTypeOfSources->currentText() == "Plane"){
-        ui->lineEditChosenSourceTypeData->setPlaceholderText("SourceName SourcePosition(X Y Z) PlaneShape ShapeData");
-        ui->lineEditChosenSourceTypeData->setToolTip("SourceName SourcePosition(X Y Z) PlaneShape ShapeData");
+        ui->lineEditChosenSourceTypeData->setPlaceholderText("SourceName SourcePosition(X Y Z) PlaneShape(Axis) ShapeData RotationAxis RotationAngle");
+        ui->lineEditChosenSourceTypeData->setToolTip("SourceName SourcePosition(X Y Z) PlaneShape(Axis) ShapeData RotationAxis RotationAngle: \n"
+                                                     "Source1 10 5 8 Square X 16 Z 45\n"
+                                                     "Source1 10 5 8 Rectangle X 11 12 Z 45\n"
+                                                     "Source1 10 5 8 Circle X 16 Z 45\n"
+                                                     "Source1 10 5 8 Ellipse X 11 12 Z 45\n"
+                                                     "Source1 10 5 8 Annulus X 11 15 Z 45\n"
+                                                     );
     }
     else if(ui->comboBoxTypeOfSources->currentText() == "Surface"){
-        ui->lineEditChosenSourceTypeData->setPlaceholderText("SourceName SourcePosition(X Y Z) SurfaceShape ShapeData");
-        ui->lineEditChosenSourceTypeData->setToolTip("SourceName SourcePosition(X Y Z) SurfaceShape ShapeData");
+        ui->lineEditChosenSourceTypeData->setPlaceholderText("SourceName SourcePosition(X Y Z) SurfaceShape ShapeData RotationAxis RotationAngle");
+        ui->lineEditChosenSourceTypeData->setToolTip("SourceName SourcePosition(X Y Z) SurfaceShape ShapeData RotationAxis RotationAngle: \n"
+                                                     "Source1 10 5 8 Sphere 11 Z 45\n"
+                                                     "Source1 10 5 8 Ellipsoid 11 13 5 Z 45\n"
+                                                     "Source1 10 5 8 Cylinder 11 13 Z 45\n"
+                                                     );
     }
     else if(ui->comboBoxTypeOfSources->currentText() == "Solid"){
-        ui->lineEditChosenSourceTypeData->setPlaceholderText("SourceName SourcePosition(X Y Z) SurfaceShape ShapeData");
-        ui->lineEditChosenSourceTypeData->setToolTip("SourceName SourcePosition(X Y Z) SurfaceShape ShapeData");
+        ui->lineEditChosenSourceTypeData->setPlaceholderText("SourceName SourcePosition(X Y Z) SolidShape ShapeData RotationAxis RotationAngle");
+        ui->lineEditChosenSourceTypeData->setToolTip("SourceName SourcePosition(X Y Z) SolidShape ShapeData RotationAxis RotationAngle: \n"
+                                                     "Source1 10 5 8 Sphere 11 Z 45\n"
+                                                     "Source1 10 5 8 Ellipsoid 11 13 5 Z 45\n"
+                                                     "Source1 10 5 8 Para 11 13 5 Z 45\n"
+                                                     "Source1 10 5 8 Cylinder 11 13 Z 45\n"
+                                                     "Source1 10 5 8 EllipticCylinder 11 13 5 Z 45\n"
+                                                     );
     }
 }
 void MainWindow::on_SourceComboBoxEnergyDist_currentIndexChanged(const QString &arg1)
@@ -7195,7 +7527,11 @@ void MainWindow::on_SourceComboBoxEnergyDist_currentIndexChanged(const QString &
 void MainWindow::on_SourceComboBoxAngleDist_currentIndexChanged(const QString &arg1)
 {
     if(arg1 == "Directed"){
-        ui->lineEditSpecialAngulatDistributionParameter->setPlaceholderText("Theta Phi     ");
+        ui->lineEditSpecialAngulatDistributionParameter->setPlaceholderText("ThetaPhi 90 270");
+        ui->lineEditSpecialAngulatDistributionParameter->setToolTip("ThetaPhi Theta Phi (ThetaPhi 90 270) (unit in degree or rad)\n"
+                                                     "ToPoint x y z (ToPoint 12 58 90) (unit in cm or mm)\n"
+                                                     "ParallelTo Plane Axis2Val Axis3Val (ParallelTo XY 12 58 or ParallelTo Y 90 12 or ParallelTo X 58 90) (unit in cm or mm)\n"
+                                                     "ToVolume x y z hx hy hz (ToVolume 0 0 0 20 12 90) (unit in cm or mm)");
         //ui->lineEditSpecialAngulatDistributionParameter->setEnabled(true);
     }else{
         ui->lineEditSpecialAngulatDistributionParameter->setPlaceholderText("");
@@ -7704,9 +8040,14 @@ void MainWindow::RunForMultiGeomeries()
         if(ui->checkBoxRocks->isChecked()){
 
             // this file name is used just in exe.sh file in rocks cluster simulations
-
+            QString SpecificNodes = SetToASpecificMPIRank();
             BashCommandsForExecuting = "#! /bin/bash \ncd " + DoseCalcsCore_build_dir_path
-                    + "\n qsub "+DoseCalcsCore_build_dir_path+"/"+ExeFileName;
+                    + "\n qsub "+ SpecificNodes +" "+ DoseCalcsCore_build_dir_path+"/"+ExeFileName;
+
+            if(false){
+                BashCommandsForExecuting = "#! /bin/bash \ncd " + DoseCalcsCore_build_dir_path
+                        + "\n sbatch "+ SpecificNodes +" "+ DoseCalcsCore_build_dir_path+"/"+ExeFileName;
+            }
             BashCommandsForExecuting += "\n bash \n";
 
             showResultsOutput("Writing Run Commands : \n", 0);
@@ -11523,3 +11864,15 @@ void MainWindow::CreateNewSourceRegion(QString SSOURCE){
     ui->progressBarReadingCalcData->setValue(100);
 
 }
+
+void MainWindow::on_checkBoxVoxelOrRegionLevel_stateChanged(int arg1)
+{
+    if(ui->checkBoxVoxelOrRegionLevel->isChecked()){
+        //ui->checkBoxVoxelOrRegionLevel->setCheckState(Qt::Checked);
+        ui->checkBoxVoxelOrRegionLevel->setText("Region Level");
+    }else{
+        //ui->checkBoxVoxelOrRegionLevel->setCheckState(Qt::Unchecked);
+        ui->checkBoxVoxelOrRegionLevel->setText("Voxel Level");
+    }
+}
+

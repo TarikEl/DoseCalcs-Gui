@@ -35,6 +35,7 @@ void terminal::executeLocalCommand(QString command){
     process.start();
     //while(process.pid()> 0){}
     process.waitForFinished(2000); // until the file is read and writed data to is
+    //process.waitForFinished();
 }
 void terminal::executeNormalCommandWithoutKillingPre(QString command){
 

@@ -71,7 +71,7 @@
              <enum>Qt::LeftToRight</enum>
             </property>
             <property name="currentIndex">
-             <number>3</number>
+             <number>1</number>
             </property>
             <property name="usesScrollButtons">
              <bool>true</bool>
@@ -1182,6 +1182,9 @@
                      <number>0</number>
                     </property>
                     <item>
+                     <widget class="QComboBox" name="comboBoxSimulationRunFor"/>
+                    </item>
+                    <item>
                      <widget class="QPushButton" name="RunButton">
                       <property name="toolTip">
                        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Run the DoseCalcs simulation. Note that DoseCalcs should be built, and principal simulation inputs should be set. The simulation output file and macros file are generated automatically in the [core_build] directory.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -1294,6 +1297,16 @@
                      </widget>
                     </item>
                     <item>
+                     <widget class="QCheckBox" name="checkBoxVoxelOrRegionLevel">
+                      <property name="toolTip">
+                       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;During the run, the absorbed energy will be scored in phantom voxels (Voxel Level) or in phantom regions (Region Level).&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      </property>
+                      <property name="text">
+                       <string>Region Level</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
                      <widget class="QComboBox" name="ScoreCombobowSimNumOnRanksLineEdit">
                       <property name="toolTip">
                        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose Multi to simulate different source data on each thread (or Ranks for MPI computation), or set one to simulate the same source data on all threads (or Ranks).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -1373,17 +1386,17 @@
                  <property name="bottomMargin">
                   <number>0</number>
                  </property>
-                 <item row="0" column="1">
-                  <widget class="QPushButton" name="BtnsourceReturn">
-                   <property name="text">
-                    <string>Return</string>
-                   </property>
-                  </widget>
-                 </item>
                  <item row="0" column="0">
                   <widget class="QPushButton" name="SourceBtnReset">
                    <property name="text">
                     <string>Reset</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QPushButton" name="BtnsourceReturn">
+                   <property name="text">
+                    <string>Return</string>
                    </property>
                   </widget>
                  </item>

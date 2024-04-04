@@ -58,12 +58,26 @@
 #include "G4Trap.hh"
 #include "G4Cons.hh"
 
+#include "G4TNuclearReactorGeometry.hh"
+#include "G4TDetectorGeometry.hh"
+#include "G4TPassiveProtonBeamLineGeometry.hh"
+
 G4TCPPGeometryFormat::G4TCPPGeometryFormat(){}
 G4TCPPGeometryFormat::~G4TCPPGeometryFormat(){}
 
 G4VPhysicalVolume* G4TCPPGeometryFormat::ConstructPhysicalVolume(){
 
     // //////////////////////////////// Required Material creation ////////////////////////
+
+
+
+    //G4TDetectorGeometry* NewGeom = new G4TDetectorGeometry();
+    //WorldPhysicalVolume = NewGeom->ConstructDetector();
+    //return WorldPhysicalVolume;
+
+    //G4TPassiveProtonBeamLineGeometry* NewGeom = new G4TPassiveProtonBeamLineGeometry();
+    //WorldPhysicalVolume = NewGeom->Construct();
+    //return WorldPhysicalVolume;
 
     G4Material* matH2O;
     G4Material* soft;
@@ -72,6 +86,8 @@ G4VPhysicalVolume* G4TCPPGeometryFormat::ConstructPhysicalVolume(){
     G4Material* adipose;
     G4Material* glandular;
     G4Material* adipose_glandular;
+    G4Material* galactic;
+
 
     G4double A;  // atomic mass
     G4double Z;  // atomic number
@@ -129,6 +145,11 @@ G4VPhysicalVolume* G4TCPPGeometryFormat::ConstructPhysicalVolume(){
 
     A = 207.19 *g/mole;
     G4Element* elPb = new G4Element("Lead","Pb", Z = 82.,A);
+
+
+    d = 1.0e-25 * g/cm3; // Very low density
+    galactic = new G4Material("G4_Galactic", d, 1, kStateGas);
+    galactic->AddElement(elH,1);
 
     // Water
     d = 1.000*g/cm3;
@@ -262,10 +283,10 @@ G4VPhysicalVolume* G4TCPPGeometryFormat::ConstructPhysicalVolume(){
     // //////////////////////////////// World Construction ////////////////////////
 
     G4double worldSize = 1.5 *m ;
-    G4Box* world = new G4Box("world", 0.25*m, 0.15*m, 1.*m);
+    G4Box* world = new G4Box("world", 2.5*m, 2.5*m, 2.5*m);
 
     G4LogicalVolume* logicWorld = new G4LogicalVolume(world,
-                                                      matAir,
+                                                      galactic,
                                                       "World", 0, 0,0);
 
     WorldPhysicalVolume = new G4PVPlacement(0,G4ThreeVector(),

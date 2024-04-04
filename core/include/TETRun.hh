@@ -38,6 +38,7 @@
 
 typedef std::map<G4int, std::pair<G4double, G4double>> EDEPMAP;
 typedef std::map<G4int,unsigned long long int> NumStepMAP;
+typedef std::map<G4int,G4double> LENGTHS;
 
 // *********************************************************************
 // This is G4Run class that sums up energy deposition from each event.
@@ -60,11 +61,14 @@ public:
     virtual void Merge(const G4Run*);
 
     EDEPMAP* GetEdepMap() {return &edepMap;};
+    LENGTHS* GetLengths() {return &Lengths;};
     NumStepMAP* GetnumstepsMap() {return &numstepsMap;};
 
 private:
     EDEPMAP edepMap;
     NumStepMAP numstepsMap;
+    LENGTHS Lengths;
+
 };
 
 #endif

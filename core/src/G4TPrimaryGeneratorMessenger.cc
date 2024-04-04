@@ -264,15 +264,19 @@ void G4TPrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command,G4String new
         if(ST == "Point"){
             GeoConst->setSourceRegionsNamesValues(SN);
 
+            GeoConst->setRotPosAxis(next());
+            GeoConst->setRotTheta(StoD(next()));
         }
         else if(ST == "Beam"){
             GeoConst->setSourceRegionsNamesValues(SN);
 
-            G4String STT = next();
+            //G4String STT = next();
             GeoConst->setSourceAxis(next());
             A = StoD(next()); //Un1 = next();
             GeoConst->setBeamSDev(A*UseG4Units(Un1));
 
+            GeoConst->setRotPosAxis(next());
+            GeoConst->setRotTheta(StoD(next()));
         }
         else if(ST == "Plane"){
             GeoConst->setSourceRegionsNamesValues(SN);
@@ -307,6 +311,10 @@ void G4TPrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command,G4String new
                 A = StoD(next()); //Un1 = next();
 
             }
+
+            GeoConst->setRotPosAxis(next());
+            GeoConst->setRotTheta(StoD(next()));
+
         }
         else if(ST == "Surface"){
             GeoConst->setSourceRegionsNamesValues(SN);
@@ -326,6 +334,15 @@ void G4TPrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command,G4String new
                 GeoConst->setHalfY(B*UseG4Units(Un1));
                 GeoConst->setHalfZ(C*UseG4Units(Un1));
             }
+            else if(STT == "Cylinder"){
+                A = StoD(next()); B = StoD(next()); //C = StoD(next()) ; //Un1 = next();
+
+                GeoConst->setHalfX(A*UseG4Units(Un1));
+                GeoConst->setHalfY(B*UseG4Units(Un1));
+                //GeoConst->setHalfZ(C*UseG4Units(Un1));
+            }
+            GeoConst->setRotPosAxis(next());
+            GeoConst->setRotTheta(StoD(next()));
         }
         else if(ST == "Solid"){
 
@@ -368,6 +385,8 @@ void G4TPrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command,G4String new
                 GeoConst->setHalfY(B*UseG4Units(Un1));
                 GeoConst->setHalfZ(C*UseG4Units(Un1));
             }
+            GeoConst->setRotPosAxis(next());
+            GeoConst->setRotTheta(StoD(next()));
         }
         else if(ST == "Volume"){
 
@@ -377,7 +396,6 @@ void G4TPrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command,G4String new
                 G4String stLower = SN; stLower.toLower();
 
                 if(stLower=="allregions"){
-
 
                     GeoConst->setSourceRegionsNamesValues(stLower);
 
@@ -707,15 +725,79 @@ void G4TPrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command,G4String new
         G4String Un2 = next(), SET = next();
         //std::cout<< " Dddddd " << SN <<  " @@@@@@@@@@@@@@@@@@@@@@@@@@@"<< std::endl;
 
+        GeoConst->setInitialDirectionModel(SET);
+
         while (!SET.empty()) {
 
             //std::cout<< " Dddddd " << SET <<  " @@@@@@@@@@@@@@@@@@@@@@@@@@@"<< std::endl;
 
+            //GeoConst->setSourceMomDirsValues(SET);
+            //if(SET == "Directed"){
+            //    G4double T = StoD(next()), P = StoD(next());
+            //    GeoConst->setSourceMomDirsDirectedThetaValues(T*UseG4Units(Un2));
+            //    GeoConst->setSourceMomDirsDirectedPhiValues(P*UseG4Units(Un2));
+            //    //std::cout<< "MomDir Dist " << SET <<  " : "<< T << " " << P << std::endl;
+
+            //}else {
+            //    GeoConst->setSourceMomDirsDirectedThetaValues(0);
+            //    GeoConst->setSourceMomDirsDirectedPhiValues(0);
+            //    //std::cout<< "MomDir Dist " << SET <<  " : "<< 0 << " " << 0 << std::endl;
+
+            //}
+
             GeoConst->setSourceMomDirsValues(SET);
             if(SET == "Directed"){
-                G4double T = StoD(next()), P = StoD(next());
-                GeoConst->setSourceMomDirsDirectedThetaValues(T*UseG4Units(Un2));
-                GeoConst->setSourceMomDirsDirectedPhiValues(P*UseG4Units(Un2));
+                G4String DirTo = next();
+                if(DirTo == "ToPoint"){
+                    GeoConst->setMomDirDirectedHow(DirTo);
+
+                    if(Un2 == "rad" || Un2 == "degree"){Un2=="mm";}
+
+                    GeoConst->setDirectedToX(StoD(next())*UseG4Units(Un2));
+                    GeoConst->setDirectedToY(StoD(next())*UseG4Units(Un2));
+                    GeoConst->setDirectedToZ(StoD(next())*UseG4Units(Un2));
+
+                    GeoConst->setSourceMomDirsDirectedThetaValues(0);
+                    GeoConst->setSourceMomDirsDirectedPhiValues(0);
+                }
+                else if(DirTo == "ParallelTo"){
+                    GeoConst->setMomDirDirectedHow(DirTo);
+
+                    if(Un2 == "rad" || Un2 == "degree"){Un2=="mm";}
+
+                    GeoConst->setDirectedParallelAxis(next());
+                    GeoConst->setDirectedToX(StoD(next())*UseG4Units(Un2));
+                    GeoConst->setDirectedToY(StoD(next())*UseG4Units(Un2));
+
+                    GeoConst->setSourceMomDirsDirectedThetaValues(0);
+                    GeoConst->setSourceMomDirsDirectedPhiValues(0);
+                }
+                else if(DirTo == "ToVolume"){
+                    GeoConst->setMomDirDirectedHow(DirTo);
+
+                    if(Un2 == "rad" || Un2 == "degree"){Un2=="mm";}
+
+                    GeoConst->setToVolumeX(StoD(next())*UseG4Units(Un2));
+                    GeoConst->setToVolumeY(StoD(next())*UseG4Units(Un2));
+                    GeoConst->setToVolumeZ(StoD(next())*UseG4Units(Un2));                    GeoConst->setDirectedToX(StoD(next())*UseG4Units(Un2));
+                    GeoConst->setDirectedToX(StoD(next())*UseG4Units(Un2));
+                    GeoConst->setDirectedToY(StoD(next())*UseG4Units(Un2));
+                    GeoConst->setDirectedToZ(StoD(next())*UseG4Units(Un2));
+
+                    GeoConst->setSourceMomDirsDirectedThetaValues(0);
+                    GeoConst->setSourceMomDirsDirectedPhiValues(0);
+                }
+                else if(DirTo == "ThetaPhi"){
+                    GeoConst->setMomDirDirectedHow(DirTo);
+
+                    if(Un2 == "rad" || Un2 == "degree"){Un2=="degree";}
+
+                    //std::cout<< "MomDir Dist " << SET <<  " : "<< T << " " << P << std::endl;
+
+                    G4double T = StoD(next()), P = StoD(next());
+                    GeoConst->setSourceMomDirsDirectedThetaValues(T*UseG4Units(Un2));
+                    GeoConst->setSourceMomDirsDirectedPhiValues(P*UseG4Units(Un2));
+                }
                 //std::cout<< "MomDir Dist " << SET <<  " : "<< T << " " << P << std::endl;
 
             }else {
@@ -724,6 +806,9 @@ void G4TPrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command,G4String new
                 //std::cout<< "MomDir Dist " << SET <<  " : "<< 0 << " " << 0 << std::endl;
 
             }
+
+
+
 
             SET = next();
         }
@@ -775,7 +860,6 @@ void G4TPrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command,G4String new
     {
         GeoConst->setSourceRotVector2(SourceRotVector2CMD->GetNew3VectorValue(newValue));
     }
-
     if( command == SourceSolidCMD )
     {
         GeoConst->setSourceSolid(newValue);
@@ -1108,7 +1192,7 @@ void  G4TPrimaryGeneratorMessenger::CommandsForPrimaryGen(){
     particle_nameCMD->SetGuidance("Set name of primary particles source : e- gamma proton ,... ");
     particle_nameCMD->SetParameterName("particle_name",true);
     particle_nameCMD->SetDefaultValue("gamma");
-    particle_nameCMD->SetCandidates("e- gamma proton alpha");
+    particle_nameCMD->SetCandidates("e- gamma proton alpha neutron");
     particle_nameCMD->AvailableForStates(G4State_PreInit,G4State_Idle);
 
     MonoEnergyCMD = new G4UIcmdWithADoubleAndUnit("/SourceData/setMonoEnergy",this);

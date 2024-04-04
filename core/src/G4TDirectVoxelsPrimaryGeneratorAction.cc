@@ -78,6 +78,10 @@ void G4TDirectVoxelsPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     particleGun->SetParticleEnergy(ENERGY);
     particleGun->SetParticleMomentumDirection(G4ParticleMomentum(XMOMD, YMOMD, ZMOMD));
 
+    //std::cout << " EnergyTypeNum=" << EnergyTypeNum
+    //          << " PositionTypeNum=" << PositionTypeNum
+    //          << " MomDirTypeNum=" << MomDirTypeNum
+    //          << std::endl;
     //std::cout << " Particle=" << particleGun->GetParticleDefinition()->GetParticleName() << " ENERGY=" << ENERGY << " X=" << X << " Y=" << Y << " Z=" << Z << std::endl;
 
     //if(WriteSourceDataToFiles == 1){SaveGeneratedDataToFiles();}

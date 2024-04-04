@@ -65,7 +65,8 @@ public:
 	virtual void EndOfRunAction(const G4Run*);
 
     void PrintResult();
-  
+    void FillRegionLenghts(G4String, G4double);
+
 private:
 
     G4String GenerateCrossSectionGraph, ExecutionMode, OneOrMultiSimulations;
@@ -86,6 +87,8 @@ private:
     G4ThreadLocal static std::map<G4int,std::map<G4String,unsigned long long int>> NOfValues;
     G4ThreadLocal static std::map<G4int,std::map<G4String,G4double>> ED_Total ;
     G4ThreadLocal static std::map<G4int,std::map<G4String,G4double>> ED2_Total ;
+    G4ThreadLocal static std::map<G4int,std::map<G4String,G4double>> Fluence ;
+
     G4ThreadLocal static G4int rank;
     G4ThreadLocal static G4int thread;
     G4ThreadLocal static G4int DataID;
@@ -108,6 +111,7 @@ private:
     std::map<G4int,std::map<G4String,unsigned long long int>> NOfValues;
     std::map<G4int,std::map<G4String,G4double>> ED_Total ;
     std::map<G4int,std::map<G4String,G4double>> ED2_Total ;
+    std::map<G4int,std::map<G4String,G4double>> Fluence ;
 
     G4int rank, thread, DataID, EventIndex, NumberOfRanksThreads, TotalEventNumber;
     G4double EnergyEmittedPerThread,ParticleSourceEnergy, ExecutionTimeInMin, OneEventExecutionTimeInMs;

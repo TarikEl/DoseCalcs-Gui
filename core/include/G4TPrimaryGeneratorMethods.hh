@@ -47,6 +47,11 @@
 
 #include <fstream>
 
+extern std::map<unsigned int,G4double* >      EnergyListForCriticality;
+extern std::map<unsigned int,G4ThreeVector* > PositionsListForCriticality;
+extern std::map<unsigned int,G4ParticleMomentum* > MomDirecsListForCriticality;
+extern G4int NumberOfEventInBatch;
+
 class G4TPrimaryGeneratorMethods {
 
 public:
@@ -70,11 +75,16 @@ protected:
     G4ThreadLocal static G4double* EnergyList;
     G4ThreadLocal static G4ThreeVector* PositionsList;
     G4ThreadLocal static G4ThreeVector* MomDirecsList;
+    //G4ThreadLocal static std::map<unsigned int,G4double* >      EnergyListForCriticality;
+    //G4ThreadLocal static std::map<unsigned int,G4ThreeVector* > PositionsListForCriticality;
+    //G4ThreadLocal static std::map<unsigned int,G4ThreeVector* > MomDirecsListForCriticality;
+
     G4ThreadLocal static std::map<unsigned int,G4ParticleDefinition* > particleDefinitionList;
 
     G4ThreadLocal static std::map<G4String,std::map<G4String,std::map<int,G4String>>> PosDataFileNames;
     G4ThreadLocal static std::map<G4String,std::map<double,std::map<int,G4String>>> EneDataFileNames;
     G4ThreadLocal static std::map<G4String,std::map<int,G4String>> MomDirDataFileNames;
+    G4ThreadLocal static std::map<G4String,std::map<int,G4String>> CriticalityDataFileNames;
 
     G4ThreadLocal static double* PosXList;
     G4ThreadLocal static double* PosYList;
@@ -90,9 +100,9 @@ protected:
     G4ThreadLocal static G4double XMOMD;
     G4ThreadLocal static G4double YMOMD;
     G4ThreadLocal static G4double ZMOMD;
-    G4ThreadLocal static G4double Voxel0PosX;
-    G4ThreadLocal static G4double Voxel0PosY;
-    G4ThreadLocal static G4double Voxel0PosZ;
+    //G4ThreadLocal static G4double Voxel0PosX;
+    //G4ThreadLocal static G4double Voxel0PosY;
+    //G4ThreadLocal static G4double Voxel0PosZ;
     G4ThreadLocal static G4int VoxelsInc;
     G4ThreadLocal static G4int CummNumbInVoxelsInc;
     G4ThreadLocal static G4VPhysicalVolume* WorldPhysicalVolume;
@@ -114,6 +124,10 @@ protected:
     G4double* PositionsList;
     G4double* MomDirecsList;
 
+    //std::map<unsigned int,G4double* >      EnergyListForCriticality;
+    //std::map<unsigned int,G4ThreeVector* > PositionsListForCriticality;
+    //std::map<unsigned int,G4ThreeVector* > MomDirecsListForCriticality;
+
     double* PosXList;
     double* PosYList;
     double* PosZList;
@@ -126,6 +140,8 @@ protected:
     std::map<G4String,std::map<G4String,std::map<int,G4String>>> PosDataFileNames;
     std::map<G4String,std::map<double,std::map<int,G4String>>> EneDataFileNames;
     std::map<G4String,std::map<int,G4String>> MomDirDataFileNames;
+    std::map<G4String,std::map<int,G4String>> CriticalityDataFileNames;
+
 
     G4double X;
     G4double Y;
@@ -133,9 +149,9 @@ protected:
     G4double XMOMD;
     G4double YMOMD;
     G4double ZMOMD;
-    G4double Voxel0PosX;
-    G4double Voxel0PosY;
-    G4double Voxel0PosZ;
+    //G4double Voxel0PosX;
+    //G4double Voxel0PosY;
+    //G4double Voxel0PosZ;
 
     G4int VoxelsInc;
     G4int CummNumbInVoxelsInc;
@@ -157,11 +173,14 @@ protected:
 
     void SourceInitialization();
     void GunInitialize();
+    void FillDataMapsForNeutronCriticality();
+    void GetEventDataFromCriticalityDataFile();
     void GetEventsData();
 
     void GenerateEventsParticle();
     //virtual void GenerateEventsPosition();
     void GenerateEventsPosition();
+    void RotatePosition();
     void GenerateEventsMomentumDirection();
     void GenerateEventsEnergy();
     void OpenFilesToSaveGeneratedData();

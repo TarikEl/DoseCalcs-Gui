@@ -86,7 +86,6 @@ int main(int argc,char** argv){
     ResultCalculation->createLatexTables();
     ResultCalculation->createDataInCSVFormat();
 
-
 #ifdef ANALYSIS_USE
     ResultCalculation->GenerateROOTFileForAllResults();
     ResultCalculation->GenerateSelfCrossGraphs();
@@ -94,11 +93,11 @@ int main(int argc,char** argv){
 
     ResultCalculation->GenerateCrossSectionGraphs();
     ResultCalculation->GenerateSourceComputationTimeGraph();
-#endif
 
-#ifdef VOX_USE
-    ResultCalculation->ReadVoxelsResult();
+//#ifdef VOX_USE
     ResultCalculation->GenerateVoxel2DGraphs();
+//#endif
+
 #endif
 
     ResultCalculation->GenerateEventsDataHisto();

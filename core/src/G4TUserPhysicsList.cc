@@ -269,7 +269,6 @@
 #include "G4HadronPhysicsShielding.hh"
 #include "G4HadronPhysicsShieldingLEND.hh"
 
-#include "G4RegionStore.hh"
 
 #include "G4RadioactiveDecayPhysics.hh"
 

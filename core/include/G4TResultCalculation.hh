@@ -51,20 +51,22 @@ public:
 
     void ReadSimulationData();
     void Initialization();
+    void InitializeVoxelizedData();
     void setRankID(G4int n ){ RankID = n;}
     void MergeSimulationsData();
     G4String getOneOrMultiSimulations(){return OneOrMultiSimulations;}
     //G4int getRankNum(){return NumberOfRanksThreads;}
     bool DirectoryExists( const char* pzPath );
 
-    void setExeFromMerge(G4bool n ){ExeFromMerge = n;}
+    //void setExeFromMerge(G4bool n ){ExeFromMerge = n;}
     void setUseAllResultsFiles(G4bool n ){UseAllResultsFiles = n;}
     void setV(G4bool n ){V = n;}
 
 private:
+    G4bool GETVOXELDATA;
 
     G4bool UseAllResultsFiles;
-    G4bool ExeFromMerge;
+    //G4bool ExeFromMerge;
 
     G4bool VOX_USE;
     G4bool GenerateVoxelsResuls;
@@ -196,6 +198,7 @@ private:
     G4double ADUnitFactor;
     G4double HUnitFactor;
     G4double EUnitFactor;
+    G4double DCCUnitFactor;
 
     G4String AEUnit;
     G4String AFUnit;
@@ -204,6 +207,7 @@ private:
     G4String ADUnit;
     G4String HUnit;
     G4String EUnit;
+    G4String DCCUnit;
 
     G4String UnitPerParticle;
     G4String UnitPerDecay;
@@ -239,6 +243,9 @@ private:
 
     unsigned long long int * VoxNOfValues ;
     std::map<G4String,unsigned long long int> NOfValues;
+    unsigned long long int * VoxFluence ;
+    std::map<G4String,unsigned long long int> Fluence;
+
     unsigned long long int TotalEventNumber;
     unsigned long long int TotalNumberOfSteps;
     std::map<G4String,std::map<G4double,std::map<G4String,std::map<G4String,unsigned long long int>>>> NumberOfSteps;
@@ -305,6 +312,15 @@ private:
     std::map<G4String,G4double> E_SDev ;
     std::map<G4String,G4double> E_RelS_D ;
 
+    std::map<G4String,G4double> DCC_Total ;
+    std::map<G4String,G4double> DCC2_Total ;
+    std::map<G4String,G4double> DCC_Mean ;
+    std::map<G4String,G4double> DCC2_Mean ;
+    std::map<G4String,G4double> DCC_Var ;
+    std::map<G4String,G4double> DCC_SDev ;
+    std::map<G4String,G4double> DCC_RelS_D ;
+    std::map<G4String,G4double> EE_RelS_D ;
+
     std::vector<G4String> DoseCalcsQuantities;
     std::map<G4String,std::map<G4String,G4double>> TotalValueOfQuantity;
 
@@ -333,6 +349,8 @@ private:
     std::map<G4String, G4double> SCte ;
     std::map<G4String, G4double> HCte ;
     std::map<G4String, G4double> ECte ;
+    std::map<G4String, G4double> DCCCte ;
+    std::map<G4String, G4double> EECte ;
 
     std::map<G4String,std::vector<G4String>> ReadedResultFilesPaths;
 
@@ -376,6 +394,7 @@ private:
     G4double* VoxS_Total ;
     G4double* VoxH_Total ;
     G4double* VoxE_Total ;
+    G4double* VoxDCC_Total ;
 
     //std::vector<unsigned int> getCNID() const { return CNID;}
     //G4double* getCopyNumberMassSize() const { return CopyNumberMassSize;}
@@ -435,6 +454,7 @@ private:
     std::map<unsigned int, G4double> VoxSCte ;
     std::map<unsigned int, G4double> VoxHCte ;
     std::map<unsigned int, G4double> VoxECte ;
+    std::map<unsigned int, G4double> VoxDCCCte ;
 
     void ReadThreadVoxelResultFile(G4String);
     void VoxelQuantitiesCalculation();

@@ -436,85 +436,97 @@ For "Voxels" and "TET" source types:
 
 ex2 : /SourceData/setEventsInitialPosData cm Voxels AllRegions 3 Liver Brain Spleen Liver Brain Spleen
 
-3. Other Sources Types
+3. Other Source Positions Generation Types
 
  .. code-block::
 
-    /SourceData/setEventsInitialPosData [Length Unit] Point [SourceName] [x y z]
+    /SourceData/setEventsInitialPosData [Length Unit] Point [SourceName] [x y z] [RotationAxis] [RotationAngle]
 
-ex : /SourceData/setEventsInitialPosData cm Point Source1 10 5 8
-
- .. code-block::
-
-    /SourceData/setEventsInitialPosData [Length Unit] Beam [SourceName] [x y z] [BeamSDev]
-
-ex : /SourceData/setEventsInitialPosData cm Plane Source1 10 5 8 2
+ex : /SourceData/setEventsInitialPosData cm Point Source1 10 5 8  Y 45
 
  .. code-block::
 
-    /SourceData/setEventsInitialPosData [Length Unit] Plane [SourceName] [x y z] Square [Axis] [HalfX]
+    /SourceData/setEventsInitialPosData [Length Unit] Beam [SourceName] [x y z] [Axis] [BeamSDev] [RotationAxis] [RotationAngle]
 
-ex : /SourceData/setEventsInitialPosData cm Plane Source1 10 5 8 Square X 16
-
- .. code-block::
-
-    /SourceData/setEventsInitialPosData [Length Unit] Plane [SourceName] [x y z] Rectangle [Axis] [HalfX] [HalfY]
-
-ex : /SourceData/setEventsInitialPosData cm Plane Source1 10 5 8 Rectangle X 11 12
+ex : /SourceData/setEventsInitialPosData cm Beam Source1 10 5 8 Z 2  Y 45
 
  .. code-block::
 
-    /SourceData/setEventsInitialPosData [Length Unit] Plane [SourceName] [x y z] Circle [Axis] [Radius]
+    /SourceData/setEventsInitialPosData [Length Unit] Plane [SourceName] [x y z] Square [Axis] [HalfX] [RotationAxis] [RotationAngle]
 
-ex : /SourceData/setEventsInitialPosData cm Plane Source1 10 5 8 Circle X 16
-
- .. code-block::
-
-    /SourceData/setEventsInitialPosData [Length Unit] Plane [SourceName] [x y z] Ellipse [Axis] [HalfX] [HalfY]
-
-ex : /SourceData/setEventsInitialPosData cm Plane Source1 10 5 8 Ellipse X 11 12
+ex : /SourceData/setEventsInitialPosData cm Plane Source1 10 5 8 Square X 16  Y 45
 
  .. code-block::
 
-    /SourceData/setEventsInitialPosData [Length Unit] Surface [SourceName] [x y z] Sphere [Radius]
+    /SourceData/setEventsInitialPosData [Length Unit] Plane [SourceName] [x y z] Rectangle [Axis] [HalfX] [HalfY] [RotationAxis] [RotationAngle]
 
-ex : /SourceData/setEventsInitialPosData cm Surface Source1 10 5 8 Sphere 11
-
- .. code-block::
-
-    /SourceData/setEventsInitialPosData [Length Unit] Surface [SourceName] [x y z] Ellipsoid [HalfX] [HalfY] [HalfZ]
-
-ex : /SourceData/setEventsInitialPosData cm Surface Source1 10 5 8 Ellipsoid 11 13 5
+ex : /SourceData/setEventsInitialPosData cm Plane Source1 10 5 8 Rectangle X 11 12  Y 45
 
  .. code-block::
 
-    /SourceData/setEventsInitialPosData [Length Unit] Solid [SourceName] [x y z] Para [HalfX] [HalfY] [HalfZ]
+    /SourceData/setEventsInitialPosData [Length Unit] Plane [SourceName] [x y z] Circle [Axis] [Radius] [RotationAxis] [RotationAngle]
 
-ex : /SourceData/setEventsInitialPosData cm Solid Source1 10 5 8 Para 11 13 5
-
- .. code-block::
-
-    /SourceData/setEventsInitialPosData [Length Unit] Solid [SourceName] [x y z] EllipticCylinder [HalfX] [HalfY] [HalfZ]
-
-ex : /SourceData/setEventsInitialPosData cm Solid Source1 10 5 8 EllipticCylinder 11 13 5
+ex : /SourceData/setEventsInitialPosData cm Plane Source1 10 5 8 Circle X 16  Y 45
 
  .. code-block::
 
-    /SourceData/setEventsInitialPosData [Length Unit] Solid [SourceName] [x y z] Cylinder [Radius] [HalfZ]
+    /SourceData/setEventsInitialPosData [Length Unit] Plane [SourceName] [x y z] Ellipse [Axis] [HalfX] [HalfY] [RotationAxis] [RotationAngle]
 
-ex : /SourceData/setEventsInitialPosData cm Solid Source1 10 5 8 Cylinder 11 13
-
- .. code-block::
-
-    /SourceData/setEventsInitialPosData [Length Unit] Solid [SourceName] [x y z] Sphere [Radius]
-
-ex : /SourceData/setEventsInitialPosData cm Solid Source1 10 5 8 Sphere 11
+ex : /SourceData/setEventsInitialPosData cm Plane Source1 10 5 8 Ellipse X 11 12  Y 45
 
  .. code-block::
 
-    /SourceData/setEventsInitialPosData [Length Unit] Solid [SourceName] [x y z] Ellipsoid [HalfX] [HalfY] [HalfZ]
+    /SourceData/setEventsInitialPosData [Length Unit] Plane [SourceName] [x y z] Annulus [Axis] [RadiusIn] [RadiusOut] [RotationAxis] [RotationAngle]
 
-ex : /SourceData/setEventsInitialPosData cm Solid Source1 10 5 8 Ellipsoid 11 13 5
+ex : /SourceData/setEventsInitialPosData cm Plane Source1 10 5 8 Annulus X 11 15  Y 45
+
+ .. code-block::
+
+    /SourceData/setEventsInitialPosData [Length Unit] Surface [SourceName] [x y z] Sphere [Radius] [RotationAxis] [RotationAngle]
+
+ex : /SourceData/setEventsInitialPosData cm Surface Source1 10 5 8 Sphere 11  Y 45
+
+ .. code-block::
+
+    /SourceData/setEventsInitialPosData [Length Unit] Surface [SourceName] [x y z] Ellipsoid [HalfX] [HalfY] [HalfZ] [RotationAxis] [RotationAngle]
+
+ex : /SourceData/setEventsInitialPosData cm Surface Source1 10 5 8 Ellipsoid 11 13 5 Y 45
+
+ .. code-block::
+
+    /SourceData/setEventsInitialPosData [Length Unit] Surface [SourceName] [x y z] Cylinder [Radius] [HalfZ] [RotationAxis] [RotationAngle]
+
+ex : /SourceData/setEventsInitialPosData cm Surface Source1 10 5 8 Cylinder 11 13 Y 45
+
+ .. code-block::
+
+    /SourceData/setEventsInitialPosData [Length Unit] Solid [SourceName] [x y z] Para [HalfX] [HalfY] [HalfZ] [RotationAxis] [RotationAngle]
+
+ex : /SourceData/setEventsInitialPosData cm Solid Source1 10 5 8 Para 11 13 5 Y 45
+
+ .. code-block::
+
+    /SourceData/setEventsInitialPosData [Length Unit] Solid [SourceName] [x y z] EllipticCylinder [HalfX] [HalfY] [HalfZ] [RotationAxis] [RotationAngle]
+
+ex : /SourceData/setEventsInitialPosData cm Solid Source1 10 5 8 EllipticCylinder 11 13 5 Y 45
+
+ .. code-block::
+
+    /SourceData/setEventsInitialPosData [Length Unit] Solid [SourceName] [x y z] Cylinder [Radius] [HalfZ] [RotationAxis] [RotationAngle]
+
+ex : /SourceData/setEventsInitialPosData cm Solid Source1 10 5 8 Cylinder 11 13  Y 45
+
+ .. code-block::
+
+    /SourceData/setEventsInitialPosData [Length Unit] Solid [SourceName] [x y z] Sphere [Radius] [RotationAxis] [RotationAngle]
+
+ex : /SourceData/setEventsInitialPosData cm Solid Source1 10 5 8 Sphere 11  Y 45
+
+ .. code-block::
+
+    /SourceData/setEventsInitialPosData [Length Unit] Solid [SourceName] [x y z] Ellipsoid [HalfX] [HalfY] [HalfZ] [RotationAxis] [RotationAngle]
+
+ex : /SourceData/setEventsInitialPosData cm Solid Source1 10 5 8 Ellipsoid 11 13 5 Y 45
 
 .. When using DICOM geometry with region segmentation, the events' initial locations are derived from a source region. The command /useVoxelAccumulatedActivity simulates events from all the PET imaging data, with each voxel emitting a number of events based on the voxel's accumulated activity. As a consequence, the deposited energy, absorbed dose, and equivalent dosage for each voxel are computed, and the final data for the simulated phantom is determined by accumulating voxel data. 
 .. code-block: :
@@ -615,9 +627,103 @@ ex : /SourceData/setEventsInitialMomDirData degree Uniform
 
  .. code-block::
 
-    /SourceData/setEventsInitialMomDirData [Angle Unit] Directed [Theta] [Phi]
+    /SourceData/setEventsInitialMomDirData [Angle Unit] Directed TetaPhi [Theta] [Phi]
 
-ex : /SourceData/setEventsInitialMomDirData degree Directed 145 30
+ex : /SourceData/setEventsInitialMomDirData degree Directed ThetaPhi 145 30
+
+ .. code-block::
+
+    /SourceData/setEventsInitialMomDirData [Length Unit] Directed ToPoint [x y z]
+
+ex : /SourceData/setEventsInitialMomDirData degree Directed ToPoint 30 54 12
+
+ .. code-block::
+
+    /SourceData/setEventsInitialMomDirData [Length Unit] Directed ParallelTo [Plane Axis] [SecondeAxisCordinate ThirdAxisCordinate]
+
+ex : /SourceData/setEventsInitialMomDirData degree Directed ParallelTo Z 30 54
+
+ .. code-block::
+
+    /SourceData/setEventsInitialMomDirData [Length Unit] Directed ToVolume [x y z] [BoxXHalfSize BoxYHalfSize BoxZHalfSize]
+
+ex : /SourceData/setEventsInitialMomDirData degree Directed ToVolume 0 0 0 21 11 56
+
+
+Initial Positions and Momentum Direction for Radiation Source Employed For External Dosimetry
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+For antero-posterior (AP), postero-anterior (PA), leftlateral (LLAT), right-lateral (RLAT), 360° rotational (ROT), fully isotropic (ISO), cranial (CRA) and caudal (CAU):
+
+
+/SourceData/setEventsInitialPosData cm Plane ROT 0 0 0 Cylinder 40 90
+/SourceData/setEventsInitialMomDirData degree Directed ParallelTo Z 0 0
+
+/SourceData/setEventsInitialPosData cm Plane ISO 0 0 0 Sphere 110
+/SourceData/setEventsInitialMomDirData degree Directed ToVolume 0 0 0 20 12 90
+
+/SourceData/setEventsInitialPosData cm Plane CRA 0 0 -100 Rectangle Z 20 12 
+/SourceData/setEventsInitialMomDirData degree Directed ThetaPhi 0 0 
+
+/SourceData/setEventsInitialPosData cm Plane CAU 0 0 100 Rectangle Z 20 12 
+/SourceData/setEventsInitialMomDirData degree Directed ThetaPhi 180 0
+
+/SourceData/setEventsInitialPosData cm Plane RLAT 25 0 0 Rectangle X 20 90 
+/SourceData/setEventsInitialMomDirData degree Directed ThetaPhi 90 180 
+
+/SourceData/setEventsInitialPosData cm Plane LLAT -25 0 0 Rectangle X 20 90
+/SourceData/setEventsInitialMomDirData degree Directed ThetaPhi 90 0 
+
+/SourceData/setEventsInitialPosData cm Plane AP 0 15 0 Rectangle Y 90 20
+/SourceData/setEventsInitialMomDirData degree Directed ThetaPhi 90 270
+
+/SourceData/setEventsInitialPosData cm Plane PA 0 -15 0 Rectangle Y 90 20
+/SourceData/setEventsInitialMomDirData degree Directed ThetaPhi 90 90
+
+For different angles:
+
+/SourceData/setEventsInitialPosData Ang-90 25 0 0 Rectangle X 14 90
+/SourceData/setEventsInitialMomDirData degree Directed ThetaPhi 90 180 
+
+/SourceData/setEventsInitialPosData Ang-75 25 0 0 Rectangle X 14 90 Z 15
+/SourceData/setEventsInitialMomDirData degree Directed ThetaPhi 90 195
+
+/SourceData/setEventsInitialPosData Ang-60 25 0 0 Rectangle X 16 90 Z 30
+/SourceData/setEventsInitialMomDirData degree Directed ThetaPhi 90 210 
+
+/SourceData/setEventsInitialPosData Ang-45 25 0 0 Rectangle X 19 90 Z 45
+/SourceData/setEventsInitialMomDirData degree Directed ThetaPhi 90 225
+
+/SourceData/setEventsInitialPosData Ang-30 25 0 0 Rectangle X 20 90 Z 60
+/SourceData/setEventsInitialMomDirData degree Directed ThetaPhi 90 240 
+
+/SourceData/setEventsInitialPosData Ang-15 25 0 0 Rectangle X 20 90 Z 75
+/SourceData/setEventsInitialMomDirData degree Directed ThetaPhi 90 255
+
+/SourceData/setEventsInitialPosData Ang-0 25 0 0 Rectangle X 20 90 Z 90
+/SourceData/setEventsInitialMomDirData degree Directed ThetaPhi 90 270
+
+/SourceData/setEventsInitialPosData Ang15 25 0 0 Rectangle X 20 90 Z 105
+/SourceData/setEventsInitialMomDirData degree Directed ThetaPhi 90 285
+
+/SourceData/setEventsInitialPosData Ang30 25 0 0 Rectangle X 20 90 Z 120
+/SourceData/setEventsInitialMomDirData degree Directed ThetaPhi 90 300
+
+/SourceData/setEventsInitialPosData Ang45 25 0 0 Rectangle X 20 90 Z 135
+/SourceData/setEventsInitialMomDirData degree Directed ThetaPhi 90 315
+
+/SourceData/setEventsInitialPosData Ang60 25 0 0 Rectangle X 16 90 Z 150
+/SourceData/setEventsInitialMomDirData degree Directed ThetaPhi 90 330
+
+/SourceData/setEventsInitialPosData Ang75 25 0 0 Rectangle X 14 90 Z 165
+/SourceData/setEventsInitialMomDirData degree Directed ThetaPhi 90 345
+
+/SourceData/setEventsInitialPosData Ang90 25 0 0 Rectangle X 14 90 Z 180
+/SourceData/setEventsInitialMomDirData degree Directed ThetaPhi 90 360
+
+/SourceData/setEventsInitialPosData Ang+-180 0 -15 0 Rectangle Y 90 20
+/SourceData/setEventsInitialMomDirData degree Directed ThetaPhi 90 90
+
 
 Setting Events Particle Names
 +++++++++++++++++++++++++++++
@@ -641,7 +747,7 @@ Setting Events Data Number, Activating Data Files Generation
     
 .. [Force Positions Generation] [Force Energies Generation] [Force MomDirs Generation]
 
-[how to use events data] : can be read, save and generate. The read option necessite the existance of data file named with nomenclature "Ene_EnergyDistribution_Energy_DataNumber_ThreadOrRankID.bin", "Pos_SourceType_SourceName_DataNumber_ThreadOrRankID.bin" and "MomDir_MomDirDistribution_MomDir_DataNumber_ThreadOrRankID.bin".
+[how to use events data] : can be read, save and generate, or MyCPPGenerator. "read" option necessite the existance of data file named with nomenclature "Ene_EnergyDistribution_Energy_DataNumber_ThreadOrRankID.bin", "Pos_SourceType_SourceName_DataNumber_ThreadOrRankID.bin" and "MomDir_MomDirDistribution_MomDir_DataNumber_ThreadOrRankID.bin". The "save" option is used when the user wants to simulate and, at the same time, save the simulated initial particle data to a data file in the EventData directory. To generate the initial particle data and save it to files in the EventData directory, use the "generate" option. The "MyCPPGenerator" option is used when the user creates his own code in the provided ModifiedPrimaryGeneratorActio.cc class. This last option necessitates a rebuild of DoseCalcs-Core to consider the new modified code.
 
 ex : /SourceData/useDataGenerationFiles read 
 
@@ -805,9 +911,9 @@ Setting Volumes To Score
 
 The results will be calculated for the set source-target combinations. If you want to calculate the results for all defined sources and targets in results directory, set "all" instead of  "[Volume1] [Volume2] [Volume3] ..." after source and target keyword.
 
-ex1 : /RunAndScoreData/setVolumesToScore source LiverVol LungsVol target SpleenVol PancreasVol
+ex : /RunAndScoreData/setVolumesToScore source LiverVol LungsVol target SpleenVol PancreasVol
 
-ex2 : /RunAndScoreData/setVolumesToScore source all target all
+ex : /RunAndScoreData/setVolumesToScore source all target all
 
 You can define a combination of several geometry-defined target regions in one for example: 
 
@@ -815,11 +921,11 @@ ex : /RunAndScoreData/setVolumesToScore source all target LiverVol LungsVol:Left
 
 The result will be given for LungsVol as a new region in form of combination of LeftLung and RightLung regions.
 
-sex : /RunAndScoreData/setVolumesToScore source all target LungsVol:LeftLung:RightLung
+ex : /RunAndScoreData/setVolumesToScore source all target LungsVol:LeftLung:RightLung
 
 Also, you can generate results by considering a number of simulated source organs as one combined source organ
 
-sex : /RunAndScoreData/setVolumesToScore source LungsVol:LeftLung:RightLung target all 
+ex : /RunAndScoreData/setVolumesToScore source LungsVol:LeftLung:RightLung target all 
 
 Setting Quantities To Score
 +++++++++++++++++++++++++++
@@ -845,7 +951,7 @@ Setting Number Of Simulation Per Ranks
 
 ex : /RunAndScoreData/setSimNumOnRanks o
 
-Setting Number Of threads
+Setting Number Of Threads
 +++++++++++++++++++++++++
 
  .. code-block::
@@ -901,11 +1007,11 @@ To calculate absorbed dose, equivalent dose, and effective dose in all body defi
 
  .. code-block::
 
-    /RunAndScoreData/setRadioTracerBiokinetic [RadioTracer] [InjectedActivity] [InjectedActivity Unit] [As1/A0 Unit] [SourceOrgan1] [As1/A0] [SourceOrgan2] [As2/A0] ... [SourceOrgann] [Asn/A0]
+    /RunAndScoreData/setRadioTracerBiokinetic [RadioTracer] [AdministeredActivity] [AdministeredActivity Unit] [As1/A0 Unit] [SourceOrgan1] [As1/A0] [SourceOrgan2] [As2/A0] ... [SourceOrgann] [Asn/A0]
  
-[InjectedActivity] : injected activity of radiotracer (should be set in MBq)
+[AdministeredActivity] : injected activity of radiotracer (should be set in MBq)
 
-[InjectedActivity Unit] can be : Bq, kBq, MBq and GBq. Default is Bq. 
+[AdministeredActivity Unit] can be : Bq, kBq, MBq and GBq. Default is Bq. 
 
 [As/A0 Unit] can be : s, min, h, d and y. Default is s.
 
@@ -925,7 +1031,7 @@ To set the quantities units produced in [ResultsData].
  
 [Quantity] can be : AE, SAF, AD, S, H and E   
 
-[Unit] can be : for AE (MeV, J) , SAF (kg-1, g-1), AD (MeV/kg, Gy, mGy), S (MeV/kg, Gy, mGy), H (MeV/kg, Gy, mGy, Sv, mSv) and E (MeV/kg, Gy, mGy, Sv, mSv) 
+[Unit] can be : for AE (MeV, J) , SAF (kg-1, g-1), AD (MeV/kg, Gy, mGy), S (MeV/kg, Gy, mGy), H (MeV/kg, Gy, mGy, Sv, mSv), E (MeV/kg, Gy, mGy, Sv, mSv), DCC (1/cm2) 
     
 ex : /RunAndScoreData/setQuantitiesUnits AE MeV SAF kg-1 AD MeV/kg S MeV/kg H MeV/kg E MeV/kg 
 
@@ -934,6 +1040,7 @@ The default units are for AE (MeV) , SAF (kg-1), AD (MeV/kg), S (MeV/kg), H (MeV
 Results units :
 
 When the results are given for single particles, the AD, H, and E per particle emission from the source, and for radiotracers, the AD, H, and E per decay of radio isotope in the radiotracer
+
 .. Where AD, H and E results for radiotracer based on administered activity are given without Bq unit.
 
 .. About Scored Results
@@ -947,6 +1054,25 @@ When the results are given for single particles, the AD, H, and E per particle e
 
 .. 3. make shir that a command is not reseted in macros file with a new value
 
+Score at the Voxel Level
++++++++++++++++++++++++++
+
+ .. code-block::
+
+    /RunAndScoreData/generateVoxelsResults
+
+The estimated energy deposited during simulation run will be scored for voxels and not regions; the default is to score at the region level.
+
+Run for Internal or External Dosimetry
+++++++++++++++++++++++++++++++++++++++++
+
+ .. code-block::
+
+    /RunAndScoreData/RunFor [Run Mode]
+
+[Run Mode] can be : for InternalDosimetry, ExternalDosimetry, or MyCPPSteppingAction
+
+The difference between InternalDosimetry and ExternalDosimetry, is that in ExternalDosimetry the fluence is scored during the run. The MyCPPSteppingAction mode is used when the user creates his own code in the provided ModifiedSteppingAction.cc class. This last option necessitates a rebuild of DoseCalcs-Core to consider the new modified code. The default is InternalDosimetry.
 
 Analysis using ROOT
 -------------------------------------
@@ -1022,10 +1148,19 @@ ex : /AnalysisData/generateVariableRegionGraph Volume
 
 [Parameter Name] can be : Volume, Mass, Density, Distance.
 
+Generate Histograms for Voxels 
+++++++++++++++++++++++++++++++++
 
+ .. code-block::
+
+    /AnalysisData/generateVoxelizedHistograms [Quantity] [Irradiation Axis] [Slice Plane] [Slice ID]
+
+ex: /AnalysisData/generateVoxelizedHistograms SAF Z XY 5
+
+This command is used to generate four type of histograms, heat-Map of the given slice ID, Dose Depth Percentage (Bragg Peak) along the irradiation axis, Dose Profile for slice plane, and 3D distribution of Quantity in all geometry.
 
 Generate Events Data Histograms
-+++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++
 
  .. code-block::
 

@@ -33,6 +33,7 @@ public:
     void create_RootInstall_sh_file();
     void create_RootInstall_Dir_file();
     void create_AppInstall_sh_file();
+    void create_Geant4ExampleInstall_sh_file();
 
     void get_file_using_Downloading(QString Url, QString download_Directory, QString FileName);
     void getPathsFromEditLines();
@@ -74,6 +75,7 @@ public:
     QString MPI_text_shFile;
     QString CMAKE_text_shFile;
     QString App_text_shFile;
+    QString Geant4Example_text_shFile;
     QString DCMTK_text_shFile;
     QString Root_text_shFile;
     QString Prequest_text_shFile;
@@ -85,9 +87,12 @@ public:
     QString DCMTK_sh_path ;
     QString Root_sh_path ;
     QString App_sh_path ;
+    QString Geant4Example_sh_path ;
+    QString Geant4Example_MacrosFile_path ;
     QString Supplementary_sh_path ;
     QString Prequests_sh_path ;
     QString AllPackagesInstall_sh_path;
+
 
     int coreNumber ;
 
@@ -202,6 +207,25 @@ private slots:
     void on_pushButtonOpenPackagesFilesDir_clicked();
 
     void on_pushButtonDownloadSupplement_clicked();
+
+    void on_pushButtonBuildRunGeant4ExampleShow_clicked();
+
+    void on_pushButtonAppSourceDir_clicked();
+
+    void on_pushButtonAppBuildDir_clicked();
+
+
+    void on_pushButtonGenerateShellFileForExampleBuilding_clicked();
+
+    void on_pushButtonBuildExample_clicked();
+
+    void on_pushButtonRunExample_clicked();
+
+    void on_pushButtonLoadInstaller_clicked();
+
+    void on_pushButtonOpenBuildDir_clicked();
+
+    void on_pushButtonEditAFile_clicked();
 
 private:
     Highlighter* highlighter ;
