@@ -653,7 +653,7 @@ ex : /SourceData/setEventsInitialMomDirData degree Directed ToVolume 0 0 0 21 11
 Initial Positions and Momentum Direction for Radiation Source Employed For External Dosimetry
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-For antero-posterior (AP), postero-anterior (PA), leftlateral (LLAT), right-lateral (RLAT), 360° rotational (ROT), fully isotropic (ISO), cranial (CRA) and caudal (CAU):
+1. For antero-posterior (AP), postero-anterior (PA), leftlateral (LLAT), right-lateral (RLAT), 360° rotational (ROT), fully isotropic (ISO), cranial (CRA) and caudal (CAU):
 
 
 /SourceData/setEventsInitialPosData cm Plane ROT 0 0 0 Cylinder 40 90
@@ -680,7 +680,7 @@ For antero-posterior (AP), postero-anterior (PA), leftlateral (LLAT), right-late
 /SourceData/setEventsInitialPosData cm Plane PA 0 -15 0 Rectangle Y 90 20
 /SourceData/setEventsInitialMomDirData degree Directed ThetaPhi 90 90
 
-For different angles:
+2. For different angles:
 
 /SourceData/setEventsInitialPosData Ang-90 25 0 0 Rectangle X 14 90
 /SourceData/setEventsInitialMomDirData degree Directed ThetaPhi 90 180 

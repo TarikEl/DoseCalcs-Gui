@@ -742,7 +742,9 @@ The user must use the C++ Geant4 syntax to code the world physical volume as wel
 </section>
 <section id="initial-positions-and-momentum-direction-for-radiation-source-employed-for-external-dosimetry">
 <h3>Initial Positions and Momentum Direction for Radiation Source Employed For External Dosimetry<a class="headerlink" href="#initial-positions-and-momentum-direction-for-radiation-source-employed-for-external-dosimetry" title="Link to this heading"></a></h3>
-<p>For antero-posterior (AP), postero-anterior (PA), leftlateral (LLAT), right-lateral (RLAT), 360° rotational (ROT), fully isotropic (ISO), cranial (CRA) and caudal (CAU):</p>
+<ol class="arabic simple">
+<li><p>For antero-posterior (AP), postero-anterior (PA), leftlateral (LLAT), right-lateral (RLAT), 360° rotational (ROT), fully isotropic (ISO), cranial (CRA) and caudal (CAU):</p></li>
+</ol>
 <p>/SourceData/setEventsInitialPosData cm Plane ROT 0 0 0 Cylinder 40 90
 /SourceData/setEventsInitialMomDirData degree Directed ParallelTo Z 0 0</p>
 <p>/SourceData/setEventsInitialPosData cm Plane ISO 0 0 0 Sphere 110
@@ -759,7 +761,9 @@ The user must use the C++ Geant4 syntax to code the world physical volume as wel
 /SourceData/setEventsInitialMomDirData degree Directed ThetaPhi 90 270</p>
 <p>/SourceData/setEventsInitialPosData cm Plane PA 0 -15 0 Rectangle Y 90 20
 /SourceData/setEventsInitialMomDirData degree Directed ThetaPhi 90 90</p>
-<p>For different angles:</p>
+<ol class="arabic simple" start="2">
+<li><p>For different angles:</p></li>
+</ol>
 <p>/SourceData/setEventsInitialPosData Ang-90 25 0 0 Rectangle X 14 90
 /SourceData/setEventsInitialMomDirData degree Directed ThetaPhi 90 180</p>
 <p>/SourceData/setEventsInitialPosData Ang-75 25 0 0 Rectangle X 14 90 Z 15
