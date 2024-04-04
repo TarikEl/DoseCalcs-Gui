@@ -198,6 +198,25 @@ void G4TActionInitialization::Build() const {
             G4cout << " \n  -- G4TModifiedSteppingAction" << G4endl;
 
             SetUserAction(new G4TModifiedSteppingAction(runAction));
+        }else{
+            if(GenerateVoxelsResuls=="yes"){
+                G4cout << " \n  -- G4TVoxelsSteppingAction" << G4endl;
+
+                SetUserAction(new G4TVoxelsSteppingAction(runAction));
+            }
+            else{
+                if( ParamType == 0){
+                    G4cout << " \n  -- G4TParamSteppingAction" << G4endl;
+
+                    //std::cout << "\n\n\n\n\n\n\n\n\n\n VOXTET_USE " << VOXTET_USE << " SourceType "<< SourceType << " ParamType "<< ParamType << std::endl;
+                    SetUserAction(new G4TParamSteppingAction(runAction));
+                }else{
+
+                    G4cout << " \n  -- G4TNestedParamSteppingAction" << G4endl;
+
+                    SetUserAction(new G4TNestedParamSteppingAction(runAction));
+                }
+            }
         }
     }else{
 
@@ -215,6 +234,10 @@ void G4TActionInitialization::Build() const {
             G4cout << " \n  -- G4TModifiedSteppingAction" << G4endl;
 
             SetUserAction(new G4TModifiedSteppingAction(runAction));
+        }else{
+            G4cout << " \n  -- G4TModifiedSteppingAction" << G4endl;
+            SetUserAction(new G4TSteppingAction(runAction));
+
         }
 
     }
