@@ -30,7 +30,6 @@
 #include "G4TSteppingAction.hh"
 #include "G4TRunAction.hh"
 #include "G4Step.hh"
-#include "G4RunManager.hh"
 
 //G4ThreadLocal G4double G4TSteppingAction::edep;
 //G4ThreadLocal G4String G4TSteppingAction::reg;

@@ -125,8 +125,9 @@ G4TResultCalculation::G4TResultCalculation(){
     DCCUnit = "pGy/cm2";
 
     UnitPerParticle = "Particle";
-    UnitPerDecay = "Decay";
-    
+    UnitPerRadioTracerDecay = "Decay";
+    UnitPerRadionuclideDecay = "Decay";
+
     ResidenceTimeUnitFactor = 1.;
     ResidenceTimeUnit = "s";
     
@@ -1042,6 +1043,8 @@ void G4TResultCalculation::ReadSimulationData(){
                         G4String Word;
                         G4String S;
                         G4double total = 0;
+                        G4double LastEnergy = 0.;
+
                         while (file1 >> Word) {
                             
                             if(Word == "gamma" || Word == "e-" || Word == "e+" || Word == "alpha" || Word == "proton" || Word == "neutron"){
@@ -1052,15 +1055,19 @@ void G4TResultCalculation::ReadSimulationData(){
                                 continue;
                             }
                             
-
                             G4double EVal = atof(Word);
                             G4double PVal; file1 >> PVal;
                             total += PVal;
                             RadioTracerEnergyPerCent[RadioTracerName][RPar][EVal] = PVal*100;
                             RadioTracerParticleTotalProbability[RadioTracerName][RPar] = total;
 
-                            if(S == "Spectrum"){}else{}
+                            if(S == "Spectrum"){
+                                RadioTracerEnergyPerCent[RadioTracerName][RPar][EVal] = (EVal-LastEnergy)*PVal*100;
+                            }else{
+                                RadioTracerEnergyPerCent[RadioTracerName][RPar][EVal] = PVal*100;
+                            }
 
+                            LastEnergy = EVal;
                             std::cout << " RadioTracerName " << RadioTracerName << " RPar = " << RPar << " EVal = " << EVal << " PVal = " << PVal << " total = " << total << std::endl;
                         }
 
@@ -1097,7 +1104,7 @@ void G4TResultCalculation::ReadSimulationData(){
                 
                 std::stringstream unittext ;
                 unittext<<InjectedActivity<<AdministeredActivityUnit;
-                UnitPerDecay = unittext.str().c_str();
+                UnitPerRadioTracerDecay = unittext.str().c_str();
 
                 if(ResidenceTimeUnit == "min"){
                     ResidenceTimeUnitFactor = 60;
@@ -1232,6 +1239,10 @@ void G4TResultCalculation::ReadSimulationData(){
                         }else if(uni == "kGy"){
                             SUnit = "kGy";
                             SUnitFactor = MeV_to_J*1e-3;
+                        }else if(uni == "mGy/MBq"){
+                            SUnit = "mGy";
+                            SUnitFactor = MeV_to_J*1e+3/Bq_to_MBq;
+                            UnitPerRadionuclideDecay = "MBq";
                         }
                         if(V)G4cout << " Quantity " << Quant << " unit " << uni << " SUnitFactor " << SUnitFactor << G4endl ;
                     }else if(Quant == "H"){
@@ -1262,6 +1273,14 @@ void G4TResultCalculation::ReadSimulationData(){
                         }else if(uni == "mSv"){
                             HUnit = "mSv";
                             HUnitFactor = MeV_to_J*1e+3*Gy_to_Sv;
+                        }else if(uni == "mGy/MBq"){
+                            SUnit = "mGy";
+                            SUnitFactor = MeV_to_J*1e+3/Bq_to_MBq;
+                            UnitPerRadionuclideDecay = "MBq";
+                        }else if(uni == "mSv/MBq"){
+                            SUnit = "mSv";
+                            SUnitFactor = MeV_to_J*1e+3*Gy_to_Sv/Bq_to_MBq;
+                            UnitPerRadionuclideDecay = "MBq";
                         }
                         if(V)G4cout << " Quantity " << Quant << " unit " << uni << " HUnitFactor " << HUnitFactor << G4endl ;
                     }else if(Quant == "E"){
@@ -1292,6 +1311,14 @@ void G4TResultCalculation::ReadSimulationData(){
                         }else if(uni == "kGy"){
                             EUnit = "kGy";
                             EUnitFactor = MeV_to_J*1e-3;
+                        }else if(uni == "mGy/MBq"){
+                            SUnit = "mGy";
+                            SUnitFactor = MeV_to_J*1e+3/Bq_to_MBq;
+                            UnitPerRadionuclideDecay = "MBq";
+                        }else if(uni == "mSv/MBq"){
+                            SUnit = "mSv";
+                            SUnitFactor = MeV_to_J*1e+3*Gy_to_Sv/Bq_to_MBq;
+                            UnitPerRadionuclideDecay = "MBq";
                         }
                         if(V)G4cout << " Quantity " << Quant << " unit " << uni << " EUnitFactor " << EUnitFactor << G4endl ;
                     }
@@ -1321,6 +1348,82 @@ void G4TResultCalculation::ReadSimulationData(){
             }
         }
         file1.close();
+
+
+        if(TissueFactorMap.size()==0){
+            G4String FilePath = "../PackagesAndFiles/ICRPDATA/ICRP110RegionsData";
+            std::ifstream file(FilePath.c_str() , std::ios::binary);
+
+            TissueFactorMap.clear();
+
+            if(file.is_open()){
+
+                double WT, frac, frac1, Mass1 , Mass2;
+
+                std::string line, indicator, organ, word;
+
+                while (getline(file, line)) {
+
+                    //G4cout << " the line " << line << G4"\n" ;
+
+                    std::istringstream A(line);
+
+                    if(A.str().empty()){
+                        continue;
+                    }
+
+                    //QTextStream(stdout) << word.c_str() << " "<< Mass1 <<  " " << Mass2 <<"\n";
+
+                    A >> word ;
+                    if(word == "#"){
+                        continue;
+                    }
+                    else if(word == "Source"){
+                        indicator = "Source";
+                        continue;
+                    } else if (word == "Target"){
+                        indicator = "Target";
+                        continue;
+                    } else if (word == "WT-factor"){
+                        indicator = "WT-factor";
+                        continue;
+                    } else if (word == "OtherTissues"){
+                        //QTextStream(stdout) << " the word " << word.c_str() << "\n" ;
+                        indicator = "OtherTissues";
+                        continue;
+                    } else if (word == "TotalBody"){
+                        //QTextStream(stdout) << " the word " << word.c_str() << "\n" ;
+                        indicator = "TotalBody";
+                        continue;
+                    } else if (word == "NewSourceRegions"){
+                        //QTextStream(stdout) << " the word " << word.c_str() << "\n" ;
+                        indicator = "NewSourceRegions";
+                        continue;
+                    } else{
+
+                        if (indicator == "WT-factor"){
+
+                            organ = word;
+                            A >> WT ;
+                            if(organ.c_str() == "#"){
+                                continue;
+                            }
+
+                            //G4cout << organ.c_str() << " " << WT << " ";
+                            TissueFactorMap[organ.c_str()] = WT;
+                            while (A >> word && A >> frac){
+
+                                TissueFactorMap[word.c_str()] = WT;
+                                //G4cout << word.c_str() << " "<< frac <<  " ";
+                            }
+                        }
+                    }
+                }
+            }
+            else{
+                G4cout << "cannot open the file " << FilePath.c_str() << " to read the tissue weighting factors"<< G4endl ;
+            }
+        }
     }
     else{
         G4cout << "cannot open the file " << filename1.str().c_str() << G4endl ;
@@ -1896,6 +1999,9 @@ void G4TResultCalculation::RegionQuantitiesCalculation(){
     }
     if(V)std::fprintf(stdout,"---------------------------------------------------------------------------------------------------------------------------------------------------\n");
     
+    G4double A1 = 0;
+    G4double A2 = 0;
+
     G4double jjj = 0. ;
     for(G4int gg = 0 ; gg < (G4int)OrgansNameVector.size() ; gg++){
         
@@ -1914,12 +2020,12 @@ void G4TResultCalculation::RegionQuantitiesCalculation(){
         DCCCte[OrgansNameVector[gg]] = DCCUnitFactor  /(VolumeNameMassMap[OrgansNameVector[gg]]*Fluence[OrgansNameVector[gg]]);
 
         AF_Total[OrgansNameVector[gg]]  = ED_Total[OrgansNameVector[gg]]*AFCte[OrgansNameVector[gg]];
-        SAF_Total[OrgansNameVector[gg]] = ED_Total[OrgansNameVector[gg]]*SAFCte[OrgansNameVector[gg]]; ;
+        SAF_Total[OrgansNameVector[gg]] = ED_Total[OrgansNameVector[gg]]*SAFCte[OrgansNameVector[gg]];
         AD_Total[OrgansNameVector[gg]]  = ED_Total[OrgansNameVector[gg]]*ADCte[OrgansNameVector[gg]];
         S_Total[OrgansNameVector[gg]]   = ED_Total[OrgansNameVector[gg]]*SCte[OrgansNameVector[gg]];
         H_Total[OrgansNameVector[gg]]   = ED_Total[OrgansNameVector[gg]]*HCte[OrgansNameVector[gg]];
         E_Total[OrgansNameVector[gg]]   = ED_Total[OrgansNameVector[gg]]*ECte[OrgansNameVector[gg]];
-        DCC_Total[OrgansNameVector[gg]]   = ED_Total[OrgansNameVector[gg]]*DCCCte[OrgansNameVector[gg]];
+        DCC_Total[OrgansNameVector[gg]] = ED_Total[OrgansNameVector[gg]]*DCCCte[OrgansNameVector[gg]];
 
         //G4cout << " OrgansNameVector[gg] " << OrgansNameVector[gg]
         //       << " DCCUnitFactor " << DCCUnitFactor
@@ -1949,6 +2055,14 @@ void G4TResultCalculation::RegionQuantitiesCalculation(){
         ResultTable["H"  ][ParticleName][ParticleSourceEnergy][SourceRegionName][OrgansNameVector[gg]] = H_Total  [OrgansNameVector[gg]];
         ResultTable["E"  ][ParticleName][ParticleSourceEnergy][SourceRegionName][OrgansNameVector[gg]] = E_Total  [OrgansNameVector[gg]];
         ResultTable["DCC"][ParticleName][ParticleSourceEnergy][SourceRegionName][OrgansNameVector[gg]] = DCC_Total[OrgansNameVector[gg]];
+
+        //ResultTable["EAm"][ParticleName][ParticleSourceEnergy][SourceRegionName]["All"] += E_Total[OrgansNameVector[gg]];
+        //ResultTable["FluenceAm"][ParticleName][ParticleSourceEnergy][SourceRegionName]["All"] += Fluence[OrgansNameVector[gg]];
+        A1 += E_Total[OrgansNameVector[gg]];
+        A2 += Fluence[OrgansNameVector[gg]]*TissueFactorMap[OrgansNameVector[gg]];
+        if( __isnan(A2) && __isinf(A2) && A2 == 0 && A2 == NULL){}else{
+            ResultTable["DCCAm"][ParticleName][ParticleSourceEnergy][SourceRegionName]["All"] = A1/A2;
+        }
 
         if( __isnan(NOfValues[OrgansNameVector[gg]]) && __isinf(NOfValues[OrgansNameVector[gg]]) && NOfValues[OrgansNameVector[gg]] == 0 && NOfValues[OrgansNameVector[gg]] == NULL){
             G4cout << "\n\n !!!!!!!!!!!!!!!!!!!!!!!!!! " << OrgansNameVector[gg] << " total number of steps is not defined (" << TotalNumberOfSteps << ")\n";
@@ -2253,6 +2367,29 @@ void G4TResultCalculation::GenerateRegionResultFile(){
             }
             //std::fprintf(file,"* ----------------------------------------------------------------------------------------------------------------------------------------------\n");
             //std::fprintf(stdout,"* ----------------------------------------------------------------------------------------------------------------------------------------------\n");
+
+            if(QuantityNamesToScore[ikl] == "DCC"){
+
+                G4cout << std::setw(24) << std::left << "Ambient_DCC_ToED " << " "
+                       << std::setw(SZ) << std::left << std::scientific << std::setprecision(VarSZ) << ResultTable["DCCAm"][ParticleName][ParticleSourceEnergy][SourceRegionName]["All"] << " "
+                       << std::setw(SZ) << std::left << std::scientific << std::setprecision(VarSZ) << "1 "  << " "
+                       << std::setw(SZ) << std::left << std::scientific << std::setprecision(VarSZ) << "1 "
+                       << std::resetiosflags(G4cout.basefield) << std::resetiosflags( G4cout.floatfield) << std::resetiosflags( G4cout.flags())
+                       << std::setw(SZ) << std::left << "1 "
+                       << std::setw(SZ) << std::left << "1 "
+                       << std::setw(SZ) << std::left << "1 "
+                       << std::setw(SZ) << std::left << "1 \n";
+
+                file << std::setw(24) << std::left << "Ambient_DCC_ToED " << " "
+                     << std::setw(SZ) << std::left << std::scientific << std::setprecision(VarSZ) << ResultTable["DCCAm"][ParticleName][ParticleSourceEnergy][SourceRegionName]["All"] << " "
+                     << std::setw(SZ) << std::left << std::scientific << std::setprecision(VarSZ) << "1 "  << " "
+                     << std::setw(SZ) << std::left << std::scientific << std::setprecision(VarSZ) << "1 "
+                     << std::resetiosflags(G4cout.basefield) << std::resetiosflags( G4cout.floatfield) << std::resetiosflags( G4cout.flags())
+                     << std::setw(SZ) << std::left << "1 "
+                     << std::setw(SZ) << std::left << "1 "
+                     << std::setw(SZ) << std::left << "1 "
+                     << std::setw(SZ) << std::left << "1 \n";
+            }
             G4cout << "* ----------------------------------------------------------------------------------------------------------------------------------------------" << G4endl;
             file << "* ----------------------------------------------------------------------------------------------------------------------------------------------\n";
 
@@ -2265,40 +2402,40 @@ void G4TResultCalculation::GenerateRegionResultFile(){
         }
     }
 }
-void G4TResultCalculation::GenerateRegionResultForRadioTracer(){
-    
+void G4TResultCalculation::GenerateExternalDosimetryCoefficients(){
+
     if(V)G4cout << "\n-------- " << __FUNCTION__ << "\n" << G4endl ;
-    
+
     G4String RadioTracer_NAME;
     G4String Quantity_NAME;
     G4String Particle_NAME;
     G4String Source_NAME;
     G4String Target_NAME;
-    
+
     G4double Energy_Val;
-    
+
     G4String Quantity_NAME_UNIT;
-    
+
     // calculation of radiotracer quantity for src-trg combination and for organ
     for ( auto it = RadioTracerEnergyPerCent.begin(); it != RadioTracerEnergyPerCent.end(); ++it  ){
-        
+
         RadioTracer_NAME = it->first;
-        
+
         RadiTracerParticleEnergyDataString[RadioTracer_NAME].str("");
         RadiTracerParticleEnergyDataString[RadioTracer_NAME].clear();
         RadiTracerDataForTotalDoseString[RadioTracer_NAME].str("");
         RadiTracerDataForTotalDoseString[RadioTracer_NAME].clear();
-        
+
         //G4cout << "RadioTracer_NAME " << RadioTracer_NAME <<G4endl;
-        
+
         for ( auto it2 = it->second.begin(); it2 != it->second.end(); ++it2  ){
             Particle_NAME = it2->first;
             //G4cout << "Particle_NAME " << Particle_NAME <<G4endl;
-            
+
             for ( auto it3 = it2->second.begin(); it3 != it2->second.end(); ++it3  ){
                 Energy_Val = it3->first;
                 //G4cout << "Energy_Val " << Energy_Val <<G4endl;
-                
+
                 if(ResultTable["AE"][Particle_NAME][Energy_Val].size() == 0){
                     G4cout << "\n-----> For Radiotracer " << RadioTracer_NAME
                            << ", the data for particle "<< Particle_NAME << " with energy "<< Energy_Val
@@ -2316,14 +2453,14 @@ void G4TResultCalculation::GenerateRegionResultForRadioTracer(){
                         RadiTracerDataForTotalDoseString[RadioTracer_NAME] << " | (by simulation) "<< Particle_NAME << " " << Energy_Val << "MeV " << RadioTracerEnergyPerCent[RadioTracer_NAME][Particle_NAME][Energy_Val] << "%";
                     }
                 }
-                
+
                 TotalRadioTracerEmmitedEnergy_Val[RadioTracer_NAME] += Energy_Val;
-                
+
                 // this is to provide results for all sources that can user simulate without taking into account the RadioTracer source Organs
                 for ( auto DD = ResultTable["S"][Particle_NAME][Energy_Val].begin(); DD != ResultTable["S"][Particle_NAME][Energy_Val].end(); ++DD  ){
                     Source_NAME  = DD->first;
                     //G4cout << "Source_NAME " << Source_NAME <<G4endl;
-                    
+
                     for ( auto XX = RadioTracerSourceTi_Fs_ai_AsPerA0[RadioTracer_NAME].begin(); XX != RadioTracerSourceTi_Fs_ai_AsPerA0[RadioTracer_NAME].end(); ++XX  ){
                         G4String SrcOrg = XX->first;
                         if(Source_NAME == SrcOrg){
@@ -2335,7 +2472,7 @@ void G4TResultCalculation::GenerateRegionResultForRadioTracer(){
 
                     for ( auto CC = DD->second.begin(); CC != DD->second.end(); ++CC  ){
                         Target_NAME  = CC->first;
-                        
+
                         double vb= ResultTable["AE"][Particle_NAME][Energy_Val][Source_NAME][Target_NAME];
                         if(__isinf(vb) || __isnan(vb) || vb == 0.){continue;}
 
@@ -2425,7 +2562,7 @@ void G4TResultCalculation::GenerateRegionResultForRadioTracer(){
                 long double val = 0. ;
                 for ( auto it5 = it4->second.begin(); it5 != it4->second.end(); ++it5  ){
                     Target_NAME = it5->first;
-                    
+
                     // to calculate ER for each source-target
                     if(Quantity_NAME == "E" || Quantity_NAME == "AD"){
                         double ccc = RadioTracerQuantitySourceTargetValue[RadioTracer_NAME][Quantity_NAME][Source_NAME][Target_NAME];
@@ -2470,7 +2607,7 @@ void G4TResultCalculation::GenerateRegionResultForRadioTracer(){
             }
         }
     }
-    
+
 
     // to calculate quantity ratio ER for each organ
     for ( auto DoseCalcsQuantities = RadioTracerQuantityOrganValue.begin(); DoseCalcsQuantities != RadioTracerQuantityOrganValue.end(); ++DoseCalcsQuantities  ){
@@ -2522,13 +2659,13 @@ void G4TResultCalculation::GenerateRegionResultForRadioTracer(){
 
 
     if(IsAllTargetsToScore == true){ TargetNamesToScore.clear();for (G4int gg = 0 ; gg < OrgansNameVector.size() ; gg++) {TargetNamesToScore.push_back(OrgansNameVector[gg]);}}
-    
+
     for ( auto it0 = RadioTracerQuantitySourceTargetValue.begin(); it0 != RadioTracerQuantitySourceTargetValue.end(); ++it0  ){
-        
+
         RadioTracer_NAME = it0->first;
-        
+
         for ( auto it1 = it0->second.begin(); it1 != it0->second.end(); ++it1  ){
-            
+
             Quantity_NAME = it1->first;
 
             // to write just the results of chosen quantities
@@ -2544,32 +2681,32 @@ void G4TResultCalculation::GenerateRegionResultForRadioTracer(){
                 Quantity_NAME_UNIT = "SAF[" + SAFUnit + "]";
             }
             else if(Quantity_NAME == "S"){
-                Quantity_NAME_UNIT = "S[(" + SUnit+ ")/"+UnitPerDecay+"]";
+                Quantity_NAME_UNIT = "S[(" + SUnit+ ")/"+UnitPerRadioTracerDecay+"]";
             }
             else if(Quantity_NAME == "AD"){
-                Quantity_NAME_UNIT = "AD[(" + ADUnit+ ")/"+UnitPerDecay+"]";
+                Quantity_NAME_UNIT = "AD[(" + ADUnit+ ")/"+UnitPerRadioTracerDecay+"]";
             }
             else if(Quantity_NAME == "H"){
-                Quantity_NAME_UNIT = "H[(" + HUnit+ ")/"+UnitPerDecay+"]";
+                Quantity_NAME_UNIT = "H[(" + HUnit+ ")/"+UnitPerRadioTracerDecay+"]";
             }
             else if(Quantity_NAME == "E"){
-                Quantity_NAME_UNIT = "E[(" + EUnit+ ")/"+UnitPerDecay+"]";
+                Quantity_NAME_UNIT = "E[(" + EUnit+ ")/"+UnitPerRadioTracerDecay+"]";
             }
             else if(Quantity_NAME == "ER"){
-                Quantity_NAME_UNIT = "ER[\%/"+UnitPerDecay+"]";
+                Quantity_NAME_UNIT = "ER[\%/"+UnitPerRadioTracerDecay+"]";
             }
-            
+
             for ( auto it2 = it1->second.begin(); it2 != it1->second.end(); ++it2  ){
                 Source_NAME = it2->first;
-                
+
                 G4cout << "\n\n================================== Generation of " << Quantity_NAME_UNIT << " deposition data in body target organs for intake of radio-tracer: " << RadioTracer_NAME << " into simulated source organ: " << Source_NAME << " ==================================\n" << G4endl ;
-                
+
                 //bool IsIn = false;
                 //for (int gg = 0 ; gg < TargetNamesToScore.size() ; gg++) {
                 //    if(TargetNamesToScore[gg] == Source_NAME){IsIn = true; break; }
                 //}
                 //if(IsIn == false){continue;}
-                
+
                 std::ostringstream filname ;
                 filname << ResultDirectoryPath << "/ResultsData";
                 G4String fileNameString = filname.str().c_str();
@@ -2579,7 +2716,7 @@ void G4TResultCalculation::GenerateRegionResultForRadioTracer(){
                 if(file.is_open()){
 
                     if(V)G4cout << "Creating file  " << fileNameString.c_str() << " - writing the data output : \n"<< G4endl;
-                    
+
                     std::ostringstream OutS;
                     OutS << "****** "
                          << Quantity_NAME << " "
@@ -2591,9 +2728,9 @@ void G4TResultCalculation::GenerateRegionResultForRadioTracer(){
                          << TotalRadioTracerEmmitedEnergy_Val[RadioTracer_NAME] << " "
                          << RadiTracerParticleEnergyDataString[RadioTracer_NAME].str().c_str() << " ";
                     OutS << "\n";
-                    
+
                     G4String headerText= OutS.str().c_str();
-                    
+
                     file << headerText.c_str();
                     G4cout << headerText.c_str();
 
@@ -2618,7 +2755,7 @@ void G4TResultCalculation::GenerateRegionResultForRadioTracer(){
                     for ( auto it3 = it2->second.begin(); it3 != it2->second.end(); ++it3  ){
                         Target_NAME = it3->first;
                         if(Target_NAME == "World"){continue;}
-                        
+
                         bool IsIn = false;
                         for (int gg = 0 ; gg < TargetNamesToScore.size() ; gg++) {
                             if(TargetNamesToScore[gg] == Target_NAME){IsIn = true; break; }
@@ -2656,29 +2793,29 @@ void G4TResultCalculation::GenerateRegionResultForRadioTracer(){
                     }
                     //std::fprintf(file,"* ----------------------------------------------------------------------------------------------------------------------------------------------\n");
                     //std::fprintf(stdout,"* ----------------------------------------------------------------------------------------------------------------------------------------------\n");
-                    
+
                     G4cout << "* ----------------------------------------------------------------------------------------------------------------------------------------------" << G4endl;
                     file << "* ----------------------------------------------------------------------------------------------------------------------------------------------\n";
 
                     file.close();
-                    
+
                 }
             }
         }
     }
-    
+
     if(GenerateResultsForRadioTracerExams){
-        
+
         for ( auto it0 = RadioTracerQuantityOrganValue.begin(); it0 != RadioTracerQuantityOrganValue.end(); ++it0  ){
-            
+
             RadioTracer_NAME = it0->first;
-            
+
             if(RadioTracerInjectedActivity[RadioTracer_NAME] == 0.){
                 continue;
             }
-            
+
             for ( auto it1 = it0->second.begin(); it1 != it0->second.end(); ++it1  ){
-                
+
                 Quantity_NAME = it1->first;
 
                 // to write just the results of chosen quantities
@@ -2694,26 +2831,26 @@ void G4TResultCalculation::GenerateRegionResultForRadioTracer(){
                     Quantity_NAME_UNIT = "SAF[" + SAFUnit + "]";
                 }
                 else if(Quantity_NAME == "S"){
-                    Quantity_NAME_UNIT = "S[(" + SUnit+ ")/"+UnitPerDecay+"]";
+                    Quantity_NAME_UNIT = "S[(" + SUnit+ ")/"+UnitPerRadioTracerDecay+"]";
                 }
                 else if(Quantity_NAME == "AD"){
-                    Quantity_NAME_UNIT = "AD[(" + ADUnit+ ")/"+UnitPerDecay+"]";
+                    Quantity_NAME_UNIT = "AD[(" + ADUnit+ ")/"+UnitPerRadioTracerDecay+"]";
                 }
                 else if(Quantity_NAME == "H"){
-                    Quantity_NAME_UNIT = "H[(" + HUnit+ ")/"+UnitPerDecay+"]";
+                    Quantity_NAME_UNIT = "H[(" + HUnit+ ")/"+UnitPerRadioTracerDecay+"]";
                 }
                 else if(Quantity_NAME == "E"){
-                    Quantity_NAME_UNIT = "E[(" + EUnit+ ")/"+UnitPerDecay+"]";
+                    Quantity_NAME_UNIT = "E[(" + EUnit+ ")/"+UnitPerRadioTracerDecay+"]";
                 }
                 else if(Quantity_NAME == "ER"){
-                    Quantity_NAME_UNIT = "ER[\%/"+UnitPerDecay+"]";
+                    Quantity_NAME_UNIT = "ER[\%/"+UnitPerRadioTracerDecay+"]";
                 }
                 else if(Quantity_NAME == "DR"){
-                    Quantity_NAME_UNIT = "DR[\%/"+UnitPerDecay+"]";
+                    Quantity_NAME_UNIT = "DR[\%/"+UnitPerRadioTracerDecay+"]";
                 }
 
                 G4cout << "\n\n================================== Generation of " << Quantity_NAME_UNIT << " deposition data in all simulated body organs for " << RadioTracerInjectedActivity[RadioTracer_NAME] << " Bq intake of radio-tracer: " << RadioTracer_NAME << " into " << GeometrySymbol<< " simulated body ==================================\n" << G4endl ;
-                
+
                 std::ostringstream filname ;
                 filname << ResultDirectoryPath << "/ResultsData";
                 G4String fileNameString = filname.str().c_str();
@@ -2723,7 +2860,7 @@ void G4TResultCalculation::GenerateRegionResultForRadioTracer(){
                 if(file.is_open()){
 
                     if(V)G4cout << "Creating file  " << fileNameString.c_str() << " - writing the data output : \n"<< G4endl;
-                    
+
                     std::ostringstream OutS;
                     OutS << "****** "
                          << Quantity_NAME << " "
@@ -2737,11 +2874,11 @@ void G4TResultCalculation::GenerateRegionResultForRadioTracer(){
                          << "InjectedActivity(Bq)=" << RadioTracerInjectedActivity[RadioTracer_NAME] << " "
                          << Quantity_NAME_UNIT << "_Total"<< "=" << TotalDoseFromRadioTracer[RadioTracer_NAME][Quantity_NAME] << " "
                             ;
-                    
+
                     OutS << "\n";
-                    
+
                     G4String headerText= OutS.str().c_str();
-                    
+
 
                     file << headerText.c_str();
                     G4cout << headerText.c_str();
@@ -2823,7 +2960,567 @@ void G4TResultCalculation::GenerateRegionResultForRadioTracer(){
             }
         }
     }
-    
+
+}
+void G4TResultCalculation::GenerateRegionResultForRadioTracer(){
+
+    if(V)G4cout << "\n-------- " << __FUNCTION__ << "\n" << G4endl ;
+
+    G4String RadioTracer_NAME;
+    G4String Quantity_NAME;
+    G4String Particle_NAME;
+    G4String Source_NAME;
+    G4String Target_NAME;
+
+    G4double Energy_Val;
+
+    G4String Quantity_NAME_UNIT;
+
+    // calculation of radiotracer quantity for src-trg combination and for organ
+    for ( auto it = RadioTracerEnergyPerCent.begin(); it != RadioTracerEnergyPerCent.end(); ++it  ){
+
+        RadioTracer_NAME = it->first;
+
+        RadiTracerParticleEnergyDataString[RadioTracer_NAME].str("");
+        RadiTracerParticleEnergyDataString[RadioTracer_NAME].clear();
+        RadiTracerDataForTotalDoseString[RadioTracer_NAME].str("");
+        RadiTracerDataForTotalDoseString[RadioTracer_NAME].clear();
+
+        //G4cout << "RadioTracer_NAME " << RadioTracer_NAME <<G4endl;
+
+        for ( auto it2 = it->second.begin(); it2 != it->second.end(); ++it2  ){
+            Particle_NAME = it2->first;
+            //G4cout << "Particle_NAME " << Particle_NAME <<G4endl;
+
+            for ( auto it3 = it2->second.begin(); it3 != it2->second.end(); ++it3  ){
+                Energy_Val = it3->first;
+                //G4cout << "Energy_Val " << Energy_Val <<G4endl;
+
+                if(ResultTable["AE"][Particle_NAME][Energy_Val].size() == 0){
+                    G4cout << "\n-----> For Radiotracer " << RadioTracer_NAME
+                           << ", the data for particle "<< Particle_NAME << " with energy "<< Energy_Val
+                           << " are not found (this source configuration not simulated), the related quantities values will be generated by interpolating the already existed data of "
+                           << Particle_NAME << " with energies surround the "
+                           << Energy_Val << " from the existing source regions." << G4endl;
+                    if(RadiotracerDataFomFile == false){
+                        RadiTracerParticleEnergyDataString[RadioTracer_NAME] << " | (by interpolation) "<< Particle_NAME << " " << Energy_Val << "MeV " << RadioTracerEnergyPerCent[RadioTracer_NAME][Particle_NAME][Energy_Val] << "%";
+                        RadiTracerDataForTotalDoseString[RadioTracer_NAME] << " | (by interpolation) "<< Particle_NAME << " " << Energy_Val << "MeV " << RadioTracerEnergyPerCent[RadioTracer_NAME][Particle_NAME][Energy_Val] << "%";
+                    }
+                    GenerateRadiotracerQuantitiesByInterpolation(Particle_NAME,Energy_Val);
+                }else{
+                    if(RadiotracerDataFomFile == false){
+                        RadiTracerParticleEnergyDataString[RadioTracer_NAME] << " | (by simulation) "<< Particle_NAME << " " << Energy_Val << "MeV " << RadioTracerEnergyPerCent[RadioTracer_NAME][Particle_NAME][Energy_Val] << "%";
+                        RadiTracerDataForTotalDoseString[RadioTracer_NAME] << " | (by simulation) "<< Particle_NAME << " " << Energy_Val << "MeV " << RadioTracerEnergyPerCent[RadioTracer_NAME][Particle_NAME][Energy_Val] << "%";
+                    }
+                }
+
+                TotalRadioTracerEmmitedEnergy_Val[RadioTracer_NAME] += Energy_Val;
+
+                // this is to provide results for all sources that can user simulate without taking into account the RadioTracer source Organs
+                for ( auto DD = ResultTable["S"][Particle_NAME][Energy_Val].begin(); DD != ResultTable["S"][Particle_NAME][Energy_Val].end(); ++DD  ){
+                    Source_NAME  = DD->first;
+                    //G4cout << "Source_NAME " << Source_NAME <<G4endl;
+
+                    for ( auto XX = RadioTracerSourceTi_Fs_ai_AsPerA0[RadioTracer_NAME].begin(); XX != RadioTracerSourceTi_Fs_ai_AsPerA0[RadioTracer_NAME].end(); ++XX  ){
+                        G4String SrcOrg = XX->first;
+                        if(Source_NAME == SrcOrg){
+                            if(RadiotracerDataFomFile == false){
+                                RadiTracerDataForTotalDoseString[RadioTracer_NAME] << " " << Source_NAME <<" As/A0(s)=" << RadioTracerSourceTi_Fs_ai_AsPerA0[RadioTracer_NAME][Source_NAME] ;
+                            }
+                        }
+                    }
+
+                    for ( auto CC = DD->second.begin(); CC != DD->second.end(); ++CC  ){
+                        Target_NAME  = CC->first;
+
+                        double vb= ResultTable["AE"][Particle_NAME][Energy_Val][Source_NAME][Target_NAME];
+                        if(__isinf(vb) || __isnan(vb) || vb == 0.){continue;}
+
+                        G4double RadiationPerCent = RadioTracerEnergyPerCent[RadioTracer_NAME][Particle_NAME][Energy_Val]/100;
+
+                        G4double CumulatedActivityInSource = RadioTracerInjectedActivity[RadioTracer_NAME]
+                                *RadioTracerSourceTi_Fs_ai_AsPerA0[RadioTracer_NAME][Source_NAME];
+
+                        // values and variance calculation for chosen quantities
+                        for (int rr = 0 ; rr < DoseCalcsQuantities.size() ; rr++) {
+
+                            double ccc = ResultTable[DoseCalcsQuantities[rr]][Particle_NAME][Energy_Val][Source_NAME][Target_NAME];
+                            if( !__isnan(ccc) && !__isinf(ccc) && ccc != 0 && ccc != NULL){
+                                RadioTracerQuantitySourceTargetValue[RadioTracer_NAME][DoseCalcsQuantities[rr]][Source_NAME][Target_NAME] +=
+                                        RadiationPerCent
+                                        *ccc;
+
+
+                                // this condition just to show the regions with Wt different to 0 for AD in intake
+                                if( DoseCalcsQuantities[rr] == "AD" && (__isnan(TissueFactorMap[Target_NAME])
+                                                                        || __isinf(TissueFactorMap[Target_NAME])
+                                                                        || TissueFactorMap[Target_NAME] == 0
+                                                                        || TissueFactorMap[Target_NAME] == NULL)){
+
+                                }else{
+                                    RadioTracerQuantityOrganValue[RadioTracer_NAME][DoseCalcsQuantities[rr]][Target_NAME] +=
+                                            RadiationPerCent
+                                            *CumulatedActivityInSource
+                                            *ccc;
+                                }
+                            }
+
+                        }
+
+                        if( !__isnan(NumberOfSteps[Particle_NAME][Energy_Val][Source_NAME][Target_NAME]) && !__isinf(NumberOfSteps[Particle_NAME][Energy_Val][Source_NAME][Target_NAME]) && NumberOfSteps[Particle_NAME][Energy_Val][Source_NAME][Target_NAME] != 0 && NumberOfSteps[Particle_NAME][Energy_Val][Source_NAME][Target_NAME] != NULL){
+
+                            NumberOfStepsInRadiotracerSourceTarget[RadioTracer_NAME][Source_NAME][Target_NAME] +=
+                                    NumberOfSteps[Particle_NAME][Energy_Val][Source_NAME][Target_NAME] ;
+
+                            NumberOfStepsInRadiotracerOrgan[RadioTracer_NAME][Target_NAME] +=
+                                    NumberOfSteps[Particle_NAME][Energy_Val][Source_NAME][Target_NAME] ;
+
+                        }
+
+                        double ccc = TotalAEForRadiotracerRSD["AE"][Particle_NAME][Energy_Val][Source_NAME][Target_NAME];
+
+                        if( !__isnan(ccc) && !__isinf(ccc) && ccc != 0 && ccc != NULL){
+                            RadioTracerQuantitySourceTargetAETotalForRSD[RadioTracer_NAME]["AE"][Source_NAME][Target_NAME] +=
+                                    ccc;
+
+                            //G4cout << " Total for " << Particle_NAME << " "<< Energy_Val << " " << Source_NAME << " "<< Target_NAME << " is " << ccc << G4endl;
+                            RadioTracerQuantityOrganAETotalForRSD[RadioTracer_NAME]["AE"][Target_NAME] +=
+                                    ccc;
+                        }
+
+                        ccc = StandardDeviation["AE"][Particle_NAME][Energy_Val][Source_NAME][Target_NAME];
+                        if( !__isnan(ccc) && !__isinf(ccc) && ccc != 0 && ccc != NULL){
+                            RadioTracerQuantitySourceTargetVariance[RadioTracer_NAME]["AE"][Source_NAME][Target_NAME] +=
+                                    ((RadiationPerCent/100)*ccc)*((RadiationPerCent/100)*ccc);
+
+                            //G4cout << " SD for AE " << Particle_NAME << " "<< Energy_Val << " " << Source_NAME << " "<< Target_NAME << " is " << ccc
+                            //<< " . and Total " << RadioTracerQuantitySourceTargetVariance[RadioTracer_NAME]["AE"][Source_NAME][Target_NAME] << G4endl ;
+
+                            RadioTracerQuantityOrganVAR[RadioTracer_NAME]["AE"][Target_NAME] +=
+                                    ((RadiationPerCent/100)*ccc)*((RadiationPerCent/100)*ccc);
+                        }
+                    }
+                }
+            }
+        }
+        RadiTracerParticleEnergyDataString[RadioTracer_NAME] << " | ";
+        RadiTracerDataForTotalDoseString[RadioTracer_NAME] << " | ";
+    }
+
+
+    // to calculate quantity ratio ER for each source-target
+    for ( auto DoseCalcsQuantities = RadioTracerQuantitySourceTargetValue.begin(); DoseCalcsQuantities != RadioTracerQuantitySourceTargetValue.end(); ++DoseCalcsQuantities  ){
+        RadioTracer_NAME = DoseCalcsQuantities->first;
+        for ( auto it3 = DoseCalcsQuantities->second.begin(); it3 != DoseCalcsQuantities->second.end(); ++it3  ){
+            Quantity_NAME = it3->first;
+            for ( auto it4 = it3->second.begin(); it4 != it3->second.end(); ++it4  ){
+                Source_NAME = it4->first;
+                G4double CumulatedActivityInSource = (RadioTracerInjectedActivity[RadioTracer_NAME]
+                                                      *RadioTracerSourceTi_Fs_ai_AsPerA0[RadioTracer_NAME][Source_NAME]);
+                TotalValueOfQuantity[RadioTracer_NAME][Quantity_NAME] = 0;
+
+                long double val = 0. ;
+                for ( auto it5 = it4->second.begin(); it5 != it4->second.end(); ++it5  ){
+                    Target_NAME = it5->first;
+
+                    // to calculate ER for each source-target
+                    if(Quantity_NAME == "E" || Quantity_NAME == "AD"){
+                        double ccc = RadioTracerQuantitySourceTargetValue[RadioTracer_NAME][Quantity_NAME][Source_NAME][Target_NAME];
+                        if( !__isnan(ccc) && !__isinf(ccc) && ccc != NULL){
+                            TotalValueOfQuantity[RadioTracer_NAME][Quantity_NAME] = TotalValueOfQuantity[RadioTracer_NAME][Quantity_NAME] + ccc;
+                        }
+                    }
+                    if( !__isnan(it5->second) && !__isinf(it5->second) && it5->second != 0 && it5->second != NULL){
+                        val = val + it5->second;
+                        //G4cout <<  " DoseCalcsQuantities->first " << DoseCalcsQuantities->first << " it3->first " << it3->first << " it4->first " << it4->first << " it5->first " << it5->first <<  " it5->second " << it5->second << " val: " << val << G4endl ;
+                    }
+                }
+                // to calculate ER for each source-target
+                if(Quantity_NAME == "E" || Quantity_NAME == "AD"){
+                    if( !__isnan(TotalValueOfQuantity[RadioTracer_NAME][Quantity_NAME]) && !__isinf(TotalValueOfQuantity[RadioTracer_NAME][Quantity_NAME]) && TotalValueOfQuantity[RadioTracer_NAME][Quantity_NAME] != 0 && TotalValueOfQuantity[RadioTracer_NAME][Quantity_NAME] != NULL){
+                        //double val = 0;
+                        for ( auto it5 = it4->second.begin(); it5 != it4->second.end(); ++it5  ){
+                            Target_NAME = it5->first;
+                            if(Quantity_NAME == "E"){
+                                double ccc = RadioTracerQuantitySourceTargetValue[RadioTracer_NAME]["E"][Source_NAME][Target_NAME];
+                                if( !__isnan(ccc) && !__isinf(ccc) && ccc != 0 && ccc != NULL){
+                                    RadioTracerQuantitySourceTargetValue[RadioTracer_NAME]["ER"][Source_NAME][Target_NAME] =
+                                            (RadioTracerQuantitySourceTargetValue[RadioTracer_NAME]["E"][Source_NAME][Target_NAME]/TotalValueOfQuantity[RadioTracer_NAME][Quantity_NAME])*100;
+                                    //val = val + RadioTracerQuantitySourceTargetValue[RadioTracer_NAME]["ER"][Source_NAME][Target_NAME];
+                                    //G4cout << " Source_NAME: " << Source_NAME << " Target_NAME: " << Target_NAME << " val: " << val << G4endl ;
+                                }
+                            }
+                            if(Quantity_NAME == "AD"){
+                                double ccc = RadioTracerQuantitySourceTargetValue[RadioTracer_NAME]["AD"][Source_NAME][Target_NAME];
+                                if( !__isnan(ccc) && !__isinf(ccc) && ccc != 0 && ccc != NULL){
+                                    RadioTracerQuantitySourceTargetValue[RadioTracer_NAME]["DR"][Source_NAME][Target_NAME] =
+                                            (RadioTracerQuantitySourceTargetValue[RadioTracer_NAME]["AD"][Source_NAME][Target_NAME]/TotalValueOfQuantity[RadioTracer_NAME][Quantity_NAME])*100;
+                                    //val = val + RadioTracerQuantitySourceTargetValue[RadioTracer_NAME]["ER"][Source_NAME][Target_NAME];
+                                    //G4cout << " Source_NAME: " << Source_NAME << " Target_NAME: " << Target_NAME << " val: " << val << G4endl ;
+                                }
+                            }
+                        }
+                    }
+                }
+                TotalDoseFromRadioTracer[RadioTracer_NAME][Quantity_NAME] += val * CumulatedActivityInSource;
+                //G4cout << " CumulatedActivityInSource " << CumulatedActivityInSource << " val: " << val << " TotalDoseFromRadioTracer[RadioTracer_NAME][Quantity_NAME] " << TotalDoseFromRadioTracer[RadioTracer_NAME][Quantity_NAME] << G4endl ;
+            }
+        }
+    }
+
+
+    // to calculate quantity ratio ER for each organ
+    for ( auto DoseCalcsQuantities = RadioTracerQuantityOrganValue.begin(); DoseCalcsQuantities != RadioTracerQuantityOrganValue.end(); ++DoseCalcsQuantities  ){
+
+        RadioTracer_NAME = DoseCalcsQuantities->first;
+        TotalValueOfQuantity[RadioTracer_NAME]["E"] = 0;
+        TotalValueOfQuantity[RadioTracer_NAME]["AD"] = 0;
+
+        //For ER
+        for ( auto it4 = DoseCalcsQuantities->second["E"].begin(); it4 != DoseCalcsQuantities->second["E"].end(); ++it4  ){
+            Target_NAME = it4->first;
+            double ccc = it4->second;
+            if( !__isnan(ccc) && !__isinf(ccc) && ccc != 0 && ccc != NULL){
+                TotalValueOfQuantity[RadioTracer_NAME]["E"] = TotalValueOfQuantity[RadioTracer_NAME]["E"] + ccc;
+            }
+        }
+        //double val;
+        for ( auto it4 = DoseCalcsQuantities->second["E"].begin(); it4 != DoseCalcsQuantities->second["E"].end(); ++it4  ){
+            Target_NAME = it4->first;
+            double ccc = it4->second;
+            if( !__isnan(ccc) && !__isinf(ccc) && ccc != 0 && ccc != NULL){
+
+                RadioTracerQuantityOrganValue[RadioTracer_NAME]["ER"][Target_NAME] = (ccc/TotalValueOfQuantity[RadioTracer_NAME]["E"])*100;
+                //val = val + RadioTracerQuantityOrganValue[RadioTracer_NAME]["ER"][Target_NAME];
+                //G4cout << " Target_NAME: " << Target_NAME << " val: " << val << G4endl ;
+            }
+        }
+
+        // For DR
+        for ( auto it4 = DoseCalcsQuantities->second["AD"].begin(); it4 != DoseCalcsQuantities->second["AD"].end(); ++it4  ){
+            Target_NAME = it4->first;
+            double ccc = it4->second;
+            if( !__isnan(ccc) && !__isinf(ccc) && ccc != 0 && ccc != NULL){
+                TotalValueOfQuantity[RadioTracer_NAME]["AD"] = TotalValueOfQuantity[RadioTracer_NAME]["AD"] + ccc;
+            }
+        }
+        //double val;
+        for ( auto it4 = DoseCalcsQuantities->second["AD"].begin(); it4 != DoseCalcsQuantities->second["AD"].end(); ++it4  ){
+            Target_NAME = it4->first;
+            double ccc = it4->second;
+            if( !__isnan(ccc) && !__isinf(ccc) && ccc != 0 && ccc != NULL){
+
+                RadioTracerQuantityOrganValue[RadioTracer_NAME]["DR"][Target_NAME] = (ccc/TotalValueOfQuantity[RadioTracer_NAME]["AD"])*100;
+                //val = val + RadioTracerQuantityOrganValue[RadioTracer_NAME]["ER"][Target_NAME];
+                //G4cout << " Target_NAME: " << Target_NAME << " val: " << val << G4endl ;
+            }
+        }
+    }
+
+
+    if(IsAllTargetsToScore == true){ TargetNamesToScore.clear();for (G4int gg = 0 ; gg < OrgansNameVector.size() ; gg++) {TargetNamesToScore.push_back(OrgansNameVector[gg]);}}
+
+    for ( auto it0 = RadioTracerQuantitySourceTargetValue.begin(); it0 != RadioTracerQuantitySourceTargetValue.end(); ++it0  ){
+
+        RadioTracer_NAME = it0->first;
+
+        for ( auto it1 = it0->second.begin(); it1 != it0->second.end(); ++it1  ){
+
+            Quantity_NAME = it1->first;
+
+            // to write just the results of chosen quantities
+            bool IsIn = false;
+            for (int gg = 0 ; gg < QuantityNamesToScore.size() ; gg++) {if(QuantityNamesToScore[gg] == Quantity_NAME){IsIn = true; break; }}
+            if(IsIn == false){continue;}
+
+
+            if(Quantity_NAME == "AF"){
+                Quantity_NAME_UNIT = "AF[" + AFUnit + "]";
+            }
+            else if(Quantity_NAME == "SAF"){
+                Quantity_NAME_UNIT = "SAF[" + SAFUnit + "]";
+            }
+            else if(Quantity_NAME == "S"){
+                Quantity_NAME_UNIT = "S[(" + SUnit+ ")/"+UnitPerRadionuclideDecay+"]";
+            }
+            else if(Quantity_NAME == "AD"){
+                Quantity_NAME_UNIT = "AD[(" + ADUnit+ ")/"+UnitPerRadionuclideDecay+"]";
+            }
+            else if(Quantity_NAME == "H"){
+                Quantity_NAME_UNIT = "H[(" + HUnit+ ")/"+UnitPerRadionuclideDecay+"]";
+            }
+            else if(Quantity_NAME == "E"){
+                Quantity_NAME_UNIT = "E[(" + EUnit+ ")/"+UnitPerRadionuclideDecay+"]";
+            }
+            else if(Quantity_NAME == "ER"){
+                Quantity_NAME_UNIT = "ER[\%/"+UnitPerRadionuclideDecay+"]";
+            }
+
+            for ( auto it2 = it1->second.begin(); it2 != it1->second.end(); ++it2  ){
+                Source_NAME = it2->first;
+
+                G4cout << "\n\n================================== Generation of " << Quantity_NAME_UNIT << " deposition data in body target organs for intake of radio-tracer: " << RadioTracer_NAME << " into simulated source organ: " << Source_NAME << " ==================================\n" << G4endl ;
+
+                //bool IsIn = false;
+                //for (int gg = 0 ; gg < TargetNamesToScore.size() ; gg++) {
+                //    if(TargetNamesToScore[gg] == Source_NAME){IsIn = true; break; }
+                //}
+                //if(IsIn == false){continue;}
+
+                std::ostringstream filname ;
+                filname << ResultDirectoryPath << "/ResultsData";
+                G4String fileNameString = filname.str().c_str();
+                std::ofstream file(fileNameString.c_str(), std::ios_base::app);
+
+                //if(FILE* file = fopen(fileNameString.c_str(),"a")){
+                if(file.is_open()){
+
+                    if(V)G4cout << "Creating file  " << fileNameString.c_str() << " - writing the data output : \n"<< G4endl;
+
+                    std::ostringstream OutS;
+                    OutS << "****** "
+                         << Quantity_NAME << " "
+                         << Source_NAME << " "
+                         << "RadioTracer "
+                         << RadioTracer_NAME << " "
+                         << GeometrySymbol <<  " "
+                         << Physics << " "
+                         << TotalRadioTracerEmmitedEnergy_Val[RadioTracer_NAME] << " "
+                         << RadiTracerParticleEnergyDataString[RadioTracer_NAME].str().c_str() << " ";
+                    OutS << "\n";
+
+                    G4String headerText= OutS.str().c_str();
+
+                    file << headerText.c_str();
+                    G4cout << headerText.c_str();
+
+                    G4cout << std::setw(24) << std::left << "# Volume" << " "
+                           << std::setw(SZ) << std::left << Quantity_NAME_UNIT.c_str() << " "
+                           << std::setw(SZ) << std::left << "SDev"  << " "
+                           << std::setw(SZ) << std::left << "Rel_SDev(%)" << " "
+                           << std::setw(SZ) << std::left << "Values Num" << " "
+                           << std::setw(SZ) << std::left << "Mass[kg]" << " "
+                           << std::setw(SZ) << std::left << "Volume[cm3]" << " "
+                           << std::setw(SZ) << std::left << "Density[g/cm3] " << " \n";
+
+                    file << std::setw(24) << std::left << "# Volume" << " "
+                         << std::setw(SZ) << std::left << Quantity_NAME_UNIT.c_str() << " "
+                         << std::setw(SZ) << std::left << "SDev"  << " "
+                         << std::setw(SZ) << std::left << "Rel_SDev(%)" << " "
+                         << std::setw(SZ) << std::left << "Values Num" << " "
+                         << std::setw(SZ) << std::left << "Mass[kg]" << " "
+                         << std::setw(SZ) << std::left << "Volume[cm3]" << " "
+                         << std::setw(SZ) << std::left << "Density[g/cm3] " << " \n";
+
+                    for ( auto it3 = it2->second.begin(); it3 != it2->second.end(); ++it3  ){
+                        Target_NAME = it3->first;
+                        if(Target_NAME == "World"){continue;}
+
+                        bool IsIn = false;
+                        for (int gg = 0 ; gg < TargetNamesToScore.size() ; gg++) {
+                            if(TargetNamesToScore[gg] == Target_NAME){IsIn = true; break; }
+                        }
+                        if(IsIn == true){
+
+                            double sdv = std::sqrt(RadioTracerQuantitySourceTargetVariance[RadioTracer_NAME]["AE"][Source_NAME][Target_NAME]);
+                            unsigned long long int sm = NumberOfStepsInRadiotracerSourceTarget[RadioTracer_NAME][Source_NAME][Target_NAME];
+                            double rsdv = ((sdv * sm)/ RadioTracerQuantitySourceTargetAETotalForRSD[RadioTracer_NAME]["AE"][Source_NAME][Target_NAME])*100;
+
+                            //G4cout << " Total for 100*" << sdv << "*"<< sm << "/" << RadioTracerQuantitySourceTargetAETotalForRSD[RadioTracer_NAME]["AE"][Source_NAME][Target_NAME] << "="<< rsdv << G4endl;
+
+                            G4cout << std::setw(24) << std::left << Target_NAME.c_str() << " "
+                                   << std::setw(SZ) << std::left << std::scientific << std::setprecision(VarSZ) << it3->second << " "
+                                   << std::setw(SZ) << std::left << std::scientific << std::setprecision(VarSZ) << sdv << " "
+                                   << std::setw(SZ) << std::left << std::scientific << std::setprecision(VarSZ) << rsdv << " "
+                                   << std::resetiosflags(G4cout.basefield) << std::resetiosflags( G4cout.floatfield) << std::resetiosflags( G4cout.flags())
+                                   << std::setw(SZ) << std::left << sm << " "
+                                   << std::setw(SZ) << std::left << VolumeNameMassMap[Target_NAME] << " "
+                                   << std::setw(SZ) << std::left << VolumeNameVolumeMap[Target_NAME] << " "
+                                   << std::setw(SZ) << std::left << VolumeNameDensityMap[Target_NAME] << " \n";
+
+                            file << std::setw(24) << std::left << Target_NAME.c_str() << " "
+                                 << std::setw(SZ) << std::left << std::scientific << std::setprecision(VarSZ) << it3->second << " "
+                                 << std::setw(SZ) << std::left << std::scientific << std::setprecision(VarSZ) << sdv << " "
+                                 << std::setw(SZ) << std::left << std::scientific << std::setprecision(VarSZ) << rsdv << " "
+                                 << std::resetiosflags(file.basefield) << std::resetiosflags( file.floatfield) << std::resetiosflags( file.flags())
+                                 << std::setw(SZ) << std::left << sm << " "
+                                 << std::setw(SZ) << std::left << VolumeNameMassMap[Target_NAME] << " "
+                                 << std::setw(SZ) << std::left << VolumeNameVolumeMap[Target_NAME] << " "
+                                 << std::setw(SZ) << std::left << VolumeNameDensityMap[Target_NAME] << " \n";
+
+                        }
+                        else{continue;}
+                    }
+                    //std::fprintf(file,"* ----------------------------------------------------------------------------------------------------------------------------------------------\n");
+                    //std::fprintf(stdout,"* ----------------------------------------------------------------------------------------------------------------------------------------------\n");
+
+                    G4cout << "* ----------------------------------------------------------------------------------------------------------------------------------------------" << G4endl;
+                    file << "* ----------------------------------------------------------------------------------------------------------------------------------------------\n";
+
+                    file.close();
+
+                }
+            }
+        }
+    }
+
+    if(GenerateResultsForRadioTracerExams){
+
+        for ( auto it0 = RadioTracerQuantityOrganValue.begin(); it0 != RadioTracerQuantityOrganValue.end(); ++it0  ){
+
+            RadioTracer_NAME = it0->first;
+
+            if(RadioTracerInjectedActivity[RadioTracer_NAME] == 0.){
+                continue;
+            }
+
+            for ( auto it1 = it0->second.begin(); it1 != it0->second.end(); ++it1  ){
+
+                Quantity_NAME = it1->first;
+
+                // to write just the results of chosen quantities
+                bool IsIn = false;
+                for (int gg = 0 ; gg < QuantityNamesToScore.size() ; gg++) {if(QuantityNamesToScore[gg] == Quantity_NAME){IsIn = true; break; }}
+                if(IsIn == false){continue;}
+
+
+                if(Quantity_NAME == "AF"){
+                    Quantity_NAME_UNIT = "AF[" + AFUnit + "]";
+                }
+                else if(Quantity_NAME == "SAF"){
+                    Quantity_NAME_UNIT = "SAF[" + SAFUnit + "]";
+                }
+                else if(Quantity_NAME == "S"){
+                    Quantity_NAME_UNIT = "S[(" + SUnit+ ")/"+UnitPerRadioTracerDecay+"]";
+                }
+                else if(Quantity_NAME == "AD"){
+                    Quantity_NAME_UNIT = "AD[(" + ADUnit+ ")/"+UnitPerRadioTracerDecay+"]";
+                }
+                else if(Quantity_NAME == "H"){
+                    Quantity_NAME_UNIT = "H[(" + HUnit+ ")/"+UnitPerRadioTracerDecay+"]";
+                }
+                else if(Quantity_NAME == "E"){
+                    Quantity_NAME_UNIT = "E[(" + EUnit+ ")/"+UnitPerRadioTracerDecay+"]";
+                }
+                else if(Quantity_NAME == "ER"){
+                    Quantity_NAME_UNIT = "ER[\%/"+UnitPerRadioTracerDecay+"]";
+                }
+                else if(Quantity_NAME == "DR"){
+                    Quantity_NAME_UNIT = "DR[\%/"+UnitPerRadioTracerDecay+"]";
+                }
+
+                G4cout << "\n\n================================== Generation of " << Quantity_NAME_UNIT << " deposition data in all simulated body organs for " << RadioTracerInjectedActivity[RadioTracer_NAME] << " Bq intake of radio-tracer: " << RadioTracer_NAME << " into " << GeometrySymbol<< " simulated body ==================================\n" << G4endl ;
+
+                std::ostringstream filname ;
+                filname << ResultDirectoryPath << "/ResultsData";
+                G4String fileNameString = filname.str().c_str();
+                std::ofstream file(fileNameString.c_str(), std::ios_base::app);
+
+                //if(FILE* file = fopen(fileNameString.c_str(),"a")){
+                if(file.is_open()){
+
+                    if(V)G4cout << "Creating file  " << fileNameString.c_str() << " - writing the data output : \n"<< G4endl;
+
+                    std::ostringstream OutS;
+                    OutS << "****** "
+                         << Quantity_NAME << " "
+                         << "IntakeIntoBody "
+                         << "RadioTracer "
+                         << RadioTracer_NAME << " "
+                         << GeometrySymbol <<  " "
+                         << Physics << " "
+                         << TotalRadioTracerEmmitedEnergy_Val[RadioTracer_NAME] << " "
+                         << RadiTracerDataForTotalDoseString[RadioTracer_NAME].str().c_str() << " "
+                         << "InjectedActivity(Bq)=" << RadioTracerInjectedActivity[RadioTracer_NAME] << " "
+                         << Quantity_NAME_UNIT << "_Total"<< "=" << TotalDoseFromRadioTracer[RadioTracer_NAME][Quantity_NAME] << " "
+                            ;
+
+                    OutS << "\n";
+
+                    G4String headerText= OutS.str().c_str();
+
+
+                    file << headerText.c_str();
+                    G4cout << headerText.c_str();
+
+                    G4cout << std::setw(24) << std::left << "# Volume" << " "
+                           << std::setw(SZ) << std::left << Quantity_NAME_UNIT.c_str() << " "
+                           << std::setw(SZ) << std::left << "SDev"  << " "
+                           << std::setw(SZ) << std::left << "Rel_SDev(%)" << " "
+                           << std::setw(SZ) << std::left << "Values Num" << " "
+                           << std::setw(SZ) << std::left << "Mass[kg]" << " "
+                           << std::setw(SZ) << std::left << "Volume[cm3]" << " "
+                           << std::setw(SZ) << std::left << "Density[g/cm3] " << " \n";
+
+                    file << std::setw(24) << std::left << "# Volume" << " "
+                         << std::setw(SZ) << std::left << Quantity_NAME_UNIT.c_str() << " "
+                         << std::setw(SZ) << std::left << "SDev"  << " "
+                         << std::setw(SZ) << std::left << "Rel_SDev(%)" << " "
+                         << std::setw(SZ) << std::left << "Values Num" << " "
+                         << std::setw(SZ) << std::left << "Mass[kg]" << " "
+                         << std::setw(SZ) << std::left << "Volume[cm3]" << " "
+                         << std::setw(SZ) << std::left << "Density[g/cm3] " << " \n";
+
+                    for ( auto it3 = it1->second.begin(); it3 != it1->second.end(); ++it3  ){
+                        Target_NAME = it3->first;
+                        if(Target_NAME == "World"){continue;}
+
+                        double sdv = std::sqrt(RadioTracerQuantityOrganVAR[RadioTracer_NAME]["AE"][Target_NAME]);
+                        unsigned long long int sm = NumberOfStepsInRadiotracerOrgan[RadioTracer_NAME][Target_NAME];
+                        double rsdv = ((sdv*sm)/RadioTracerQuantityOrganAETotalForRSD[RadioTracer_NAME]["AE"][Target_NAME])*100;
+
+                        G4cout << std::setw(24) << std::left << Target_NAME.c_str() << " "
+                               << std::setw(SZ) << std::left << std::scientific << std::setprecision(VarSZ) << it3->second << " "
+                               << std::setw(SZ) << std::left << std::scientific << std::setprecision(VarSZ) << sdv << " "
+                               << std::setw(SZ) << std::left << std::scientific << std::setprecision(VarSZ) << rsdv << " "
+                               << std::resetiosflags(G4cout.basefield) << std::resetiosflags( G4cout.floatfield) << std::resetiosflags( G4cout.flags())
+                               << std::setw(SZ) << std::left << sm << " "
+                               << std::setw(SZ) << std::left << VolumeNameMassMap[Target_NAME] << " "
+                               << std::setw(SZ) << std::left << VolumeNameVolumeMap[Target_NAME] << " "
+                               << std::setw(SZ) << std::left << VolumeNameDensityMap[Target_NAME] << " \n";
+
+                        file << std::setw(24) << std::left << Target_NAME.c_str() << " "
+                             << std::setw(SZ) << std::left << std::scientific << std::setprecision(VarSZ) << it3->second << " "
+                             << std::setw(SZ) << std::left << std::scientific << std::setprecision(VarSZ) << sdv << " "
+                             << std::setw(SZ) << std::left << std::scientific << std::setprecision(VarSZ) << rsdv << " "
+                             << std::resetiosflags(file.basefield) << std::resetiosflags( file.floatfield) << std::resetiosflags( file.flags())
+                             << std::setw(SZ) << std::left << sm << " "
+                             << std::setw(SZ) << std::left << VolumeNameMassMap[Target_NAME] << " "
+                             << std::setw(SZ) << std::left << VolumeNameVolumeMap[Target_NAME] << " "
+                             << std::setw(SZ) << std::left << VolumeNameDensityMap[Target_NAME] << " \n";
+
+                    }
+
+                    G4cout << std::setw(24) << std::left << "Total" << " "
+                           << std::setw(SZ) << std::left << std::scientific << std::setprecision(VarSZ) << TotalDoseFromRadioTracer[RadioTracer_NAME][Quantity_NAME] << " "
+                           << std::setw(SZ) << std::left << std::scientific << std::setprecision(VarSZ) << 1 << " "
+                           << std::setw(SZ) << std::left << std::scientific << std::setprecision(VarSZ) << 1 << " "
+                           << std::resetiosflags(G4cout.basefield) << std::resetiosflags( G4cout.floatfield) << std::resetiosflags( G4cout.flags())
+                           << std::setw(SZ) << std::left << 1 << " "
+                           << std::setw(SZ) << std::left << 1 << " "
+                           << std::setw(SZ) << std::left << 1 << " "
+                           << std::setw(SZ) << std::left << 1 << " \n";
+
+                    file << std::setw(24) << std::left << "Total" << " "
+                         << std::setw(SZ) << std::left << std::scientific << std::setprecision(VarSZ) << TotalDoseFromRadioTracer[RadioTracer_NAME][Quantity_NAME] << " "
+                         << std::setw(SZ) << std::left << std::scientific << std::setprecision(VarSZ) << 1 << " "
+                         << std::setw(SZ) << std::left << std::scientific << std::setprecision(VarSZ) << 1 << " "
+                         << std::resetiosflags(file.basefield) << std::resetiosflags( file.floatfield) << std::resetiosflags( file.flags())
+                         << std::setw(SZ) << std::left << 1 << " "
+                         << std::setw(SZ) << std::left << 1 << " "
+                         << std::setw(SZ) << std::left << 1 << " "
+                         << std::setw(SZ) << std::left << 1 << " \n";
+
+
+                    G4cout << "* ----------------------------------------------------------------------------------------------------------------------------------------------" << G4endl;
+                    file << "* ----------------------------------------------------------------------------------------------------------------------------------------------\n";
+
+                    file.close();
+                }
+            }
+        }
+    }
+
 }
 void G4TResultCalculation::GenerateRadiotracerQuantitiesByInterpolation(G4String ParticleName, G4double Energy){
     

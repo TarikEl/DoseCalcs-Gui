@@ -53,6 +53,7 @@
 #include "G4TDirectToFilesPrimaryGeneratorAction.hh"
 #include "G4TModifiedPrimaryGeneratorAction.hh"
 #include "G4TReadPrimaryGeneratorAction.hh"
+#include "G4TFileRadionuclidePrimaryGeneratorAction.hh"
 
 #ifdef G4MPI_USE
 //#include "G4TRunActionMaster.hh"
@@ -74,6 +75,7 @@ extern G4bool VOXTET_USE;
 extern G4int ParamType;
 extern G4String GenerateVoxelsResuls;
 extern G4String SimulationIntExtNeutDet;
+extern G4String EnergyDistribution;
 
 G4TActionInitialization::G4TActionInitialization(): G4VUserActionInitialization(){}
 
@@ -162,7 +164,7 @@ void G4TActionInitialization::Build() const {
     //    }
     //}
 
-    G4cout << " \n\n\n * SimulationIntExtNeutDet " << SimulationIntExtNeutDet
+    G4cout << "\n * SimulationIntExtNeutDet " << SimulationIntExtNeutDet
            << "\n * GenerateVoxelsResuls " << GenerateVoxelsResuls
            << G4endl;
 
@@ -237,10 +239,9 @@ void G4TActionInitialization::Build() const {
         }else{
             G4cout << " \n  -- G4TModifiedSteppingAction" << G4endl;
             SetUserAction(new G4TSteppingAction(runAction));
-
         }
-
     }
+
 
     if( TConstruction2->getUseGeneratedData() == "read"){
 
@@ -257,19 +258,32 @@ void G4TActionInitialization::Build() const {
     }
     else{
         if(SourceType=="Voxels"){
-            G4cout << " \n  -- G4TDirectVoxelsPrimaryGeneratorAction" << G4endl;
 
-            SetUserAction(new G4TDirectVoxelsPrimaryGeneratorAction);
+            if(EnergyDistribution == "RadioNuclide" || EnergyDistribution == "File"){
+                SetUserAction(new G4TFileRadionuclidePrimaryGeneratorAction);
+            }else{
+                G4cout << " \n  -- G4TDirectVoxelsPrimaryGeneratorAction" << G4endl;
+
+                SetUserAction(new G4TDirectVoxelsPrimaryGeneratorAction);
+            }
         }
         else if(SourceType=="TET"){
-            G4cout << " \n  -- G4TDirectPrimaryGeneratorAction" << G4endl;
+            if(EnergyDistribution == "RadioNuclide" || EnergyDistribution == "File"){
+                SetUserAction(new G4TFileRadionuclidePrimaryGeneratorAction);
+            }else{
+                G4cout << " \n  -- G4TDirectPrimaryGeneratorAction" << G4endl;
 
-            SetUserAction(new G4TDirectPrimaryGeneratorAction);
+                SetUserAction(new G4TDirectPrimaryGeneratorAction);
+            }
         }
         else {
-            G4cout << " \n  -- G4TDirectPrimaryGeneratorAction" << G4endl;
+            if(EnergyDistribution == "RadioNuclide" || EnergyDistribution == "File"){
+                SetUserAction(new G4TFileRadionuclidePrimaryGeneratorAction);
+            }else{
+                G4cout << " \n  -- G4TDirectPrimaryGeneratorAction" << G4endl;
 
-            SetUserAction(new G4TDirectPrimaryGeneratorAction);
+                SetUserAction(new G4TDirectPrimaryGeneratorAction);
+            }
         }
     }
 

@@ -1,4 +1,4 @@
-//
+﻿//
 // ********************************************************************
 // * License and Disclaimer                                           *
 // *                                                                  *
@@ -23,37 +23,45 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-// 
-/// \file G4TNestedParamSteppingAction.hh
-/// \brief Definition of the G4TNestedParamSteppingAction class
+// Author: Tarik Elghalbzouri,  Abdelmalek Essaâdi University,
+// faculty of sciences Tetouane, morocco. email : telghalbzouri@uae.ac.ma
+//
+// This application is based on code developed by :
+// G. Guerrieri, University of Genova, Italy .
+// S. Guatelli. University of Wollongong, Australia.
+//
 
-#ifndef G4TNestedParamSteppingAction_h
-#define G4TNestedParamSteppingAction_h 1
+#ifndef G4TFileRadionuclidePrimaryGeneratorAction_h
+#define G4TFileRadionuclidePrimaryGeneratorAction_h 1
 
-#include "G4UserSteppingAction.hh"
-//#include "globals.hh"
+#include "G4VUserPrimaryGeneratorAction.hh"
+#include "G4TPrimaryGeneratorMethods.hh"
+#include "G4Navigator.hh"
+#include "globals.hh"
+#include "G4ParticleDefinition.hh"
+#include "G4ParticleMomentum.hh"
+#include "G4AutoLock.hh"
 
-//class G4TVolumeConstruction;
-class G4TRunAction;
+#ifdef G4MPI_USE
+#include "mpi.h"
+#endif
 
-class G4TNestedParamSteppingAction : public G4UserSteppingAction
-{
+#include <fstream>
+
+class G4ParticleGun;
+//class G4GeneralParticleSource;
+class G4Event;
+
+class G4TFileRadionuclidePrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction, public G4TPrimaryGeneratorMethods {
+
 public:
-    G4TNestedParamSteppingAction(G4TRunAction* runAction);
-    virtual ~G4TNestedParamSteppingAction();
+    G4TFileRadionuclidePrimaryGeneratorAction();
+    ~G4TFileRadionuclidePrimaryGeneratorAction();
 
-    virtual void UserSteppingAction(const G4Step* step);
-    
+    void GeneratePrimaries(G4Event* anEvent);
+
 private:
-    //const G4TVolumeConstruction* fDetConstruction;
-    G4TRunAction*  RunAction;
 
-    //G4ThreadLocal static G4double edep;
-    //G4ThreadLocal static G4String reg;
-    //G4ThreadLocal static unsigned int CN;
-
+    G4ParticleGun* particleGun;
 };
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
 #endif

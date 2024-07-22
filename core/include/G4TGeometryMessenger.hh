@@ -116,6 +116,9 @@ private:
     G4UIcommand*          CreateVolumeCMD ;
     G4UIcommand*          DumpGeomCMD ;
 
+    G4UIcommand*          SourceVolumeData ;
+
+
 /*
 
     G4UIcmdWith3VectorAndUnit*   WorldHalfSizeCMD ;

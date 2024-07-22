@@ -31,7 +31,7 @@
 #define G4TSteppingActionVoxelizedExternal_h 1
 
 #include "G4UserSteppingAction.hh"
-#include "globals.hh"
+//#include "globals.hh"
 
 //class G4TVolumeConstruction;
 class G4TRunAction;

@@ -31,7 +31,7 @@
 #include "G4TRunAction.hh"
 #include "G4Step.hh"
 
-extern G4String GenerateVoxelsResuls;
+//extern G4String GenerateVoxelsResuls;
 extern G4String* CopyNumberRegionNameMap;
 
 extern G4int VoxXNumber;

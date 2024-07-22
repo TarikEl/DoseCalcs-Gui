@@ -179,17 +179,17 @@ void G4TReadPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
         l.unlock();
     }
 
-    //G4cout << "\n\n\n\n"<< EvInc <<" PositionsList[EvInc] " << PositionsList[EvInc] << G4endl;
+    //G4cout << "\n\n\n\n"<< EvInc <<" ReadedPositionsList[EvInc] " << ReadedPositionsList[EvInc] << G4endl;
 
     particleGun->SetNumberOfParticles(1);
     particleGun->SetParticleDefinition(G4ParticleTable::GetParticleTable()->FindParticle(ParticleName));
-    particleGun->SetParticlePosition(PositionsList[EvInc]);
-    particleGun->SetParticleMomentumDirection(MomDirecsList[EvInc]);
-    particleGun->SetParticleEnergy(EnergyList[EvInc]);  // Energy comes from .mac file and from GetEnergyWithDistribution() it stay in geant4 default unit
+    particleGun->SetParticlePosition(ReadedPositionsList[EvInc]);
+    particleGun->SetParticleMomentumDirection(ReadedMomDirecsList[EvInc]);
+    particleGun->SetParticleEnergy(ReadedEnergyList[EvInc]);  // Energy comes from .mac file and from GetEnergyWithDistribution() it stay in geant4 default unit
 
     particleGun->GeneratePrimaryVertex(anEvent);
 
-    TotalEmittedEnergy += EnergyList[EvInc] ;
+    TotalEmittedEnergy += ReadedEnergyList[EvInc] ;
     EvInc++;
 
 }

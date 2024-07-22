@@ -63,6 +63,7 @@
 #include "G4PVParameterised.hh"
 #include "G4TVolumeBuilderUsingDICOM.hh"
 #include "G4TCPPGeometryFormat.hh"
+#include "G4TMyGeometry.hh"
 
 #include "G4TVolumeBuilderUsingVoxel.hh"
 
@@ -103,6 +104,9 @@ G4TVolumeConstruction::G4TVolumeConstruction()
 #endif
 
     //CreateICRPSAFsReferenceDataFile();
+
+
+    InternalSourcePosition = G4ThreeVector();
 
     DicomCTName = "CTDATA.txt";
     DicomPETName = "PETDATA.txt";
@@ -177,6 +181,8 @@ G4VPhysicalVolume* G4TVolumeConstruction::Construct()
 
     //ConstructICRPPhantomVolume(); return 0;
 
+
+
     if(GeometryFileType == "GDML"){
 #if GDML_USE
 #else
@@ -184,18 +190,25 @@ G4VPhysicalVolume* G4TVolumeConstruction::Construct()
 #endif
     }
 
+    if(GeometryFileType == "ADD"){
+        CreateVolumesData();
+    }
+    else if(GeometryFileType == "GDML" || GeometryFileType == "TEXT" || GeometryFileType == "CPP" || GeometryFileType == "Construct" || GeometryFileType == "STL" || GeometryFileType == "MyGeometry" ){
+        ConstructVolumes();
 
-    if(GeometryFileType == "GDML" || GeometryFileType == "TEXT" || GeometryFileType == "CPP" || GeometryFileType == "Construct" || GeometryFileType == "STL"  ){
-        return ConstructVolumes();
+        CreateVolumesData();
+
+        ShowBoxVolume();
+        makeVolumeVisualization();
     }
     else if(GeometryFileType == "VOXEL"){
-        return ConstructVOXELVolume();
+        ConstructVOXELVolume();
     }
     else if(GeometryFileType == "DICOM"){
-        return ConstructDICOMVolume();
+        ConstructDICOMVolume();
     }
     else if(GeometryFileType == "VoxIDs") {
-        return ConstructPhantomFromVoxIds();
+        ConstructPhantomFromVoxIds();
     }
     else if(GeometryFileType == "Generate") {
 
@@ -207,15 +220,18 @@ G4VPhysicalVolume* G4TVolumeConstruction::Construct()
         return 0;
     }
     else if(GeometryFileType == "TET"){
-        return ConstructTETPhantomVolume();
+        ConstructTETPhantomVolume();
     }
     else {
         return 0;
     }
 
+    setRankDataForMPIMode();
+
+    return WorldPhysicalVolume;
 }
 
-G4VPhysicalVolume* G4TVolumeConstruction::ConstructVolumes(){
+void G4TVolumeConstruction::ConstructVolumes(){
 
     if(GeometryFileType == "GDML"){
 #if GDML_USE
@@ -238,6 +254,12 @@ G4VPhysicalVolume* G4TVolumeConstruction::ConstructVolumes(){
         WorldPhysicalVolume = CGF->ConstructPhysicalVolume();
 
     }
+    else if(GeometryFileType == "MyGeometry"){
+
+        G4TMyGeometry * CGF = new G4TMyGeometry();
+        WorldPhysicalVolume = CGF->ConstructPhysicalVolume();
+
+    }
     else if(GeometryFileType == "Construct"){
 
     }
@@ -246,20 +268,19 @@ G4VPhysicalVolume* G4TVolumeConstruction::ConstructVolumes(){
     //    WorldPhysicalVolume = NucRea->ConstructNuclearReactor();
     //}
 
-    CreateVolumesData();
+    // CreateVolumesData();
 
-    //boxCenterPos = CreatedPositionOrgans[SourceRegionName];
-    //G4cout << "boxCenterPos " << boxCenterPos <<G4endl;
+    // //boxCenterPos = CreatedPositionOrgans[SourceRegionName];
+    // //G4cout << "boxCenterPos " << boxCenterPos <<G4endl;
 
-    ShowBoxVolume();
-    makeVolumeVisualization();
-    setRankDataForMPIMode();
+    // ShowBoxVolume();
+    // makeVolumeVisualization();
+    // setRankDataForMPIMode();
+    // //CreateMaterialsGDMLTags();
 
-    //CreateMaterialsGDMLTags();
-
-    return WorldPhysicalVolume ;
+    //return WorldPhysicalVolume ;
 }
-G4VPhysicalVolume* G4TVolumeConstruction::ConstructDICOMVolume(){
+void G4TVolumeConstruction::ConstructDICOMVolume(){
 #ifdef DCMTK_USE
 
     // to set materials ordered in MaterialIndices[] map
@@ -391,17 +412,20 @@ G4VPhysicalVolume* G4TVolumeConstruction::ConstructDICOMVolume(){
 
     ShowMaterialRegionVoxelsData();
 
-    setRankDataForMPIMode();
-    return ConstructVoxeDcmGeometry();
+    //setRankDataForMPIMode();
+    //return ConstructVoxeDcmGeometry();
+    ConstructVoxeDcmGeometry();
 }
-G4VPhysicalVolume* G4TVolumeConstruction::ConstructVOXELVolume(){
+void G4TVolumeConstruction::ConstructVOXELVolume(){
 
     CreateDefaultVOXELRegionData();
     CreateRegionsDataFile();
-    setRankDataForMPIMode();
-    return ConstructVoxeDcmGeometry();
+    //setRankDataForMPIMode();
+
+    //return ConstructVoxeDcmGeometry();
+    ConstructVoxeDcmGeometry();
 }
-G4VPhysicalVolume* G4TVolumeConstruction::ConstructPhantomFromVoxIds(){
+void G4TVolumeConstruction::ConstructPhantomFromVoxIds(){
     ReadVoxelsIDsAndFillCNMatIDsMassColour();
     if(MaterialNameAsRegionName == false){
         GenerateDataForVoxelsIdsFilePhantom();
@@ -409,28 +433,60 @@ G4VPhysicalVolume* G4TVolumeConstruction::ConstructPhantomFromVoxIds(){
         CreateRegionsDataFile();
     }
     ShowMaterialRegionVoxelsData();
-    setRankDataForMPIMode();
-    return ConstructVoxeDcmGeometry();
+    //setRankDataForMPIMode();
+    //return ConstructVoxeDcmGeometry();
+    ConstructVoxeDcmGeometry();
 }
-G4VPhysicalVolume* G4TVolumeConstruction::ConstructTETPhantomVolume(){
+void G4TVolumeConstruction::ConstructTETPhantomVolume(){
 
+    //Original
+    //GenerateDataFromTETPhantomFiles();
+    //setRankDataForMPIMode();
+    // //return ConstructTETGeometry();
+    //ConstructTETGeometry();
+
+
+    // modified
     GenerateDataFromTETPhantomFiles();
-    setRankDataForMPIMode();
-    return ConstructTETGeometry();
-
+    //return ConstructTETGeometry();
+    ConstructTETGeometry();
 }
-G4VPhysicalVolume* G4TVolumeConstruction::ConstructTETGeometry(){
+
+
+void G4TVolumeConstruction::ConstructTETGeometry(){
 
     // Define the phantom container (10 cm-margins from the bounding box of phantom)
     //
 
     G4Material* vacuum = G4NistManager::Instance()->FindOrBuildMaterial("G4_Galactic");
+    ContSolidVoll = new G4Box("Container", phantomSize.x() * 0.5 + 10.*cm, phantomSize.y() * 0.5 + 10.*cm,phantomSize.z() * 0.5 + 10.*cm);
 
-    ContSolidVoll = new G4Box("TETVoxelContainer", phantomSize.x() * 0.5 + 10.*cm, phantomSize.y() * 0.5 + 10.*cm,phantomSize.z() * 0.5 + 10.*cm);
-    ContLogicalVoll = new G4LogicalVolume(ContSolidVoll, vacuum, "TETVoxelContainer");
-    ContPhysicalVoll = new G4PVPlacement(0, G4ThreeVector(), ContLogicalVoll, "TETVoxelContainer", WorldPhysicalVolume->GetLogicalVolume(), false, 0);
+    // added
+    if(UseInternalSourceVolume == true){
+        G4PhysicalVolumeStore* pvs = G4PhysicalVolumeStore::GetInstance() ;
+        for (size_t iLV = 0; iLV < pvs->size(); iLV++ ) {
+            G4String nmm = (*pvs)[iLV]->GetLogicalVolume()->GetName();
+            //G4cout << (*pvs)[iLV]->GetLogicalVolume()->GetName() << " " << nmm << G4endl;
+            if(strstr(nmm.c_str(),InternalSourceName)){
+                InternalSourceLogicalSolid = (*pvs)[iLV]->GetLogicalVolume()->GetSolid();
+                InternalSourceLogicalVolume = (*pvs)[iLV]->GetLogicalVolume();
+                InternalSourcePosition = getRegionAbsolutePosition(InternalSourceName);
+                WorldPhysicalVolume->GetLogicalVolume()->RemoveDaughter((*pvs)[iLV]);
+            }
+        }
+
+        G4RotationMatrix* rm = new G4RotationMatrix();
+        NewContSolidVoll = new G4SubtractionSolid( "Container" , ContSolidVoll, InternalSourceLogicalSolid, rm, InternalSourcePosition);
+        ContLogicalVoll = new G4LogicalVolume(NewContSolidVoll, vacuum, "Container");
+        placeInternalSourceVolume();
+    }else{
+        ContLogicalVoll = new G4LogicalVolume(ContSolidVoll, vacuum, "Container");
+    }
+
+    //ContLogicalVoll = new G4LogicalVolume(ContSolidVoll, vacuum, "Container");
+    ContPhysicalVoll = new G4PVPlacement(0, G4ThreeVector(), ContLogicalVoll, "Container", WorldPhysicalVolume->GetLogicalVolume(), false, 0);
     //G4RotationMatrix* rm = new G4RotationMatrix(); rm->rotateX(G4ThreeVector().getX()); rm->rotateY(G4ThreeVector().y()); rm->rotateZ(G4ThreeVector().z());
-    //ContPhysicalVoll = new G4PVPlacement(rm, G4ThreeVector(), ContLogicalVoll, "TETVoxelContainer", WorldPhysicalVolume->GetLogicalVolume(), false, 0);
+    //ContPhysicalVoll = new G4PVPlacement(rm, G4ThreeVector(), ContLogicalVoll, "Container", WorldPhysicalVolume->GetLogicalVolume(), false, 0);
     ContLogicalVoll->SetOptimisation(TRUE);
     ContLogicalVoll->SetSmartless( 0.5 ); // for optimization (default=2)
 
@@ -456,11 +512,20 @@ G4VPhysicalVolume* G4TVolumeConstruction::ConstructTETGeometry(){
                           param2);
 */
     // physical volume (phantom) constructed as parameterised geometry
+
     new G4PVParameterised("wholePhantom",tetLogic,ContLogicalVoll,
                           kUndefined,tetData->GetNumTetrahedron(),
                           new TETParameterisation(tetData));
 
-    return WorldPhysicalVolume;
+    // added
+    //setSourceVolumeData(G4ThreeVector(12*cm,32*cm,62*cm));
+    //setSourceVolumeData(G4ThreeVector(0*cm,0*cm,0*cm));
+    // // we make it here because we have to add a volume before creting replicate then
+    // // getting its position
+
+    //setRankDataForMPIMode();
+
+    //return WorldPhysicalVolume;
 
 }
 void G4TVolumeConstruction::GenerateDataFromTETPhantomFiles()
@@ -499,6 +564,14 @@ void G4TVolumeConstruction::GenerateDataFromTETPhantomFiles()
     tetData->PrintMaterialInfomation();
 #endif
     ShowMaterialRegionVoxelsData();
+}
+
+void G4TVolumeConstruction::placeInternalSourceVolume(){
+    new G4PVPlacement(0, InternalSourcePosition, InternalSourceLogicalVolume, "Tumour", WorldPhysicalVolume->GetLogicalVolume(), false, 0, true);
+}
+void G4TVolumeConstruction::setInternalSourceData(G4String n ){
+    UseInternalSourceVolume = true;
+    InternalSourceName = n;
 }
 
 // called in the begining of construct method to see the values seten by commands
@@ -630,7 +703,10 @@ void G4TVolumeConstruction::CreateVolumesData(){
         PV->GetLogicalVolume()->SetVisAttributes(organVisAtt);
 
         G4double Density1 = PV->GetLogicalVolume()->GetMaterial()->GetDensity() * G4Density_to_gPerCm3; // density in g/cm3;
-        if(OrganNameDensityMap[LVName] == 0.){
+        //G4cout << PV->GetLogicalVolume()->GetMaterial()->GetName() << " " << PV->GetLogicalVolume()->GetMaterial()->GetDensity() << " " << LVName.c_str()  << G4endl;
+
+        if(OrganNameDensityMap[LVName] == 0. || __isinf(OrganNameDensityMap[LVName]) || __isnan(OrganNameDensityMap[LVName])){
+        //if(OrganNameDensityMap[LVName] == 0.){
             OrganNameDensityMap[LVName] = Density1;
         }
         else{
@@ -1319,14 +1395,14 @@ void G4TVolumeConstruction::placeVolume(G4String n, G4String MotherVolumeName, G
     G4String FileName = getFileNameFromPath(n) ;
     G4String FileExtension = getFileExt(n);;
 
-    //G4cout << "\n\n --------------- " << FileExtension << G4endl;
+//    G4cout << "\n\n --------------- " << __FUNCTION__ << G4endl;
 
     //G4cout << __FUNCTION__ << G4endl;
     //G4cout << PhysicalVolumeName<<G4endl;
     //G4cout << __FUNCTION__ << " " << PhysicalVolumeName << " " << MotherVolumeName << " " << Position << " " << Rotation << G4endl;
 
     if(WorldPhysicalVolume == NULL){
-        if(FileExtension == "gdml" || FileExtension == "geom" || FileExtension == "c++" || FileExtension == "cpp" ){
+        if(FileExtension == "gdml" || FileExtension == "geom" || FileExtension == "c++" || FileExtension == "cpp" || n == "MyGeometry"){
             FileName = "World";
         }else{
             // create world volume first
@@ -1337,25 +1413,32 @@ void G4TVolumeConstruction::placeVolume(G4String n, G4String MotherVolumeName, G
 
     if(FileName == "World"){
 
-        if(FileExtension == "gdml"){
-#if GDML_USE
-            G4GDMLParser parser;
-            parser.Read( PhysicalVolumeName , false );  //false to eliminate the xchema validation because it print a lot of lines of error validation
-            WorldPhysicalVolume = parser.GetWorldVolume();
-#endif
-        }
-        else if(FileExtension == "geom"){
-            G4tgbVolumeMgr* G4tgbVolumeMgrObj;
-            G4tgbVolumeMgrObj = G4tgbVolumeMgr::GetInstance();
-            G4tgbVolumeMgrObj->AddTextFile(PhysicalVolumeName);
-            WorldPhysicalVolume = G4tgbVolumeMgrObj->ReadAndConstructDetector();
-        }
-        else if(FileExtension == "cpp" || FileExtension == "c++"){
+        if(n == "MyGeometry"){
 
-            G4TCPPGeometryFormat * CGF = new G4TCPPGeometryFormat();
+            G4TMyGeometry * CGF = new G4TMyGeometry();
             WorldPhysicalVolume = CGF->ConstructPhysicalVolume();
-        }
+        }else{
+            if(FileExtension == "gdml"){
+#if GDML_USE
+                G4GDMLParser parser;
+                parser.Read( PhysicalVolumeName , false );  //false to eliminate the xchema validation because it print a lot of lines of error validation
+                WorldPhysicalVolume = parser.GetWorldVolume();
+#else
+            G4String msg =  "DoseCalcs should be built with \"-DWITH_GDML_USE=ON\" to construct geometry from .gdml files "; G4Exception("Geometry Data", "1", FatalErrorInArgument, msg.c_str());
+#endif
+            }
+            else if(FileExtension == "geom"){
+                G4tgbVolumeMgr* G4tgbVolumeMgrObj;
+                G4tgbVolumeMgrObj = G4tgbVolumeMgr::GetInstance();
+                G4tgbVolumeMgrObj->AddTextFile(PhysicalVolumeName);
+                WorldPhysicalVolume = G4tgbVolumeMgrObj->ReadAndConstructDetector();
+            }
+            else if(FileExtension == "cpp" || FileExtension == "c++"){
 
+                G4TCPPGeometryFormat * CGF = new G4TCPPGeometryFormat();
+                WorldPhysicalVolume = CGF->ConstructPhysicalVolume();
+            }
+        }
         WorldPhysicalVolume->SetName("World");
         WorldPhysicalVolume->GetLogicalVolume()->SetName("World");
 #if VERBOSE_USE
@@ -1416,6 +1499,7 @@ void G4TVolumeConstruction::placeVolume(G4String n, G4String MotherVolumeName, G
     }
     else if(FileExtension == "stl" || FileExtension == "ast"){
 
+#if GDML_USE
         PhysicalVolumeName = FileName;
 
         createStlVol = new G4TStlToGdml();
@@ -1430,6 +1514,9 @@ void G4TVolumeConstruction::placeVolume(G4String n, G4String MotherVolumeName, G
         //G4VSolid::BoundingLimits()
         // because when reading gdml by parser an physical volume will be registered
         // G4PhysicalVolumeStore::GetInstance()->GetVolume(PhysicalVolumeName)->Clean();
+#else
+            G4String msg =  "DoseCalcs should be built with \"-DWITH_GDML_USE=ON\" to construct geometry from .gdml files "; G4Exception("Geometry Data", "1", FatalErrorInArgument, msg.c_str());
+#endif
     }
     else{
         PhysicalVolumeName = FileName;
@@ -1543,6 +1630,8 @@ void G4TVolumeConstruction::PlaceVolumeFromRegionfile(G4String n, G4String Mothe
 
     G4VPhysicalVolume* MotherVol = G4PhysicalVolumeStore::GetInstance()->GetVolume(MotherVolumeName);
     new G4PVPlacement( rm , Position , FileName , G4LogicalVolumeStore::GetInstance()->GetVolume(FileName) , MotherVol , false , 0 , false );
+
+
 
     //G4cout << "\n\n - Volume " << FileName << " - mother : " << MotherVolumeName << "=" << G4PhysicalVolumeStore::GetInstance()->GetVolume(FileName)->GetMotherLogical()->GetName() << " - Pos "<< Position << " - Rot " << Rotation << " - rm "<< *G4PhysicalVolumeStore::GetInstance()->GetVolume()->GetRotation() <<G4endl;
 
@@ -2606,11 +2695,33 @@ void G4TVolumeConstruction::ConstructVoxDcmContainerGeometry(){
     G4cout << "\n\n========= Voxels container construction and setting regions data ======================= \n"<<G4endl;
 #endif
 
+    ContSolidVoll = new G4Box("Container",VoxXNumber*VoxXHalfSize, VoxYNumber*VoxYHalfSize, VoxZNumber*VoxZHalfSize);
+
     G4RotationMatrix* rm = new G4RotationMatrix(); rm->rotateX(G4ThreeVector().getX()); rm->rotateY(G4ThreeVector().y()); rm->rotateZ(G4ThreeVector().z());
 
-    ContSolidVoll = new G4Box("TETVoxelContainer",VoxXNumber*VoxXHalfSize, VoxYNumber*VoxYHalfSize, VoxZNumber*VoxZHalfSize);
-    ContLogicalVoll = new G4LogicalVolume( ContSolidVoll, defaultMat , "TETVoxelContainer", 0, 0, 0 ); //the material is not important, it will be fully filled by the voxels
-    ContPhysicalVoll = new G4PVPlacement(rm,VoxContainerPos, ContLogicalVoll, "TETVoxelContainer", WorldPhysicalVolume->GetLogicalVolume(), 0, false, 0);              // Copy number
+    if(UseInternalSourceVolume == true){
+        G4PhysicalVolumeStore* pvs = G4PhysicalVolumeStore::GetInstance() ;
+        for (size_t iLV = 0; iLV < pvs->size(); iLV++ ) {
+            G4String nmm = (*pvs)[iLV]->GetLogicalVolume()->GetName();
+            //G4cout << (*pvs)[iLV]->GetLogicalVolume()->GetName() << " " << nmm << G4endl;
+            if(strstr(nmm.c_str(),InternalSourceName)){
+                InternalSourceLogicalSolid = (*pvs)[iLV]->GetLogicalVolume()->GetSolid();
+                InternalSourceLogicalVolume = (*pvs)[iLV]->GetLogicalVolume();
+                InternalSourcePosition = getRegionAbsolutePosition(InternalSourceName);
+                WorldPhysicalVolume->GetLogicalVolume()->RemoveDaughter((*pvs)[iLV]);
+            }
+        }
+
+        G4RotationMatrix* rm = new G4RotationMatrix();
+        NewContSolidVoll = new G4SubtractionSolid( "Container" , ContSolidVoll, InternalSourceLogicalSolid, rm, InternalSourcePosition);
+        ContLogicalVoll = new G4LogicalVolume(NewContSolidVoll, defaultMat, "Container");
+        placeInternalSourceVolume();
+    }else{
+        ContLogicalVoll = new G4LogicalVolume(ContSolidVoll, defaultMat, "Container");
+    }
+
+    //ContLogicalVoll = new G4LogicalVolume( ContSolidVoll, defaultMat , "Container", 0, 0, 0 ); //the material is not important, it will be fully filled by the voxels
+    ContPhysicalVoll = new G4PVPlacement(rm,VoxContainerPos, ContLogicalVoll, "Container", WorldPhysicalVolume->GetLogicalVolume(), 0, false, 0);              // Copy number
 }
 G4VPhysicalVolume* G4TVolumeConstruction::ConstructVoxeDcmGeometry(){
 
@@ -2651,7 +2762,7 @@ G4VPhysicalVolume* G4TVolumeConstruction::ConstructVoxeDcmGeometry(){
             //--- Assure yourself that the voxels are completely filling the fContainer volume
             param->CheckVoxelsFillContainer( ContSolidVoll->GetXHalfLength(),ContSolidVoll->GetYHalfLength(),ContSolidVoll->GetZHalfLength() );
             //----- The G4PVParameterised object that uses the created parameterisation should be placed in the fContainer logical volume
-            G4PVParameterised* phantom_phys = new G4PVParameterised("TETVoxelContainer",voxel_logic,ContLogicalVoll, kXAxis, VoxXNumber*VoxYNumber*VoxZNumber, param);
+            G4PVParameterised* phantom_phys = new G4PVParameterised("Container",voxel_logic,ContLogicalVoll, kXAxis, VoxXNumber*VoxYNumber*VoxZNumber, param);
             //G4cout << " 4 " << G4endl;
             // if axis is set as kUndefined instead of kXAxis, GEANT4 will do an smart voxel optimisation (not needed if G4RegularNavigation is used)
             //----- Set this physical volume as having a regular structure of type 1, so that G4RegularNavigation is used
@@ -2689,22 +2800,10 @@ G4VPhysicalVolume* G4TVolumeConstruction::ConstructVoxeDcmGeometry(){
 
             new G4PVParameterised("phantom", voxel_logic,logXRep,kZAxis,VoxZNumber,param1);
 
-            //G4PVParameterised* phantom_phys = new G4PVParameterised("TETVoxelContainer",voxel_logic,ContLogicalVoll, kXAxis, VoxXNumber*VoxYNumber*VoxZNumber, param1);
+            //G4PVParameterised* phantom_phys = new G4PVParameterised("Container",voxel_logic,ContLogicalVoll, kXAxis, VoxXNumber*VoxYNumber*VoxZNumber, param1);
             //phantom_phys->SetRegularStructureId(1); // if not set, G4VoxelNavigation will be used instead
         }
     }
-/*
-    G4double radius = 10.0 * cm;  // Set your desired radius
-    G4double startPhi = 0.0;      // Starting phi angle in radians
-    G4double deltaPhi = 2.0 * M_PI; // Delta phi angle in radians (360 degrees)
-    G4double startTheta = 0.0;    // Starting theta angle in radians
-    G4double deltaTheta = M_PI;   // Delta theta angle in radians (180 degrees)
-
-    // Create a G4Sphere
-    G4Sphere* RadioSphereSol = new G4Sphere("RadioSphereSol", 0.0, radius, startPhi, deltaPhi, startTheta, deltaTheta);
-    G4LogicalVolume* RadioSphereLV = new G4LogicalVolume(RadioSphereSol,defaultMat,"RadioSphereLV");
-    G4VPhysicalVolume* RadioSpherePV = new G4PVPlacement(0,G4ThreeVector(0,0,0), RadioSphereLV, "RadioSpherePV", WorldPhysicalVolume->GetLogicalVolume(), 0, false, 0);              // Copy number
-*/
     return WorldPhysicalVolume;
 }
 void G4TVolumeConstruction::VisualizationVoxelizedGeometry(){
@@ -2937,13 +3036,32 @@ void G4TVolumeConstruction::ReadVoxelsIDsAndFillCNMatIDsMassColour(){
 
                     MateIDs[Cn_inc] = ID;
                     //G4cout << Cn_inc << " MateID : " << MateIDs[Cn_inc]  << G4endl;
+                    //std::cout << Cn_inc << " MateID : " << ID << std::endl;
 
                     CopyNumberMassSize[Cn_inc] = VoxelsMaterials[ID]->GetDensity() * G4Density_to_kgPerMm3 * VoxelVolume; /*density ; e+21 in g/mm3 , and e+18 g/cm3 )*/
+                    //std::cout << Cn_inc << " MateID : " << ID << std::endl;
 
                     if(MaterialNameAsRegionName == true){
-                        bool isIn = false; for ( int df = 0 ; df < OrganNamesVector.size(); df++  ){ if(VoxelsMaterials[ID]->GetName() == OrganNamesVector[df] ){ isIn = true; }}
-                        if(isIn == false ){ OrganNamesVector.push_back(VoxelsMaterials[ID]->GetName());}
+                        //std::cout << Cn_inc << " VoxelsMaterials.size : " << VoxelsMaterials.size()
+                        //          << " OrganNamesVector.size : " << OrganNamesVector.size() << std::endl;
+
+                        bool isIn = false;
+                        for ( int df = 0 ; df < OrganNamesVector.size(); df++  ){
+                            //std::cout << Cn_inc << " OrganNamesVector[df] : " << OrganNamesVector[df]<< std::endl;
+                            //std::cout << Cn_inc << " VoxelsMaterials[ID] : " << VoxelsMaterials[ID]<< std::endl;
+                            if(VoxelsMaterials[ID]->GetName() == OrganNamesVector[df] ){ isIn = true;}
+                        }
+                        if(isIn == false ){
+                            //std::cout << Cn_inc << " VoxelsMaterials[ID]->GetName() : " << std::endl;
+
+                            OrganNamesVector.push_back(VoxelsMaterials[ID]->GetName());
+                            //std::cout << VoxelsMaterials[ID]->GetName() << std::endl;
+                        }
+                        //std::cout << Cn_inc << " MateID : " << ID << std::endl;
+                        //std::cout << Cn_inc << " MaterialColour[ID].size() : " << MaterialColour.size() << std::endl;
+
                         RegionNameColour[VoxelsMaterials[ID]->GetName()] = MaterialColour[ID];
+                        //std::cout << Cn_inc << " MateID : " << ID << std::endl;
                         OrganNameMassMap[VoxelsMaterials[ID]->GetName()] += CopyNumberMassSize[Cn_inc]; // should be in Kg
                         OrganNameVolumeMap[VoxelsMaterials[ID]->GetName()] += VoxelVolume/1000; // should be in cm3
                         OrganNameDensityMap[VoxelsMaterials[ID]->GetName()] = VoxelsMaterials[ID]->GetDensity() * G4Density_to_kgPerMm3*G4Density_to_kgPerMm3ToGPercm3; // from mm3 to cm3 // should be in g/cm3
@@ -3731,6 +3849,13 @@ void G4TVolumeConstruction::setRankDataForMPIMode(){
                     if(SourceType == "Volume"){
                         NewRankSourceRegionsBoxDimValues.push_back(SourceRegionsBoxDimValues[b1]);
                         NewRankSourceRegionsPosValues.push_back(getRegionAbsolutePosition(SourceRegionsNamesValues[b1]));
+                        G4Navigator* aNavigator = new G4Navigator();
+                        aNavigator->SetWorldVolume(WorldPhysicalVolume);
+                        NavigatorForVolumesInitialPosition.push_back(aNavigator);
+                        //G4cout <<" \n\n\n\n\n\n\n\n\n\n BoxDimValues " << SourceRegionsBoxDimValues[b1]
+                        //        << " NewRankSourceRegionsPosValues " << getRegionAbsolutePosition(SourceRegionsNamesValues[b1])
+                        //        << " SourceRegionsNamesValues " << SourceRegionsNamesValues[b1] << G4endl;
+
                     }else if(SourceType == "Voxels"){
                         G4int TotalVoxelsNumber = VoxXNumber*VoxYNumber*VoxZNumber;
                         for (int n = 0; n < TotalVoxelsNumber; n++) {
@@ -3863,6 +3988,9 @@ void G4TVolumeConstruction::setRankDataForMPIMode(){
             if(SourceType == "Volume"){
                 NewRankSourceRegionsBoxDimValues.push_back(NewRankSourceRegionsBoxDimValues[0]);
                 NewRankSourceRegionsPosValues.push_back(NewRankSourceRegionsPosValues[0]);
+                G4Navigator* aNavigator = new G4Navigator();
+                aNavigator->SetWorldVolume(WorldPhysicalVolume);
+                NavigatorForVolumesInitialPosition.push_back(aNavigator);
             }else if(SourceType == "Voxels"){
                 NewRankVoxelsIDsOfSourceRegion.push_back(NewRankVoxelsIDsOfSourceRegion[0]);
             }
@@ -3904,6 +4032,9 @@ void G4TVolumeConstruction::setRankDataForMPIMode(){
             if(SourceType == "Volume"){
                 NewRankSourceRegionsBoxDimValues.push_back(NewRankSourceRegionsBoxDimValues[0]);
                 NewRankSourceRegionsPosValues.push_back(NewRankSourceRegionsPosValues[0]);
+                G4Navigator* aNavigator = new G4Navigator();
+                aNavigator->SetWorldVolume(WorldPhysicalVolume);
+                NavigatorForVolumesInitialPosition.push_back(aNavigator);
             }else if(SourceType == "Voxels"){
                 NewRankVoxelsIDsOfSourceRegion.push_back(NewRankVoxelsIDsOfSourceRegion[0]);
             }
@@ -3935,6 +4066,9 @@ void G4TVolumeConstruction::setRankDataForMPIMode(){
         RanksSourceData << "Thread                           " << d << " " << NewRankSourceParticlesNamesValues[SourceDataInc]<< " " << NewRankSourceRegionsNamesValues[SourceDataInc]<< " " << NewRankSourceEnergiesValues[SourceDataInc] << "\n" ;
 #endif
     }
+
+
+    InitializeRadiationSource();
 
 }
 void G4TVolumeConstruction::GenerateEventsDataInMPIMode(){
@@ -4099,6 +4233,104 @@ void G4TVolumeConstruction::GenerateEventsDataInMPIMode(){
 
     }
 }
+
+//############################################################
+void G4TVolumeConstruction::InitializeRadiationSource(){
+
+
+    if(EnergyDistribution == "Spectrum"){//EnergyTypeNum = 4;
+
+        EnergyList        = new double[EventsNumPerThreadRank];
+
+        G4double TotalProbability = 0;
+
+        std::map<G4double, G4double> EnergyProbabilityInterval;
+        std::map<G4int, G4double> CumulatedProbabilityIndexEnergy;
+
+        G4int index=0;
+
+        for ( auto Abeg = EnergyValueProbability.begin(); Abeg != EnergyValueProbability.end(); ++Abeg  ){
+
+            EnergyProbabilityInterval[Abeg->first] = Abeg->second;
+            TotalProbability += EnergyProbabilityInterval[Abeg->first];
+
+#if VERBOSE_USE
+            //std::cout  << index << " TotalProbability "<< TotalProbability << " - this EnergyProbabilityInterval " << EnergyProbabilityInterval[Abeg->first] << " Energy " << std::endl;
+#endif
+            CumulatedProbabilityIndexEnergy[index] = Abeg->first;
+            index++;
+        }
+
+        G4double* EnergyList = new G4double[EventsNumPerThreadRank];
+
+        for(int f = 0; f < EventsNumPerThreadRank ;f++ ){
+
+            G4double RV = TotalProbability*(G4double)G4UniformRand() ;
+            G4double EnergyCumulatedProbability = 0;
+
+            index=0;
+            for ( auto Abeg = EnergyValueProbability.begin(); Abeg != EnergyValueProbability.end(); ++Abeg  ){
+
+                EnergyCumulatedProbability += Abeg->second;
+
+                if(RV < EnergyCumulatedProbability){
+                    EnergyList[f] = CumulatedProbabilityIndexEnergy[index];
+                    break;
+                }
+                index++;
+            }
+
+            //std::cout << f << " Energy " << EnergyValues[f] << " EnergyCumulatedProbability " << EnergyCumulatedProbability << " - this EnergyProbabilityInterval " << EnergyProbabilityInterval[EnergyValues[f]] << std::endl;
+        }
+    }
+    else if(EnergyDistribution == "RadioNuclide" || EnergyDistribution == "File"){//EnergyTypeNum = 5;
+
+        EnergyList        = new double[EventsNumPerThreadRank];
+        ParNameList = new unsigned int[EventsNumPerThreadRank];
+        //MomDirXList       = new double[EventsNumPerThreadRank];
+        //MomDirYList       = new double[EventsNumPerThreadRank];
+        //MomDirZList       = new double[EventsNumPerThreadRank];
+        //PosXList          = new double[EventsNumPerThreadRank];
+        //PosYList          = new double[EventsNumPerThreadRank];
+        //PosZList          = new double[EventsNumPerThreadRank];
+
+        G4double TotalProbability;
+        for(int m = 0; m < RadioNuclideProbVec.size() ;m++ ){
+            TotalProbability += RadioNuclideProbVec[m];
+            //std::cout << m << " TotalProbability " << TotalProbability << " SpectrumOrDiscreteVec " << RadioNuclideSpectrumOrDiscreteVec[m] << " Proba " << RadioNuclideProbVec[m] << " EneMin " << RadioNuclideEneVec[m][0] << std::endl;
+            //std::cout << m <<  " yield " << RadioNuclideProbVec[m] <<  " accumulated yield " << TotalProbability << std::endl;
+        }
+
+        for(int f = 0; f < EventsNumPerThreadRank ;f++ ){
+
+            G4double RV = TotalProbability*(G4double)G4UniformRand() ;
+            G4double EnergyCumulatedProbability = 0;
+
+            for(int m = 0; m < RadioNuclideProbVec.size() ;m++ ){
+
+                EnergyCumulatedProbability += RadioNuclideProbVec[m];
+
+                if(RV < EnergyCumulatedProbability){
+                    if(RadioNuclideSpectrumOrDiscreteVec[m] == 0){
+
+                        double RandomEne = RadioNuclideEneVec[m][0] + (RadioNuclideEneVec[m][1]-RadioNuclideEneVec[m][0])*(double)G4UniformRand();
+                        EnergyList[f] = RandomEne;
+                        //std::cout << f << " Particle "<< RadioNuclidePartNameVec[m] << " TotalProbability "<< TotalProbability << " RandomProb " << RV << " Prob "<< RadioNuclideProbVec[m] << " EnergyCumulatedProbability " << EnergyCumulatedProbability  << " SpectrumOrDiscreteVec " << RadioNuclideSpectrumOrDiscreteVec[m] << " Min " << RadioNuclideEneVec[m][0]   << " RandomEne " << EnergyList[f] << " Max " << RadioNuclideEneVec[m][1] << std::endl;
+
+                    }else{
+
+                        EnergyList[f] = RadioNuclideEneVec[m][0];
+                        //std::cout << f << " Particle "<< RadioNuclidePartNameVec[m] << " TotalProbability "<< TotalProbability << " RandomProb " << RV << " Prob "<< RadioNuclideProbVec[m] << " EnergyCumulatedProbability " << EnergyCumulatedProbability  << " SpectrumOrDiscreteVec " << RadioNuclideSpectrumOrDiscreteVec[m] << " selected Energy " << EnergyList[f] << std::endl;
+                    }
+                    ParNameList[f]=RadioNuclidePartNameVec[m];
+                    break;
+                }
+            }
+        }
+    }
+
+}
+
 
 void G4TVolumeConstruction::setNumberOfThreads(G4int newNumber){
     ThreadsNumber = newNumber;

@@ -38,15 +38,211 @@
 #include "G4RotationMatrix.hh"
 #include "G4NistManager.hh"
 #include "G4NistElementBuilder.hh"
-#include "G4THadrontherapyDetectorConstruction.hh"
 #include "G4THadrontherapyModulator.hh"
 #include "G4TPassiveProtonBeamLineGeometry.hh"
+#include "G4PVReplica.hh"
+#include "G4PhysicalVolumeStore.hh"
+#include "G4TPhantomCreationAdding.hh"
 
+extern G4String* CopyNumberRegionNameMap;
+extern G4double VoxXHalfSize;
+extern G4double VoxYHalfSize;
+extern G4double VoxZHalfSize;
+extern G4int VoxXNumber;
+extern G4int VoxYNumber;
+extern G4int VoxZNumber;
+extern  size_t* MateIDs; // index of material of each voxel unsigned int* fMateIDs; // index of material of each voxel
+extern  G4String* CopyNumberRegionNameMap;
+extern  G4float* CopyNumberXPos;
+extern  G4float* CopyNumberYPos;
+extern  G4float* CopyNumberZPos;
+extern  G4float* CopyNumberMassSize;
+void G4TPassiveProtonBeamLineGeometry::ConstructVoxelizedRO(){
+
+
+    // ************************************ Voxelized tumour Region
+
+    // World volume of ROGeometry ... SERVE SOLO PER LA ROG
+
+    ROSizeX = 4. *cm;
+    ROSizeY = 4. *cm;
+    ROSizeZ = 4. *cm;
+
+
+    // Adjust RO position
+    ROToPhantomPosition = G4ThreeVector(-5. *cm, 0. *cm, 0. *cm);
+
+    ROPosition.setX(ROToPhantomPosition.getX() - phantomSizeX/2 + ROSizeX/2);
+    ROPosition.setY(ROToPhantomPosition.getY() - phantomSizeY/2 + ROSizeY/2);
+    ROPosition.setZ(ROToPhantomPosition.getZ() - phantomSizeZ/2 + ROSizeZ/2);
+
+    ROToWorldPosition = phantomPosition + ROPosition;
+
+    ROMaterial = G4NistManager::Instance()->FindOrBuildMaterial("G4_WATER", false);
+
+    // Default detector RO voxels size
+    // 200 slabs along the beam direction (X)
+
+    // // by setting the half sizes it calculate the number of voxels
+    //VoxXHalfSize = 200 *um;
+    //VoxYHalfSize = 100 *um;
+    //VoxZHalfSize = 80  *um;
+    //VoxXNumber = G4lrint(ROSizeX / VoxXHalfSize);
+    //VoxYNumber = G4lrint(ROSizeY / VoxYHalfSize);
+    //VoxZNumber = G4lrint(ROSizeZ / VoxZHalfSize);
+
+    // // by setting the number of voxels it calculate the half sizes
+    VoxXNumber = 20;
+    VoxYNumber = 1;
+    VoxZNumber = 1;
+    VoxXHalfSize = ROSizeX/VoxXNumber;
+    VoxYHalfSize = ROSizeY/VoxYNumber;
+    VoxZHalfSize = ROSizeZ/VoxZNumber;
+
+
+    // Detector ROGeometry
+    RODetector = new G4Box("RODetector",
+                           ROSizeX,
+                           ROSizeY,
+                           ROSizeZ);
+
+    RODetectorLog = new G4LogicalVolume(RODetector,
+                                        ROMaterial,
+                                        "RODetectorLog",
+                                        0,0,0);
+
+    G4VPhysicalVolume *RODetectorPhys = new G4PVPlacement(0,
+                                                          ROToPhantomPosition,
+                                                          //ROToWorldPosition,
+                                                          RODetectorLog,
+                                                          "RODetectorPhys",
+                                                          phantomLogicalVolume,
+                                                          false,0);
+
+    // Division along X axis: the detector is divided in slices along the X axis
+
+    G4double halfXVoxelSizeX = ROSizeX/VoxXNumber;
+    G4double halfXVoxelSizeY = ROSizeY;
+    G4double halfXVoxelSizeZ = ROSizeZ;
+    G4double voxelXThickness = 2*halfXVoxelSizeX;
+
+    std::cout << VoxXNumber << " " << halfXVoxelSizeX << std::endl;
+
+    RODetectorXDivision = new G4Box("RODetectorXDivision",
+                                    halfXVoxelSizeX,
+                                    halfXVoxelSizeY,
+                                    halfXVoxelSizeZ);
+
+    RODetectorXDivisionLog = new G4LogicalVolume(RODetectorXDivision,
+                                                 ROMaterial,
+                                                 "RO",
+                                                 0,0,0);
+
+    G4VPhysicalVolume *RODetectorXDivisionPhys = new G4PVReplica("RODetectorXDivisionPhys",
+                                                                 RODetectorXDivisionLog,
+                                                                 RODetectorLog,
+                                                                 kXAxis,
+                                                                 VoxXNumber,
+                                                                 voxelXThickness);
+
+    // Division along Y axis: the slices along the X axis are divided along the Y axis
+
+    G4double halfYVoxelSizeX = halfXVoxelSizeX;
+    G4double halfYVoxelSizeY = ROSizeY/VoxYNumber;
+    G4double halfYVoxelSizeZ = ROSizeZ;
+    G4double voxelYThickness = 2*halfYVoxelSizeY;
+
+    std::cout << VoxYNumber << " " << halfXVoxelSizeY << std::endl;
+
+    RODetectorYDivision = new G4Box("RODetectorYDivision",
+                                    halfYVoxelSizeX,
+                                    halfYVoxelSizeY,
+                                    halfYVoxelSizeZ);
+
+    RODetectorYDivisionLog = new G4LogicalVolume(RODetectorYDivision,
+                                                 ROMaterial,
+                                                 "RO",
+                                                 0,0,0);
+
+    G4VPhysicalVolume *RODetectorYDivisionPhys = new G4PVReplica("RODetectorYDivisionPhys",
+                                                                 RODetectorYDivisionLog,
+                                                                 RODetectorXDivisionLog,
+                                                                 kYAxis,
+                                                                 VoxYNumber,
+                                                                 voxelYThickness);
+
+    // Division along Z axis: the slices along the Y axis are divided along the Z axis
+
+    G4double halfZVoxelSizeX = halfXVoxelSizeX;
+    G4double halfZVoxelSizeY = halfYVoxelSizeY;
+    G4double halfZVoxelSizeZ = ROSizeZ/VoxZNumber;
+    G4double voxelZThickness = 2*halfZVoxelSizeZ;
+
+    std::cout << VoxZNumber << " " << halfXVoxelSizeZ << std::endl;
+
+    RODetectorZDivision = new G4Box("RODetectorZDivision",
+                                    halfZVoxelSizeX,
+                                    halfZVoxelSizeY,
+                                    halfZVoxelSizeZ);
+
+    RODetectorZDivisionLog = new G4LogicalVolume(RODetectorZDivision,
+                                                 ROMaterial,
+                                                 "RO",
+                                                 0,0,0);
+
+    new G4PVReplica("RODetectorZDivisionPhys",
+                    RODetectorZDivisionLog,
+                    RODetectorYDivisionLog,
+                    kZAxis,
+                    VoxZNumber,
+                    voxelZThickness);
+
+    size_t VoxelNumberInPhantom = VoxXNumber*VoxYNumber*VoxZNumber;
+
+    CopyNumberXPos = new G4float[VoxelNumberInPhantom];
+    CopyNumberYPos = new G4float[VoxelNumberInPhantom];
+    CopyNumberZPos = new G4float[VoxelNumberInPhantom];
+
+    CopyNumberMassSize = new G4float[VoxelNumberInPhantom];
+    CopyNumberRegionNameMap = new G4String[VoxelNumberInPhantom];
+
+    G4double VoxelVolume = 8*(VoxXHalfSize*VoxYHalfSize*VoxZHalfSize)/mm;
+#if VERBOSE_USE
+    G4cout << " VoxelVolume (mm3) of RO: " << VoxelVolume << G4endl;
+#endif
+    // CN coordinate and position
+    G4float Voxel0PosX = -((VoxXNumber*VoxXHalfSize) - VoxXHalfSize) + ROToWorldPosition.getX();
+    G4float Voxel0PosY = -((VoxYNumber*VoxYHalfSize) - VoxYHalfSize) + ROToWorldPosition.getY();
+    G4float Voxel0PosZ = -((VoxZNumber*VoxZHalfSize) - VoxZHalfSize) + ROToWorldPosition.getZ();
+
+    size_t Cn_inc = 0;
+    for(size_t f = 0; f < VoxZNumber ;f++ ){
+        for(size_t g = 0; g < VoxYNumber ;g++ ){
+            for(size_t d = 0; d < VoxXNumber ;d++ ){
+
+                CopyNumberXPos[Cn_inc] = Voxel0PosX + d * 2 * VoxXHalfSize;
+                CopyNumberYPos[Cn_inc] = Voxel0PosY + g * 2 * VoxYHalfSize;
+                CopyNumberZPos[Cn_inc] = Voxel0PosZ + f * 2 * VoxZHalfSize;
+                //G4cout << Cn_inc << " " << f << " " << g << " " << d << G4endl;
+
+                CopyNumberMassSize[Cn_inc]= ROMaterial->GetDensity() * (mm3/kg) * VoxelVolume; /*density ; e+21 in g/mm3 , and e+18 g/cm3 )*/
+                CopyNumberRegionNameMap[Cn_inc] = "RO";
+
+                //G4float ff = VoxelsMaterials[MateIDs[Cn_inc]]->GetDensity() * G4Density_to_kgPerMm3 * VoxelVolume ;
+                //G4double nn = VoxelsMaterials[MateIDs[Cn_inc]]->GetDensity() * G4Density_to_kgPerMm3 * VoxelVolume ;
+                //G4cout << " Float " << ff << "  Vs Double " << nn  << G4endl;
+
+                Cn_inc++;
+            }
+        }
+    }
+
+}
 
 //G4bool G4TPassiveProtonBeamLineGeometry::doCalculation = false;
 /////////////////////////////////////////////////////////////////////////////
 G4TPassiveProtonBeamLineGeometry::G4TPassiveProtonBeamLineGeometry():
-    modulator(0), physicalTreatmentRoom(0),hadrontherapyDetectorConstruction(0),
+    physicalTreatmentRoom(0),
     physiBeamLineSupport(0), physiBeamLineCover(0), physiBeamLineCover2(0),
     firstScatteringFoil(0), physiFirstScatteringFoil(0), physiKaptonWindow(0),
     solidStopper(0), physiStopper(0), secondScatteringFoil(0), physiSecondScatteringFoil(0),
@@ -56,7 +252,12 @@ G4TPassiveProtonBeamLineGeometry::G4TPassiveProtonBeamLineGeometry():
     physiHoleSecondCollimatorModulatorBox(0), physiMOPIMotherVolume(0),
     physiFirstMonitorLayer1(0), physiFirstMonitorLayer2(0), physiFirstMonitorLayer3(0),
     physiFirstMonitorLayer4(0), physiSecondMonitorLayer1(0), physiSecondMonitorLayer2(0),
-    physiSecondMonitorLayer3(0), physiSecondMonitorLayer4(0), physiNozzleSupport(0), physiBrassTube(0), solidFinalCollimator(0), physiFinalCollimator(0)
+    physiSecondMonitorLayer3(0), physiSecondMonitorLayer4(0), physiNozzleSupport(0),
+    physiBrassTube(0), solidFinalCollimator(0), physiFinalCollimator(0),
+    solidMod1(0),         logicMod1(0),          physiMod1(0),
+    solidMod2(0),         logicMod2(0),          physiMod2(0),
+    solidMod3(0),         logicMod3(0),          physiMod3(0),
+    solidMod4(0),         logicMod4(0),          physiMod4(0)
 {
     // Messenger to change parameters of the G4TPassiveProtonBeamLineGeometry geometry
     //passiveMessenger = new G4TPassiveProtonBeamLineGeometryMessenger(this);
@@ -85,9 +286,14 @@ G4VPhysicalVolume* G4TPassiveProtonBeamLineGeometry::Construct()
     
     // Construct the whole Passive Beam Line
     ConstructG4TPassiveProtonBeamLineGeometry();
-    
-    hadrontherapyDetectorConstruction = new G4THadrontherapyDetectorConstruction(physicalTreatmentRoom);
-    physicalTreatmentRoom = hadrontherapyDetectorConstruction->Construct();
+    G4TPhantomCreationAdding* pca = new G4TPhantomCreationAdding();
+
+    pca->CreateAndAddPhantom(physicalTreatmentRoom,
+                             G4ThreeVector(20. *cm, 0. *cm, 0. *cm),
+                             G4ThreeVector(40. *cm, 40. *cm, 40. *cm));
+
+    //ConstructPhantom();
+    //ConstructVoxelizedRO();
 
     return physicalTreatmentRoom;
 }
@@ -516,6 +722,21 @@ void G4TPassiveProtonBeamLineGeometry::SetDefaultDimensions()
     
     // Material of the final collimator
     finalCollimatorMaterial = brass;
+
+
+
+
+    // Define here the material of the water phantom and of the detector
+
+    G4Material* pMat = G4NistManager::Instance()->FindOrBuildMaterial("G4_WATER", false);
+    phantomMaterial  = pMat;
+
+    phantomSizeX = 40. *cm;
+    phantomSizeY = 40. *cm;
+    phantomSizeZ = 40. *cm;
+    phantomPosition = G4ThreeVector(20. *cm, 0. *cm, 0. *cm);
+
+
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -558,9 +779,7 @@ void G4TPassiveProtonBeamLineGeometry::ConstructG4TPassiveProtonBeamLineGeometry
     
     // The following lines construc a typical modulator wheel inside the Passive Beam line.
     // Please remember to set the nodulator material (default is air, i.e. no modulator!)
-    // in the HadrontherapyModulator.cc file
-    modulator = new G4THadrontherapyModulator();
-    modulator -> BuildModulator(physicalTreatmentRoom);
+    BuildModulator();
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -641,7 +860,6 @@ void G4TPassiveProtonBeamLineGeometry::HadrontherapyBeamLineSupport()
     logicBeamLineCover -> SetVisAttributes(blue);
 
 }
-
 /////////////////////////////////////////////////////////////////////////////
 void G4TPassiveProtonBeamLineGeometry::HadrontherapyBeamScatteringFoils()
 {
@@ -1001,7 +1219,6 @@ void G4TPassiveProtonBeamLineGeometry::HadrontherapyBeamCollimators()
 
 
 }
-
 /////////////////////////////////////////////////////////////////////////////
 void G4TPassiveProtonBeamLineGeometry::HadrontherapyBeamMonitoring()
 {
@@ -1466,7 +1683,6 @@ void G4TPassiveProtonBeamLineGeometry::HadrontherapyBeamNozzle()
     
     logicBrassTube3 -> SetVisAttributes(darkOrange3);
 }
-
 /////////////////////////////////////////////////////////////////////////////
 void G4TPassiveProtonBeamLineGeometry::HadrontherapyBeamFinalCollimator()
 {
@@ -1504,6 +1720,497 @@ void G4TPassiveProtonBeamLineGeometry::HadrontherapyBeamFinalCollimator()
     
     logicFinalCollimator -> SetVisAttributes(yellow);
 }
+
+void G4TPassiveProtonBeamLineGeometry::ConstructPhantom()
+{
+
+    // ***********************************  Phantom Geometry
+
+    // Definition of the solid volume of the Phantom
+    phantom = new G4Box("Phantom",
+                        phantomSizeX/2,
+                        phantomSizeY/2,
+                        phantomSizeZ/2);
+
+    // Definition of the logical volume of the Phantom
+    phantomLogicalVolume = new G4LogicalVolume(phantom,
+                                               phantomMaterial,
+                                               "phantomLog", 0, 0, 0);
+
+    // Definition of the physics volume of the Phantom
+    phantomPhysicalVolume = new G4PVPlacement(0,
+                                              phantomPosition,
+                                              "phantomPhys",
+                                              phantomLogicalVolume,
+                                              physicalTreatmentRoom,
+                                              false,
+                                              0);
+
+    // Visualisation attributes of the phantom
+    red = new G4VisAttributes(G4Colour(255/255., 0/255. ,0/255.));
+    red -> SetVisibility(true);
+    red -> SetForceSolid(true);
+    red -> SetForceWireframe(true);
+    phantomLogicalVolume -> SetVisAttributes(red);
+
+
+
+
+
+    // ***********************************  Detector Geometry
+
+
+    /*
+    // Definition of the solid volume of the Detector
+    detector = new G4Box("Detector",
+
+                         ROSizeX/2,
+
+                         ROSizeY/2,
+
+                         ROSizeZ/2);
+
+    // Definition of the logic volume of the Phantom
+    detectorLogicalVolume = new G4LogicalVolume(detector,
+                                                ROMaterial,
+                                                "DetectorLog",
+                                                0,0,0);
+    // Definition of the physical volume of the Phantom
+    detectorPhysicalVolume = new G4PVPlacement(0,
+                                               G4ThreeVector(),//ROPosition, // Setted by displacement
+                                               "DetectorPhys",
+                                               detectorLogicalVolume,
+                                               phantomPhysicalVolume,
+                                               false,0);
+
+    // Visualisation attributes of the detector
+    skyBlue = new G4VisAttributes( G4Colour(135/255. , 206/255. ,  235/255. ));
+    skyBlue -> SetVisibility(true);
+    skyBlue -> SetForceSolid(true);
+    //skyBlue -> SetForceWireframe(true);
+    detectorLogicalVolume -> SetVisAttributes(skyBlue);
+
+    */
+
+}
+
+
+void G4TPassiveProtonBeamLineGeometry::BuildModulator(){
+
+
+    // ********************** initialization
+
+    pi=4*std::atan(1.);
+    StepNumbers=22;
+    Weight=new G4double[StepNumbers];
+    StepThickness=new G4double[StepNumbers];
+    StartingAngle=new G4double[StepNumbers];
+    SpanningAngle=new G4double[StepNumbers];
+    PositionMod=new G4ThreeVector[StepNumbers];
+
+
+    solidMod=new G4Tubs *[StepNumbers];
+    logicMod=new G4LogicalVolume *[StepNumbers];
+    physiMod=new G4VPhysicalVolume *[(4*(StepNumbers-1)+1)];
+
+    for (G4int i=0;i<StepNumbers;i++)
+    {
+        Weight[i]=0;
+        StepThickness[i]=0;
+        StartingAngle[i]=0;
+        SpanningAngle[i]=0;
+        PositionMod[i]=G4ThreeVector(0,0,0);
+        solidMod[i]=0;
+        logicMod[i]=0;
+
+    }
+    for (G4int i=0;i<4*(StepNumbers-1)+1;i++)
+    {
+        physiMod[i]=0;
+    }
+
+
+
+    // ModulatorDefaultProperties()
+
+    /*
+       Here we initialize the step properties of Modulator wheel, you can create your
+       specific modulator by changing the values in this class or writing them in an external
+       file and activate reading from file via a macrofile.
+    */
+
+    StepThickness[0]=0; Weight[0]=.14445;
+    StepThickness[1]=.8; Weight[1]=.05665;
+    StepThickness[2]=1.6; Weight[2]=.05049;
+    StepThickness[3]=2.4; Weight[3]=.04239;
+    StepThickness[4]=3.2; Weight[4]=.04313;
+    StepThickness[5]=4.0; Weight[5]=.03879;
+    StepThickness[6]=4.8; Weight[6]=.04182;
+    StepThickness[7]=5.6; Weight[7]=.03422;
+    StepThickness[8]=6.4; Weight[8]=.03469;
+    StepThickness[9]=7.2; Weight[9]=.03589;
+    StepThickness[10]=8.0; Weight[10]=.03633;
+    StepThickness[11]=8.8; Weight[11]=.03842;
+    StepThickness[12]=9.6; Weight[12]=.03688;
+    StepThickness[13]=10.4; Weight[13]=.03705;
+    StepThickness[14]=11.2; Weight[14]=.03773;
+    StepThickness[15]=12.0; Weight[15]=.03968;
+    StepThickness[16]=12.8; Weight[16]=.04058;
+    StepThickness[17]=13.6; Weight[17]=.03903;
+    StepThickness[18]=14.4; Weight[18]=.04370;
+    StepThickness[19]=15.2; Weight[19]=.03981;
+    StepThickness[20]=16.0; Weight[20]=.05226;
+    StepThickness[21]=16.8; Weight[21]=.03603;
+
+    // GetStepInformation();
+
+    G4double TotalWeight=0;
+    // convert the absolute weight values to relative ones
+    for(G4int i=0;i<StepNumbers;i++)
+    {
+        TotalWeight+=Weight[i];
+    }
+
+    for(G4int i=0;i<StepNumbers;i++)
+    {
+        Weight[i]=Weight[i]/TotalWeight;
+    }
+
+    // To build the RMW step layers will be put one after another
+
+    StartingAngle[0]=0 *deg;
+    SpanningAngle[0]=90 *deg;
+    G4double PositionModx;
+    G4double WholeStartingAngle=0 *deg;
+    G4double WholeThickness=0;
+    for(G4int i=1;i<StepNumbers;i++)
+    {
+        StartingAngle[i]=WholeStartingAngle+(Weight[i-1]*(2*pi))/8;
+        SpanningAngle[i]=90* deg -2*StartingAngle[i];
+        StepThickness[i]=StepThickness[i]-WholeThickness;
+        PositionModx=WholeThickness+StepThickness[i]/2.;
+        PositionMod[i]=G4ThreeVector(0,0,PositionModx);
+        WholeThickness+=StepThickness[i];
+        WholeStartingAngle=StartingAngle[i];
+    }
+
+    rm = new G4RotationMatrix();
+    G4double phi = 270. *deg;
+    rm -> rotateY(phi);
+
+
+    // BuildModulato
+
+    G4bool isotopes = false;
+    G4Material* airNist =  G4NistManager::Instance()->FindOrBuildMaterial("G4_AIR", isotopes);
+
+
+    Mod0Mater = airNist;
+    ModMater = airNist; // You have to change modulator material via a macrofile (default is air)
+
+    innerRadiusOfTheTube = 2.5 *cm;
+    outerRadiusOfTheTube = 9.5 *cm;
+
+    // Mother of the modulator wheel
+    G4ThreeVector positionMotherMod = G4ThreeVector(-2160.50 *mm, 30 *mm, 50 *mm);
+
+    G4Box* solidMotherMod = new G4Box("MotherMod", 12 *cm, 12 *cm, 12 *cm);
+
+    logicMotherMod = new G4LogicalVolume(solidMotherMod, Mod0Mater,"MotherMod",0,0,0);
+
+    physiMotherMod = new G4PVPlacement(rm,positionMotherMod,  "MotherMod",
+                                       logicMotherMod,
+                                       physicalTreatmentRoom,
+                                       false,
+                                       0);
+
+
+    // BuildSteps()
+
+    //----------------------------------------------------------
+    // Mother volume of first quarter of the modulator
+    //----------------------------------------------------------
+
+    G4double hightOfTheTube0 = 10.0 *cm;
+    G4double startAngleOfTheTube0 = 0 *deg;
+    G4double spanningAngleOfTheTube0 = 90 *deg;
+
+    G4RotationMatrix rm1;
+    rm1.rotateZ(0 *deg);
+
+    G4ThreeVector positionMod1 = G4ThreeVector(0*cm,0*cm,0*cm);
+
+    solidMod1 = new G4Tubs("Mod1",
+                           innerRadiusOfTheTube,
+                           outerRadiusOfTheTube,
+                           hightOfTheTube0/2.,
+                           startAngleOfTheTube0,
+                           spanningAngleOfTheTube0);
+
+    logicMod1 = new G4LogicalVolume(solidMod1, Mod0Mater, "Mod1",0,0,0);
+
+    physiMod1 = new G4PVPlacement(G4Transform3D(rm1, positionMod1),
+                                  logicMod1,
+                                  "Mod1",
+                                  logicMotherMod,
+                                  false,
+                                  0);
+
+    //----------------------------------------------------------
+    //  modulator steps
+    //----------------------------------------------------------
+    for (G4int i=1;i<StepNumbers;i++)
+    {
+
+        solidMod[i] = new G4Tubs("Modstep",
+                                 innerRadiusOfTheTube,
+                                 outerRadiusOfTheTube,
+                                 StepThickness[i]/2.,
+                                 StartingAngle[i],
+                                 SpanningAngle[i]);
+
+        logicMod[i] = new G4LogicalVolume(solidMod[i],
+                                          ModMater, "Modstep",0,0,0);
+
+        physiMod[i] = new G4PVPlacement(0,
+                                        PositionMod[i],
+                                        logicMod[i],
+                                        "Modstep",
+                                        logicMod1,
+                                        false,
+                                        0);
+
+
+    }
+
+    //----------------------------------------------------------
+    // Mother volume of the second modulator quarter
+    //----------------------------------------------------------
+
+    G4RotationMatrix rm2;
+    rm2.rotateZ(90 *deg);
+
+    G4ThreeVector positionMod2 = G4ThreeVector(0*cm,0*cm,0*cm);
+
+    solidMod2 = new G4Tubs("Mod2",
+                           innerRadiusOfTheTube,
+                           outerRadiusOfTheTube,
+                           hightOfTheTube0/2.,
+                           startAngleOfTheTube0,
+                           spanningAngleOfTheTube0);
+
+    logicMod2 = new G4LogicalVolume(solidMod2,
+                                    Mod0Mater, "Mod2",0,0,0);
+
+
+    physiMod2 = new G4PVPlacement(G4Transform3D(rm2, positionMod2),
+                                  logicMod2,
+                                  "Mod2",
+                                  logicMotherMod,
+                                  false,
+                                  0);
+
+
+    for (G4int i=1;i<StepNumbers;i++)
+    {
+
+        physiMod[StepNumbers+i-1] = new G4PVPlacement(0,
+                                                      PositionMod[i],
+                                                      logicMod[i],
+                                                      "Modstep",
+                                                      logicMod2,
+                                                      false,
+                                                      0);
+
+    }
+
+    //----------------------------------------------------------
+    // Mother volume of the third modulator quarter
+    //----------------------------------------------------------
+
+    G4RotationMatrix rm3;
+    rm3.rotateZ(180 *deg);
+
+    G4ThreeVector positionMod3 = G4ThreeVector(0*cm,0*cm,0*cm);
+
+    solidMod3 = new G4Tubs("Mod3",
+                           innerRadiusOfTheTube,
+                           outerRadiusOfTheTube,
+                           hightOfTheTube0,
+                           startAngleOfTheTube0/2.,
+                           spanningAngleOfTheTube0);
+
+    logicMod3 = new G4LogicalVolume(solidMod3,
+                                    Mod0Mater, "Mod3",0,0,0);
+
+
+    physiMod3 = new G4PVPlacement(G4Transform3D(rm3, positionMod3),
+                                  logicMod3,    // its logical volume
+                                  "Mod3",        // its name
+                                  logicMotherMod,  // its mother  volume
+                                  false,         // no boolean operations
+                                  0);            // no particular field
+
+
+
+
+    for (G4int i=1;i<StepNumbers;i++)
+    {
+
+        physiMod[2*(StepNumbers-1)+i] = new G4PVPlacement(0,
+                                                          PositionMod[i],
+                                                          logicMod[i],
+                                                          "Modstep",
+                                                          logicMod3,
+                                                          false,
+                                                          0);
+
+    }
+
+    //----------------------------------------------------------
+    // Mother volume of the fourth modulator quarter
+    //----------------------------------------------------------
+
+
+    G4RotationMatrix rm4;
+    rm4.rotateZ(270 *deg);
+
+    G4ThreeVector positionMod4 = G4ThreeVector(0*cm,0*cm,0*cm);
+
+    solidMod4 = new G4Tubs("Mod4",
+                           innerRadiusOfTheTube,
+                           outerRadiusOfTheTube,
+                           hightOfTheTube0,
+                           startAngleOfTheTube0/2.,
+                           spanningAngleOfTheTube0);
+
+    logicMod4 = new G4LogicalVolume(solidMod4,
+                                    Mod0Mater, "Mod4",0,0,0);
+
+
+    physiMod4 = new G4PVPlacement(G4Transform3D(rm4, positionMod4),
+                                  logicMod4,
+                                  "Mod4",
+                                  logicMotherMod,
+                                  false,
+                                  0);
+
+
+    for (G4int i=1;i<StepNumbers;i++)
+    {
+        physiMod[3*(StepNumbers-1)+i] = new G4PVPlacement(0,
+                                                          PositionMod[i],
+                                                          logicMod[i],
+                                                          "Modstep",
+                                                          logicMod4,
+                                                          false,
+                                                          0);
+    }
+    // Inform the kernel about the new geometry
+    G4RunManager::GetRunManager() -> GeometryHasBeenModified();
+    G4RunManager::GetRunManager() -> PhysicsHasBeenModified();
+    G4VisAttributes * red = new G4VisAttributes( G4Colour(1. ,0. ,0.));
+    red-> SetVisibility(true);
+    red-> SetForceSolid(true);
+    logicMotherMod -> SetVisAttributes(G4VisAttributes::GetInvisible());
+
+    logicMod1 ->SetVisAttributes(G4VisAttributes::GetInvisible());
+    logicMod2 ->SetVisAttributes(G4VisAttributes::GetInvisible());
+    logicMod3 ->SetVisAttributes(G4VisAttributes::GetInvisible());
+    logicMod4 ->SetVisAttributes(G4VisAttributes::GetInvisible());
+
+    for (G4int i=1;i<StepNumbers;i++)
+    {
+        logicMod[i] -> SetVisAttributes(red);
+    }
+
+
+
+}
+/////////////////////////////////////////////////////////////////////////////
+// Messenger values
+/////////////////////////////////////////////////////////////////////////////
+void G4TPassiveProtonBeamLineGeometry::SetModulatorAngle(G4double angle)
+{
+    G4double rotationAngle = angle;
+    rm -> rotateZ(rotationAngle);
+    physiMotherMod -> SetRotation(rm);
+    G4cout << "MODULATOR HAS BEEN ROTATED OF " << rotationAngle/deg
+           << " deg" << G4endl;
+    G4RunManager::GetRunManager() -> GeometryHasBeenModified();
+}
+/////////////////////////////////////////////////////////////////////////
+// Change modulator material
+void G4TPassiveProtonBeamLineGeometry::SetModulatorMaterial(G4String Material)
+{
+    if (G4Material* NewMaterial = G4NistManager::Instance()->FindOrBuildMaterial(Material, false) )
+    {
+        if (NewMaterial)
+        {
+            for(G4int i=1;i<StepNumbers;i++)
+            {
+                logicMod[i] -> SetMaterial(NewMaterial);
+                //  G4RunManager::GetRunManager() -> PhysicsHasBeenModified();
+                G4RunManager::GetRunManager() -> GeometryHasBeenModified();
+
+                //  G4cout<<(logicMod[i]->GetMaterial()->GetName())<<G4endl;
+            }
+            G4cout << "The material of the Modulator wheel has been changed to " << Material << G4endl;
+        }
+    }
+    else
+    {
+        G4cout << "WARNING: material \"" << Material << "\" doesn't exist in NIST elements/materials"
+                                                        " table [located in $G4INSTALL/source/materials/src/G4NistMaterialBuilder.cc]" << G4endl;
+        G4cout << "Use command \"/parameter/nist\" to see full materials list!" << G4endl;
+
+
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Change modulator position in the beam line
+void G4TPassiveProtonBeamLineGeometry::SetModulatorPosition(G4ThreeVector Pos)
+{
+    G4ThreeVector NewModulatorPos=Pos;
+    physiMotherMod -> SetTranslation( NewModulatorPos);
+    G4RunManager::GetRunManager() -> GeometryHasBeenModified();
+    G4cout << "The modulator wheel is translated to"<<  NewModulatorPos/mm <<"mm " <<G4endl;
+
+}
+/////////////////////////////////////////////////////////////////////////////////
+//change modulator inner raduis
+void G4TPassiveProtonBeamLineGeometry::SetModulatorInnerRadius(G4double newvalue)
+{
+    solidMod1 -> SetInnerRadius(newvalue);
+    solidMod2 -> SetInnerRadius(newvalue);
+    solidMod3 -> SetInnerRadius(newvalue);
+    solidMod4 -> SetInnerRadius(newvalue);
+    for(G4int i=1;i<StepNumbers;i++)
+    {
+        solidMod[i] -> SetInnerRadius(newvalue);}
+    G4RunManager::GetRunManager() -> GeometryHasBeenModified();
+    G4cout << "InnerRadius of the Modulator Wheel has been changed to :"
+           << newvalue/mm<<" mm"<< G4endl;
+}
+/////////////////////////////////////////////////////////////////////////////////
+//change modulator outer raduis
+void G4TPassiveProtonBeamLineGeometry::SetModulatorOuterRadius(G4double newvalue)
+{
+    solidMod1 -> SetOuterRadius(newvalue);
+    solidMod2 -> SetOuterRadius(newvalue);
+    solidMod3 -> SetOuterRadius(newvalue);
+    solidMod4 -> SetOuterRadius(newvalue);
+    for(G4int i=1;i<StepNumbers;i++)
+    {
+        solidMod[i] -> SetOuterRadius(newvalue);}
+    G4RunManager::GetRunManager() -> GeometryHasBeenModified();
+    G4cout << "OuterRadius of the Modulator Wheel has been changed to :"
+           << newvalue/mm<<" mm"<<G4endl;
+}
+
+
+
 /////////////////////////// MESSENGER ///////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 void G4TPassiveProtonBeamLineGeometry::SetRangeShifterXPosition(G4double value)
@@ -1581,11 +2288,3 @@ void G4TPassiveProtonBeamLineGeometry::SetRSMaterial(G4String materialChoice)
         G4cout << "Use command \"/parameter/nist\" to see full materials list!" << G4endl;
     }
 }
-
-/////////////////////////////////////////////////////////////////////////////
-void G4TPassiveProtonBeamLineGeometry::SetModulatorAngle(G4double value)
-{
-    modulator -> SetModulatorAngle(value);
-    //G4RunManager::GetRunManager() -> GeometryHasBeenModified();
-}
-/////////////////////////////////////////////////////////////////////////////

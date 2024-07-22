@@ -31,9 +31,7 @@
 #define G4TModifiedSteppingAction_h 1
 
 #include "G4UserSteppingAction.hh"
-#include "globals.hh"
 
-//class G4TVolumeConstruction;
 class G4TRunAction;
 
 class G4TModifiedSteppingAction : public G4UserSteppingAction
@@ -47,10 +45,6 @@ public:
 private:
     //const G4TVolumeConstruction* fDetConstruction;
     G4TRunAction*  RunAction;
-
-    //G4ThreadLocal static G4double edep;
-    //G4ThreadLocal static G4String reg;
-    //G4ThreadLocal static unsigned int CN;
 
 };
 

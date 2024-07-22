@@ -35,9 +35,6 @@
 #include "G4String.hh"
 #include "TETRunAction.hh"
 #include "TETSteppingAction.hh"
-#include "G4TDirectPrimaryGeneratorAction.hh"
-#include "G4TReadPrimaryGeneratorAction.hh"
-#include "G4TDirectToFilesPrimaryGeneratorAction.hh"
 
 // *********************************************************************
 // This UserActionInitialization class initializes UserAction classes

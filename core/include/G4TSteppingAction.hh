@@ -31,7 +31,6 @@
 #define G4TSteppingAction_h 1
 
 #include "G4UserSteppingAction.hh"
-#include "globals.hh"
 
 //class G4TVolumeConstruction;
 class G4TRunAction;

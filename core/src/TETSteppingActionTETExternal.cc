@@ -68,9 +68,12 @@ void TETSteppingActionTETExternal::UserSteppingAction(const G4Step* step)
     else stepCounter=0;
 
     G4int CN = step->GetPreStepPoint()->GetTouchable()->GetCopyNumber();
+    auto reg = step->GetPreStepPoint()->GetTouchable()->GetVolume()->GetLogicalVolume()->GetName();
     if(step->GetTrack()->GetTrackID() == 1){
-        //std::cout <<" edep:" << edep << " SL " << step->GetStepLength() << std::endl;
-        RunAction->FillRegionLenghts(CopyNumberRegionNameMap[CN], 0.1*step->GetStepLength()); // in cm
-        //std::cout << " Particle:" << step->GetTrack()->GetParticleDefinition()->GetParticleName() << " ID:" << step->GetTrack()->GetTrackID() << " reg:" << reg << " Edep:" << step->GetTotalEnergyDeposit() << " Lenght:" << step->GetStepLength() << " @@@@@@@@@@@@@@@@@@@@@@@" << std::endl;
+        if(reg != "World"){
+            //std::cout <<" edep:" << edep << " SL " << step->GetStepLength() << std::endl;
+            RunAction->FillRegionLenghts(CopyNumberRegionNameMap[CN], 0.1*step->GetStepLength()); // in cm
+            //std::cout << " Particle:" << step->GetTrack()->GetParticleDefinition()->GetParticleName() << " ID:" << step->GetTrack()->GetTrackID() << " reg:" << reg << " Edep:" << step->GetTotalEnergyDeposit() << " Lenght:" << step->GetStepLength() << " @@@@@@@@@@@@@@@@@@@@@@@" << std::endl;
+        }
     }
 }

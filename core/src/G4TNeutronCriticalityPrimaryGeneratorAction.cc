@@ -64,7 +64,21 @@ G4TNeutronCriticalityPrimaryGeneratorAction::G4TNeutronCriticalityPrimaryGenerat
     //TotalEmittedEnergy = 0. ;
 
     particleGun = new G4ParticleGun(1);
+
     GunInitialize();
+
+    particleDefinition = G4ParticleTable::GetParticleTable()->FindParticle(NewRankSourceParticlesNamesValues[DataID]);
+    if(particleDefinition == nullptr){ G4String msg = "Particle name (" + NewRankSourceParticlesNamesValues[DataID] + ") in rank/thread (" + std::to_string(DataID) + ") not found "; G4Exception("Source Data", "1", FatalErrorInArgument, msg.c_str());}
+    particleGun->SetParticleDefinition(particleDefinition);
+    particleGun->SetNumberOfParticles(1);
+
+    if(UseGeneratedData == "read"){
+        G4AutoLock l(&mutex);
+        GetEventDataFromCriticalityDataFile();
+        l.unlock();
+    }else{
+        FillDataMapsForNeutronCriticality();
+    }
 
 }
 
@@ -84,21 +98,23 @@ G4TNeutronCriticalityPrimaryGeneratorAction::~G4TNeutronCriticalityPrimaryGenera
 void G4TNeutronCriticalityPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
 
-    if(EvInc == 0){
-        //G4cout << " First Event: Initialization"<< G4endl;
+    //// For MPI mode, For MT, This is called in the Constructor
+    //if(EvInc == 0){
+    //    //G4cout << " First Event: Initialization"<< G4endl;
+    //    SourceInitialization();
+    //    particleGun->SetNumberOfParticles(1);
+    //    if(UseGeneratedData == "read"){
+    //        G4AutoLock l(&mutex);
+    //        GetEventDataFromCriticalityDataFile();
+    //        l.unlock();
+    //    }else{
+    //        FillDataMapsForNeutronCriticality();
+    //    }
+    //}
 
-        SourceInitialization();
-        particleGun->SetNumberOfParticles(1);
-        if(UseGeneratedData == "read"){
-            G4AutoLock l(&mutex);
-            GetEventDataFromCriticalityDataFile();
-            l.unlock();
-        }else{
-            //
-            FillDataMapsForNeutronCriticality();
-            //
-        }
-    }
+
+
+
 
     //G4cout << NumberOfEventInBatch << " "<< EvInc << G4endl;
        //               1000-1000=0 should not simulated because the array data dont have the index 1000

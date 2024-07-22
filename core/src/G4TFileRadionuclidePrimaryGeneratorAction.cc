@@ -31,7 +31,7 @@
 // S. Guatelli. University of Wollongong, Australia.
 //
 
-#include "G4TDirectToFilesPrimaryGeneratorAction.hh"
+#include "G4TFileRadionuclidePrimaryGeneratorAction.hh"
 #include "globals.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4Event.hh"
@@ -43,23 +43,30 @@
 #include <iostream>
 #include "G4PhysicalConstants.hh"
 
-G4TDirectToFilesPrimaryGeneratorAction::G4TDirectToFilesPrimaryGeneratorAction(){
+G4TFileRadionuclidePrimaryGeneratorAction::G4TFileRadionuclidePrimaryGeneratorAction(){
+
 
     particleGun = new G4ParticleGun(1);
     GunInitialize();
 
-    particleDefinition = G4ParticleTable::GetParticleTable()->FindParticle(NewRankSourceParticlesNamesValues[DataID]);
-    if(particleDefinition == nullptr){ G4String msg = "Particle name (" + NewRankSourceParticlesNamesValues[DataID] + ") in rank/thread (" + std::to_string(DataID) + ") not found "; G4Exception("Source Data", "1", FatalErrorInArgument, msg.c_str());}
-    particleGun->SetParticleDefinition(particleDefinition);
+    //particleDefinition = G4ParticleTable::GetParticleTable()->FindParticle(NewRankSourceParticlesNamesValues[DataID]);
+    //if(particleDefinition == nullptr){ G4String msg = "Particle name (" + NewRankSourceParticlesNamesValues[DataID] + ") in rank/thread (" + std::to_string(DataID) + ") not found "; G4Exception("Source Data", "1", FatalErrorInArgument, msg.c_str());}
+    //particleGun->SetParticleDefinition(particleDefinition);
     particleGun->SetNumberOfParticles(1);
 
-    OpenFilesToSaveGeneratedData();
+    //std::cout << "\n\n\n\n\n\n\n\n\n\n\n\n************** The primary generator Action initialization... \n" << NewRankSourceParticlesNamesValues[DataID] << std::endl;
 
 }
 
-G4TDirectToFilesPrimaryGeneratorAction::~G4TDirectToFilesPrimaryGeneratorAction(){}
+G4TFileRadionuclidePrimaryGeneratorAction::~G4TFileRadionuclidePrimaryGeneratorAction()
+{
+    //G4MUTEXDESTROY(mutex);
+    //G4cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n from function : " << __FUNCTION__<< G4endl;
 
-void G4TDirectToFilesPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
+    delete particleGun;
+}
+
+void G4TFileRadionuclidePrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
     //particleGun->SetParticlePosition(G4ThreeVector(0, 0, 0));
     //particleGun->SetParticleEnergy(1.);
@@ -67,29 +74,29 @@ void G4TDirectToFilesPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
     //// For MPI mode, For MT, This is called in the Constructor
     //if(EvInc == 0){
+    //    //std::cout << "begin of SourceInitialization()" << std::endl;
     //    SourceInitialization();
     //    particleGun->SetNumberOfParticles(1);
-    //    if(EnergyTypeNum != 5){particleGun->SetParticleDefinition(particleDefinition);
-    //    OpenFilesToSaveGeneratedData();
-    //    //std::cout << "\n\n\n\n\n\n\n\n 22222222 DataID "<< DataID << " SourceType=" << SourceType<< std::endl;
+    //    if(EnergyTypeNum != 5){particleGun->SetParticleDefinition(particleDefinition);}
     //    EvInc++;
     //}
 
-    //// A class for Primary generator for File and Radionuclide is created G4TFileRadionuclidePrimaryGeneratorAction.cc
-    //if(EnergyTypeNum == 5){particleGun->SetParticleDefinition(G4ParticleTable::GetParticleTable()->FindParticle(ParNameList[EnergyListInc]));}
+    particleGun->SetParticleDefinition(G4ParticleTable::GetParticleTable()->FindParticle(ParNameList[EnergyListInc]));
 
     //GenerateEventsParticle();
     GenerateEventsEnergy();
     GenerateEventsPosition();
     GenerateEventsMomentumDirection();
-    SaveGeneratedDataToFiles();
 
     particleGun->SetParticlePosition(G4ThreeVector(X, Y, Z));
     particleGun->SetParticleEnergy(ENERGY);
     particleGun->SetParticleMomentumDirection(G4ParticleMomentum(XMOMD, YMOMD, ZMOMD));
 
-    //std::cout << " Particle=" << particleGun->GetParticleDefinition()->GetParticleName() << " ENERGY=" << ENERGY << " X=" << X << " Y=" << Y << " Z=" << Z << std::endl;
+    //std::cout << EvInc << " ENERGY=" << ENERGY << " X=" << X << " Y=" << Y << " Z=" << Z << " XMOMD=" << XMOMD << " YMOMD=" << YMOMD << " ZMOMD=" << ZMOMD << " " << NewRankSourceRegionsBoxDimValues[DataID] << " " << particleDefinition->GetParticleName() << std::endl;
+
+    //if(WriteSourceDataToFiles == 1){SaveGeneratedDataToFiles();}
 
     particleGun->GeneratePrimaryVertex(anEvent);
+    //std::cout << " particleGun->GeneratePrimaryVertex(anEvent) " << std::endl;
 
 }

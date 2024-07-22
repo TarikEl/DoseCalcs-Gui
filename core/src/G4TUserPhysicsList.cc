@@ -280,40 +280,63 @@ G4TUserPhysicsList::G4TUserPhysicsList():  G4VUserPhysicsList()
     decPhysicsList = new G4DecayPhysics(0);
     RadioactivedecPhysicsList = new G4RadioactiveDecayPhysics(0);
 
+    const G4TVolumeConstruction* TConstruction2 = static_cast<const G4TVolumeConstruction*> (G4RunManager::GetRunManager()->GetUserDetectorConstruction());
+
     int verbose = 0 ;
 
     if (ParticlePysics == "EMS") {
         G4VEmPhysicsConstructorObj = new G4EmStandardPhysics(verbose);
+        if (TConstruction2->getParticleName() == "neutron") {
+            G4VHadromPhysicsConstructorObj = new G4HadronPhysicsFTFP_BERT();
+        }
     }
     else if(ParticlePysics == "EMS1"){
         //G4cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n EMS1 Physics " << G4endl;
 
         G4VEmPhysicsConstructorObj = new G4EmStandardPhysics_option1(verbose);
+        if (TConstruction2->getParticleName() == "neutron") {
+            G4VHadromPhysicsConstructorObj = new G4HadronPhysicsFTFP_BERT();
+        }
     }
     else if(ParticlePysics == "EMS2"){
         //G4cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n EMS2 Physics " << G4endl;
 
         G4VEmPhysicsConstructorObj = new G4EmStandardPhysics_option2(verbose);
+        if (TConstruction2->getParticleName() == "neutron") {
+            G4VHadromPhysicsConstructorObj = new G4HadronPhysicsFTFP_BERT();
+        }
     }
     else if(ParticlePysics == "EMS3"){
         //G4cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n EMS3 Physics " << G4endl;
 
         G4VEmPhysicsConstructorObj = new G4EmStandardPhysics_option3(verbose);
+        if (TConstruction2->getParticleName() == "neutron") {
+            G4VHadromPhysicsConstructorObj = new G4HadronPhysicsFTFP_BERT();
+        }
     }
     else if(ParticlePysics == "EMS4"){
         //G4cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n EMS4 Physics " << G4endl;
 
         G4VEmPhysicsConstructorObj = new G4EmStandardPhysics_option4(verbose);
+        if (TConstruction2->getParticleName() == "neutron") {
+            G4VHadromPhysicsConstructorObj = new G4HadronPhysicsFTFP_BERT();
+        }
     }
     else if(ParticlePysics == "Livermore"){
         //G4cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Livermore Physics " << G4endl;
 
         G4VEmPhysicsConstructorObj = new G4EmLivermorePhysics(verbose);
+        if (TConstruction2->getParticleName() == "neutron") {
+            G4VHadromPhysicsConstructorObj = new G4HadronPhysicsFTFP_BERT();
+        }
     }
     else if(ParticlePysics == "Penelope"){
         //G4cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n penelope Physics " << G4endl;
 
         G4VEmPhysicsConstructorObj = new G4EmPenelopePhysics(verbose);
+        if (TConstruction2->getParticleName() == "neutron") {
+            G4VHadromPhysicsConstructorObj = new G4HadronPhysicsFTFP_BERT();
+        }
     }
     else if(ParticlePysics == "HADRON_FTFP_BERT"){
         G4VEmPhysicsConstructorObj = new G4EmStandardPhysics_option3(verbose);
@@ -372,13 +395,12 @@ G4TUserPhysicsList::~G4TUserPhysicsList()
     delete decPhysicsList;
     //delete messengerPhyObj;
 
-    if(ParticlePysics == "EMS" || ParticlePysics == "EMS1" || ParticlePysics == "EMS2" || ParticlePysics == "EMS3"|| ParticlePysics == "EMS4"|| ParticlePysics == "Livermore"|| ParticlePysics == "Penelope"){
+    //if(ParticlePysics == "EMS" || ParticlePysics == "EMS1" || ParticlePysics == "EMS2" || ParticlePysics == "EMS3"|| ParticlePysics == "EMS4"|| ParticlePysics == "Livermore"|| ParticlePysics == "Penelope"){
+    if(G4VEmPhysicsConstructorObj != nullptr){
         delete G4VEmPhysicsConstructorObj;
     }
-    else if(ParticlePysics == "Construct"){
 
-    }
-    else{
+    if(G4VHadromPhysicsConstructorObj != nullptr){
         delete G4VHadromPhysicsConstructorObj;
     }
 
@@ -412,6 +434,11 @@ void G4TUserPhysicsList::ConstructProcess()
 
     if(ParticlePysics == "EMS" || ParticlePysics == "EMS1" || ParticlePysics == "EMS2" || ParticlePysics == "EMS3"|| ParticlePysics == "EMS4"|| ParticlePysics == "Livermore"|| ParticlePysics == "Penelope"){
         G4VEmPhysicsConstructorObj->ConstructProcess();
+
+        const G4TVolumeConstruction* TConstruction2 = static_cast<const G4TVolumeConstruction*> (G4RunManager::GetRunManager()->GetUserDetectorConstruction());
+        if (TConstruction2->getParticleName() == "neutron") {
+            G4VHadromPhysicsConstructorObj->ConstructProcess();
+        }
     }
     else if( ParticlePysics == "Construct"){
 

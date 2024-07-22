@@ -425,6 +425,7 @@ private:
     void CalculateQuantitiesBasedOnICRPData();
     void GenerateSAFFromNewSource(QString);
     void GenerateSAFFromNewTarget(QString);
+
     void GenerateRadiotracerQuantitiesByInterpolationInDefaultUnit(QString, double);
     double GenerateRadiotracerQuantitiesByInterpolationInDefaultUnitForBiokinetic(QString, double, QString, QString);
     double  GenerateRadiationFactor(QString, double);
@@ -436,8 +437,14 @@ private:
     void Read_DoseCalcs_file(QString);
     void Read_Reference_file(QString);
     void ReadMassesAndWTFactor(QString);
+    void ReadMassesAndWTFactorForDCC(QString);
     void ConstructOtherTissuesSource();
     void CreateNewSourceRegion(QString);
+
+    void GenerateDCCFromNewTarget(QString);
+    void CalculateExternalDosimetryQuantities();
+
+    void ReadWTFactor(QString);
 
     bool ReadNeutronSpectrum;
     double  GenerateTissueFactor(QString);
@@ -708,6 +715,12 @@ private slots:
     void on_comboBoxRadioPharmaceutiques_textActivated(const QString &arg1);
 
     void on_checkBoxVoxelOrRegionLevel_stateChanged(int arg1);
+
+    void on_comboBoxPredefinedSources_currentTextChanged(const QString &arg1);
+
+    void on_pushButtonReadDCCsDoseCalcs_clicked();
+
+    void on_pushButtonGenerateExternalDosValues_clicked();
 
 private:
 

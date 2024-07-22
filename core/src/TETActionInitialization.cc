@@ -33,8 +33,13 @@
 #include "TETActionInitialization.hh"
 #include "TETSteppingActionTETExternal.hh"
 #include "G4TModifiedSteppingAction.hh"
+#include "G4TFileRadionuclidePrimaryGeneratorAction.hh"
+#include "G4TDirectPrimaryGeneratorAction.hh"
+#include "G4TReadPrimaryGeneratorAction.hh"
+#include "G4TDirectToFilesPrimaryGeneratorAction.hh"
 
 extern G4String SimulationIntExtNeutDet;
+extern G4String EnergyDistribution;
 
 TETActionInitialization::TETActionInitialization()
  : G4VUserActionInitialization()
@@ -56,22 +61,37 @@ void TETActionInitialization::Build() const
     SetUserAction(runAction);
 
     if(SimulationIntExtNeutDet == "InternalDosimetry"){
+        G4cout << " \n  -- TETSteppingAction" << G4endl;
+
         SetUserAction(new TETSteppingAction);
     } else if(SimulationIntExtNeutDet == "ExternalDosimetry"){
+        G4cout << " \n  -- TETSteppingActionTETExternal" << G4endl;
+
         SetUserAction(new TETSteppingActionTETExternal(runAction));
     }else if (SimulationIntExtNeutDet == "MyCPPSteppingAction"){
         G4cout << " \n  -- G4TModifiedSteppingAction" << G4endl;
 
-        //SetUserAction(new G4TModifiedSteppingAction(runAction));
+        SetUserAction(new G4TModifiedSteppingAction(0));
     }
 
     const G4TVolumeConstruction* TConstruction2 = static_cast<const G4TVolumeConstruction*> (G4RunManager::GetRunManager()->GetUserDetectorConstruction());
     if( TConstruction2->getUseGeneratedData() == "read"){
+        G4cout << " \n  -- G4TReadPrimaryGeneratorAction" << G4endl;
+
         SetUserAction(new G4TReadPrimaryGeneratorAction);
     }else if(TConstruction2->getUseGeneratedData() == "save"){
+        G4cout << " \n  -- G4TDirectToFilesPrimaryGeneratorAction" << G4endl;
+
         SetUserAction(new G4TDirectToFilesPrimaryGeneratorAction);
     }else{
-        SetUserAction(new G4TDirectPrimaryGeneratorAction);
-    }
+        if(EnergyDistribution == "RadioNuclide" || EnergyDistribution == "File"){
+            G4cout << " \n  -- G4TFileRadionuclidePrimaryGeneratorAction" << G4endl;
 
-}  
+            SetUserAction(new G4TFileRadionuclidePrimaryGeneratorAction);
+        }else{
+            G4cout << " \n  -- G4TDirectPrimaryGeneratorAction" << G4endl;
+
+            SetUserAction(new G4TDirectPrimaryGeneratorAction);
+        }
+    }
+}

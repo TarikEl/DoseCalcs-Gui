@@ -30,8 +30,8 @@
 #include "G4TSteppingActionVoxelizedExternal.hh"
 #include "G4TRunAction.hh"
 #include "G4Step.hh"
-#include "G4RunManager.hh"
-#include "G4SystemOfUnits.hh"
+//#include "G4RunManager.hh"
+//#include "G4SystemOfUnits.hh"
 
 extern G4String GenerateVoxelsResuls;
 extern G4String* CopyNumberRegionNameMap;
@@ -63,25 +63,28 @@ void G4TSteppingActionVoxelizedExternal::UserSteppingAction(const G4Step* step)
 
     const G4VTouchable* touchable = step->GetPreStepPoint()->GetTouchable();
     auto edep = step->GetTotalEnergyDeposit();
-
     G4int CN ;
-
+    auto reg = step->GetPreStepPoint()->GetTouchable()->GetVolume()->GetLogicalVolume()->GetName();
     if(GenerateVoxelsResuls == "yes"){
         if(ParamType == 0){
             CN = touchable->GetCopyNumber();
             if(step->GetTrack()->GetTrackID() == 1){
-                //std::cout <<" edep:" << edep << " SL " << step->GetStepLength() << std::endl;
-                RunAction->FillVoxelLenghts(CN, 0.1*step->GetStepLength()); // in cm
-                //std::cout << " Particle:" << step->GetTrack()->GetParticleDefinition()->GetParticleName() << " ID:" << step->GetTrack()->GetTrackID() << " reg:" << reg << " Edep:" << step->GetTotalEnergyDeposit() << " Lenght:" << step->GetStepLength() << " @@@@@@@@@@@@@@@@@@@@@@@" << std::endl;
+                if(reg != "World"){
+                    //std::cout <<" edep:" << edep << " SL " << step->GetStepLength() << std::endl;
+                    RunAction->FillVoxelLenghts(CN, 0.1*step->GetStepLength()); // in cm
+                    //std::cout << " Particle:" << step->GetTrack()->GetParticleDefinition()->GetParticleName() << " ID:" << step->GetTrack()->GetTrackID() << " reg:" << reg << " Edep:" << step->GetTotalEnergyDeposit() << " Lenght:" << step->GetStepLength() << " @@@@@@@@@@@@@@@@@@@@@@@" << std::endl;
+                }
             }
             RunAction->FillVoxelStepHits(touchable->GetCopyNumber(), edep);
         }else{
             if(touchable->GetHistoryDepth()!=0){
                 CN = touchable->GetReplicaNumber(1) + VoxXNumber*touchable->GetReplicaNumber(2) + VoxXNumber*VoxYNumber*touchable->GetReplicaNumber(0);
                 if(step->GetTrack()->GetTrackID() == 1){
-                    //std::cout <<" edep:" << edep << " SL " << step->GetStepLength() << std::endl;
-                    RunAction->FillVoxelLenghts(CN, 0.1*step->GetStepLength()); // in cm
-                    //std::cout << " Particle:" << step->GetTrack()->GetParticleDefinition()->GetParticleName() << " ID:" << step->GetTrack()->GetTrackID() << " reg:" << reg << " Edep:" << step->GetTotalEnergyDeposit() << " Lenght:" << step->GetStepLength() << " @@@@@@@@@@@@@@@@@@@@@@@" << std::endl;
+                    if(reg != "World"){
+                        //std::cout <<" edep:" << edep << " SL " << step->GetStepLength() << std::endl;
+                        RunAction->FillVoxelLenghts(CN, 0.1*step->GetStepLength()); // in cm
+                        //std::cout << " Particle:" << step->GetTrack()->GetParticleDefinition()->GetParticleName() << " ID:" << step->GetTrack()->GetTrackID() << " reg:" << reg << " Edep:" << step->GetTotalEnergyDeposit() << " Lenght:" << step->GetStepLength() << " @@@@@@@@@@@@@@@@@@@@@@@" << std::endl;
+                    }
                 }
                 RunAction->FillVoxelStepHits(CN, edep);
             }
@@ -90,24 +93,26 @@ void G4TSteppingActionVoxelizedExternal::UserSteppingAction(const G4Step* step)
         if(ParamType == 0){
             CN = touchable->GetCopyNumber();
             if(step->GetTrack()->GetTrackID() == 1){
-                //std::cout <<" edep:" << edep << " SL " << step->GetStepLength() << std::endl;
-                RunAction->FillRegionLenghts(CopyNumberRegionNameMap[CN], 0.1*step->GetStepLength()); // in cm
-                //std::cout << " Particle:" << step->GetTrack()->GetParticleDefinition()->GetParticleName() << " ID:" << step->GetTrack()->GetTrackID() << " reg:" << reg << " Edep:" << step->GetTotalEnergyDeposit() << " Lenght:" << step->GetStepLength() << " @@@@@@@@@@@@@@@@@@@@@@@" << std::endl;
+                if(reg != "World"){
+                    //std::cout <<" edep:" << edep << " SL " << step->GetStepLength() << std::endl;
+                    RunAction->FillRegionLenghts(CopyNumberRegionNameMap[CN], 0.1*step->GetStepLength()); // in cm
+                    //std::cout << " Particle:" << step->GetTrack()->GetParticleDefinition()->GetParticleName() << " ID:" << step->GetTrack()->GetTrackID() << " reg:" << reg << " Edep:" << step->GetTotalEnergyDeposit() << " Lenght:" << step->GetStepLength() << " @@@@@@@@@@@@@@@@@@@@@@@" << std::endl;
+                }
             }
             RunAction->FillRegionStepHits(CopyNumberRegionNameMap[CN], edep);
         }else{
             if(touchable->GetHistoryDepth()!=0){
                 CN = touchable->GetReplicaNumber(1) + VoxXNumber*touchable->GetReplicaNumber(2) + VoxXNumber*VoxYNumber*touchable->GetReplicaNumber(0);
                 if(step->GetTrack()->GetTrackID() == 1){
-                    //std::cout <<" edep:" << edep << " SL " << step->GetStepLength() << std::endl;
-                    RunAction->FillRegionLenghts(CopyNumberRegionNameMap[CN], 0.1*step->GetStepLength()); // in cm
-                    //std::cout << " Particle:" << step->GetTrack()->GetParticleDefinition()->GetParticleName() << " ID:" << step->GetTrack()->GetTrackID() << " reg:" << reg << " Edep:" << step->GetTotalEnergyDeposit() << " Lenght:" << step->GetStepLength() << " @@@@@@@@@@@@@@@@@@@@@@@" << std::endl;
+                    if(reg != "World"){
+                        //std::cout <<" edep:" << edep << " SL " << step->GetStepLength() << std::endl;
+                        RunAction->FillRegionLenghts(CopyNumberRegionNameMap[CN], 0.1*step->GetStepLength()); // in cm
+                        //std::cout << " Particle:" << step->GetTrack()->GetParticleDefinition()->GetParticleName() << " ID:" << step->GetTrack()->GetTrackID() << " reg:" << reg << " Edep:" << step->GetTotalEnergyDeposit() << " Lenght:" << step->GetStepLength() << " @@@@@@@@@@@@@@@@@@@@@@@" << std::endl;
+                    }
                 }
                 RunAction->FillRegionStepHits(CopyNumberRegionNameMap[CN], edep);
             }
         }
     }
-
     //if (edep == 0.) return;
-
 }

@@ -45,10 +45,17 @@
 
 G4TDirectPrimaryGeneratorAction::G4TDirectPrimaryGeneratorAction(){
 
-    //std::cout << "dddddddddddddddddddddddd \n\n\n\n\n\n\n\n\n\n\n\n************** The primary generator Action initialization... "<< std::endl;
 
     particleGun = new G4ParticleGun(1);
     GunInitialize();
+
+    particleDefinition = G4ParticleTable::GetParticleTable()->FindParticle(NewRankSourceParticlesNamesValues[DataID]);
+    if(particleDefinition == nullptr){ G4String msg = "Particle name (" + NewRankSourceParticlesNamesValues[DataID] + ") in rank/thread (" + std::to_string(DataID) + ") not found "; G4Exception("Source Data", "1", FatalErrorInArgument, msg.c_str());}
+    particleGun->SetParticleDefinition(particleDefinition);
+    particleGun->SetNumberOfParticles(1);
+
+    //std::cout << "\n\n\n\n\n\n\n\n\n\n\n\n************** The primary generator Action initialization... \n" << NewRankSourceParticlesNamesValues[DataID] << std::endl;
+
 }
 
 G4TDirectPrimaryGeneratorAction::~G4TDirectPrimaryGeneratorAction()
@@ -65,19 +72,17 @@ void G4TDirectPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     //particleGun->SetParticleEnergy(1.);
     //particleGun->SetParticleMomentumDirection(G4ParticleMomentum(0, 0, 1.));
 
-    if(EvInc == 0){
-        //std::cout << "begin of SourceInitialization()" << std::endl;
-        SourceInitialization();
-        //std::cout << "End of SourceInitialization()" << std::endl;
+    //// For MPI mode, For MT, This is called in the Constructor
+    //if(EvInc == 0){
+    //    //std::cout << "begin of SourceInitialization()" << std::endl;
+    //    SourceInitialization();
+    //    particleGun->SetNumberOfParticles(1);
+    //    if(EnergyTypeNum != 5){particleGun->SetParticleDefinition(particleDefinition);}
+    //    EvInc++;
+    //}
 
-        particleGun->SetNumberOfParticles(1);
-
-        if(EnergyTypeNum != 5){particleGun->SetParticleDefinition(particleDefinition);}
-
-        EvInc++;
-    }
-
-    if(EnergyTypeNum == 5){particleGun->SetParticleDefinition(particleDefinitionList[ParNameList[EnergyListInc]]);}
+    //// A class for Primary generator for File and Radionuclide is created G4TFileRadionuclidePrimaryGeneratorAction.cc
+    //if(EnergyTypeNum == 5){particleGun->SetParticleDefinition(G4ParticleTable::GetParticleTable()->FindParticle(ParNameList[EnergyListInc]));}
 
     //GenerateEventsParticle();
     GenerateEventsEnergy();
@@ -95,7 +100,6 @@ void G4TDirectPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     particleGun->GeneratePrimaryVertex(anEvent);
     //std::cout << " particleGun->GeneratePrimaryVertex(anEvent) " << std::endl;
 
-
 }
 
 void G4TDirectPrimaryGeneratorAction::GenerateEventsPosition(){
@@ -103,6 +107,15 @@ void G4TDirectPrimaryGeneratorAction::GenerateEventsPosition(){
     //std::cout << "G4TDirectPrimaryGeneratorAction::GenerateEventsPosition()" << std::endl;
 
     if(PositionTypeNum == 1){
+
+
+        //std::cout << "NewRankSourceRegionsPosValues.size() "<< NewRankSourceRegionsPosValues.size() << " NewRankSourceRegionsBoxDimValues.size()" << NewRankSourceRegionsBoxDimValues.size() << std::endl;
+        //std::cout << NewRankSourceRegionsPosValues[DataID].getX()  << std::endl;
+        //std::cout << NewRankSourceRegionsPosValues[DataID].getY()  << std::endl;
+        //std::cout << NewRankSourceRegionsPosValues[DataID].getZ()  << std::endl;
+        //std::cout << NewRankSourceRegionsBoxDimValues[DataID].getX()  << std::endl;
+        //std::cout << NewRankSourceRegionsBoxDimValues[DataID].getY()  << std::endl;
+        //std::cout << NewRankSourceRegionsBoxDimValues[DataID].getZ()  << std::endl;
 
         X = (NewRankSourceRegionsPosValues[DataID].getX() - NewRankSourceRegionsBoxDimValues[DataID].getX()) + (G4double)G4UniformRand() * (2*NewRankSourceRegionsBoxDimValues[DataID].getX()); //generateRandom(hXmin,NewRankSourceRegionsBoxDimValues[DataID].getX());
         Y = (NewRankSourceRegionsPosValues[DataID].getY() - NewRankSourceRegionsBoxDimValues[DataID].getY()) + (G4double)G4UniformRand() * (2*NewRankSourceRegionsBoxDimValues[DataID].getY()); //generateRandom(hXmin,NewRankSourceRegionsBoxDimValues[DataID].getX());
@@ -115,7 +128,8 @@ void G4TDirectPrimaryGeneratorAction::GenerateEventsPosition(){
             bool Save = true;
 
             for (int gg = 0 ; gg < SourceRegionsNamesToBeIgnoredValues.size() ; gg++) {
-                if(SourceRegionsNamesToBeIgnoredValues[gg] == aNavigator->LocateGlobalPointAndSetup(G4ThreeVector(X,Y,Z))->GetLogicalVolume()->GetName()){
+                //if(SourceRegionsNamesToBeIgnoredValues[gg] == aNavigator->LocateGlobalPointAndSetup(G4ThreeVector(X,Y,Z))->GetLogicalVolume()->GetName()){
+                if(SourceRegionsNamesToBeIgnoredValues[gg] == NavigatorForVolumesInitialPosition[DataID]->LocateGlobalPointAndSetup(G4ThreeVector(X,Y,Z))->GetLogicalVolume()->GetName()){
                     Save=false;
                     break;
                 }
@@ -133,7 +147,8 @@ void G4TDirectPrimaryGeneratorAction::GenerateEventsPosition(){
                 Z = (NewRankSourceRegionsPosValues[DataID].getZ() - NewRankSourceRegionsBoxDimValues[DataID].getZ()) + (G4double)G4UniformRand() * (2*NewRankSourceRegionsBoxDimValues[DataID].getZ()); //generateRandom(hXmin,NewRankSourceRegionsBoxDimValues[DataID].getX());
 
                 for (int gg = 0 ; gg < SourceRegionsNamesToBeIgnoredValues.size() ; gg++) {
-                    if(SourceRegionsNamesToBeIgnoredValues[gg] == aNavigator->LocateGlobalPointAndSetup(G4ThreeVector(X,Y,Z))->GetLogicalVolume()->GetName()){
+                    //if(SourceRegionsNamesToBeIgnoredValues[gg] == aNavigator->LocateGlobalPointAndSetup(G4ThreeVector(X,Y,Z))->GetLogicalVolume()->GetName()){
+                    if(SourceRegionsNamesToBeIgnoredValues[gg] == NavigatorForVolumesInitialPosition[DataID]->LocateGlobalPointAndSetup(G4ThreeVector(X,Y,Z))->GetLogicalVolume()->GetName()){
                         Save=false;
                     }
                 }
@@ -143,7 +158,11 @@ void G4TDirectPrimaryGeneratorAction::GenerateEventsPosition(){
             }
 
         }else{
-            while (aNavigator->LocateGlobalPointAndSetup(G4ThreeVector(X,Y,Z))->GetLogicalVolume()->GetName() != NewRankSourceRegionsNamesValues[DataID]){
+
+            //while (aNavigator->LocateGlobalPointAndSetup(G4ThreeVector(X,Y,Z))->GetLogicalVolume()->GetName() != NewRankSourceRegionsNamesValues[DataID]){
+            while (NavigatorForVolumesInitialPosition[DataID]->LocateGlobalPointAndSetup(G4ThreeVector(X,Y,Z))->GetLogicalVolume()->GetName() != NewRankSourceRegionsNamesValues[DataID]){
+
+                //std::cout << "DataID "<< DataID << " SourceType=" << SourceType << " NewRankSourceRegionsBoxDimValues[DataID]=" << NewRankSourceRegionsBoxDimValues[DataID] << " NewRankSourceRegionsNamesValues[DataID]=" << NewRankSourceRegionsNamesValues[DataID] << " NewRankSourceRegionsPosValues[DataID]=" << NewRankSourceRegionsPosValues[DataID] << " Generated Pos: " << G4ThreeVector(X,Y,Z) << std::endl;
 
                 //std::cout << "DataID "<< DataID << " SourceType=" << SourceType << " NewRankSourceRegionsBoxDimValues[DataID]=" << NewRankSourceRegionsBoxDimValues[DataID] << " NewRankSourceRegionsNamesValues[DataID]=" << NewRankSourceRegionsNamesValues[DataID] << " NewRankSourceRegionsPosValues[DataID]=" << NewRankSourceRegionsPosValues[DataID] << " Generated Pos: " << G4ThreeVector(X,Y,Z) << " is in " << aNavigator->LocateGlobalPointAndSetup(G4ThreeVector(X,Y,Z))->GetLogicalVolume()->GetName() << std::endl;
 

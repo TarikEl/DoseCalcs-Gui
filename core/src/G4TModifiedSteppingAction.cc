@@ -30,84 +30,177 @@
 #include "G4TModifiedSteppingAction.hh"
 #include "G4TRunAction.hh"
 #include "G4Step.hh"
-#include "G4RunManager.hh"
-#include "G4SystemOfUnits.hh"
 
-extern G4String GenerateVoxelsResuls;
-extern G4String* CopyNumberRegionNameMap;
 
-extern G4int VoxXNumber;
-extern G4int VoxYNumber;
-extern G4int VoxZNumber;
-extern G4int ParamType;
 
-//G4ThreadLocal G4double G4TModifiedSteppingAction::edep;
-//G4ThreadLocal G4String G4TModifiedSteppingAction::reg;
-//G4ThreadLocal unsigned int  G4TModifiedSteppingAction::CN;
+#include "G4OpBoundaryProcess.hh"
+#include "G4OpticalPhoton.hh"
 
 G4TModifiedSteppingAction::G4TModifiedSteppingAction(G4TRunAction* ra):G4UserSteppingAction(),RunAction(ra){}
 
 G4TModifiedSteppingAction::~G4TModifiedSteppingAction(){}
 
+
 void G4TModifiedSteppingAction::UserSteppingAction(const G4Step* step)
 {
-
-    //G4String Particlename = step->GetTrack()->GetParticleDefinition()->GetParticleName();
-    //if(step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName() == "nFission"){
-    //    std::cout << " EventID " << G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID()
-    //          << " TrackID " << step->GetTrack()->GetTrackID()
-    //          << " Particlename " << Particlename
-    //          << " ProcessName " << step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName()
-    //          << std::endl;
-    //}
-
-    const G4VTouchable* touchable = step->GetPreStepPoint()->GetTouchable();
-    auto edep = step->GetTotalEnergyDeposit();
-
-    G4int CN ;
-
-    if(GenerateVoxelsResuls == "yes"){
-        if(ParamType == 0){
-            CN = touchable->GetCopyNumber();
-            if(step->GetTrack()->GetTrackID() == 1){
-                //std::cout <<" edep:" << edep << " SL " << step->GetStepLength() << std::endl;
-                RunAction->FillVoxelLenghts(CN, 0.1*step->GetStepLength()); // in cm
-                //std::cout << " Particle:" << step->GetTrack()->GetParticleDefinition()->GetParticleName() << " ID:" << step->GetTrack()->GetTrackID() << " reg:" << reg << " Edep:" << step->GetTotalEnergyDeposit() << " Lenght:" << step->GetStepLength() << " @@@@@@@@@@@@@@@@@@@@@@@" << std::endl;
-            }
-            RunAction->FillVoxelStepHits(touchable->GetCopyNumber(), edep);
-        }else{
-            if(touchable->GetHistoryDepth()!=0){
-                CN = touchable->GetReplicaNumber(1) + VoxXNumber*touchable->GetReplicaNumber(2) + VoxXNumber*VoxYNumber*touchable->GetReplicaNumber(0);
-                if(step->GetTrack()->GetTrackID() == 1){
-                    //std::cout <<" edep:" << edep << " SL " << step->GetStepLength() << std::endl;
-                    RunAction->FillVoxelLenghts(CN, 0.1*step->GetStepLength()); // in cm
-                    //std::cout << " Particle:" << step->GetTrack()->GetParticleDefinition()->GetParticleName() << " ID:" << step->GetTrack()->GetTrackID() << " reg:" << reg << " Edep:" << step->GetTotalEnergyDeposit() << " Lenght:" << step->GetStepLength() << " @@@@@@@@@@@@@@@@@@@@@@@" << std::endl;
-                }
-                RunAction->FillVoxelStepHits(CN, edep);
-            }
-        }
-    }else{
-        if(ParamType == 0){
-            CN = touchable->GetCopyNumber();
-            if(step->GetTrack()->GetTrackID() == 1){
-                //std::cout <<" edep:" << edep << " SL " << step->GetStepLength() << std::endl;
-                RunAction->FillRegionLenghts(CopyNumberRegionNameMap[CN], 0.1*step->GetStepLength()); // in cm
-                //std::cout << " Particle:" << step->GetTrack()->GetParticleDefinition()->GetParticleName() << " ID:" << step->GetTrack()->GetTrackID() << " reg:" << reg << " Edep:" << step->GetTotalEnergyDeposit() << " Lenght:" << step->GetStepLength() << " @@@@@@@@@@@@@@@@@@@@@@@" << std::endl;
-            }
-            RunAction->FillRegionStepHits(CopyNumberRegionNameMap[CN], edep);
-        }else{
-            if(touchable->GetHistoryDepth()!=0){
-                CN = touchable->GetReplicaNumber(1) + VoxXNumber*touchable->GetReplicaNumber(2) + VoxXNumber*VoxYNumber*touchable->GetReplicaNumber(0);
-                if(step->GetTrack()->GetTrackID() == 1){
-                    //std::cout <<" edep:" << edep << " SL " << step->GetStepLength() << std::endl;
-                    RunAction->FillRegionLenghts(CopyNumberRegionNameMap[CN], 0.1*step->GetStepLength()); // in cm
-                    //std::cout << " Particle:" << step->GetTrack()->GetParticleDefinition()->GetParticleName() << " ID:" << step->GetTrack()->GetTrackID() << " reg:" << reg << " Edep:" << step->GetTotalEnergyDeposit() << " Lenght:" << step->GetStepLength() << " @@@@@@@@@@@@@@@@@@@@@@@" << std::endl;
-                }
-                RunAction->FillRegionStepHits(CopyNumberRegionNameMap[CN], edep);
-            }
-        }
-    }
-
-    //if (edep == 0.) return;
+    static G4ParticleDefinition* opticalphoton = G4OpticalPhoton::OpticalPhotonDefinition();
+    const G4ParticleDefinition* particleDef = step->GetTrack()->GetDynamicParticle()->GetParticleDefinition();
+    RunAction->CountOpticalInteractions(step->GetPreStepPoint()->GetTouchable()->GetVolume()->GetLogicalVolume()->GetName()+"_"+particleDef->GetParticleName(), step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName());
 
 }
+
+///////////////////////////////////// For Detector, Scintillation and ////////////////////////////////////////////////////////////////////////////
+/*
+    #include "G4OpBoundaryProcess.hh"
+    #include "G4OpticalPhoton.hh"
+
+    static G4ParticleDefinition* opticalphoton = G4OpticalPhoton::OpticalPhotonDefinition();
+    const G4ParticleDefinition* particleDef = step->GetTrack()->GetDynamicParticle()->GetParticleDefinition();
+    RunAction->CountOpticalInteractions(step->GetPreStepPoint()->GetTouchable()->GetVolume()->GetLogicalVolume()->GetName()+"_"+particleDef->GetParticleName(), step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName());
+*/
+/*
+    extern G4String* CopyNumberRegionNameMap;
+    extern G4int VoxXNumber;
+    extern G4int VoxYNumber;
+    extern G4int VoxZNumber;
+
+    auto edep = step->GetTotalEnergyDeposit();
+    if (edep == 0.) return;
+    auto reg = step->GetPreStepPoint()->GetTouchable()->GetVolume()->GetLogicalVolume()->GetName();
+    if(reg != "RO"){return;}
+
+    const G4VTouchable* touchable = step->GetPreStepPoint()->GetTouchable();
+    RunAction->FillVoxelStepHits(touchable->GetReplicaNumber(2) + VoxXNumber*touchable->GetReplicaNumber(1) + VoxXNumber*VoxYNumber*touchable->GetReplicaNumber(0), edep);
+*/
+
+///////////////////////////////////// For Stylized Phantoms, Internal Dosimetry  ////////////////////////////////////////////////////////////////////////////
+
+/*
+    auto edep = step->GetTotalEnergyDeposit();
+    if (edep == 0.) return;
+    auto reg = step->GetPreStepPoint()->GetTouchable()->GetVolume()->GetLogicalVolume()->GetName();
+    RunAction->FillRegionStepHits(reg, edep);
+*/
+
+///////////////////////////////////// For Voxelized Phantoms, Internal Dosimetry, Region Level  ////////////////////////////////////////////////////////////////////////////
+
+/*   For Parammetrization 0
+extern G4String* CopyNumberRegionNameMap;
+
+auto edep = step->GetTotalEnergyDeposit();
+if (edep == 0.) return;
+G4int CN = step->GetPreStepPoint()->GetTouchable()->GetCopyNumber();
+RunAction->FillRegionStepHits(CopyNumberRegionNameMap[CN], edep);
+*/
+
+
+/*   For Nested Parammetrization 1
+extern G4String* CopyNumberRegionNameMap;
+extern G4int VoxXNumber;
+extern G4int VoxYNumber;
+extern G4int VoxZNumber;
+
+auto edep = step->GetTotalEnergyDeposit();
+if (edep == 0.) return;
+if(step->GetPreStepPoint()->GetTouchable()->GetHistoryDepth()!=0){
+    const G4VTouchable* touchable = step->GetPreStepPoint()->GetTouchable();
+    RunAction->FillRegionStepHits(CopyNumberRegionNameMap[touchable->GetReplicaNumber(1) + VoxXNumber*touchable->GetReplicaNumber(2) + VoxXNumber*VoxYNumber*touchable->GetReplicaNumber(0)], edep);
+}
+*/
+
+///////////////////////////////////// For Voxelized Phantoms, Internal Dosimetry, Voxel Level  ////////////////////////////////////////////////////////////////////////////
+
+/*   For Parammetrization 0
+extern G4String* CopyNumberRegionNameMap;
+
+auto edep = step->GetTotalEnergyDeposit();
+if (edep == 0.) return;
+const G4VTouchable* touchable = step->GetPreStepPoint()->GetTouchable();
+RunAction->FillVoxelStepHits(touchable->GetCopyNumber(), edep);
+*/
+
+
+/*   For Nested Parammetrization 1
+extern G4String* CopyNumberRegionNameMap;
+extern G4int VoxXNumber;
+extern G4int VoxYNumber;
+extern G4int VoxZNumber;
+
+auto edep = step->GetTotalEnergyDeposit();
+if (edep == 0.) return;
+const G4VTouchable* touchable = step->GetPreStepPoint()->GetTouchable();
+RunAction->FillVoxelStepHits(touchable->GetCopyNumber(), edep);
+if(step->GetPreStepPoint()->GetTouchable()->GetHistoryDepth()!=0){
+        RunAction->FillVoxelStepHits(touchable->GetReplicaNumber(1) + VoxXNumber*touchable->GetReplicaNumber(2) + VoxXNumber*VoxYNumber*touchable->GetReplicaNumber(0), edep);
+}
+*/
+
+
+///////////////////////////////////// For Voxelized Phantoms, External Dosimetry, Region Level  ////////////////////////////////////////////////////////////////////////////
+
+
+/*   For Parammetrization 0
+extern G4String* CopyNumberRegionNameMap;
+
+const G4VTouchable* touchable = step->GetPreStepPoint()->GetTouchable();
+auto edep = step->GetTotalEnergyDeposit();
+G4int CN = touchable->GetCopyNumber();
+if(step->GetTrack()->GetTrackID() == 1){
+    RunAction->FillRegionLenghts(CopyNumberRegionNameMap[CN], 0.1*step->GetStepLength()); // in cm
+}
+RunAction->FillRegionStepHits(CopyNumberRegionNameMap[CN], edep);
+*/
+
+
+/*   For Nested Parammetrization 1
+extern G4String* CopyNumberRegionNameMap;
+extern G4int VoxXNumber;
+extern G4int VoxYNumber;
+extern G4int VoxZNumber;
+
+const G4VTouchable* touchable = step->GetPreStepPoint()->GetTouchable();
+auto edep = step->GetTotalEnergyDeposit();
+if(touchable->GetHistoryDepth()!=0){
+    G4int CN = touchable->GetReplicaNumber(1) + VoxXNumber*touchable->GetReplicaNumber(2) + VoxXNumber*VoxYNumber*touchable->GetReplicaNumber(0);
+    if(step->GetTrack()->GetTrackID() == 1){
+        RunAction->FillRegionLenghts(CopyNumberRegionNameMap[CN], 0.1*step->GetStepLength()); // in cm
+    }
+    RunAction->FillRegionStepHits(CopyNumberRegionNameMap[CN], edep);
+}
+*/
+
+///////////////////////////////////// For Voxelized Phantoms, External Dosimetry, Voxel Level  ////////////////////////////////////////////////////////////////////////////
+
+/*   For Parammetrization 0
+extern G4String* CopyNumberRegionNameMap;
+
+const G4VTouchable* touchable = step->GetPreStepPoint()->GetTouchable();
+auto edep = step->GetTotalEnergyDeposit();
+G4int CN = touchable->GetCopyNumber();
+if(step->GetTrack()->GetTrackID() == 1){
+    RunAction->FillVoxelLenghts(CN, 0.1*step->GetStepLength()); // in cm
+}
+RunAction->FillVoxelStepHits(touchable->GetCopyNumber(), edep);
+*/
+
+
+/*   For Nested Parammetrization 1
+extern G4String* CopyNumberRegionNameMap;
+extern G4int VoxXNumber;
+extern G4int VoxYNumber;
+extern G4int VoxZNumber;
+
+const G4VTouchable* touchable = step->GetPreStepPoint()->GetTouchable();
+auto edep = step->GetTotalEnergyDeposit();
+if(touchable->GetHistoryDepth()!=0){
+    G4int CN = touchable->GetReplicaNumber(1) + VoxXNumber*touchable->GetReplicaNumber(2) + VoxXNumber*VoxYNumber*touchable->GetReplicaNumber(0);
+    if(step->GetTrack()->GetTrackID() == 1){
+        RunAction->FillVoxelLenghts(CN, 0.1*step->GetStepLength()); // in cm
+    }
+    RunAction->FillVoxelStepHits(CN, edep);
+}
+*/
+
+
+//////////////////////// For Mesh-type Phantoms, Internal Dosimetry and External Dosimetry are already separated ////////////////////////////////////////////////////////////////////////////
+

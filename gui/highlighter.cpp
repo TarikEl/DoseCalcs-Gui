@@ -28,7 +28,7 @@ Highlighter::Highlighter(QTextDocument *parent) : QSyntaxHighlighter(parent) {
 
         QStringLiteral("\\b.gdml\\b"), QStringLiteral("\\b.geom\\b"),
         QStringLiteral("\\b.ast\\b"), QStringLiteral("\\b.stl\\b"),
-        QStringLiteral("\\b.c\+\+\\b"),
+        QStringLiteral("\\b.c\+\+\\b"),QStringLiteral("\\bMyGeometry\\b"),
 
         QStringLiteral("\\bxy\\b"), QStringLiteral("\\byz\\b"),
         QStringLiteral("\\byx\\b"), QStringLiteral("\\bzy\\b"),

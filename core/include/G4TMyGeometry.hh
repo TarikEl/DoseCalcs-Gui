@@ -23,35 +23,32 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-// 
-/// \file G4TNestedParamSteppingAction.hh
-/// \brief Definition of the G4TNestedParamSteppingAction class
+//
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#ifndef G4TNestedParamSteppingAction_h
-#define G4TNestedParamSteppingAction_h 1
+#ifndef G4TMyGeometry_h
+#define G4TMyGeometry_h 1
 
-#include "G4UserSteppingAction.hh"
-//#include "globals.hh"
+#include "globals.hh"
+#include "G4VPhysicalVolume.hh"
 
-//class G4TVolumeConstruction;
-class G4TRunAction;
 
-class G4TNestedParamSteppingAction : public G4UserSteppingAction
-{
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+class G4TMyGeometry {
+
 public:
-    G4TNestedParamSteppingAction(G4TRunAction* runAction);
-    virtual ~G4TNestedParamSteppingAction();
 
-    virtual void UserSteppingAction(const G4Step* step);
+    G4TMyGeometry();
     
+    ~G4TMyGeometry();
+
+    G4VPhysicalVolume* ConstructPhysicalVolume();
+    void ConstructLogicalVolumes();
+
 private:
-    //const G4TVolumeConstruction* fDetConstruction;
-    G4TRunAction*  RunAction;
-
-    //G4ThreadLocal static G4double edep;
-    //G4ThreadLocal static G4String reg;
-    //G4ThreadLocal static unsigned int CN;
-
+    G4VPhysicalVolume* WorldPhysicalVolume;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

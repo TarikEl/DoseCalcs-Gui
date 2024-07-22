@@ -210,6 +210,17 @@ extern std::vector<G4String> NewRankSourcePositionDataFiles;
 extern std::vector<G4String> NewRankSourceEnergyDataFiles;
 extern std::vector<G4String> NewRankSourceMomDirDataFiles;
 
+extern std::vector<G4Navigator*> NavigatorForVolumesInitialPosition;
+extern G4int EventsNumPerThreadRank;
+extern unsigned int* ParNameList ;
+extern double* EnergyList        ;
+extern double* MomDirXList       ;
+extern double* MomDirYList       ;
+extern double* MomDirZList       ;
+extern double* PosXList          ;
+extern double* PosYList          ;
+extern double* PosZList          ;
+
 extern G4int ParamType;
 
 // TET Geometry
@@ -256,11 +267,11 @@ public:
     ~G4TVolumeConstruction();
     G4VPhysicalVolume* Construct();
 
-    G4VPhysicalVolume* ConstructVolumes();
-    G4VPhysicalVolume* ConstructDICOMVolume();
-    G4VPhysicalVolume* ConstructVOXELVolume();
-    G4VPhysicalVolume* ConstructTETPhantomVolume();
-    G4VPhysicalVolume* ConstructPhantomFromVoxIds();
+    void ConstructVolumes();
+    void ConstructDICOMVolume();
+    void ConstructVOXELVolume();
+    void ConstructTETPhantomVolume();
+    void ConstructPhantomFromVoxIds();
 
     void ShowBoxVolume();
     void makeVolumeVisualization();
@@ -275,6 +286,7 @@ public:
 
     void GenerateEventsDataInMPIMode();
     void setRankDataForMPIMode();
+    void InitializeRadiationSource();
 
 private:
 
@@ -403,9 +415,15 @@ public:
 
     void setSourceRegionsNamesToBeIgnoredValues(G4String n ){ SourceRegionsNamesToBeIgnoredValues.push_back(n); }
 
+    std::vector<G4String> GeometryFileTypesVectors;
+    void setGeometryFileTypesVectors(G4String n ){ GeometryFileTypesVectors.push_back(n); }
+
     std::vector<G4String> VolumesNotVisualized;
     void setVolumesNotVisualized(G4String n ){ VolumesNotVisualized.push_back(n); }
     void setGeometrySymbol(G4String n ){ GeometrySymbol = n; }
+
+    void setInternalSourceData(G4String);
+    void placeInternalSourceVolume();
 
     struct SourceDataStruct
     {
@@ -427,6 +445,8 @@ public:
 
     std::vector<SourceDataStruct> RankThreadSourceData;
     std::vector<SourceDataStruct> GetRankThreadSourceData() const { return RankThreadSourceData;}
+
+    G4ThreeVector InternalSourcePosition;
 
 private:
 
@@ -872,17 +892,26 @@ public:
     void InitializeCNMassColourRegNamePosAxisIDs();
     G4VPhysicalVolume* ConstructVoxeDcmGeometry();
 
-    G4VPhysicalVolume* ConstructTETGeometry();
+    void ConstructTETGeometry();
 
     void VisualizationVoxelizedGeometry();
+
+    G4bool UseInternalSourceVolume;
+    G4String InternalSourceName;
 
     G4Material* defaultMat;
     G4Box* voxel_solid;
     G4LogicalVolume* voxel_logic;
 
     G4Box* ContSolidVoll;
+
+    G4VSolid* NewContSolidVoll;
+
     G4LogicalVolume* ContLogicalVoll;
     G4VPhysicalVolume* ContPhysicalVoll;
+
+    G4VSolid* InternalSourceLogicalSolid;
+    G4LogicalVolume* InternalSourceLogicalVolume;
 
     // for Voxelized geometry
 
@@ -1057,7 +1086,6 @@ public:
 
     G4VPhysicalVolume*  PhysicalBoxVolume;
 
-
     bool getMaterialNameAsRegionName() const { return MaterialNameAsRegionName;}
     void setMaterialNameAsRegionName(bool n){MaterialNameAsRegionName = n;}
 
@@ -1068,7 +1096,6 @@ public:
     G4int              nOfTetrahedrons;
 
     G4LogicalVolume*   tetLogic;
-
 
     //G4String phantomDataPath;
     //G4String phantomName;

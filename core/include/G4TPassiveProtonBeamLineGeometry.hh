@@ -35,12 +35,12 @@
 #include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
+#include <fstream>
 
 class G4VPhysicalVolume;
-class G4THadrontherapyDetectorConstruction;
 class G4THadrontherapyModulator;
 //class G4TPassiveProtonBeamLineGeometryMessenger;
-class G4THadrontherapyDetectorROGeometry;
+//class G4THadrontherapyDetectorROGeometry;
 
 class G4TPassiveProtonBeamLineGeometry
         //: public G4VUserDetectorConstruction
@@ -124,14 +124,15 @@ private:
     //passive proton line dimensions
     void SetDefaultDimensions();
     void ConstructG4TPassiveProtonBeamLineGeometry();
-    
-    G4THadrontherapyModulator* modulator; // Pointer to the modulator
+    void ConstructPhantom();
+    void ConstructVoxelizedRO();
+    void BuildModulator();
+
+
     // geometry component
 
     G4VPhysicalVolume* physicalTreatmentRoom;
-    G4THadrontherapyDetectorConstruction* hadrontherapyDetectorConstruction;
-    
-    
+
     G4Material* kapton;
 	
     G4double vacuumZoneXSize;
@@ -353,8 +354,125 @@ private:
     G4Material* finalCollimatorMaterial;
     
     
-    G4THadrontherapyDetectorROGeometry* RO;
+    G4Box *phantom , *detector;
+    G4LogicalVolume *phantomLogicalVolume, *detectorLogicalVolume;
+    G4VPhysicalVolume *phantomPhysicalVolume, *detectorPhysicalVolume;
+
+    G4Box* solidVirtualLayer;
+    G4LogicalVolume* logicVirtualLayer;
+    G4VPhysicalVolume*  physVirtualLayer;
+
+    G4double phantomSizeX;
+    G4double phantomSizeY;
+    G4double phantomSizeZ;
+
+    G4double ROSizeX;
+    G4double ROSizeY;
+    G4double ROSizeZ;
+
+    G4ThreeVector ROToWorldPosition, phantomPosition, ROPosition,
+        ROToPhantomPosition; //  phantom center, detector center, detector
+                                   //  to phantom relative position
+
+    G4double sizeOfVoxelAlongX;
+    G4double sizeOfVoxelAlongY;
+    G4double sizeOfVoxelAlongZ;
+
+    G4int numberOfVoxelsAlongX;
+    G4int numberOfVoxelsAlongY;
+    G4int numberOfVoxelsAlongZ;
+
+    G4double volumeOfVoxel, massOfVoxel;
+
+    G4Material *phantomMaterial, *ROMaterial;
+
+
+
+    // RO detector
+
+    G4Box* RODetector;
+    G4Box* RODetectorXDivision;
+    G4Box* RODetectorYDivision;
+    G4Box* RODetectorZDivision;
+
+    //Logical volumes used for the re-build on-the-fly
+    G4LogicalVolume* RODetectorLog;
+    G4LogicalVolume* RODetectorXDivisionLog;
+    G4LogicalVolume* RODetectorYDivisionLog;
+    G4LogicalVolume* RODetectorZDivisionLog;
+
+
+
+
+
+private:
+
+    // Modulator
+
+    std::ifstream File;
+
+     G4LogicalVolume * logicMotherMod ;
+     G4VPhysicalVolume* physiMotherMod;
+
+     G4Material* Mod0Mater;
+    G4Material* ModMater;
+
+    G4Tubs*           solidMod1;
+    G4LogicalVolume*  logicMod1;
+    G4VPhysicalVolume* physiMod1;
+
+    G4Tubs*            solidMod2;
+    G4LogicalVolume*   logicMod2;
+    G4VPhysicalVolume* physiMod2;
+
+    G4Tubs*            solidMod3;
+    G4LogicalVolume*   logicMod3;
+    G4VPhysicalVolume* physiMod3;
+
+    G4Tubs*            solidMod4;
+    G4LogicalVolume*   logicMod4;
+    G4VPhysicalVolume* physiMod4;
+
+    G4double pi;
+    G4int StepNumbers;
+    G4double* Weight;
+    G4double* StepThickness;
+    G4double* StartingAngle;
+    G4double* SpanningAngle;
+    G4ThreeVector* PositionMod;
+    G4Tubs** solidMod;
+    G4LogicalVolume**	logicMod;
+    G4VPhysicalVolume**	physiMod;
+
+    G4RotationMatrix* rm;
+
+    G4String FileName;
+    G4double innerRadiusOfTheTube ;
+    G4double outerRadiusOfTheTube ;
+
+
+public:
+
+    void SetModulatorMaterial(G4String);
+    void SetModulatorPosition(G4ThreeVector);
+    void SetModulatorInnerRadius(G4double);
+    void SetModulatorOuterRadius(G4double);
+
+
+
+
+
+
+
+    //G4THadrontherapyDetectorROGeometry* RO;
     
+
+
+
+
+
+
+
     
 };
 #endif

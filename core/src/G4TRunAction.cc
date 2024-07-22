@@ -517,7 +517,7 @@ void G4TRunAction::BeginOfRunAction(const G4Run* aRun) {
 
 #else
 
-    std::cout <<  " GeometryFileType " << GeometryFileType <<  " GenerateVoxelsResuls " << GenerateVoxelsResuls << std::endl ;
+    //std::cout <<  " GeometryFileType " << GeometryFileType <<  " GenerateVoxelsResuls " << GenerateVoxelsResuls << std::endl ;
 
     if(G4Threading::IsMultithreadedApplication()){ // normal multiThreaded mode
 
@@ -645,15 +645,18 @@ void G4TRunAction::EndOfRunAction(const G4Run* aRun)
     ShowOpticalPhotonInteractionData();
 
 
-    if(GeometryFileType == "VoxIDs" || GeometryFileType == "VOXEL" || GeometryFileType == "DICOM"){
+    // because MyGeometry can be not voxelized or stylized and voxelized in the same time which is not one
+    // of the voxelized geometries VoxIDs, VOXEL, and DICOM.
+    //if(GeometryFileType == "VoxIDs" || GeometryFileType == "VOXEL" || GeometryFileType == "DICOM"){
         if(GenerateVoxelsResuls == "yes"){
             CreateThreadVoxelsResultsFiles();
         }else{
             CreateThreadRegionResultFile();
         }
-    }else{
-        CreateThreadRegionResultFile();
-    }
+
+    //}else{
+    //    CreateThreadRegionResultFile();
+    //}
 
 
 

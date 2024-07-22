@@ -277,12 +277,22 @@ std::vector<G4String> NewRankSourcePositionDataFiles;
 std::vector<G4String> NewRankSourceEnergyDataFiles;
 std::vector<G4String> NewRankSourceMomDirDataFiles;
 std::vector<G4String> SourceRegionsNamesToBeIgnoredValues;
+std::vector<G4Navigator*> NavigatorForVolumesInitialPosition;
 
 std::vector<G4String> RadioNuclideParticleNames;
 
 G4int EventsNumPerThreadRank;
 
 G4String ResultDirectoryPath ;
+
+unsigned int* ParNameList ;
+double* EnergyList        ;
+double* MomDirXList       ;
+double* MomDirYList       ;
+double* MomDirZList       ;
+double* PosXList          ;
+double* PosYList          ;
+double* PosZList          ;
 
 
 std::string getProgpath()
@@ -499,7 +509,28 @@ int main(int argc,char** argv){
                 }
             }
             runManager->SetUserInitialization(physicsList);
-        }else{
+        }
+        else if(ParticlePysics.contains("OpticalPhysics")){
+
+            G4PhysListFactory* physFactory = new G4PhysListFactory();
+            G4VModularPhysicsList* physicsList = physFactory->GetReferencePhysList("FTFP_BERT");
+            physicsList->ReplacePhysics(new G4EmStandardPhysics_option4());
+
+            G4OpticalPhysics* opticalPhysics = new G4OpticalPhysics();
+            auto opticalParams               = G4OpticalParameters::Instance();
+
+            opticalParams->SetWLSTimeProfile("delta");
+
+            opticalParams->SetScintTrackSecondariesFirst(true);
+
+            opticalParams->SetCerenkovMaxPhotonsPerStep(100);
+            opticalParams->SetCerenkovMaxBetaChange(10.0);
+            opticalParams->SetCerenkovTrackSecondariesFirst(true);
+
+            physicsList->RegisterPhysics(opticalPhysics);
+            runManager->SetUserInitialization(physicsList);
+        }
+        else{
             runManager->SetUserInitialization(new G4TUserPhysicsList());
         }
 
@@ -726,7 +757,28 @@ int main(int argc,char** argv){
                 }
             }
             runManager->SetUserInitialization(physicsList);
-        }else{
+        }
+        else if(ParticlePysics.contains("OpticalPhysics")){
+
+            G4PhysListFactory* physFactory = new G4PhysListFactory();
+            G4VModularPhysicsList* physicsList = physFactory->GetReferencePhysList("FTFP_BERT");
+            physicsList->ReplacePhysics(new G4EmStandardPhysics_option4());
+
+            G4OpticalPhysics* opticalPhysics = new G4OpticalPhysics();
+            auto opticalParams               = G4OpticalParameters::Instance();
+
+            opticalParams->SetWLSTimeProfile("delta");
+
+            opticalParams->SetScintTrackSecondariesFirst(true);
+
+            opticalParams->SetCerenkovMaxPhotonsPerStep(100);
+            opticalParams->SetCerenkovMaxBetaChange(10.0);
+            opticalParams->SetCerenkovTrackSecondariesFirst(true);
+
+            physicsList->RegisterPhysics(opticalPhysics);
+            runManager->SetUserInitialization(physicsList);
+        }
+        else{
             runManager->SetUserInitialization(new G4TUserPhysicsList());
         }
 
@@ -802,7 +854,7 @@ int main(int argc,char** argv){
             physicsList->SetCutsWithDefault();
         }else{
             std::istringstream LineString(CutInRangeData);
-            G4cout << CutInRangeData << G4endl;
+            G4cout << " CutInRangeData " << CutInRangeData << G4endl;
 
             G4double Ene; G4String pn, Unit;
             while(LineString >> pn ){
@@ -835,7 +887,28 @@ int main(int argc,char** argv){
             }
         }
         runManager->SetUserInitialization(physicsList);
-    }else{
+    }
+    else if(ParticlePysics.contains("OpticalPhysics")){
+
+        G4PhysListFactory* physFactory = new G4PhysListFactory();
+        G4VModularPhysicsList* physicsList = physFactory->GetReferencePhysList("FTFP_BERT");
+        physicsList->ReplacePhysics(new G4EmStandardPhysics_option4());
+
+        G4OpticalPhysics* opticalPhysics = new G4OpticalPhysics();
+        auto opticalParams               = G4OpticalParameters::Instance();
+
+        opticalParams->SetWLSTimeProfile("delta");
+
+        opticalParams->SetScintTrackSecondariesFirst(true);
+
+        opticalParams->SetCerenkovMaxPhotonsPerStep(100);
+        opticalParams->SetCerenkovMaxBetaChange(10.0);
+        opticalParams->SetCerenkovTrackSecondariesFirst(true);
+
+        physicsList->RegisterPhysics(opticalPhysics);
+        runManager->SetUserInitialization(physicsList);
+    }
+    else {
 
         //G4PhysListFactory* physFactory = new G4PhysListFactory();
         //G4VModularPhysicsList* physicsList = physFactory->GetReferencePhysList("FTFP_BERT");
@@ -844,7 +917,6 @@ int main(int argc,char** argv){
         //G4OpticalPhysics* opticalPhysics = new G4OpticalPhysics();
         //physicsList->RegisterPhysics(opticalPhysics);
         //runManager->SetUserInitialization(physicsList);
-
         runManager->SetUserInitialization(new G4TUserPhysicsList());
     }
 

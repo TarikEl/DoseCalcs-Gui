@@ -210,7 +210,8 @@ private:
     G4String DCCUnit;
 
     G4String UnitPerParticle;
-    G4String UnitPerDecay;
+    G4String UnitPerRadioTracerDecay;
+    G4String UnitPerRadionuclideDecay;
 
     G4double ResidenceTimeUnitFactor;
     G4String ResidenceTimeUnit;
@@ -228,6 +229,7 @@ private:
 
     void GenerateRegionResultFile();
     void GenerateRegionResultForRadioTracer();
+    void GenerateExternalDosimetryCoefficients();
     void GenerateRadiotracerQuantitiesByInterpolation(G4String, G4double);
 
     G4String RemoveWordFromString(G4String,G4String);

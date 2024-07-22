@@ -30,15 +30,8 @@
 #include "G4TParamSteppingAction.hh"
 #include "G4TRunAction.hh"
 #include "G4Step.hh"
-#include "G4RunManager.hh"
-#include "G4RunManager.hh"
 
-//extern G4String GenerateVoxelsResuls;
 extern G4String* CopyNumberRegionNameMap;
-
-//G4ThreadLocal G4double G4TParamSteppingAction::edep;
-//G4ThreadLocal G4String G4TParamSteppingAction::reg;
-//G4ThreadLocal unsigned int  G4TParamSteppingAction::CN;
 
 G4TParamSteppingAction::G4TParamSteppingAction(G4TRunAction* ra):G4UserSteppingAction(),RunAction(ra){}
 

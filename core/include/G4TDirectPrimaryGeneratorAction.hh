@@ -43,7 +43,6 @@
 #include "G4AutoLock.hh"
 
 #ifdef G4MPI_USE
-//#include "G4MPImanager.hh"
 #include "mpi.h"
 #endif
 

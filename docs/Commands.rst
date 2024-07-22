@@ -983,11 +983,11 @@ To set the organ (or tissue) factor, if not set, the default DoseCalcs values wi
 
 ex : /RunAndScoreData/setTissueFactors Legs 0.12 Skin 0.01
 
-To set the radiotracer data
+To set the radiotracer data in line 
 
  .. code-block::
 
-    /RunAndScoreData/setRadioTracerData [RadioTracer] [Energy Unit] [Particle1] [Energy1] [Yield1] ... [Particlen] [Energyn] [Yieldn]
+    /RunAndScoreData/setRadioTracerData [Radionuclide symbole] P-E-Y [Particle1] [Energy1] [Yield1] ... [Particlen] [Energyn] [Yieldn]
  
 [Particle] : emitted particle from radiotracer 
 
@@ -995,7 +995,31 @@ To set the radiotracer data
 
 [Yield] : yield of emitted particle
     
-ex : /RunAndScoreData/setRadioTracerData 18-FDG MeV e+ 0.6335 96.73 e- 0.000502 2.89 e- 0.0000143 0.229
+ex : /RunAndScoreData/setRadioTracerData F-18 P-E-Y e+ 0.6335 96.73 e- 0.000502 2.89 e- 0.0000143 0.229
+
+To read the radionuclide data from a file 
+
+ .. code-block::
+
+    /RunAndScoreData/setRadioTracerData [Radionuclide symbole] File [File Path]
+     
+ex : /RunAndScoreData/setRadioTracerData F-18 File /../../F-18-data.txt
+
+The content of radionuclide data file should be in this formatn for each particle name we set the energy disribution type, which can be either "Spectrum" or "Discrete". Then, for each line, we give energy and yield (should not be in percent(%)) for Discrete, and yiedl per MeV for "Spectrum".
+
+---------------------------
+e- Spectrum
+0.00000 0.000E+00
+0.00010 1.781E-08
+0.00011 4.220E-08
+.....
+...
+.
+0.60000 5.162E-02
+0.63350 0.000E+00
+gamma Distcrete
+0.511 1.96
+---------------------------
 
 The absorbed energy result file (AE@For@Rank@i@Thread@j@SourceOrgan@Particle@Energy) must exist for this command to generate results (AE, AF, SAF, AD, S, DR, H, and E) of radiotracer, which is a number of emitted particles each with its own awn yield. Note that the radiotracer particle-energy is presented in single particle simulation for each simulated source. The results of the Quantities (AD, H, and E) are based on emission rather than all simulated events.
 

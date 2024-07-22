@@ -206,7 +206,7 @@ void G4TGeometryMessenger::SetNewValue(G4UIcommand* command,G4String newValue){
 
         G4String ext = getFileExt(mn);
 
-        if(ext == "gdml" || ext == "geom" || ext == "cpp" || ext == "c++"){
+        if(ext == "gdml" || ext == "geom" || ext == "cpp" || ext == "c++" || mn == "MyGeometry"){
 
             //std::cout << "\n\n 1-------------- "  << std::endl;
             GeometryConstruction->placeVolume(mn, "", G4ThreeVector(), G4ThreeVector());
@@ -230,7 +230,6 @@ void G4TGeometryMessenger::SetNewValue(G4UIcommand* command,G4String newValue){
         G4String fn = getFileNameFromPath(SolidType);
 
         G4double A, B, C, D, E, F, G, H, I; G4String Un1, Un2, Un3;
-
 
         if(SolidType == "Box"){
 
@@ -331,7 +330,7 @@ void G4TGeometryMessenger::SetNewValue(G4UIcommand* command,G4String newValue){
             GeometryConstruction->setGeometryFileType(volN);
             GeometryConstruction->setGeometryPath(volS);
         }
-        else if(volN == "DICOM" || volN == "VOXEL" || volN == "CPP"){
+        else if(volN == "DICOM" || volN == "VOXEL" || volN == "CPP" ){
             GeometryConstruction->setGeometryFileType(volN);
         }
         else if(volN == "TET"){
@@ -352,6 +351,103 @@ void G4TGeometryMessenger::SetNewValue(G4UIcommand* command,G4String newValue){
             else if(volN == "Generate"){
                 GeometryConstruction->setGeometryFileType(volN);
                 GeometryConstruction->setGeometryPath(next());
+                return;
+            }
+            else if(volN == "ADD"){
+
+                GeometryConstruction->setGeometryFileType(volN);
+                GeometryConstruction->setGeometryFileTypesVectors(volN);
+
+                volN = next();
+
+                if(volN == "TET"){
+                    G4String node = next();
+                    G4String ele = next();
+                    G4String mat = next();
+                    GeometryConstruction->setGeometryTETDataFiles(node, ele, mat);
+                    GeometryConstruction->ConstructTETPhantomVolume();
+                }
+                else if(volN == "VoxIDs" ){
+                    G4String volS = next();
+                    GeometryConstruction->setGeometryPath(volS);
+                    GeometryConstruction->ConstructPhantomFromVoxIds();
+                }
+                else if(volN == "VOXEL"){
+                    GeometryConstruction->ConstructVOXELVolume();
+                }
+                else if(volN == "DICOM"){
+                    GeometryConstruction->ConstructDICOMVolume();
+                }
+                else if(volN == "GDML"){
+                    G4String volS = next();
+                    GeometryConstruction->setGeometryPath(volS);
+                    GeometryConstruction->ConstructVolumes();
+                }
+                else if(volN == "TEXT"){
+                    G4String volS = next();
+                    GeometryConstruction->setGeometryPath(volS);
+                    GeometryConstruction->ConstructVolumes();
+                }
+                else if(volN == "CPP"){
+                    GeometryConstruction->ConstructVolumes();
+                }
+                else if(volN == "Construct"){
+                    GeometryConstruction->ConstructVolumes();
+                }
+                else if(volN == "MyGeometry"){
+                    GeometryConstruction->ConstructVolumes();
+                }
+                else {
+
+                    G4String ext = getFileExt(volN);
+                    G4String fn = getFileNameFromPath(volN);
+
+                    if(fn == "World"){
+                        GeometryConstruction->placeVolume(volN, "", G4ThreeVector(), G4ThreeVector());
+                        return;
+                    }
+                    if(ext == "gdml" || ext == "geom" || ext == "cpp" || ext == "c++"){
+
+                    }
+                    else if(ext == "stl" || ext == "ast"){
+                        //GeometryConstruction->setVolumeName(volN);
+
+                        G4String volM = next();
+                        GeometryConstruction->setSTLVolumeMaterial(volM);
+                    }
+                    else{
+
+                        G4String volS = next();
+                        G4String volM = next();
+                        G4MaterialTable Mates = *G4Material::GetMaterialTable();
+                        for (G4int n = 0; n < Mates.size(); n++ ){
+                            if(Mates[n]->GetName() == volM){
+                                new G4LogicalVolume(G4SolidStore::GetInstance()->GetSolid(volS), Mates[n], volN, 0, 0,0);
+                            }
+                        }
+                    }
+
+                    G4String motherVol = next();
+
+                    G4double PosX = StoD(next());
+                    G4double PosY = StoD(next());
+                    G4double PosZ = StoD(next());
+
+                    G4double RotX = StoD(next());
+                    G4double RotY = StoD(next());
+                    G4double RotZ = StoD(next());
+
+                    G4String Un1 = next(), Un2 = next();
+
+                    //std::cout << " ---------------------- ext " << ext << " volN " << volN <<  std::endl;
+
+                    GeometryConstruction->placeVolume(volN,
+                                                      motherVol,
+                                                      G4ThreeVector(PosX*UseG4Units(Un1),PosY*UseG4Units(Un1),PosZ*UseG4Units(Un1)),
+                                                      G4ThreeVector(RotX*UseG4Units(Un2),RotY*UseG4Units(Un2),RotZ*UseG4Units(Un2)));
+
+                }
+
                 return;
             }
             else {
@@ -657,6 +753,12 @@ void G4TGeometryMessenger::SetNewValue(G4UIcommand* command,G4String newValue){
         GeometryConstruction->setDcmPixelsCompression(DcmPixelsCompressionCMD->GetNewIntValue(newValue));
     }
 
+    if( command == SourceVolumeData )
+    {
+        G4Tokenizer next(newValue);
+        GeometryConstruction->setInternalSourceData(next());
+    }
+
 }
 
 // called from constructor to define the commands waited to fill from user
@@ -761,6 +863,12 @@ void  G4TGeometryMessenger::CommandsForGeometries(){
     //GeometrySymbolCMD->SetDefaultValue("G4_AIR");
     //GeometrySymbolCMD->SetCandidates("yes no");
     GeometrySymbolCMD->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+    SourceVolumeData = new G4UIcommand("/GeometryData/setInternalSource" ,this);
+    //NewMaterialCMD->SetGuidance("");
+    G4UIparameter* param1;
+    param1 = new G4UIparameter("Name of volume to be considered as internal source",'s', false);      SourceVolumeData->SetParameter(param1);
+
 
 }
 void  G4TGeometryMessenger::CommandsForVoxGeometryType(){

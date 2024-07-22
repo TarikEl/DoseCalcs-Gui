@@ -41,8 +41,15 @@
 #include <iostream>
 
 G4TDirectVoxelsPrimaryGeneratorAction::G4TDirectVoxelsPrimaryGeneratorAction(){
+
     particleGun = new G4ParticleGun(1);
     GunInitialize();
+
+    particleDefinition = G4ParticleTable::GetParticleTable()->FindParticle(NewRankSourceParticlesNamesValues[DataID]);
+    if(particleDefinition == nullptr){ G4String msg = "Particle name (" +  NewRankSourceParticlesNamesValues[DataID] + ") in rank/thread (" + std::to_string(DataID) + ") not found "; G4Exception("Source Data", "1", FatalErrorInArgument, msg.c_str());}
+    particleGun->SetParticleDefinition(particleDefinition);
+    particleGun->SetNumberOfParticles(1);
+
 }
 
 G4TDirectVoxelsPrimaryGeneratorAction::~G4TDirectVoxelsPrimaryGeneratorAction(){}
@@ -53,21 +60,17 @@ void G4TDirectVoxelsPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     //particleGun->SetParticleEnergy(1.);
     //particleGun->SetParticleMomentumDirection(G4ParticleMomentum(0, 0, 1.));
 
-    if(EvInc == 0){
-        //std::cout << "begin of SourceInitialization()" << std::endl;
-        //std::cout << "\n\n\n\n\n\n\n\n 1 DataID "<< DataID << " SourceType=" << SourceType<< std::endl;
+    //// For MPI mode, For MT, This is called in the Constructor
+    //if(EvInc == 0){
+    //    //std::cout << "begin of SourceInitialization()" << std::endl;
+    //    SourceInitialization();
+    //    particleGun->SetNumberOfParticles(1);
+    //    if(EnergyTypeNum != 5){particleGun->SetParticleDefinition(particleDefinition);}
+    //    EvInc++;
+    //}
 
-        SourceInitialization();
-
-        particleGun->SetNumberOfParticles(1);
-
-        if(EnergyTypeNum != 5){particleGun->SetParticleDefinition(particleDefinition);}
-
-        //std::cout << "\n\n\n\n\n\n\n\n 22222222 DataID "<< DataID << " SourceType=" << SourceType<< std::endl;
-        EvInc++;
-    }
-
-    if(EnergyTypeNum == 5){particleGun->SetParticleDefinition(particleDefinitionList[ParNameList[EnergyListInc]]);}
+    //// A class for Primary generator for File and Radionuclide is created G4TFileRadionuclidePrimaryGeneratorAction.cc
+    //if(EnergyTypeNum == 5){particleGun->SetParticleDefinition(G4ParticleTable::GetParticleTable()->FindParticle(ParNameList[EnergyListInc]));}
 
     //GenerateEventsParticle();
     GenerateEventsEnergy();

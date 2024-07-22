@@ -96,32 +96,47 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     ui->setupUi(this);
 
+    //ui->groupBoxExternal->setVisible(false);
+
     QStringList ICRPPhantoms=(QStringList()<<"ICRPAdultMale"<<"ICRPAdultFemale");
     ui->comboBoxPhantom->addItems(ICRPPhantoms);
 
-    QStringList PreDefinedGeom=(QStringList()<<"ICRP110 Voxel-Type Adult Male"<<"ICRP110 Voxel-Type Adult Female"
-                                <<"ICRP143 Voxel-Type Male 15-years-old"<<"ICRP143 Voxel-Type Female 15-years-old"
-                                <<"ICRP143 Voxel-Type Male 10-years-old"<<"ICRP143 Voxel-Type Female 10-years-old"
-                                <<"ICRP143 Voxel-Type Male 05-years-old"<<"ICRP143 Voxel-Type Female 05-years-old"
-                                <<"ICRP143 Voxel-Type Male 01-years-old"<<"ICRP143 Voxel-Type Female 01-years-old"
-                                <<"ICRP143 Voxel-Type Male Newborn"<<"ICRP143 Voxel-Type Female Newborn"
-                                <<"ICRP145 Mesh-Type Adult Male"<<"ICRP145 Mesh-Type Adult Female"
-                                <<"Phantom Constructed using DICOM/CT Files"<<"Simple Voxelized Geometry Using DoseCalcs Commands"
-                                <<"Stylized MIRD Adult Female Phantom using CPP (../DoseCalcs/core/src/G4TCPPGeometryFormat.cc) Geometry Method"<<"Stylized MIRD Adult Female Phantom using GDML (.gdml) Geometry Method"
-                                <<"Stylized MIRD Adult Female Phantom using TEXT (.geom) Geometry Method"<<"Phantom Constructed using a Combination of GDML, CPP, TEXT, STL, and STANDARD methods"
-                                <<"Simple Geometry using STL Solids and DoseCalcs Commands" <<"Simple Geometry using Geant4 Standard Solids and DoseCalcs Commands"
+    QStringList PreDefinedGeom=(QStringList()<<"ICRP110 Voxel-Type Adult Male"
+                                <<"ICRP110 Voxel-Type Adult Female"
+                                <<"ICRP143 Voxel-Type Male 15-years-old"
+                                <<"ICRP143 Voxel-Type Female 15-years-old"
+                                <<"ICRP143 Voxel-Type Male 10-years-old"
+                                <<"ICRP143 Voxel-Type Female 10-years-old"
+                                <<"ICRP143 Voxel-Type Male 05-years-old"
+                                <<"ICRP143 Voxel-Type Female 05-years-old"
+                                <<"ICRP143 Voxel-Type Male 01-years-old"
+                                <<"ICRP143 Voxel-Type Female 01-years-old"
+                                <<"ICRP143 Voxel-Type Male Newborn"
+                                <<"ICRP143 Voxel-Type Female Newborn"
+                                <<"ICRP145 Mesh-Type Adult Male"
+                                <<"ICRP145 Mesh-Type Adult Female"
+                                <<"Phantom Constructed using DICOM/CT Files"
+                                <<"Simple Voxelized Geometry Using DoseCalcs Commands"
+                                <<"Stylized MIRD Adult Female Phantom using CPP (../DoseCalcs/core/src/G4TCPPGeometryFormat.cc) Geometry Method"
+                                <<"Stylized MIRD Adult Female Phantom using GDML (.gdml) Geometry Method"
+                                <<"Stylized MIRD Adult Female Phantom using TEXT (.geom) Geometry Method"
+                                <<"Phantom Constructed using a Combination of GDML, CPP, TEXT, STL, and STANDARD methods"
+                                <<"Simple Geometry using STL Solids and DoseCalcs Commands"
+                                <<"Simple Geometry using Geant4 Standard Solids and DoseCalcs Commands"
+                                <<"Simple Voxelized Water Phantom"
+                                <<"MyGeometry"
                                 );
 
-    PreDefinedGeomMap[PreDefinedGeom[0]]="VoxICRPAdultMale";
-    PreDefinedGeomMap[PreDefinedGeom[1]]="VoxICRPAdultFemale";
-    PreDefinedGeomMap[PreDefinedGeom[2]]="VoxICRPMale15";
-    PreDefinedGeomMap[PreDefinedGeom[3]]="VoxICRPFemale15";
-    PreDefinedGeomMap[PreDefinedGeom[4]]="VoxICRPMale10";
-    PreDefinedGeomMap[PreDefinedGeom[5]]="VoxICRPFemale10";
-    PreDefinedGeomMap[PreDefinedGeom[6]]="VoxICRPMale05";
-    PreDefinedGeomMap[PreDefinedGeom[7]]="VoxICRPFemale05";
-    PreDefinedGeomMap[PreDefinedGeom[8]]="VoxICRPMale01";
-    PreDefinedGeomMap[PreDefinedGeom[9]]="VoxICRPFemale01";
+    PreDefinedGeomMap[PreDefinedGeom[0]] ="VoxICRPAdultMale";
+    PreDefinedGeomMap[PreDefinedGeom[1]] ="VoxICRPAdultFemale";
+    PreDefinedGeomMap[PreDefinedGeom[2]] ="VoxICRPMale15";
+    PreDefinedGeomMap[PreDefinedGeom[3]] ="VoxICRPFemale15";
+    PreDefinedGeomMap[PreDefinedGeom[4]] ="VoxICRPMale10";
+    PreDefinedGeomMap[PreDefinedGeom[5]] ="VoxICRPFemale10";
+    PreDefinedGeomMap[PreDefinedGeom[6]] ="VoxICRPMale05";
+    PreDefinedGeomMap[PreDefinedGeom[7]] ="VoxICRPFemale05";
+    PreDefinedGeomMap[PreDefinedGeom[8]] ="VoxICRPMale01";
+    PreDefinedGeomMap[PreDefinedGeom[9]] ="VoxICRPFemale01";
     PreDefinedGeomMap[PreDefinedGeom[10]]="VoxICRPMale00";
     PreDefinedGeomMap[PreDefinedGeom[11]]="VoxICRPFemale00";
     PreDefinedGeomMap[PreDefinedGeom[12]]="TetICRPAdultMale";
@@ -134,7 +149,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     PreDefinedGeomMap[PreDefinedGeom[19]]="Constructed_GDML_CPP_TEXT_STL_STAN_Example";
     PreDefinedGeomMap[PreDefinedGeom[20]]="STL_Solids_Example";
     PreDefinedGeomMap[PreDefinedGeom[21]]="Geant4_STANDARDs_Example";
-
+    PreDefinedGeomMap[PreDefinedGeom[22]]="SimpleVoxelizedWaterPhantom";
+    PreDefinedGeomMap[PreDefinedGeom[23]]="MyGeometry";
 
     ui->comboBoxPreDefinedGeom->addItems(PreDefinedGeom);
 
@@ -222,7 +238,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     QStringList AngleDistlist=(QStringList()<<"Isotropic"<<"Uniform"<<"Directed");
     ui->SourceComboBoxAngleDist->addItems(AngleDistlist);
 
-    QStringList Physicslist=(QStringList()<<"EMS"<<"EMS1"<<"EMS2"<<"EMS3"<<"EMS4"<<"Penelope"<<"Livermore"<<"Construct"
+    QStringList Physicslist=(QStringList()<<"EMS"<<"EMS1"<<"EMS2"<<"EMS3"<<"EMS4"<<"Penelope"<<"Livermore"<<"Construct"<<"OpticalPhysics"
                              <<"HADRON_FTFP_BERT"<<"HADRON_FTFP_BERT_ATL"<<"HADRON_FTFP_BERT_TRV"<<"HADRON_QGSP_FTFP_BERT"<<"HADRON_QGSP_BERT"
                              <<"HADRON_QGSP_BERT_HP"<<"HADRON_QGSP_BIC"<<"HADRON_QGSP_BIC_AllHP"<<"HADRON_INCLXX"<<"HADRON_Shielding"<<"HADRON_ShieldingLEND"
                              <<"FACTORY_FTFP_BERT"<<"FACTORY_FTFP_BERT_ATL"<<"FACTORY_FTFP_BERT_TRV"<<"FACTORY_QGSP_FTFP_BERT"<<"FACTORY_QGSP_BERT"
@@ -402,10 +418,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->comboBoxAEUnits->addItems(AEUnits);
     QStringList SAFUnits=(QStringList()<<"g-1"<<"kg-1");
     ui->comboBoxSAFUnits->addItems(SAFUnits);
-    QStringList ADUnits=(QStringList()<<"MeV/kg"<<"nGy"<<"miGy"<<"mGy"<<"Gy"<<"kGy"<<"MGy");
+    QStringList ADUnits=(QStringList()<<"MeV/kg"<<"nGy"<<"miGy"<<"mGy"<<"mGy/MBq"<<"Gy"<<"kGy"<<"MGy");
     ui->comboBoxADUnits->addItems(ADUnits);
     ui->comboBoxSUnits->addItems(ADUnits);
-    QStringList HUnits=(QStringList()<<"MeV/kg"<<"nGy"<<"miGy"<<"mGy"<<"Gy"<<"kGy"<<"MGy"<<"mSv"<<"Sv");
+    QStringList HUnits=(QStringList()<<"MeV/kg"<<"nGy"<<"miGy"<<"mGy"<<"mGy/MBq"<<"Gy"<<"kGy"<<"MGy"<<"mSv"<<"mSv/MBq"<<"Sv");
     ui->comboBoxHUnits->addItems(HUnits);
     ui->comboBoxEUnits->addItems(HUnits);
 
@@ -472,6 +488,63 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
                                );
 
     ui->comboBoxSimulationRunFor->addItems(RunForList);
+
+    QStringList PredefinedSources=(QStringList()
+                                   <<""
+                                   <<"External RLAT(Ang=-90) for Stylized Phantoms"
+                                   <<"External LLAT(Ang=90) for Stylized Phantoms"
+                                   <<"External PA(Ang=+-180) for Stylized Phantoms"
+                                   <<"External AP(Ang=0) for Stylized Phantoms"
+                                   <<"External ROT for Stylized Phantoms"
+                                   <<"External ISO for Stylized Phantoms"
+                                   <<"External RLAT(Ang=-90) for Voxelized and Mesh-type Phantoms"
+                                   <<"External LLAT(Ang=90) for Voxelized and Mesh-type Phantoms"
+                                   <<"External PA(Ang=+-180) for Voxelized and Mesh-type Phantoms"
+                                   <<"External AP(Ang=0) for Voxelized and Mesh-type Phantoms"
+                                   <<"External ROT for Voxelized and Mesh-type Phantoms"
+                                   <<"External ISO for Voxelized and Mesh-type Phantoms"
+                                   <<"External Ang=-75 for Stylized Phantoms"
+                                   <<"External Ang=-60 for Stylized Phantoms"
+                                   <<"External Ang=-45 for Stylized Phantoms"
+                                   <<"External Ang=-30 for Stylized Phantoms"
+                                   <<"External Ang=-15 for Stylized Phantoms"
+                                   <<"External Ang=+15 for Stylized Phantoms"
+                                   <<"External Ang=+30 for Stylized Phantoms"
+                                   <<"External Ang=+45 for Stylized Phantoms"
+                                   <<"External Ang=+60 for Stylized Phantoms"
+                                   <<"External Ang=+75 for Stylized Phantoms"
+                               );
+
+    ui->comboBoxPredefinedSources->addItems(PredefinedSources);
+
+    LegPosList=(QStringList()
+                <<"DCC"
+                <<"Ambient Dose"
+                <<"Personal Dose"
+                <<"Directional or Personal Absorbed Dose in the Lens of the Eye"
+                <<"Directional or Personal Absorbed Dose in Local Skin"
+                );
+
+    ui->comboBoxExternalDosQuantities->addItems(LegPosList);
+
+    LegPosList=(QStringList()
+                <<"e-"
+                <<"gamma"
+                <<"e+"
+                <<"alpha"
+                <<"proton"
+                <<"neutron"
+                );
+
+    ui->comboBoxExternalDoseParticles->addItems(LegPosList);
+
+    LegPosList=(QStringList()
+                <<"For Each Source"
+                <<"For Each Target"
+                <<"For Each Energy"
+                );
+
+    ui->comboBoxGenerateExternalFor->addItems(LegPosList);
 
     ElementsSymbolSym["1-H-1.008"]="H";     ElementsSymbolZ["1-H-1.008"]="1";ElementsSymbolA["1-H-1.008"]="1.008";ElementsSymbolName["1-H-1.008"]="Hydrogen";
     ElementsSymbolSym["2-He-4.003"]="He";   ElementsSymbolZ["2-He-4.003"]="2";ElementsSymbolA["2-He-4.003"]="4.003";ElementsSymbolName["2-He-4.003"]="Helium";
@@ -1037,6 +1110,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     if(ui->radioButtonDICOM->isChecked() || ui->radioButtonVoxel->isChecked() || ui->radioButtonVoxIDs->isChecked()){
         ui->checkBoxVoxelOrRegionLevel->setVisible(true);
         ui->checkBoxVoxelOrRegionLevel->setChecked(true);
+    }else{
+        if(ui->comboBoxPreDefinedGeom->currentText() == "MyGeometry"){
+            ui->checkBoxVoxelOrRegionLevel->setVisible(true);
+            ui->checkBoxVoxelOrRegionLevel->setChecked(true);
+        }
     }
 
     ui->checkBoxInterpolationType->setChecked(true);
@@ -3652,6 +3730,10 @@ void MainWindow::on_actionVisualization_triggered()
                 if(!ui->checkBoxVoxelOrRegionLevel->isChecked()){
                     commandsText += "\n" + RunAndScoreCommands[12] + "\n";
                 }
+            }else{
+                if(ui->comboBoxPreDefinedGeom->currentText() == "MyGeometry"){
+                    commandsText += "\n" + RunAndScoreCommands[12] + "\n";
+                }
             }
 
             commandsText += "\n" + RunAndScoreCommands[13] + " " + ui->comboBoxSimulationRunFor->currentText()+"\n";
@@ -3879,7 +3961,7 @@ void MainWindow::on_actionAbout_triggered()
     msgBox.setWindowTitle("About");
     msgBox.setWindowIcon(QIcon(QDir(QCoreApplication::applicationDirPath()).filePath(GUIPackagesAndFilesDirName+"/AppIcon.png")));
     msgBox.setText("*************************************************************\n"
-                   "*** DoseCalcs v1.0 is a Geant4-based code with a GUI interface, for internal dosimetry Monte Carlo simulations.\n"
+                   "*** DoseCalcs v1.0 is a Geant4-based code with a GUI interface, for dosimetry Monte Carlo simulations and calculations.\n"
                    "*** DoseCalcs for internal dosimetry calculations is developed by Tarik El Ghalbzouri in a thesis directed by Prof Tarek El Bardouni, and co-directed by Prof Jaafar El Bakkali ,at ERSN, faculty of sicences, university Abdelmalek Essaadi, Tetouan, Morocco.  \n"
                    "*** Application source code can be Downloaded from https://github.com/TarikEl/DoseCalcs-gui \n"
                    "*** Documentation can be found on https://dosecalcs-gui.readthedocs.io/en/latest/ \n"
@@ -4146,6 +4228,9 @@ int MainWindow::FillComponentsFromInputsFile(QString FilePathString){
         if(Commlines[dd].first == GeometryCommands[0] || Commlines[dd].first == GeometryCommands[2]){ // /GeometryData/createWorld or /GeometryData/createVolume
             //showResultsOutput(GeometryCommands[0] + " "+ Commlines[dd].second, 4)
             InputsVals = Commlines[dd].second.split(QRegExp("(\\s|\\n|\\r)+"), QString::SkipEmptyParts);
+
+            //QMessageBox::information(this, tr(""),"Commlines[dd].second: "+ Commlines[dd].second+ " InputsVals[0]: " +InputsVals[0]);
+
             if(InputsVals.size() > 0){
                 if(InputsVals[0] == "GDML" || InputsVals[0] == "TEXT" || InputsVals[0] == "VoxIDs" || InputsVals[0] == "VOXEL" || InputsVals[0] == "DICOM"){
                     continue;
@@ -4166,6 +4251,14 @@ int MainWindow::FillComponentsFromInputsFile(QString FilePathString){
                 }
                 else{
                     if(Commlines[dd].first == GeometryCommands[0]){
+                        if(InputsVals[0] == "MyGeometry"){
+                            ui->checkBoxWorldConst->setChecked(false);
+                            ui->checkBoxWorldConst->setCheckState(Qt::Unchecked);
+                            on_checkBoxWorldConst_clicked(false);
+                            ui->PhantomWorldHalfSizeslineEdit->setText(InputsVals[0]);
+                            ui->radioButtonCpp->setChecked(true);
+                            Geometry_CreateVolume_GeometryFileType = "CPP";
+                        }
                         VolsNames.push_back("World");
                     }
                 }
@@ -4375,7 +4468,7 @@ int MainWindow::FillComponentsFromInputsFile(QString FilePathString){
         // Physics
 
         InputsVals = lines[PhysicsCommands[0]].split(QRegExp("(\\s|\\n|\\r)+"), QString::SkipEmptyParts); // "/SourceData/setPhysicsData"
-        if(InputsVals.size() > 8){ui->SourceComboBoxPhysUsed->setCurrentText(InputsVals[0]);}
+        if(InputsVals.size() == 1){ui->SourceComboBoxPhysUsed->setCurrentText(InputsVals[0]);}
         if(InputsVals.size() == 8){
             ui->comboBoxPEEModels->setCurrentIndex(InputsVals[1].toInt());
             ui->comboBoxComptonModels->setCurrentIndex(InputsVals[2].toInt());
@@ -4743,6 +4836,10 @@ QString MainWindow::generateInputUserTextForinputFile(){
         if(!ui->checkBoxVoxelOrRegionLevel->isChecked()){
             ScoreData += "\n" + RunAndScoreCommands[12] + "\n";
         }
+    }else{
+        if(ui->comboBoxPreDefinedGeom->currentText() == "MyGeometry"){
+            ScoreData += "\n" + RunAndScoreCommands[12] + "\n";
+        }
     }
 
     ScoreData += "\n" + RunAndScoreCommands[13] + " " + ui->comboBoxSimulationRunFor->currentText()+"\n";
@@ -4903,9 +5000,13 @@ bool MainWindow::TestSimulateExecutableInputsToRun(){
             QString dd = QString::fromLocal8Bit(getFileExt(ui->PhantomWorldHalfSizeslineEdit->text().toStdString()).c_str());
             if(dd == "gdml" || dd == "geom" || dd == "c++" || dd == "cpp" || dd == "cc"){}
             else{
-                ui->Tab->setCurrentIndex(0);
-                QMessageBox::information(this, tr(""), "The name of world geometry file should be one of (i.e.World.c++, World.cpp, World.gdml, or World.geom )");
-                return false;
+                if(ui->PhantomWorldHalfSizeslineEdit->text() == "MyGeometry"){
+
+                }else{
+                    ui->Tab->setCurrentIndex(0);
+                    QMessageBox::information(this, tr(""), "The name of world geometry file should be one of (i.e.World.c++, World.cpp, World.gdml, World.geom, MyGeometry )");
+                    return false;
+                }
             }
         }
     }
@@ -5575,10 +5676,162 @@ void MainWindow::on_comboBoxPreDefinedGeom_currentTextChanged(const QString &arg
         ui->checkBoxVoxelOrRegionLevel->setVisible(true);
         ui->checkBoxVoxelOrRegionLevel->setChecked(true);
     }else{
-        ui->checkBoxVoxelOrRegionLevel->setVisible(false);
-        ui->checkBoxVoxelOrRegionLevel->setChecked(true);
+        if(ui->comboBoxPreDefinedGeom->currentText() == "MyGeometry"){
+            ui->checkBoxVoxelOrRegionLevel->setVisible(true);
+            ui->checkBoxVoxelOrRegionLevel->setChecked(true);
+        }else{
+            ui->checkBoxVoxelOrRegionLevel->setVisible(false);
+            ui->checkBoxVoxelOrRegionLevel->setChecked(true);
+        }
     }
 
+    //ReadWTFactor(ICRPDATAPath+"/ICRP110RegionsData");
+}
+void MainWindow::on_checkBoxVoxelOrRegionLevel_stateChanged(int arg1)
+{
+    if(ui->checkBoxVoxelOrRegionLevel->isChecked()){
+        //ui->checkBoxVoxelOrRegionLevel->setCheckState(Qt::Checked);
+        ui->checkBoxVoxelOrRegionLevel->setText("Region Level");
+    }else{
+        //ui->checkBoxVoxelOrRegionLevel->setCheckState(Qt::Unchecked);
+        ui->checkBoxVoxelOrRegionLevel->setText("Voxel Level");
+    }
+}
+
+void MainWindow::on_comboBoxPredefinedSources_currentTextChanged(const QString &arg1)
+{
+    if(arg1 == "External RLAT(Ang=-90) for Stylized Phantoms"){
+        ui->comboBoxTypeOfSources->setCurrentText("Plane");
+        ui->lineEditChosenSourceTypeData->setText("RLAT 25 0 0 Rectangle X 14 90");
+        ui->SourceComboBoxAngleDist->setCurrentText("Directed");
+        ui->lineEditSpecialAngulatDistributionParameter->setText("ThetaPhi 90 180 ");
+    }
+    else if(arg1=="External LLAT(Ang=90) for Stylized Phantoms"){
+        ui->comboBoxTypeOfSources->setCurrentText("Plane");
+        ui->lineEditChosenSourceTypeData->setText("LLAT 25 0 0 Rectangle X 14 90 Z 180");
+        ui->SourceComboBoxAngleDist->setCurrentText("Directed");
+        ui->lineEditSpecialAngulatDistributionParameter->setText("ThetaPhi 90 360");
+    }
+    else if(arg1=="External PA(Ang=+-180) for Stylized Phantoms"){
+        ui->comboBoxTypeOfSources->setCurrentText("Plane");
+        ui->lineEditChosenSourceTypeData->setText("PA 0 -25 0 Rectangle Y 90 20");
+        ui->SourceComboBoxAngleDist->setCurrentText("Directed");
+        ui->lineEditSpecialAngulatDistributionParameter->setText("ThetaPhi 90 90");
+    }
+    else if(arg1=="External AP(Ang=0) for Stylized Phantoms"){
+        ui->comboBoxTypeOfSources->setCurrentText("Plane");
+        ui->lineEditChosenSourceTypeData->setText("AP 25 0 0 Rectangle X 20 90 Z 90");
+        ui->SourceComboBoxAngleDist->setCurrentText("Directed");
+        ui->lineEditSpecialAngulatDistributionParameter->setText("ThetaPhi 90 270");
+    }
+    else if(arg1=="External ROT for Stylized Phantoms"){
+        ui->comboBoxTypeOfSources->setCurrentText("Surface");
+        ui->lineEditChosenSourceTypeData->setText("ROT 0 0 0 Cylinder 40 90");
+        ui->SourceComboBoxAngleDist->setCurrentText("Directed");
+        ui->lineEditSpecialAngulatDistributionParameter->setText("ParallelTo Z 0 0");
+    }
+    else if(arg1=="External ISO for Stylized Phantoms"){
+        ui->comboBoxTypeOfSources->setCurrentText("Surface");
+        ui->lineEditChosenSourceTypeData->setText("ISO 0 0 0 Sphere 110");
+        ui->SourceComboBoxAngleDist->setCurrentText("Directed");
+        ui->lineEditSpecialAngulatDistributionParameter->setText("ToVolume 0 0 0 20 12 90");
+    }
+    else if(arg1=="External RLAT(Ang=-90) for Voxelized and Mesh-type Phantoms"){
+        ui->comboBoxTypeOfSources->setCurrentText("Plane");
+        ui->lineEditChosenSourceTypeData->setText("RLAT -40 0 0 Rectangle X 26 100");
+        ui->SourceComboBoxAngleDist->setCurrentText("Directed");
+        ui->lineEditSpecialAngulatDistributionParameter->setText("ThetaPhi 90 360");
+    }
+    else if(arg1=="External LLAT(Ang=90) for Voxelized and Mesh-type Phantoms"){
+        ui->comboBoxTypeOfSources->setCurrentText("Plane");
+        ui->lineEditChosenSourceTypeData->setText("LLAT 40 0 0 Rectangle X 26 100");
+        ui->SourceComboBoxAngleDist->setCurrentText("Directed");
+        ui->lineEditSpecialAngulatDistributionParameter->setText("ThetaPhi 90 180 ");
+    }
+    else if(arg1=="External PA(Ang=+-180) for Voxelized and Mesh-type Phantoms"){
+        ui->comboBoxTypeOfSources->setCurrentText("Plane");
+        ui->lineEditChosenSourceTypeData->setText("PA 30 0 0 Rectangle X 41 100 Z 90");
+        ui->SourceComboBoxAngleDist->setCurrentText("Directed");
+        ui->lineEditSpecialAngulatDistributionParameter->setText("ThetaPhi 90 270");
+    }
+    else if(arg1=="External AP(Ang=0) for Voxelized and Mesh-type Phantoms"){
+        ui->comboBoxTypeOfSources->setCurrentText("Plane");
+        ui->lineEditChosenSourceTypeData->setText("AP 0 -30 0 Rectangle Y 100 41");
+        ui->SourceComboBoxAngleDist->setCurrentText("Directed");
+        ui->lineEditSpecialAngulatDistributionParameter->setText("ThetaPhi 90 90");
+    }
+    else if(arg1=="External ROT for Voxelized and Mesh-type Phantoms"){
+        ui->comboBoxTypeOfSources->setCurrentText("Surface");
+        ui->lineEditChosenSourceTypeData->setText("ROT 0 0 0 Cylinder 50 100");
+        ui->SourceComboBoxAngleDist->setCurrentText("Directed");
+        ui->lineEditSpecialAngulatDistributionParameter->setText("ParallelTo Z 0 0");
+    }
+    else if(arg1=="External ISO for Voxelized and Mesh-type Phantoms"){
+        ui->comboBoxTypeOfSources->setCurrentText("Surface");
+        ui->lineEditChosenSourceTypeData->setText("ISO 0 0 0 Sphere 110");
+        ui->SourceComboBoxAngleDist->setCurrentText("Directed");
+        ui->lineEditSpecialAngulatDistributionParameter->setText("ToVolume 0 0 0 40 20 100");
+    }
+    else if(arg1=="External Ang=-75 for Stylized Phantoms"){
+        ui->comboBoxTypeOfSources->setCurrentText("Plane");
+        ui->lineEditChosenSourceTypeData->setText("Ang=-75 25 0 0 Rectangle X 14 90 Z 15");
+        ui->SourceComboBoxAngleDist->setCurrentText("Directed");
+        ui->lineEditSpecialAngulatDistributionParameter->setText("ThetaPhi 90 195");
+    }
+    else if(arg1=="External Ang=-60 for Stylized Phantoms"){
+        ui->comboBoxTypeOfSources->setCurrentText("Plane");
+        ui->lineEditChosenSourceTypeData->setText("Ang=-60 25 0 0 Rectangle X 16 90 Z 30");
+        ui->SourceComboBoxAngleDist->setCurrentText("Directed");
+        ui->lineEditSpecialAngulatDistributionParameter->setText("ThetaPhi 90 210 ");
+    }
+    else if(arg1=="External Ang=-45 for Stylized Phantoms"){
+        ui->comboBoxTypeOfSources->setCurrentText("Plane");
+        ui->lineEditChosenSourceTypeData->setText("Ang=-45 25 0 0 Rectangle X 19 90 Z 45");
+        ui->SourceComboBoxAngleDist->setCurrentText("Directed");
+        ui->lineEditSpecialAngulatDistributionParameter->setText("ThetaPhi 90 225");
+    }
+    else if(arg1=="External Ang=-30 for Stylized Phantoms"){
+        ui->comboBoxTypeOfSources->setCurrentText("Plane");
+        ui->lineEditChosenSourceTypeData->setText("Ang=-30 25 0 0 Rectangle X 20 90 Z 60");
+        ui->SourceComboBoxAngleDist->setCurrentText("Directed");
+        ui->lineEditSpecialAngulatDistributionParameter->setText("ThetaPhi 90 240 ");
+    }
+    else if(arg1=="External Ang=-15 for Stylized Phantoms"){
+        ui->comboBoxTypeOfSources->setCurrentText("Plane");
+        ui->lineEditChosenSourceTypeData->setText("Ang=-15 25 0 0 Rectangle X 20 90 Z 75");
+        ui->SourceComboBoxAngleDist->setCurrentText("Directed");
+        ui->lineEditSpecialAngulatDistributionParameter->setText("ThetaPhi 90 255");
+    }
+    else if(arg1=="External Ang=+15 for Stylized Phantoms"){
+        ui->comboBoxTypeOfSources->setCurrentText("Plane");
+        ui->lineEditChosenSourceTypeData->setText("Ang=+15 25 0 0 Rectangle X 20 90 Z 105");
+        ui->SourceComboBoxAngleDist->setCurrentText("Directed");
+        ui->lineEditSpecialAngulatDistributionParameter->setText("ThetaPhi 90 285");
+    }
+    else if(arg1=="External Ang=+30 for Stylized Phantoms"){
+        ui->comboBoxTypeOfSources->setCurrentText("Plane");
+        ui->lineEditChosenSourceTypeData->setText("Ang=+30 25 0 0 Rectangle X 20 90 Z 120");
+        ui->SourceComboBoxAngleDist->setCurrentText("Directed");
+        ui->lineEditSpecialAngulatDistributionParameter->setText("ThetaPhi 90 300");
+    }
+    else if(arg1=="External Ang=+45 for Stylized Phantoms"){
+        ui->comboBoxTypeOfSources->setCurrentText("Plane");
+        ui->lineEditChosenSourceTypeData->setText("Ang=+45 25 0 0 Rectangle X 20 90 Z 135");
+        ui->SourceComboBoxAngleDist->setCurrentText("Directed");
+        ui->lineEditSpecialAngulatDistributionParameter->setText("ThetaPhi 90 315");
+    }
+    else if(arg1=="External Ang=+60 for Stylized Phantoms"){
+        ui->comboBoxTypeOfSources->setCurrentText("Plane");
+        ui->lineEditChosenSourceTypeData->setText("Ang=+60 25 0 0 Rectangle X 16 90 Z 150");
+        ui->SourceComboBoxAngleDist->setCurrentText("Directed");
+        ui->lineEditSpecialAngulatDistributionParameter->setText("ThetaPhi 90 330");
+    }
+    else if(arg1=="External Ang=+75 for Stylized Phantoms"){
+        ui->comboBoxTypeOfSources->setCurrentText("Plane");
+        ui->lineEditChosenSourceTypeData->setText("Ang=+75 25 0 0 Rectangle X 14 90 Z 165");
+        ui->SourceComboBoxAngleDist->setCurrentText("Directed");
+        ui->lineEditSpecialAngulatDistributionParameter->setText("ThetaPhi 90 345");
+    }
 }
 void MainWindow::on_checkBoxUsePreDefinedGeom_stateChanged(int arg1)
 {
@@ -7540,6 +7793,19 @@ void MainWindow::on_SourceComboBoxAngleDist_currentIndexChanged(const QString &a
 }
 void MainWindow::on_AnalysisComboBoxGraphData_currentIndexChanged(const QString &arg1)
 {
+    if(arg1 == "Reference_Result"){
+            ui->AnalysisLineEditRefFile->setEnabled(true);
+            ui->AnalysisLineEdit_RefName->setEnabled(true);
+            ui->AnalysisComboBoxGraphsType->setEnabled(true);
+            ui->comboBoxRelDiff->setEnabled(true);
+
+    }else{
+        ui->AnalysisLineEdit_RefName->setEnabled(false);
+        ui->AnalysisLineEditRefFile->setEnabled(false);
+        ui->btnReferenceFile->setEnabled(false);
+        ui->comboBoxRelDiff->setEnabled(false);
+    }
+
     if(arg1 == "none"){
         //ui->AnalysisLineEditRefFile->setEnabled(false);
         //ui->AnalysisLineEdit_RefName->setEnabled(false);
@@ -8491,6 +8757,7 @@ void MainWindow::on_pushButtonReadICRPData_clicked()
 void MainWindow::on_pushButton_ReadDoseCalcsSAFs_clicked()
 {
     Read_DoseCalcs_file(ICRPDATAPath+"/DoseCalcsSAFsData");
+    ReadMassesAndWTFactor(ICRPDATAPath+"/DoseCalcsRegionsData");
 
     if(ICRPSAFs.size() == 0){
         ui->pushButtonReadICRPData->setText("Read ICRP133 SAFs");
@@ -8516,6 +8783,8 @@ void MainWindow::on_pushButtonReadUSERData_clicked()
     }else{
         if(QFile::exists(DataDirName)){
             Read_DoseCalcs_file(DataDirName);
+            ReadMassesAndWTFactor(ICRPDATAPath+"/DoseCalcsRegionsData");
+
             if(ICRPSAFs.size() == 0){
                 ui->pushButtonReadICRPData->setText("Read ICRP133 SAFs");
                 ui->pushButton_ReadDoseCalcsSAFs->setText("Read DoseCalcs SAFs");
@@ -11339,8 +11608,6 @@ void MainWindow::Read_DoseCalcs_file(QString FilePath){
 
     ui->progressBarReadingCalcData->setValue(100);
 
-    ReadMassesAndWTFactor(ICRPDATAPath+"/DoseCalcsRegionsData");
-
 }
 void MainWindow::Read_Reference_file(QString FilePath){
 
@@ -11651,11 +11918,214 @@ void MainWindow::ReadMassesAndWTFactor(QString FilePath){
                 RegionParameterValueMap[Geometry_NAME]["Mass"].remove("Uterus") ;
             }
         }
-
     }
+}
+void MainWindow::ReadMassesAndWTFactorForDCC(QString FilePath){
 
+    std::ifstream file(FilePath.toStdString() , std::ios::binary);
+
+    TissueFactorMap.clear();
+    //SpecialOrganSoftMassFraction.clear();
+
+    if(file.is_open()){
+
+        double WT, frac, frac1, Mass1 , Mass2;
+
+        std::string line, indicator, organ, word;
+
+        while (getline(file, line)) {
+
+            //G4cout << " the line " << line << G4"\n" ;
+
+            std::istringstream A(line);
+
+            if(A.str().empty()){
+                continue;
+            }
+
+            //QTextStream(stdout) << word.c_str() << " "<< Mass1 <<  " " << Mass2 <<"\n";
+
+            A >> word ;
+            if(word == "#"){
+                continue;
+            }
+            else if(word == "Source"){
+                indicator = "Source";
+                continue;
+            } else if (word == "Target"){
+                indicator = "Target";
+                continue;
+            } else if (word == "WT-factor"){
+                indicator = "WT-factor";
+                continue;
+            } else if (word == "OtherTissues"){
+                //QTextStream(stdout) << " the word " << word.c_str() << "\n" ;
+                indicator = "OtherTissues";
+                continue;
+            } else if (word == "TotalBody"){
+                //QTextStream(stdout) << " the word " << word.c_str() << "\n" ;
+                indicator = "TotalBody";
+                continue;
+            } else if (word == "NewSourceRegions"){
+                //QTextStream(stdout) << " the word " << word.c_str() << "\n" ;
+                indicator = "NewSourceRegions";
+                continue;
+            } else{
+
+                if (indicator == "WT-factor"){
+
+                    CurrentTargets.clear();
+                    CurrentTargetsFractions.clear();
+                    RegionFraction.clear();
+
+                    organ = word;
+                    A >> WT ;
+                    if(organ.c_str() == "#"){
+                        continue;
+                    }
+
+                    //QTextStream(stdout) << organ.c_str() << " " << WT << " ";
+
+                    while (A >> word && A >> frac){
+                        CurrentTargets.push_back(word.c_str());
+                        CurrentTargetsFractions.push_back(frac);
+                        RegionFraction[organ.c_str()][word.c_str()] = frac;
+                        //QTextStream(stdout) << word.c_str() << " "<< frac <<  " ";
+                    }
+
+                    //QTextStream(stdout) <<" ------ \n";
+
+                    bool isin = false;
+
+                    for ( auto it = RegionParameterValueMap.begin(); it != RegionParameterValueMap.end(); ++it  ){
+                        QString Geometry_NAME = it.key();
+                        if(RegionParameterValueMap[Geometry_NAME]["Mass"][organ.c_str()] != 0.){
+                            isin = true;break;
+                        }
+                    }
+                    if(isin == false){
+                        GenerateDCCFromNewTarget(organ.c_str());
+                    }
+                    TissueFactorMap[organ.c_str()] = WT;
+                }
+                /*
+                else if (indicator == "NewSourceRegions"){
+
+                    organ = word;
+
+                    A >> word ;// add or all_except
+                    CurrentSources.clear();
+                    while (A >> word ){
+                        CurrentSources.push_back(word.c_str());
+
+                        //QTextStream(stdout) << word.c_str() << " "<< frac <<  " ";
+                    }
+                    CreateNewSourceRegion(organ.c_str());
+
+                }
+                else if (indicator == "OtherTissues"){
+                    A >> frac >> frac1;
+                    SpecialOrganSoftMassFraction["OtherTissues"]["ICRPAdultMale"][word.c_str()] = frac;
+                    SpecialOrganSoftMassFraction["OtherTissues"]["ICRPAdultFemale"][word.c_str()] = frac1;
+                    //QTextStream(stdout) << " organ " << word.c_str() << " frac " << frac << " frac1 " << frac1 <<"\n";
+                }
+                else if (indicator == "TotalBody"){
+                    A >> frac >> frac1;
+                    SpecialOrganSoftMassFraction["TotalBody"]["ICRPAdultMale"][word.c_str()] = frac;
+                    SpecialOrganSoftMassFraction["TotalBody"]["ICRPAdultFemale"][word.c_str()] = frac1;
+                    //QTextStream(stdout) << " organ " << word.c_str() << " frac " << frac << " frac1 " << frac1 <<"\n";
+                }
+                else if(indicator == "Source"){
+                    A >> Mass1 >> Mass2 ;
+
+                    ICRPSourceMassMap["ICRPAdultMale"]["Mass"][word.c_str()] = Mass1;
+                    ICRPSourceMassMap["ICRPAdultFemale"]["Mass"][word.c_str()] = Mass2;
+                }
+                */
+                else if(indicator == "Target"){
+                    //QTextStream(stdout) << word.c_str() << " "<< Mass1 <<  " " << Mass2 <<"\n";
+                    A >> Mass1 >> Mass2 ;
+
+                    RegionParameterValueMap["ICRPAdultMale"]["Mass"][word.c_str()] = Mass1;
+                    RegionParameterValueMap["ICRPAdultFemale"]["Mass"][word.c_str()] = Mass2;
+
+                }
+            }
+        }
+
+        QMap<QString,QMap<QString,QMap<QString,double>>> RegionParameterValueMap1 = RegionParameterValueMap;
+        for ( auto it = RegionParameterValueMap1.begin(); it != RegionParameterValueMap1.end(); ++it  ){
+            QString Geometry_NAME = it.key();
+            if(Geometry_NAME.contains("Female")){
+                RegionParameterValueMap[Geometry_NAME]["Mass"].remove("BoneEndosteumAdultMale") ;
+                RegionParameterValueMap[Geometry_NAME]["Mass"].remove("ActiveBoneMarrowAdultMale") ;
+                RegionParameterValueMap[Geometry_NAME]["Mass"].remove("Prostate") ;
+            }
+            else if(Geometry_NAME.contains("Male")){
+                RegionParameterValueMap[Geometry_NAME]["Mass"].remove("BoneEndosteumAdultFemale") ;
+                RegionParameterValueMap[Geometry_NAME]["Mass"].remove("ActiveBoneMarrowAdultFemale") ;
+                RegionParameterValueMap[Geometry_NAME]["Mass"].remove("Uterus") ;
+            }
+        }
+    }
 }
 
+
+void MainWindow::ReadWTFactor(QString FilePath){
+
+    std::ifstream file(FilePath.toStdString() , std::ios::binary);
+
+    if(file.is_open()){
+
+        double WT, frac, frac1, Mass1 , Mass2;
+
+        std::string line, indicator, organ, word;
+
+        if(!ui->checkBoxFixScoreCommands->isChecked()){
+            return;
+        }
+        QString sstt= "";
+
+        while (getline(file, line)) {
+
+            //G4cout << " the line " << line << G4"\n" ;
+
+            std::istringstream A(line);
+
+            if(A.str().empty()){
+                continue;
+            }
+
+            //QTextStream(stdout) << word.c_str() << " "<< Mass1 <<  " " << Mass2 <<"\n";
+
+            A >> word ;
+            if(word == "#"){
+                continue;
+            }
+            else if (word == "WT-factor"){
+                indicator = "WT-factor";
+                continue;
+            }
+            else{
+                if (indicator == "WT-factor"){
+
+                    organ = word;  QString orr = organ.c_str();
+                    A >> WT ;
+
+                    sstt += orr + " " + QString::number(WT) + " ";
+
+                    if(organ.c_str() == "#"){
+                        continue;
+                    }
+
+                    //QTextStream(stdout) <<" ------ \n";
+                }
+            }
+        }
+        ui->TissueFactorLineEdit->setText(sstt);
+
+    }
+}
 void MainWindow::ConstructOtherTissuesSource(){
 
     QStringList OtherTissuesSourceOrgans;
@@ -11786,7 +12256,6 @@ void MainWindow::ConstructOtherTissuesSource(){
     }
 
 }
-
 void MainWindow::CreateNewSourceRegion(QString SSOURCE){
 
     QString Quantity_NAME = "SAF";
@@ -11865,14 +12334,302 @@ void MainWindow::CreateNewSourceRegion(QString SSOURCE){
 
 }
 
-void MainWindow::on_checkBoxVoxelOrRegionLevel_stateChanged(int arg1)
+
+
+
+
+
+
+
+// External Dosimetry coefficients
+void MainWindow::on_pushButtonReadDCCsDoseCalcs_clicked()
 {
-    if(ui->checkBoxVoxelOrRegionLevel->isChecked()){
-        //ui->checkBoxVoxelOrRegionLevel->setCheckState(Qt::Checked);
-        ui->checkBoxVoxelOrRegionLevel->setText("Region Level");
+    Read_DoseCalcs_file  (ICRPDATAPath+"/DoseCalcsDCCsData");
+    ReadMassesAndWTFactor(ICRPDATAPath+"/DoseCalcsRegionsData");
+
+    CalculateExternalDosimetryQuantities();
+
+    //ui->pushButton_ReadDoseCalcsSAFs->setToolTip("Current readed file path: "+ICRPDATAPath+"/DoseCalcsSAFsData");
+
+}
+void MainWindow::on_pushButtonGenerateExternalDosValues_clicked()
+{
+
+    QString Quantity_NAME = ui->comboBoxExternalDosQuantities->currentText();
+    //double convfac = QuantitiesConversionFromDefault[ui->comboBoxQuantityNucl->currentText()][ui->comboBoxEffDoseUnit->currentText()];
+    double convfac = 1;
+    QString Geometry_NAME    = ui->comboBoxPhantom->currentText();
+    QString Particle_NAME    = ui->comboBoxExternalDoseParticles->currentText();
+    QString Source_NAME      = ui->comboBoxSources->currentText();
+    QString Target_NAME      = ui->comboBoxTargets->currentText();
+    double  Energy_Val;
+
+
+    ui->tableWidgetForOneGraph->clear();
+    ui->tableWidgetForOneGraph->setRowCount(0);
+    ui->tableWidgetForOneGraph->setColumnCount(0);
+
+
+    QStringList headers;
+
+    headers.append("Energy\Source");
+
+    QVector<QString> Sources;
+    if(ui->comboBoxExternalDosQuantities->currentText() == "Ambient Dose"){
+        headers.append("Ambient Dose");
+        Sources.push_back("Ambient Dose");
     }else{
-        //ui->checkBoxVoxelOrRegionLevel->setCheckState(Qt::Unchecked);
-        ui->checkBoxVoxelOrRegionLevel->setText("Voxel Level");
+        for(int b=0; b < PhantomSourcesMap[Geometry_NAME].size();b++){
+            headers.append(PhantomSourcesMap[Geometry_NAME][b]);
+            Sources.push_back(PhantomSourcesMap[Geometry_NAME][b]);
+        }
+    }
+
+    QVector<double> energies;
+    for(int b=0; b < PhantomSourcesMap[Geometry_NAME].size();b++){
+        for(int a=0; a < SourceParticleEnergyValues[PhantomSourcesMap[Geometry_NAME][b]][Particle_NAME].size();a++){
+
+            double particleE = SourceParticleEnergyValues[PhantomSourcesMap[Geometry_NAME][b]][Particle_NAME][a];
+            bool isin = false;
+            for (int dd = 0 ; dd < energies.size(); dd++) {
+                if(particleE == energies[dd]){isin = true;break;}}
+            if(isin == false){energies.push_back(particleE);}
+        }
+    }
+
+    ui->tableWidgetForOneGraph->setColumnCount(PhantomSourcesMap[Geometry_NAME].size()+1);
+    ui->tableWidgetForOneGraph->setShowGrid(true);
+    ui->tableWidgetForOneGraph->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui->tableWidgetForOneGraph->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->tableWidgetForOneGraph->setHorizontalHeaderLabels(headers);
+    ui->tableWidgetForOneGraph->horizontalHeader()->setStretchLastSection(true);
+    ui->tableWidgetForOneGraph->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    //ui->tableWidgetForOneGraph->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    ui->tableWidgetForOneGraph->resizeColumnsToContents();
+    //ui->tableWidgetForOneGraph->horizontalHeader()->sectionResizeMode(0, QHeaderView::Stretch);
+
+    //QTextStream(stdout) << "Table to show rows " << Data.size() << "\n";
+
+    int row = 0;
+
+    for(int a=0; a < energies.size();a++){
+
+        ui->tableWidgetForOneGraph->insertRow(row);
+        ui->tableWidgetForOneGraph->setItem(row,0, new QTableWidgetItem(QString::number(energies[a])));
+        for(int b=0; b < Sources.size();b++){
+
+            double value;
+
+            if(ui->comboBoxExternalDosQuantities->currentText() == "DCC"){
+                value = ICRPSAFs[Quantity_NAME][Geometry_NAME][Particle_NAME][energies[a]][Source_NAME][Target_NAME];
+            }
+            else if(ui->comboBoxExternalDosQuantities->currentText() == "Ambient Dose"){
+                value = ICRPSAFs[Quantity_NAME][Geometry_NAME][Particle_NAME][energies[a]]["Ambient Dose"]["Ambient Dose"];
+            }
+            else{
+                value = ICRPSAFs[Quantity_NAME][Geometry_NAME][Particle_NAME][energies[a]][Source_NAME][ui->comboBoxExternalDosQuantities->currentText()];
+            }
+
+            //QTextStream(stdout) << "Col "<< b+1 << " Particle " << Particles[b] << " val " << QString::number(DATAMap[Quantity_NAME][Geometry_NAME][RadioTracer_NAME][Particles[b]][Targets[a]][Targets[a]]/convfac) <<"\n";
+            ui->tableWidgetForOneGraph->setItem(row,b+1, new QTableWidgetItem(QString::number(value/convfac)));
+        }
+        row++;
+    }
+
+    ui->tableWidgetForOneGraph->resizeColumnsToContents();
+    ui->tableWidgetForOneGraph->horizontalHeader()->setStretchLastSection(true);
+    ui->tableWidgetForOneGraph->horizontalHeader()->viewport()->installEventFilter(this);
+
+}
+void MainWindow::GenerateDCCFromNewTarget(QString TTARGET){
+
+    QString Quantity_NAME = "DCC";
+
+    QMap<QString,QMap<QString,QMap<double,QMap<QString,QMap<QString,double>>>>> SAFMap = ICRPSAFs[Quantity_NAME];
+
+    ui->progressBarReadingCalcData->setRange(0, 100);
+    ui->progressBarReadingCalcData->setValue(0);
+    ui->progressBarReadingCalcData->show();
+    double percent = 0;
+    int qq = 0;
+
+    for ( auto it = SAFMap.begin(); it != SAFMap.end(); ++it  ){
+
+        QString Geometry_NAME = it.key();
+        //        QTextStream(stdout) << "--Geometry_NAME " << Geometry_NAME <<"\n";
+
+        percent = ((qq+1)/it->size())*100;
+        ui->progressBarReadingCalcData->setValue(percent);
+        qq++;
+
+        for ( auto it2 = it.value().begin(); it2 != it.value().end(); ++it2  ){
+            QString Particle_NAME = it2.key();
+            //            QTextStream(stdout) << "---Particle_NAME " << Particle_NAME <<"\n";
+
+            for ( auto it3 = it2.value().begin(); it3 != it2.value().end(); ++it3  ){
+                double Energy_Val = it3.key();
+                //                QTextStream(stdout) << "----Energy_Val " << Energy_Val <<"\n";
+
+                for ( auto DD = it3.value().begin(); DD != it3.value().end(); ++DD  ){
+                    QString Source_NAME  = DD.key();
+
+                    //QTextStream(stdout) << "-----Source_NAME " << Source_NAME <<"\n";
+                    for ( auto CC = DD.value().begin(); CC != DD.value().end(); ++CC  ){
+                        QString  Target_NAME  = CC.key();
+
+
+                        bool isin = false;
+                        for (int dd = 0 ; dd < CurrentTargets.size(); dd++) {
+                            if(Target_NAME == CurrentTargets[dd]){
+                                isin = true;break;
+                            }
+                        }
+                        if(isin == false){
+                            continue;
+                        }
+
+                        //QTextStream(stdout) << "-----Target_NAME " << Target_NAME << "-----fraction " << RegionFraction[TTARGET] <<"\n";
+
+                        double SAFValue  = CC.value();
+
+                        ICRPSAFs[Quantity_NAME][Geometry_NAME][Particle_NAME][Energy_Val][Source_NAME][TTARGET] += SAFValue*RegionFraction[TTARGET][Target_NAME];
+                    }
+                }
+            }
+        }
+    }
+
+    ui->progressBarReadingCalcData->setValue(100);
+
+    QMap<QString,QMap<QString,QMap<QString,double>>> RegionParameterValueMap1 = RegionParameterValueMap;
+    for ( auto it = RegionParameterValueMap.begin(); it != RegionParameterValueMap.end(); ++it  ){
+        QString Geometry_NAME = it.key();
+        for (int dd = 0 ; dd < CurrentTargets.size(); dd++) {
+            RegionParameterValueMap[Geometry_NAME]["Mass"][TTARGET] += RegionParameterValueMap1[Geometry_NAME]["Mass"][CurrentTargets[dd]]*RegionFraction[TTARGET][CurrentTargets[dd]];
+        }
+
+        // The WT are defined in a file for DoseCalcs ICRP Phantoms
+        //TissueFactorMap[TTARGET] += TissueFactorMap[CurrentTargets[dd]];
+        //TissueFactorMap[CurrentTargets[dd]]=0;
+    }
+}
+void MainWindow::CalculateExternalDosimetryQuantities(){
+
+    //double convfac = QuantitiesConversionFromDefault[ui->comboBoxQuantityNucl->currentText()][ui->comboBoxEffDoseUnit->currentText()];
+    double convfac = 1;
+    QString Quantity_NAME = "DCC";
+    QString Geometry_NAME    = ui->comboBoxPhantom->currentText();
+    QString Particle_NAME    = ui->comboBoxExternalDoseParticles->currentText();
+    QString Source_NAME      = ui->comboBoxSources->currentText();
+    QString Target_NAME      = ui->comboBoxTargets->currentText();
+    double  Energy_Val;
+    double Val;
+
+
+    QMap<QString,QMap<QString,QMap<double,QMap<QString,QMap<QString,double>>>>> SAFMap = ICRPSAFs[Quantity_NAME];
+
+    for ( auto it = SAFMap.begin(); it != SAFMap.end(); ++it  ){
+
+        QString Geometry_NAME = it.key();
+        //        QTextStream(stdout) << "--Geometry_NAME " << Geometry_NAME <<"\n";
+
+        for ( auto it2 = it.value().begin(); it2 != it.value().end(); ++it2  ){
+            QString Particle_NAME = it2.key();
+            //            QTextStream(stdout) << "---Particle_NAME " << Particle_NAME <<"\n";
+
+            for ( auto it3 = it2.value().begin(); it3 != it2.value().end(); ++it3  ){
+                double Energy_Val = it3.key();
+                //                QTextStream(stdout) << "----Energy_Val " << Energy_Val <<"\n";
+                double ambienteffedose = 0;
+
+                for ( auto DD = it3.value().begin(); DD != it3.value().end(); ++DD  ){
+                    QString Source_NAME  = DD.key();
+                    //QTextStream(stdout) << "-----Source_NAME " << Source_NAME << "-----fraction " << RegionFraction[SSOURCE] <<"\n";
+
+                    for ( auto CC = DD.value().begin(); CC != DD.value().end(); ++CC  ){
+                        QString  Target_NAME  = CC.key();
+                        double SAFValue  = CC.value();
+
+                        ICRPSAFs[Quantity_NAME][Geometry_NAME][Particle_NAME][Energy_Val][Source_NAME]["Ambient Dose"] += SAFValue*GenerateRadiationFactor(Particle_NAME,Energy_Val)*TissueFactorMap[Target_NAME];
+                        ICRPSAFs[Quantity_NAME][Geometry_NAME][Particle_NAME][Energy_Val][Source_NAME]["Personal Dose"] += SAFValue*GenerateRadiationFactor(Particle_NAME,Energy_Val)*TissueFactorMap[Target_NAME];
+
+                        if(        Target_NAME == "ELL"
+                                || Target_NAME == "EBL"
+                                || Target_NAME == "ELR"
+                                || Target_NAME == "EBR"
+
+                                || Target_NAME == "Eye_lens_sensitive_left"
+                                || Target_NAME == "Eye_lens_insensitive_left"
+                                || Target_NAME == "Eye_lens_sensitive_right"
+                                || Target_NAME == "Eye_lens_insensitive_right"
+                                ){
+
+                            ICRPSAFs[Quantity_NAME][Geometry_NAME][Particle_NAME][Energy_Val][Source_NAME]["Directional or Personal Absorbed Dose in the Lens of the Eye"] += SAFValue;
+                        }
+                        if(        Target_NAME == "SkH"
+                                || Target_NAME == "SkT"
+                                || Target_NAME == "SkL"
+                                || Target_NAME == "SkA"
+                                || Target_NAME == "STB"
+
+                                || Target_NAME == "Skin_head_insensitive"
+                                || Target_NAME == "Skin_head_sensitive(50-100)"
+                                || Target_NAME == "Skin_trunk_insensitive"
+                                || Target_NAME == "Skin_trunk_sensitive(50-100)"
+                                || Target_NAME == "Skin_arms_insensitive"
+                                || Target_NAME == "Skin_arms_sensitive(50-100)"
+                                || Target_NAME == "Skin_legs_insensitive"
+                                || Target_NAME == "Skin_legs_sensitive(50-100)"
+
+                                ){
+
+                            ICRPSAFs[Quantity_NAME][Geometry_NAME][Particle_NAME][Energy_Val][Source_NAME]["Directional or Personal Absorbed Dose in Local Skin"] += SAFValue;
+                        }
+                    }
+
+                    if(ICRPSAFs[Quantity_NAME][Geometry_NAME][Particle_NAME][Energy_Val][Source_NAME]["Ambient Dose"] > ambienteffedose){
+                        ambienteffedose = ICRPSAFs[Quantity_NAME][Geometry_NAME][Particle_NAME][Energy_Val][Source_NAME]["Ambient Dose"];
+                    }
+                }
+
+                ICRPSAFs[Quantity_NAME][Geometry_NAME][Particle_NAME][Energy_Val]["Ambient Dose"]["Ambient Dose"] = ambienteffedose;
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    if(ui->comboBoxExternalDosQuantities->currentText() == "DCC"){
+
+
+    }
+    else if(ui->comboBoxExternalDosQuantities->currentText() == "Ambient Dose"){
+
+
+
+    }
+    else if(ui->comboBoxExternalDosQuantities->currentText() == "Personal Dose"){
+
+
+    }
+    else if(ui->comboBoxExternalDosQuantities->currentText() == "Directional or Personal Absorbed Dose in the Lens of the Eye"){
+
+
+    }
+    else if(ui->comboBoxExternalDosQuantities->currentText() == "Directional or Personal Absorbed Dose in Local Skin"){
+
+
     }
 }
 
