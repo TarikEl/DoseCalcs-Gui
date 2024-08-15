@@ -28,5 +28,6 @@
 G4TClass::G4TClass()
 {
 }
-G4TClass::~G4TClass(){
+G4TClass::~G4TClass()
+{
 }

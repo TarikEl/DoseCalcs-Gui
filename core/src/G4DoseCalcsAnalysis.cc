@@ -3809,7 +3809,7 @@ void G4DoseCalcsAnalysis::createDataInCSVFormat(){
                     
                     LatexText << "\n" << Geometry << "," << PARTICLE_NAME << ","<< Source_ORG << ","<<  "\n";
                     
-                    LatexText << "Target" << "," << Quantity << "\n";
+                    LatexText << "Target" << "," << QuantityUnit[Quantity] << ", Rel_SD%" << "\n";
                     
                     for ( auto Cbeg = Bbeg->second.begin(); Cbeg != Bbeg->second.end(); ++Cbeg  )
                     {
@@ -3817,11 +3817,22 @@ void G4DoseCalcsAnalysis::createDataInCSVFormat(){
                         Target_ORG = Cbeg->first;
                         LatexText << Target_ORG  << ",";
                         double val = ResultQuantityGeometryRadioTracerSourceTargetValues[Quantity][Geometry][PARTICLE_NAME][Source_ORG][Target_ORG];
+                        double error = QuantityGeometryRadioTracerSourceTargetRelativeStandartDeviation[Quantity][Geometry][PARTICLE_NAME][Source_ORG][Target_ORG];
                         if(val == 0 || __isinf(val) || __isnan(val)){
-                            LatexText << "," ;
+                            LatexText << " ," << " ,";
                         }else{
-                            LatexText << val << "," ;
+                            LatexText << val << "," << error << ",";
                         }
+
+
+                        //if(val == 0 || __isinf(val) || __isnan(val)){
+                        //    LatexText << "," ;
+                        //}else{
+                        //    LatexText << val << "," ;
+                        //}
+
+
+
                         
                         LatexText << "\n";
                         
@@ -3878,7 +3889,7 @@ void G4DoseCalcsAnalysis::createDataInCSVFormat(){
                     
                     LatexText << "\n" << Geometry << "," << PARTICLE_NAME << ","<< Source_ORG << ","<<  "\n";
                     
-                    LatexText << "Target" << "," << Quantity << "-DoseCalcs,"<< Quantity <<"-"<< CompareReferenceName <<", Ratio" << "\n";
+                    LatexText << "Target" << "," << QuantityUnit[Quantity] << "-DoseCalcs,"<< QuantityUnit[Quantity] <<"-"<< CompareReferenceName <<", Ratio" << "\n";
                     
                     for ( auto Cbeg = Bbeg->second.begin(); Cbeg != Bbeg->second.end(); ++Cbeg  )
                     {

@@ -1143,21 +1143,188 @@ MainWindow::~MainWindow()
 
 void MainWindow::UsePackagesMethods(){
 
+/*
 
-    QMap<QString,QVector<QString>> TableWords = fileManagerObject->ReadLinesFromFileWithFirstWordIndicatorAndVector("/home/tarik/Bureau/DoseCalcs_Files/Scripts/TextChangeFromToWords.txt");
-    QString Text = fileManagerObject->ReadTextFromFileInOneString("/home/tarik/Bureau/DoseCalcs_Files/Scripts/TextToChange.txt");
+    // ///////////////////// to replace words in a file using two file, the pair (word and new words) file, and the file
+    // that we will modifiy
 
-    for ( auto Abeg = TableWords.begin(); Abeg != TableWords.end(); ++Abeg  ){
+    QMap<QString,QVector<QString>> TableWords = fileManagerObject->ReadLinesFromFileWithFirstWordIndicatorAndVector
+            ("/home/tarik/DoseCalcs_Files/Scripts/TextChangeFromToWordsMesh.txt");
 
-        for (int ff = 0 ; ff < Abeg.value().size(); ff++) {
-            //showResultsOutput(Abeg.value()[ff] + " -  key:"+ Abeg.key());
+    QString Text = "";
+    QString DataDirName = QFileDialog::getOpenFileName( this, tr("Choose DoseCalcs ResultsData file"), UserCurrentResultsDirPath, tr("All files (*)") );
+    if(DataDirName.isEmpty() || DataDirName.isNull()){
+    }else{
+        Text = fileManagerObject->ReadTextFromFileInOneString(DataDirName);
+        for ( auto Abeg = TableWords.begin(); Abeg != TableWords.end(); ++Abeg  ){
 
-            Text.replace(Abeg.value()[ff],Abeg.key());
+            for (int ff = 0 ; ff < Abeg.value().size(); ff++) {
+                //showResultsOutput(Abeg.value()[ff] + " -  key:"+ Abeg.key());
+
+                //Text.replace(Abeg.value()[ff],Abeg.key());
+                Text.replace(Abeg.key(),Abeg.value()[ff]);
+            }
+        }
+        fileManagerObject->WriteTextToFile(DataDirName,Text);
+    }
+
+*/
+
+
+
+
+
+    // /////////////////////  change the reference masses of the defined organs using two files, the source(with blood)
+    // and target mass of organs, and reference file, the name of organs in reference and masses files should be the same
+
+
+    QStringList DefinedOrgans=(QStringList() << "Liver" << "Spleen" << "Pancreas" << "Brain" << "Thyroid"
+                               <<"Thymus" << "Uterus" << "Ht-wall" << "HeW"
+                               //<< "Ovary_right" << "Ovary_left"
+                               //<<"Salivary_glands_left" << "Salivary_glands_right" << "Adrenal_left"  << "Adrenal_left"
+                               );
+
+    QString FilePath = ICRPDATAPath+"/ICRP110RegionsData";
+    std::ifstream file(FilePath.toStdString() , std::ios::binary);
+    QMap<QString,double> TargetMassFactors;
+    QMap<QString,double> SourceMassFactors;
+    QMap<QString,double> OrganMassFactors;
+
+    if(file.is_open()){
+
+        double WT, frac, frac1, srcMass , trgMass;
+
+        std::string line, indicator, organ, word;
+
+        while (getline(file, line)) {
+
+            //QTextStream(stdout)  << " the line " << line.c_str() << "\n";
+
+            std::istringstream A(line);
+
+            if(A.str().empty()){
+                continue;
+            }
+
+            //QTextStream(stdout) << word.c_str() << " "<< Mass1 <<  " " << Mass2 <<"\n";
+
+            A >> word ;
+            if(word == "#"){
+                continue;
+            }
+            else if(word == "Source"){
+                indicator = "Source";
+                continue;
+            } else if (word == "Target"){
+                indicator = "Target";
+                continue;
+            } else if (word == "WT-factor"){
+                indicator = "WT-factor";
+                continue;
+            } else if (word == "OtherTissues"){
+                //QTextStream(stdout) << " the word " << word.c_str() << "\n" ;
+                indicator = "OtherTissues";
+                continue;
+            } else if (word == "TotalBody"){
+                //QTextStream(stdout) << " the word " << word.c_str() << "\n" ;
+                indicator = "TotalBody";
+                continue;
+            } else if (word == "NewSourceRegions"){
+                //QTextStream(stdout) << " the word " << word.c_str() << "\n" ;
+                indicator = "NewSourceRegions";
+                continue;
+            }else{
+                if(indicator == "Source"){
+                    A >> srcMass >> srcMass ;
+
+                    SourceMassFactors[word.c_str()] = srcMass;
+
+                    QTextStream(stdout) << " Source                  "<< word.c_str() << " " << SourceMassFactors[word.c_str()] <<"\n";
+
+                    if(word.c_str() == "Liver"){
+                    }
+                }
+                else if(indicator == "Target"){
+                    A >> trgMass >> trgMass ;
+
+                    TargetMassFactors[word.c_str()] = trgMass;
+
+                    QTextStream(stdout) << " Target                  "<< word.c_str() << " " << TargetMassFactors[word.c_str()] <<"\n";
+
+                    if(word.c_str() == "Liver"){
+                    }
+                }
+            }
         }
     }
 
-    showResultsOutput(Text , 4);
-    fileManagerObject->WriteTextToFile("/home/tarik/Bureau/DoseCalcs_Files/Scripts/TextResultedWithChanges.txt",Text);
+
+    for (int ff = 0 ; ff < DefinedOrgans.size(); ff++) {
+        if(SourceMassFactors[DefinedOrgans[ff]] != 0){
+            OrganMassFactors[DefinedOrgans[ff]] = SourceMassFactors[DefinedOrgans[ff]]/TargetMassFactors[DefinedOrgans[ff]];
+            QTextStream(stdout) << DefinedOrgans[ff] << " Factor "<< OrganMassFactors[DefinedOrgans[ff]] <<"\n";
+        }
+    }
+
+    QString Text = "";
+    FilePath = QFileDialog::getOpenFileName( this, tr("Choose DoseCalcs ResultsData file"), UserCurrentResultsDirPath, tr("All files (*)") );
+    QFile filee(FilePath);
+    if(filee.open(QIODevice::ReadWrite)) {
+
+        QStringList Commandslist;
+
+        QTextStream in(&filee);
+
+        while(!in.atEnd()) {
+            QRegExp space("\\s++");
+            QString line = in.readLine().remove(space);
+
+            if( line.isEmpty()){
+
+            }
+            else{
+                QStringList fields = line.split(QRegExp("(\\s|\\n|\\r)+"), QString::SkipEmptyParts);
+                QString Value = "";
+                //fields.removeOne("");
+                QString spacee = " ";
+                if(fields.size() > 1){
+                    int cc = fields.size()-1;
+                    for (int ff = 2 ; ff < fields.size(); ff++) {
+
+                        if(fields[ff]=="" || fields[ff]==" "){
+                            continue;
+                        }
+                        if(ff == cc){
+                            spacee = "";
+                        }
+                        Value += fields[ff]+spacee ;
+                    }
+
+                    showResultsOutput( "Command : " + fields[0] + "  fields[1] : " + fields[1], 4);
+                    for (int aa = 0 ; aa < DefinedOrgans.size(); aa++) {
+
+                        if(DefinedOrgans[aa] == fields[0]){
+                            QTextStream(stdout) << fields[0] << " " << DefinedOrgans[aa] << " " << fields[1] << " " << fields[1].toDouble()*OrganMassFactors[fields[0]] <<"\n";
+                            fields[1] = QString::number(fields[1].toDouble()*OrganMassFactors[fields[0]]);
+                            break;
+                        }
+                    }
+                    QString newline= fields[0] + " " + fields[1] +" "+ Value + "\n";
+
+                    Text += newline;
+                }else{
+                    QString newline= fields[0] + "\n";
+
+                    QTextStream(stdout) << newline <<"\n";
+
+                    Text += newline;
+                }
+            }
+        }
+
+        filee.close();
+    }
+    fileManagerObject->WriteTextToFile(FilePath,Text);
 
 }
 
@@ -8670,10 +8837,6 @@ void MainWindow::removeHugFiles_slot(){
 
     }
 }
-
-
-
-
 void MainWindow::on_pushButtonReadICRP107128_clicked()
 {
     Read_ICRP107_108Files(ICRPDATAPath);
@@ -9253,6 +9416,10 @@ void MainWindow::GenerateSAFFromNewTarget(QString TTARGET){
         //TissueFactorMap[CurrentTargets[dd]]=0;
     }
 }
+
+
+
+
 
 void MainWindow::GenerateRadiotracerQuantitiesByInterpolationInDefaultUnit(QString ParticleName, double Energy){
 

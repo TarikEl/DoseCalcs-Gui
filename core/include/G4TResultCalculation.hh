@@ -97,6 +97,7 @@ private:
     std::vector<G4String> SourceNamesToScore;
     std::map<G4String,std::vector<G4String>> NeWCombinationsForSourceNamesToScore;
     std::map<G4String,std::vector<G4String>> RegionsVolumesNamesMap;
+    std::map<G4String,std::map<G4String,G4double>> RegionRegionsVolumesNamesFractionMap;
     std::vector<G4String> QuantityNamesToScore;
 
     G4double CutsDistance;

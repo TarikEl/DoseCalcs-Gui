@@ -969,21 +969,83 @@ void G4TResultCalculation::ReadSimulationData(){
                                         TargetNamesToScore.push_back(RegionName);
                                     }
                                 }else{
-                                    bool IsIn = false;
-                                    if(SourceOrTarget == "source"){
-                                        for (int gg = 0 ; gg < RegionsVolumesNamesMap[RegionName].size() ; gg++) { if(RegionsVolumesNamesMap[RegionName][gg] == item){ IsIn = true; }}
-                                        if(IsIn == false){ RegionsVolumesNamesMap[RegionName].push_back(item);}
-                                        NeWCombinationsForSourceNamesToScore[RegionName].push_back(item);
-                                        OldTargetNamesToScore.push_back(item);
-                                    }
-                                    else if(SourceOrTarget == "target"){
-                                        for (int gg = 0 ; gg < RegionsVolumesNamesMap[RegionName].size() ; gg++) { if(RegionsVolumesNamesMap[RegionName][gg] == item){ IsIn = true; }}
-                                        if(IsIn == false){
-                                            RegionsVolumesNamesMap[RegionName].push_back(item);
+
+                                    if (item.find("@") != std::string::npos) {
+                                        std::string str2 = item;
+                                        std::stringstream pp (str2);
+                                        std::string subitem;
+                                        int jj = 0;
+                                        std::string regionname;
+                                        G4double Fraction = 1;
+                                        while (getline (pp, subitem, '@')) {
+
+                                            if(jj == 0){
+                                                regionname = subitem;
+                                                bool IsIn = false;
+                                                if(SourceOrTarget == "source"){
+                                                    for (int gg = 0 ; gg < RegionsVolumesNamesMap[RegionName].size() ; gg++) { if(RegionsVolumesNamesMap[RegionName][gg] == subitem){ IsIn = true; }}
+                                                    if(IsIn == false){ RegionsVolumesNamesMap[RegionName].push_back(subitem);}
+                                                    NeWCombinationsForSourceNamesToScore[RegionName].push_back(subitem);
+                                                    OldTargetNamesToScore.push_back(subitem);
+                                                }
+                                                else if(SourceOrTarget == "target"){
+                                                    for (int gg = 0 ; gg < RegionsVolumesNamesMap[RegionName].size() ; gg++) { if(RegionsVolumesNamesMap[RegionName][gg] == subitem){ IsIn = true; }}
+                                                    if(IsIn == false){
+                                                        RegionsVolumesNamesMap[RegionName].push_back(subitem);
+                                                        OldTargetNamesToScore.push_back(subitem);
+                                                    }
+                                                }
+                                                G4cout << " SourceOrTarget " << SourceOrTarget
+                                                       << " jj " << jj
+                                                       << " RegionName " << RegionName
+                                                       << " regionname " << regionname
+                                                       << G4endl ;
+
+                                            }else{
+
+                                                Fraction = atof(subitem.c_str());
+
+                                                if(SourceOrTarget == "source"){
+                                                    RegionRegionsVolumesNamesFractionMap[RegionName][regionname] = Fraction;
+                                                }
+                                                else if(SourceOrTarget == "target"){
+                                                    RegionRegionsVolumesNamesFractionMap[RegionName][regionname] = Fraction;
+                                                }
+                                                G4cout << " SourceOrTarget " << SourceOrTarget
+                                                       << " jj " << jj
+                                                       << " RegionName " << RegionName
+                                                       << " regionname " << regionname
+                                                       << " Fraction " << Fraction
+                                                       << G4endl ;
+
+                                            }
+
+
+
+                                            jj++;
+                                        }
+
+                                    }else{
+
+
+                                        bool IsIn = false;
+                                        if(SourceOrTarget == "source"){
+                                            for (int gg = 0 ; gg < RegionsVolumesNamesMap[RegionName].size() ; gg++) { if(RegionsVolumesNamesMap[RegionName][gg] == item){ IsIn = true; }}
+                                            if(IsIn == false){ RegionsVolumesNamesMap[RegionName].push_back(item);}
+                                            NeWCombinationsForSourceNamesToScore[RegionName].push_back(item);
+                                            RegionRegionsVolumesNamesFractionMap[RegionName][item] = 1;
                                             OldTargetNamesToScore.push_back(item);
                                         }
+                                        else if(SourceOrTarget == "target"){
+                                            for (int gg = 0 ; gg < RegionsVolumesNamesMap[RegionName].size() ; gg++) { if(RegionsVolumesNamesMap[RegionName][gg] == item){ IsIn = true; }}
+                                            if(IsIn == false){
+                                                RegionsVolumesNamesMap[RegionName].push_back(item);
+                                                RegionRegionsVolumesNamesFractionMap[RegionName][item] = 1;
+                                                OldTargetNamesToScore.push_back(item);
+                                            }
+                                        }
                                     }
-                                    //G4cout << " item " << item << G4endl ;
+
                                 }
                                 ii++;
                             }
@@ -1037,25 +1099,34 @@ void G4TResultCalculation::ReadSimulationData(){
                     LineString >> filename ;
                     
                     std::ifstream file1(filename.c_str() , std::ios::binary);
+
                     if(file1.is_open()){
                         
                         G4String RPar;
-                        G4String Word;
                         G4String S;
                         G4double total = 0;
                         G4double LastEnergy = 0.;
-
-                        while (file1 >> Word) {
+                        std::string line, indicator;
+                        G4double EVal;
+                        G4double PVal;
+/*
+                        while (file1 >> word) {
                             
-                            if(Word == "gamma" || Word == "e-" || Word == "e+" || Word == "alpha" || Word == "proton" || Word == "neutron"){
-                                RPar = Word;
+                            if(        word == "gamma"
+                                    || word == "e-"
+                                    || word == "e+"
+                                    || word == "alpha"
+                                    || word == "proton"
+                                    || word == "neutron"){
+
+                                RPar = word;
                                 file1 >> S;
                                 total = 0;
                                 //std::cout<< " RPar = " << RPar << " S = " << S << std::endl;
                                 continue;
                             }
                             
-                            G4double EVal = atof(Word);
+                            G4double EVal = atof(word);
                             G4double PVal; file1 >> PVal;
                             total += PVal;
                             RadioTracerEnergyPerCent[RadioTracerName][RPar][EVal] = PVal*100;
@@ -1069,6 +1140,71 @@ void G4TResultCalculation::ReadSimulationData(){
 
                             LastEnergy = EVal;
                             std::cout << " RadioTracerName " << RadioTracerName << " RPar = " << RPar << " EVal = " << EVal << " PVal = " << PVal << " total = " << total << std::endl;
+                        }
+*/
+                        while (getline(file1, line)) {
+
+                            //G4cout << " the line " << line << G4"\n" ;
+
+                            std::istringstream A(line);
+
+                            if(A.str().empty()){
+                                continue;
+                            }
+
+                            //QTextStream(stdout) << word.c_str() << " "<< Mass1 <<  " " << Mass2 <<"\n";
+
+                            A >> word ;
+                            //std::cout << " Line " << A.str() << "             word = " << word << std::endl;
+
+                            if(word == "#"){
+                                continue;
+                            }
+                            else if(word.empty()){
+                                continue;
+                            }
+                            else if(word == "Radionuclide"){
+                                indicator = "Radionuclide";
+                                A >> RadioTracerName;
+                                continue;
+                            }
+                            else if(   word == "gamma"
+                                    || word == "e-"
+                                    || word == "e+"
+                                    || word == "alpha"
+                                    || word == "proton"
+                                    || word == "neutron"){
+
+                                RPar = word;
+                                A >> S;
+                                LastEnergy = 0;
+                                total = 0;
+
+                                continue;
+
+                            }else{
+
+                                EVal = atof(word);
+                                A >> PVal;
+                                total += PVal;
+
+                                if(S == "Spectrum"){
+                                    RadioTracerEnergyPerCent[RadioTracerName][RPar][EVal] = (EVal-LastEnergy)*PVal*100;
+                                }else{
+                                    RadioTracerEnergyPerCent[RadioTracerName][RPar][EVal] = PVal*100;
+                                }
+                                std::cout << " RadioTracerName " << RadioTracerName
+                                          << " RPar = " << RPar
+                                          << " S = " << S
+                                          << " LastEnergy = " << LastEnergy
+                                          << " EVal = " << EVal
+                                          << " PVal = " << PVal
+                                          << " Yield% = " << RadioTracerEnergyPerCent[RadioTracerName][RPar][EVal] << std::endl;
+
+                                LastEnergy = EVal;
+
+                                continue;
+                            }
                         }
 
                         file1.close();
@@ -1879,28 +2015,49 @@ void G4TResultCalculation::RegionQuantitiesCalculation(){
             //TissueFactorMap[it->first] = 0.12;
         }
 
+        G4double multipliedmasses = 1;
+        G4double addedmasses = 0;
+        G4double multipliedmasses2 = 1;
+
         for (int gg = 0 ; gg < it->second.size() ; gg++) {
 
             //G4cout << it->second[gg] <<  " " <<   VolumeNameMassMap[it->second[gg]] <<  " " << ED_Total[it->second[gg]] << " it->first " <<  it->first << " " << VolumeNameMassMap[it->first]  <<G4endl;
+
+            multipliedmasses = 1;
+            addedmasses = 0;
+            multipliedmasses2 = 1;
 
             bool IsIn = false;
             for (int zz = 0 ; zz < OrgansNameVector.size() ; zz++) {
                 if(OrgansNameVector[zz] == it->second[gg]){ IsIn = true; break; }
             }
+
+
             if(IsIn == true){ //if exist means that its data existe
-                //if(TissueFactorMap[it->second[gg]] != 0 ){
-                //  if(TissueFactorMap[it->second[gg]] > TissueFactorMap[it->first] ){
-                //    TissueFactorMap[it->first] = TissueFactorMap[it->second[gg]];
-                //}
-                //}
+
+
+                //ED_Total[it->first] += ED_Total[it->second[gg]];
+                //ED2_Total[it->first] += ED2_Total[it->second[gg]];
+
+                std::vector<G4String> subregions = it->second;
+                for (int AAA = 0 ; AAA < subregions.size() ; AAA++) {
+                    multipliedmasses *= VolumeNameMassMap[subregions[AAA]];
+                    addedmasses += VolumeNameMassMap[subregions[AAA]];
+                }
+                multipliedmasses2 = multipliedmasses/VolumeNameMassMap[it->second[gg]];
+
+                ED_Total[it->first] += ((ED_Total[it->second[gg]]*multipliedmasses2)/multipliedmasses)
+                        *RegionRegionsVolumesNamesFractionMap[it->first][it->second[gg]]*addedmasses;
+                ED2_Total[it->first] += ((ED2_Total[it->second[gg]]*multipliedmasses2)/multipliedmasses)
+                        *RegionRegionsVolumesNamesFractionMap[it->first][it->second[gg]]*addedmasses;
+
+
+                NOfValues[it->first] += NOfValues[it->second[gg]];
+                Fluence[it->first] += Fluence[it->second[gg]];
 
                 VolumeNameMassMap[it->first] += VolumeNameMassMap[it->second[gg]] ;
                 VolumeNameVolumeMap[it->first] += VolumeNameVolumeMap[it->second[gg]] ;
                 VolumeNameDensityMap[it->first] += VolumeNameDensityMap[it->second[gg]] ;
-                ED_Total[it->first] += ED_Total[it->second[gg]];
-                ED2_Total[it->first] += ED2_Total[it->second[gg]];
-                NOfValues[it->first] += NOfValues[it->second[gg]];
-                Fluence[it->first] += Fluence[it->second[gg]];
 
                 // to eliminate the initial regions data which affect data in DR and ER ratios which depends on the sum of dose
                 //ED_Total[it->second[gg]] = 0;
@@ -1950,7 +2107,7 @@ void G4TResultCalculation::RegionQuantitiesCalculation(){
 
     // to remove all old targets used to construct new target
     for (int zz = 0 ; zz < OldTargetNamesToScore.size() ; zz++) {
-        ED_Total[OldTargetNamesToScore[zz]] = NULL;
+        //ED_Total[OldTargetNamesToScore[zz]] = NULL;
     }
 
 
