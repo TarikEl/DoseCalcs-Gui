@@ -63,6 +63,9 @@ public:
     void setV(G4bool n ){V = n;}
 
 private:
+
+    G4String ErrorMessage;
+
     G4bool GETVOXELDATA;
 
     G4bool UseAllResultsFiles;

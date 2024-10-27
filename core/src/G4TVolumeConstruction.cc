@@ -595,9 +595,9 @@ void G4TVolumeConstruction::TestAndShowUserInputs(){
     G4cout<<" >> Source Momentum Direction Dist: " << MomDirDistribution <<G4endl;
     //G4cout<<" >> Source Events Data Number: " << NumberOfGenPointsToSave <<G4endl;
 
-    G4cout<<"\n\n >> Quantities To Score: " << variable_To_Score <<G4endl;
-    G4cout<<" >> Regions To Score: " << organs_to_score << G4endl;
-    G4cout<<" >> Simulation Number On Ranks: " << MPISimulationNum <<G4endl;
+    //G4cout<<"\n\n >> Quantities To Score: " << variable_To_Score <<G4endl;
+    //G4cout<<" >> Regions To Score: " << organs_to_score << G4endl;
+    G4cout<<"\n\n >> Simulation Number On Ranks: " << MPISimulationNum <<G4endl;
     G4cout<<" >> Number Of Threads: " << ThreadsNumber <<"\n\n"<<G4endl;
 
     //if(WorldPhysicalVolume == nullptr){msg = "construct the world geometry"; G4Exception("Source Data", "1", FatalException, msg.c_str());}
@@ -3820,6 +3820,11 @@ void G4TVolumeConstruction::setRankDataForMPIMode(){
 
     G4int NumberOfSimulation = SourceParticlesNumber*SourceRegionsNumber*SourceEnergiesNumber*SourceMomDirsNumber;
 
+    //G4cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+    //          " SourceParticlesNumber " << SourceParticlesNumber << " SourceRegionsNumber " << SourceRegionsNumber
+    //       << " SourceEnergiesNumber " << SourceEnergiesNumber << " SourceMomDirsNumber " << SourceMomDirsNumber << G4endl ;
+
+
     if(NumberOfSimulation==0){
         G4String msg = "Particle, region, energy or momentum direction source data are not set"; G4Exception("Source Data", "1", FatalErrorInArgument, msg.c_str());
     }
@@ -3834,6 +3839,11 @@ void G4TVolumeConstruction::setRankDataForMPIMode(){
         for( G4int b = 0; b < SourceRegionsNumber ; b++ ){
             for( G4int c = 0; c < SourceEnergiesNumber ; c++ ){
                 for( G4int d = 0; d < SourceMomDirsNumber ; d++ ){
+
+                    //G4cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+                    //          " SourceParticlesNumber " << SourceParticlesNumber << " SourceRegionsNumber " << SourceRegionsNumber
+                    //       << " SourceEnergiesNumber " << SourceEnergiesNumber << " SourceMomDirsNumber " << SourceMomDirsNumber << G4endl ;
+
 
                     if(MPISimulationNum == "m"){
 
@@ -4037,7 +4047,59 @@ void G4TVolumeConstruction::setRankDataForMPIMode(){
                 NavigatorForVolumesInitialPosition.push_back(aNavigator);
             }else if(SourceType == "Voxels"){
                 NewRankVoxelsIDsOfSourceRegion.push_back(NewRankVoxelsIDsOfSourceRegion[0]);
+            }else if(SourceType == "TET"){  // is the same as we fill the array first, look for the statement
+                                            // "else if(SourceType == "TET"){" before this
+
+                std::vector<G4Tet*>      internalTetVec;
+                G4double xMin(DBL_MAX), yMin(DBL_MAX), zMin(DBL_MAX);
+                G4double xMax(DBL_MIN), yMax(DBL_MIN), zMax(DBL_MIN);
+
+                for(G4int n=0;n<tetData->GetNumTetrahedron();n++){
+
+                    if(SourceRegionsNamesValues[0] == "allregions"){
+
+                        bool SaveCN = true;
+                        for (int gg = 0 ; gg < SourceRegionsNamesToBeIgnoredValues.size() ; gg++) {
+                            if(SourceRegionsNamesToBeIgnoredValues[gg] == CopyNumberRegionNameMap[n]){
+                                SaveCN=false;
+                            }
+                        }
+                        if(SaveCN){
+                            G4Tet* tetSolid = tetData->GetTetrahedron(n);
+                            for(auto vertex:tetSolid->GetVertices()){
+                                if      (vertex.getX() < xMin) xMin = vertex.getX();
+                                else if (vertex.getX() > xMax) xMax = vertex.getX();
+                                if      (vertex.getY() < yMin) yMin = vertex.getY();
+                                else if (vertex.getY() > yMax) yMax = vertex.getY();
+                                if      (vertex.getZ() < zMin) zMin = vertex.getZ();
+                                else if (vertex.getZ() > zMax) zMax = vertex.getZ();
+                            }
+                            internalTetVec.push_back(tetData->GetTetrahedron(n));
+                        }
+                    }else{
+
+                        if(CopyNumberRegionNameMap[n] != SourceRegionsNamesValues[0]) continue;
+                        //VoxelsIDsOfSourceRegion.push_back(n);
+                        G4Tet* tetSolid = tetData->GetTetrahedron(n);
+                        for(auto vertex:tetSolid->GetVertices()){
+                            if      (vertex.getX() < xMin) xMin = vertex.getX();
+                            else if (vertex.getX() > xMax) xMax = vertex.getX();
+                            if      (vertex.getY() < yMin) yMin = vertex.getY();
+                            else if (vertex.getY() > yMax) yMax = vertex.getY();
+                            if      (vertex.getZ() < zMin) zMin = vertex.getZ();
+                            else if (vertex.getZ() > zMax) zMax = vertex.getZ();
+                        }
+                        internalTetVec.push_back(tetData->GetTetrahedron(n));
+                    }
+                }
+
+                //NewRankVoxelsIDsOfSourceRegion.push_back(VoxelsIDsOfSourceRegion);
+
+                NewRankTETBoxMinOfSourceRegion.push_back(G4ThreeVector(xMin, yMin, zMin));
+                NewRankTETBoxDimOfSourceRegion.push_back(G4ThreeVector(xMax-xMin, yMax-yMin, zMax-zMin));
+                NewRankTETOfSourceRegion.push_back(internalTetVec);
             }
+
             NewRankSourceEnergiesValues.push_back(NewRankSourceEnergiesValues[0]);
             NewRankSourceMomDirsValues.push_back(NewRankSourceMomDirsValues[0]);
             NewRankSourceMomDirsDirectedThetaValues.push_back(NewRankSourceMomDirsDirectedThetaValues[0]);

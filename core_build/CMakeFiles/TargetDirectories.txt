@@ -1,0 +1,9 @@
+/home/tarik/DoseCalcs_Files/DoseCalcs-Gui/core_build/CMakeFiles/simulate.dir
+/home/tarik/DoseCalcs_Files/DoseCalcs-Gui/core_build/CMakeFiles/IntDoseCalcs.dir
+/home/tarik/DoseCalcs_Files/DoseCalcs-Gui/core_build/CMakeFiles/merge.dir
+/home/tarik/DoseCalcs_Files/DoseCalcs-Gui/core_build/CMakeFiles/edit_cache.dir
+/home/tarik/DoseCalcs_Files/DoseCalcs-Gui/core_build/CMakeFiles/rebuild_cache.dir
+/home/tarik/DoseCalcs_Files/DoseCalcs-Gui/core_build/CMakeFiles/list_install_components.dir
+/home/tarik/DoseCalcs_Files/DoseCalcs-Gui/core_build/CMakeFiles/install.dir
+/home/tarik/DoseCalcs_Files/DoseCalcs-Gui/core_build/CMakeFiles/install/local.dir
+/home/tarik/DoseCalcs_Files/DoseCalcs-Gui/core_build/CMakeFiles/install/strip.dir

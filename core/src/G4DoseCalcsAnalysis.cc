@@ -3816,6 +3816,8 @@ void G4DoseCalcsAnalysis::createDataInCSVFormat(){
                         
                         Target_ORG = Cbeg->first;
                         LatexText << Target_ORG  << ",";
+                        //LatexText << Target_ORG  << "<-" << Source_ORG << ",";
+
                         double val = ResultQuantityGeometryRadioTracerSourceTargetValues[Quantity][Geometry][PARTICLE_NAME][Source_ORG][Target_ORG];
                         double error = QuantityGeometryRadioTracerSourceTargetRelativeStandartDeviation[Quantity][Geometry][PARTICLE_NAME][Source_ORG][Target_ORG];
                         if(val == 0 || __isinf(val) || __isnan(val)){
@@ -3896,6 +3898,8 @@ void G4DoseCalcsAnalysis::createDataInCSVFormat(){
                         
                         Target_ORG = Cbeg->first;
                         LatexText << Target_ORG  << ",";
+                        //LatexText << Target_ORG  << "<-" << Source_ORG << ",";
+
                         double val = ResultQuantityGeometryRadioTracerSourceTargetValues[Quantity][Geometry][PARTICLE_NAME][Source_ORG][Target_ORG];
                         double val2 = ReferenceQuantityGeometryRadioTracerSourceTargetValues[Quantity][Geometry][PARTICLE_NAME][Source_ORG][Target_ORG];
                         if(val == MinValForLog || val == 0 || __isinf(val) || __isnan(val)){
@@ -8203,6 +8207,8 @@ void G4DoseCalcsAnalysis::GenerateRadioTracerComparisonFactorGraphsForAllComAndS
                 if(a3==NULL || a3==0.){a3 = MinValForLog;}
                 yi[jj] = a3;
 
+                //if(a1 > 2 || a1 < 0.01){a1 = a2;}
+
                 if(QuantityUseLog[QuantitiesToScore] == true && yi[jj] < MinValForLog){
                     yi[jj] = MinValForLog;
                 }
@@ -8457,10 +8463,13 @@ void G4DoseCalcsAnalysis::GenerateRadioTracerComparisonFactorGraphsForAllComAndS
 
                     double a1 = ResultQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometrySymbol][RadioTracerName][Source_ORG][Target_ORG];
                     double a2 = ReferenceQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometrySymbol][RadioTracerName][Source_ORG][Target_ORG];
-                    if(     a1==NULL || a1==0. || a1 == MinValForLog ||
-                            a2==NULL || a2==0. || a2 == MinValForLog ){
+                    if(     a1==NULL || a1==0. || a1 == MinValForLog || isnanl(a1) || isinfl(a1) ||
+                            a2==NULL || a2==0. || a2 == MinValForLog || isnanl(a2) || isinfl(a2)){
                         continue;
                     }
+
+                    //if(a1 > 2 || a1 < 0.01){a1 = a2;}
+
                     XSValues.push_back(a2);
                     YSValues.push_back(a1);
                 }
@@ -8562,10 +8571,13 @@ void G4DoseCalcsAnalysis::GenerateRadioTracerComparisonFactorGraphsForAllComAndS
 
                     double a1 = ResultQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometrySymbol][RadioTracerName][Source_ORG][Target_ORG];
                     double a2 = ReferenceQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometrySymbol][RadioTracerName][Source_ORG][Target_ORG];
-                    if(     a1==NULL || a1==0. || a1 == MinValForLog ||
-                            a2==NULL || a2==0. || a2 == MinValForLog ){
+                    if(     a1==NULL || a1==0. || a1 == MinValForLog || isnanl(a1) || isinfl(a1) ||
+                            a2==NULL || a2==0. || a2 == MinValForLog || isnanl(a2) || isinfl(a2)){
                         continue;
                     }
+
+                    //if(a1 > 2 || a1 < 0.01){a1 = a2;}
+
                     XSValues.push_back(a2);
                     YSValues.push_back(a1);
                 }
@@ -8667,8 +8679,8 @@ void G4DoseCalcsAnalysis::GenerateRadioTracerComparisonFactorGraphsForAllComAndS
 
                     double a1 = ResultQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometrySymbol][RadioTracerName][Source_ORG][Target_ORG];
                     double a2 = ReferenceQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometrySymbol][RadioTracerName][Source_ORG][Target_ORG];
-                    if(     a1==NULL || a1==0. || a1 == MinValForLog ||
-                            a2==NULL || a2==0. || a2 == MinValForLog ){
+                    if(     a1==NULL || a1==0. || a1 == MinValForLog || isnanl(a1) || isinfl(a1) ||
+                            a2==NULL || a2==0. || a2 == MinValForLog || isnanl(a2) || isinfl(a2)){
                         continue;
                     }
                     XSValues.push_back(a2);
@@ -8768,8 +8780,8 @@ void G4DoseCalcsAnalysis::GenerateRadioTracerComparisonFactorGraphsForAllComAndS
 
                     double a1 = ResultQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometrySymbol][RadioTracerName][Source_ORG][Target_ORG];
                     double a2 = ReferenceQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometrySymbol][RadioTracerName][Source_ORG][Target_ORG];
-                    if(     a1==NULL || a1==0. || a1 == MinValForLog ||
-                            a2==NULL || a2==0. || a2 == MinValForLog ){
+                    if(     a1==NULL || a1==0. || a1 == MinValForLog || isnanl(a1) || isinfl(a1) ||
+                            a2==NULL || a2==0. || a2 == MinValForLog || isnanl(a2) || isinfl(a2)){
                         continue;
                     }
                     XSValues.push_back(a2);
@@ -8869,8 +8881,8 @@ void G4DoseCalcsAnalysis::GenerateRadioTracerComparisonFactorGraphsForAllComAndS
 
                 double a1 = ResultQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometrySymbol][RadioTracerName][Source_ORG][Target_ORG];
                 double a2 = ReferenceQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometrySymbol][RadioTracerName][Source_ORG][Target_ORG];
-                if(     a1==NULL || a1==0. || a1 == MinValForLog ||
-                        a2==NULL || a2==0. || a2 == MinValForLog ){
+                if(     a1==NULL || a1==0. || a1 == MinValForLog || isnanl(a1) || isinfl(a1) ||
+                        a2==NULL || a2==0. || a2 == MinValForLog || isnanl(a2) || isinfl(a2)){
                     continue;
                 }
                 XSValues.push_back(a2);

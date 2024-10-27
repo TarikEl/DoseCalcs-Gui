@@ -240,7 +240,8 @@ void G4TPrimaryGeneratorMethods::GenerateEventsParticle(){
 
 void G4TPrimaryGeneratorMethods::GenerateEventsPosition(){
     
-    //std::cout << "DataID "<< DataID << " SourceType=" << SourceType << " NewRankSourceRegionsNamesValues[DataID]=" << NewRankSourceRegionsNamesValues[DataID] << " " << G4ThreeVector(X,Y,Z) << " is in " << aNavigator->LocateGlobalPointAndSetup(G4ThreeVector(X,Y,Z))->GetLogicalVolume()->GetName() << std::endl;
+    //std::cout << "DataID "<< DataID << std::endl;
+    //std::cout << " SourceType=" << SourceType << " NewRankSourceRegionsNamesValues[DataID]=" << NewRankSourceRegionsNamesValues[DataID] << " " << G4ThreeVector(X,Y,Z) << " is in " << aNavigator->LocateGlobalPointAndSetup(G4ThreeVector(X,Y,Z))->GetLogicalVolume()->GetName() << std::endl;
 
     if(PositionTypeNum == 1){
         

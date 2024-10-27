@@ -163,10 +163,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->progressBarReadingCalcData->setWindowIconText("Reading");
     ui->progressBarReadingCalcData->setValue(0);
 
-    QStringList DDD=(QStringList()<<"File"<<"P-E-Y");
+    QStringList DDD=(QStringList()<<"File"<<"P-E-Y"<<"ICRP107");
     ui->comboBoxRadionuclidedataType->addItems(DDD);
     RadDataType["File"]= "File";
     RadDataType["P-E-Y"]= "P-E-Y";
+    RadDataType["ICRP107"]= "ICRP107";
 
     ui->comboBoxPeriodUnit->addItems(QuantitiesUnitsLists["T"]);
     ui->comboBoxQuantityNucl->addItems(DoseCalcsQuantities);
@@ -1143,7 +1144,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::UsePackagesMethods(){
 
-/*
+
 
     // ///////////////////// to replace words in a file using two file, the pair (word and new words) file, and the file
     // that we will modifiy
@@ -1168,11 +1169,10 @@ void MainWindow::UsePackagesMethods(){
         fileManagerObject->WriteTextToFile(DataDirName,Text);
     }
 
-*/
 
 
 
-
+/*
 
     // /////////////////////  change the reference masses of the defined organs using two files, the source(with blood)
     // and target mass of organs, and reference file, the name of organs in reference and masses files should be the same
@@ -1325,7 +1325,7 @@ void MainWindow::UsePackagesMethods(){
         filee.close();
     }
     fileManagerObject->WriteTextToFile(FilePath,Text);
-
+*/
 }
 
 //called from MainWindow() and ...
@@ -4123,7 +4123,7 @@ void MainWindow::on_actionAbout_triggered()
 {
 
 
-    //UsePackagesMethods();
+    UsePackagesMethods();
     QMessageBox msgBox;
     msgBox.setWindowTitle("About");
     msgBox.setWindowIcon(QIcon(QDir(QCoreApplication::applicationDirPath()).filePath(GUIPackagesAndFilesDirName+"/AppIcon.png")));
@@ -5409,7 +5409,7 @@ bool MainWindow::TestMergeExecutableInputsToRun(){
     QStringList InputsVals2 = ui->RadioNucleidlineEmissionDataEdit->text().split(QRegExp("(\\s|\\n|\\r)+"), QString::SkipEmptyParts);
 
     if(InputsVals.size() < 1){}else{
-        if(ui->comboBoxRadionuclidedataType->currentText() == "File"){
+        if(ui->comboBoxRadionuclidedataType->currentText() == "File" || ui->comboBoxRadionuclidedataType->currentText() == "ICRP107"){
             if(InputsVals2.size() > 1){
                 if(!QFile::exists(InputsVals2[0])){
                     ui->Tab->setCurrentIndex(2);
@@ -5437,7 +5437,7 @@ bool MainWindow::TestMergeExecutableInputsToRun(){
 
     if(QFile::exists(UserCurrentResultsDirPath)){}else{
         while(!QFile::exists(UserCurrentResultsDirPath)){
-            ui->Tab->setCurrentIndex(1);
+            //ui->Tab->setCurrentIndex(1);
             QMessageBox::information(this, tr(""), "Canno't find the results directory \""+ UserCurrentResultsDirPath +"\". Please choose a new directory path.");
             on_openResultsDirButton_clicked();
         }
@@ -11008,7 +11008,7 @@ double MainWindow::GenerateRadiotracerQuantitiesByInterpolationInDefaultUnitForB
 void MainWindow::Read_ICRP107_108Files(QString DataDirName ){
 
     // this for ICRP radionuclides, this numbers should be the indicators in SAFs files
-    EnergyIDRadionuclideForNeutronSAF["U-238"  ]  =111;
+    EnergyIDRadionuclideForNeutronSAF["U-238"  ] =111;
     EnergyIDRadionuclideForNeutronSAF["Pu-236" ] =222;
     EnergyIDRadionuclideForNeutronSAF["Pu-238" ] =333;
     EnergyIDRadionuclideForNeutronSAF["Pu-240" ] =444;

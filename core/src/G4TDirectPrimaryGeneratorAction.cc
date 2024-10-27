@@ -471,6 +471,13 @@ void G4TDirectPrimaryGeneratorAction::GenerateEventsPosition(){
     }
     else if(PositionTypeNum == 8){
 
+        //std::cout << "DataID "<< DataID << std::endl;
+        //std::cout << " NewRankTETBoxMinOfSourceRegion.size()=" << NewRankTETBoxMinOfSourceRegion.size() << std::endl;
+        //std::cout << " NewRankTETBoxDimOfSourceRegion.size()=" << NewRankTETBoxDimOfSourceRegion.size() << std::endl;
+        //std::cout << " NewRankTETOfSourceRegion.size()=" << NewRankTETOfSourceRegion.size() << std::endl;
+
+        //std::cout << " SourceType=" << SourceType << std::endl;
+
         G4bool insideChk(false);
         G4ThreeVector pos;
         do{
@@ -483,11 +490,15 @@ void G4TDirectPrimaryGeneratorAction::GenerateEventsPosition(){
                 insideChk = true;
                 break;
             }
+            //std::cout << pos << std::endl;
+
         }while(!insideChk);
 
         X = pos.getX();
         Y = pos.getY();
         Z = pos.getZ();
+
+        //std::cout << "X "<< X  << "Y "<< Y  << "Z "<< Z << std::endl;
 
     }
     else if(PositionTypeNum == 9){
