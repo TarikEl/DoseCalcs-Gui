@@ -1171,15 +1171,13 @@ void MainWindow::UsePackagesMethods(){
 
 
 
-
 /*
-
     // /////////////////////  change the reference masses of the defined organs using two files, the source(with blood)
     // and target mass of organs, and reference file, the name of organs in reference and masses files should be the same
 
 
     QStringList DefinedOrgans=(QStringList() << "Liver" << "Spleen" << "Pancreas" << "Brain" << "Thyroid"
-                               <<"Thymus" << "Uterus" << "Ht-wall" << "HeW"
+                               <<"Thymus" << "HeW" << "GBW"<< "Prostate" << "Uterus"
                                //<< "Ovary_right" << "Ovary_left"
                                //<<"Salivary_glands_left" << "Salivary_glands_right" << "Adrenal_left"  << "Adrenal_left"
                                );
@@ -1235,7 +1233,8 @@ void MainWindow::UsePackagesMethods(){
                 continue;
             }else{
                 if(indicator == "Source"){
-                    A >> srcMass >> srcMass ;
+                    A >> srcMass ;//>> srcMass ; // for male
+                    //A >> srcMass >> srcMass ; // for female
 
                     SourceMassFactors[word.c_str()] = srcMass;
 
@@ -1245,7 +1244,8 @@ void MainWindow::UsePackagesMethods(){
                     }
                 }
                 else if(indicator == "Target"){
-                    A >> trgMass >> trgMass ;
+                    A >> trgMass ;//>> trgMass ; // for male
+                    //A >> trgMass >> trgMass ; // for female
 
                     TargetMassFactors[word.c_str()] = trgMass;
 
@@ -1305,7 +1305,7 @@ void MainWindow::UsePackagesMethods(){
 
                         if(DefinedOrgans[aa] == fields[0]){
                             QTextStream(stdout) << fields[0] << " " << DefinedOrgans[aa] << " " << fields[1] << " " << fields[1].toDouble()*OrganMassFactors[fields[0]] <<"\n";
-                            fields[1] = QString::number(fields[1].toDouble()*OrganMassFactors[fields[0]]);
+                            fields[1] = QString::number(fields[1].toDouble()/OrganMassFactors[fields[0]]);
                             break;
                         }
                     }
@@ -1325,6 +1325,7 @@ void MainWindow::UsePackagesMethods(){
         filee.close();
     }
     fileManagerObject->WriteTextToFile(FilePath,Text);
+
 */
 }
 
@@ -6293,7 +6294,7 @@ void MainWindow::showConstructVoxelizedCommandsFrame(){
             RegionToVisualizeComb->setVisible(true);
             LimitsPlan->setCurrentIndex(4);
             QString ttt = "";
-            for (int kk =0 ;kk < InputsVals.size() ; kk++){
+            for (int kk =1 ;kk < InputsVals.size() ; kk++){
                 ttt += InputsVals[kk] + " ";
             }
             LimitsValues->setText(ttt);

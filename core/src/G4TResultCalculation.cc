@@ -675,6 +675,23 @@ void G4TResultCalculation::MergeSimulationsData(){
                                     }
 
 
+                                    // ///////////////////////////////////////////////////
+
+                                    // to update the value of a combined source because the mass fraction
+                                    // because all source2 files are combined in ED_ and ED2_ ... maps,
+                                    G4double TotalSourceMass = 0;
+                                    for (G4int dbn = 0 ; dbn < SSbeg->second.size() ; dbn++) { // calculate data just if the file is readed
+                                        TotalSourceMass += VolumeNameMassMap[SSbeg->second[dbn]];
+                                    }
+                                    for (G4int dbn = 0 ; dbn < SSbeg->second.size() ; dbn++) { // calculate data just if the file is readed
+                                        G4double massfraction = VolumeNameMassMap[SSbeg->second[dbn]]/TotalSourceMass;
+                                        ED_Total[SSbeg->second[dbn]]  =  ED_Total[SSbeg->second[dbn]]*massfraction;
+                                        ED2_Total[SSbeg->second[dbn]] = ED2_Total[SSbeg->second[dbn]]*massfraction;
+                                        NOfValues[SSbeg->second[dbn]] = NOfValues[SSbeg->second[dbn]]*massfraction;
+                                    }
+
+                                    // /////////////////////////////////////////
+
                                     //if(V)G4cout << "Vox_use "<< VOX_USE<< G4endl ;
                                     if(VOX_USE && GenerateVoxelsResuls){
 
@@ -1013,6 +1030,7 @@ void G4TResultCalculation::ReadSimulationData(){
 
                                                 if(SourceOrTarget == "source"){
                                                     RegionRegionsVolumesNamesFractionMap[RegionName][regionname] = Fraction;
+                                                    SourceRegionRegionsVolumesNamesFractionMap[RegionName][regionname] = Fraction;
                                                 }
                                                 else if(SourceOrTarget == "target"){
                                                     RegionRegionsVolumesNamesFractionMap[RegionName][regionname] = Fraction;
@@ -1040,6 +1058,8 @@ void G4TResultCalculation::ReadSimulationData(){
                                             if(IsIn == false){ RegionsVolumesNamesMap[RegionName].push_back(item);}
                                             NeWCombinationsForSourceNamesToScore[RegionName].push_back(item);
                                             RegionRegionsVolumesNamesFractionMap[RegionName][item] = 1;
+                                            SourceRegionRegionsVolumesNamesFractionMap[RegionName][item] = 1;
+
                                             OldTargetNamesToScore.push_back(item);
                                         }
                                         else if(SourceOrTarget == "target"){
@@ -1923,6 +1943,7 @@ bool G4TResultCalculation::ReadThreadRegionResultFile(G4String fm){
                 G4String VolumeName = ParameterName;
                 if(VolumeName == "World" || VolumeName == "VOXEL"){continue;}
 
+                //LineString >> val ; ED_Total[VolumeName] += SourceRegionRegionsVolumesNamesFractionMap[RegionName][item]*val ;
                 LineString >> val ; ED_Total[VolumeName] += val ;
                 LineString >> val ; ED2_Total[VolumeName] += val ;
                 LineString >> ival ; NOfValues[VolumeName] += ival ;
@@ -2201,12 +2222,12 @@ void G4TResultCalculation::RegionQuantitiesCalculation(){
         
 
         //This for just the error in mass, it should be removed after the calculation for article
-        //if (VolumeNameMassMap["Liver"] > 1000){
-        //    for (int zz = 0 ; zz < OrgansNameVector.size() ; zz++) {
-        //        VolumeNameMassMap[OrgansNameVector[zz]] = VolumeNameMassMap[OrgansNameVector[zz]]/1000;
-        //    }
-        //    G4cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n " << G4endl ;
-        //}
+        if (VolumeNameMassMap["Liver"] > 1000){
+            for (int zz = 0 ; zz < OrgansNameVector.size() ; zz++) {
+                VolumeNameMassMap[OrgansNameVector[zz]] = VolumeNameMassMap[OrgansNameVector[zz]]/1000;
+            }
+            G4cout << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n " << G4endl ;
+        }
 
         AFCte[OrgansNameVector[gg]]  = AFUnitFactor/TotalEmittedEnergy;
         //G4cout << TotalEmittedEnergy << "  - AFCte[OrgansNameVector[gg]] " << AFCte[OrgansNameVector[gg]] << G4endl;

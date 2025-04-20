@@ -258,6 +258,10 @@ void G4DoseCalcsAnalysis::ReadSimulationData(){
                             
                         }
                     }
+                    std::sort(TargetNamesToScore.begin(), TargetNamesToScore.end());
+                    std::sort(SourceNamesToScore.begin(), SourceNamesToScore.end());
+
+
                 }
                 
                 if(V)G4cout << "IsAllSourcesToScore "<< IsAllSourcesToScore << "IsAllTargetsToScore "<< IsAllTargetsToScore << G4endl;
@@ -666,6 +670,9 @@ void G4DoseCalcsAnalysis::ReadResultsAndReferenceData(){
     if(RefFilePaths.size() > 1){
         ReferenceTable2 = ReadReferenceFile(RefFilePaths[1]);
     }
+
+    std::sort(OrgansNameVector.begin(), OrgansNameVector.end());
+
 }
 
 // called from GenerateSelfCrossGraphs() and GenerateVoxel2DGraphs()
@@ -1402,6 +1409,8 @@ void G4DoseCalcsAnalysis::GenerateRegionsDataLatexTable(){
     
     LatexText << "=============================== Geometrical Data (volume, mass, density) in all simulated geometries \n\n";
     
+    // ////////////////////////////////////////////////// Geometrical data, each geometry ina distinct table
+
     for ( int DD = 0; DD < GeometryList.size() ; DD++  ){
         
         GeometrySymbol = GeometryList[DD];
@@ -1428,6 +1437,45 @@ void G4DoseCalcsAnalysis::GenerateRegionsDataLatexTable(){
         
     }
     
+
+    // ////////////////////////////////////////////////// Geometrical data for all geometries in one table
+
+    LatexText << "\\begin{table}[H] \n\%\\begin{sidewaystable}\n"
+              << "\\centering \n\%\\caption*{Table 3: (\\textit{continued})}\n"
+              << "\\caption{Regions names implemented in the in geometries and the corresponding volume, mass and density.} \n"
+              << "\\begin{tabular}{lll} \n";
+    LatexText << "\\hline \n";
+    LatexText << "\\textbf{Region name}         & \\textbf{Abbreviation}      & \\textbf{Mass (kg) (";
+                 for ( int SD = 0; SD < GeometryList.size() ; SD++  ){
+                     LatexText << GeometryList[SD];
+                     if(SD != GeometryList.size()-1){ LatexText <<", ";}
+                 }
+                 LatexText << ")}";
+
+    for ( int A = 0; A < OrgansNameVector.size() ; A++  ){
+        if(OrgansNameVector[A] == "World"){
+            continue;
+        }
+        LatexText << "       \\\\\\hline\n";
+        LatexText << OrgansNameVector[A] <<"     & "
+                    << OrgansNameVector[A] << "     & ";
+                    for ( int SD = 0; SD < GeometryList.size() ; SD++  ){
+                        LatexText << std::fixed << std::setprecision(GeometryVarDigitNum)  << GeometryRegionVariableValue[GeometryList[SD]]["Mass"][OrgansNameVector[A]];
+                        if(SD != GeometryList.size()-1){ LatexText <<", ";}
+                    }
+                    //LatexText <<"     & ";
+                    //for ( int SD = 0; SD < GeometryList.size() ; SD++  ){
+                    //    LatexText << std::fixed << std::setprecision(GeometryVarDigitNum) << GeometryRegionVariableValue[GeometryList[SD]]["Density"][OrgansNameVector[A]];
+                    //    if(SD != GeometryList.size()-1){ LatexText <<", ";}
+                    //}
+    }
+
+    LatexText << "\\\\ \\hline\n\\end{tabular} \n\%\\begin{flushright}\\textit{Continued on next page}\\end{flushright}\n";
+    LatexText << "\\label{GeometriesRegionImplementedData}\n";
+    LatexText << "\\end{table}\n\%\\end{sidewaystable}";
+    LatexText << "\n\n\n\n\n";
+
+
     // //////////////////////////////////////////////////////////////////
     
     int NumberOfGeometries = GeometryList.size();
@@ -2273,7 +2321,7 @@ void G4DoseCalcsAnalysis::GenerateLatexTableResultReferenceOfQuantitiesGeometrie
                         LatexText << "\\\\ \n                             & "<< DiffSym <<"\\tnote{a} " << "                                        ";
                         
                         for ( int B = 0; B < NumberOfSourceTargetColumn ; B++  ){
-                            
+
                             double a1 = ResultQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometrySymbol][RadioTracerName][GeometryRadiotracerSources[B]][TargetNamesToScore[A]];
                             double a2 = ReferenceQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometrySymbol][RadioTracerName][GeometryRadiotracerSources[B]][TargetNamesToScore[A]];
                             double a3 = RelativeDifferenceCalculation(a1,a2);
@@ -3105,6 +3153,615 @@ void G4DoseCalcsAnalysis::GenerateLatexTableResultForRadioTracerGeometry(){
             }
         }
         
+        // For value(RSD) in one line without method column (Tested for table for each source)
+
+        RowNum = 1; // just one line value(RSD) and not two lines (value and RSD%)
+
+        for (int sss = 0 ; sss < 3 ; sss++) { //0 self(sources) and 1 Cross(source-target combinations) // 2 for SourceTargets
+            for (int fd = 0 ; fd < GeometryList.size() ; fd++) {
+
+                if(ResultQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometryList[fd]].size()== 0){continue;}
+
+                int NumberOfRadioTracerOrGeom = RadiotracerList.size();
+                int NumberOfCol = NumberOfRadioTracerOrGeom + 1;
+
+                std::cout << "\n\n                                                          ========= Creation of Latex Table For Radiotracer Data in geometries ========= "<< "\n" << std::endl;
+
+                DataInitialization();
+                std::string FileName = GraphsDirectoryPath + "ResRefLatexTables";
+
+                if(sss==2){
+                    for ( int srcInc = 0; srcInc < GeometryRadiotracerSources.size() ; srcInc++  ){
+
+                        std::ostringstream LatexText;
+
+                        std::cout << "\n\n                                                          ========= Creation of Latex Table For Geometry Data and radiotracers ========= "<< "\n" << std::endl;
+
+                        //LatexText << "=============================== Latex Table for particle " << ParticleName << " and Source " << GeometryRadiotracerSources[srcInc] << "\n\n";
+
+                        LatexText << "\n\n\n\n\\usepackage{booktabs, makecell, graphicx, caption, subcaption}\n";
+                        LatexText << "\\usepackage{threeparttable}\n\%\\usepackage{longtable}\n\%\\usepackage{rotating}\n";
+                        LatexText << "\\usepackage{multirow}\n";
+                        LatexText << "\n\n";
+
+                        LatexText << "\\begin{table}[H] \n\%\\begin{sidewaystable}\n"
+                                  << "\\centering \n\%\\caption*{Table 3: (\\textit{continued})}\n";
+
+                        LatexText << "\%for long tatbles ------------------------------ \n\%\\begin{tiny}\n\% \\begin{longtable}{@{\\extracolsep{\\fill}}*{"<<NumberOfCol<<"}{l}}\n\%------------------------------\n";
+
+                        if(RowNum == 3){
+                            LatexText << "\\caption{" << QuantityUnit[QuantitiesToScore] << " values of " << GeometryList[fd] << " for internal irradiation from "<<GeometryRadiotracerSources[srcInc]<<" calculated in phantoms target regions by DoseCalcs and compared to the " << CompareReferenceName << " reference} \n";
+                        }else{
+                            LatexText << "\\caption{" << QuantityUnit[QuantitiesToScore] << " values of " << GeometryList[fd] << " for internal irradiation from  "<<GeometryRadiotracerSources[srcInc]<<" calculated in phantoms target regions by DoseCalcs} \n";
+                        }
+
+                        LatexText << "\%for long tatbles ------------------------------ \n\%\\\\ \n\%\\hline\n\% \\endfirsthead\n\% \\caption[]{(\\textit{continued})}\\\\\n\% \\hline\n\%------------------------------\n";
+
+                        LatexText << "\\begin{adjustbox}{width=\\columnwidth,center}\n"
+                                  << "\\begin{threeparttable}\n"
+                                  << "\%\\tiny \%to make any table size fill one page\n\\begin{tabular}{";
+
+                        for ( int A = 0; A < NumberOfCol ; A++  )
+                        {
+                            LatexText << "l";
+                        }
+                        LatexText << "} \\hline \n";
+
+                        LatexText << "\\multicolumn{1}{l}{\\multirow{1}{*}{\\textbf{Target}}} & \\multicolumn{";
+                        LatexText << NumberOfRadioTracerOrGeom << "}{l}{ ";
+                        LatexText << " \\textbf{Radionuclides}}       \\\\ \\cline{2-"<< NumberOfCol << "}\n                 \\multicolumn{1}{l}{}       ";
+                        for ( int A = 0; A < NumberOfRadioTracerOrGeom ; A++  )
+                        {
+                            LatexText << "   & \\textbf{" << RadiotracerList[A]<< "}";
+                        }
+
+                        LatexText << "\%for long tatbles ------------------------------ \n\%\\\\\\hline \n\%\\endhead \n\%\\hline \n\%\\multicolumn{6}{r}{(\\textit{Continued on next page})} \\\\ \n\%\\endfoot \n\%\\hline \n\%\\endlastfoot\n";
+
+                        LatexText << "\n\%\\multicolumn{1}{l}{\\multirow{1}{*}{\\textbf{Target}}} & \\multicolumn{";
+                        LatexText << NumberOfRadioTracerOrGeom << "}{l}{ ";
+                        LatexText << "\n\% \\textbf{Radionuclides}}       \\\\ \\cline{2-"<< NumberOfCol << "}\n\%                 \\multicolumn{1}{l}{      ";
+                        for ( int A = 0; A < NumberOfRadioTracerOrGeom ; A++  )
+                        {
+                            LatexText << "   & \\textbf{" << RadiotracerList[A]<< "}";
+                        }
+                        LatexText << "\n\%------------------------------\n";
+
+                        for ( int A = 0; A < TargetNamesToScore.size() ; A++  ){
+
+                            LatexText << "       \\\\\\hline \n";
+                            LatexText << "\\multirow{"<< RowNum <<"}{*}{\\textbf{"<<TargetNamesToScore[A]<< "}}         ";
+
+                            for ( int B = 0; B < NumberOfRadioTracerOrGeom ; B++  ){
+                                double a1 = QuantityGeometryRadioTracerSourceTargetRelativeStandartDeviation[QuantitiesToScore][GeometryList[fd]][RadiotracerList[B]][GeometryRadiotracerSources[srcInc]][TargetNamesToScore[A]];
+
+                                LatexText << "& " << std::scientific << std::setprecision(QuantityDigitNum) << ResultQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometryList[fd]][RadiotracerList[B]][GeometryRadiotracerSources[srcInc]][TargetNamesToScore[A]] << " ("<< std::scientific << std::setprecision(QuantityDigitNum) << a1 << "\\%)";
+                            }
+
+                            if(RowNum == 3){
+                                LatexText << "\\\\ \n                             & "<< CompareReferenceName << "(" << DiffSym << "\\tnote{a} " << ")                      ";
+
+                                for ( int B = 0; B < NumberOfRadioTracerOrGeom ; B++  ){
+                                    double a1 = ResultQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometryList[fd]][RadiotracerList[B]][GeometryRadiotracerSources[srcInc]][TargetNamesToScore[A]];
+                                    double a2 = ReferenceQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometryList[fd]][RadiotracerList[B]][GeometryRadiotracerSources[srcInc]][TargetNamesToScore[A]];
+                                    double a3 = RelativeDifferenceCalculation(a1,a2);
+                                    LatexText << "& " << std::scientific << std::setprecision(QuantityDigitNum) << ReferenceQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometryList[fd]][RadiotracerList[B]][GeometryRadiotracerSources[srcInc]][TargetNamesToScore[A]] << " (" << std::fixed << std::setprecision(DiffDigitNum) << a3 << ")        ";
+                                }
+                            }
+
+                        }
+
+                        LatexText << "\%for long tables ------------------------------ \n\%\\end{longtable} \n\%\\footnotetext[1]{Ratio} \n\%\\footnotetext[2]{Relative standard deviation}\n\%\\end{tiny}\n\%------------------------------\n";
+
+                        LatexText << "\\\\ \\hline\n\\end{tabular} \n\%\\begin{flushright}\\textit{Continued on next page}\\end{flushright}\n";
+                        //LatexText << "\\begin{tablenotes}\\footnotesize\n";
+                        //LatexText << "\\item[a] " << DiffExp << "\n";
+                        //LatexText << "\\item[b] Relative Standard Deviation (\\%)\n";
+                        //LatexText << "\\end{tablenotes}\n";
+                        LatexText << "\\end{threeparttable}\n";
+                        LatexText << "\\end{adjustbox}\n";
+                        LatexText << "\\label{tab:"<<GeometryRadiotracerSources[srcInc]<<"RadiotracersIn" << GeometryList[fd] << "}\n";
+                        LatexText << "\\end{table}\n\%\\end{sidewaystable}";
+                        LatexText << "\n\n";
+
+                        std::ofstream outfile(FileName , std::ios::app);
+                        if(outfile.is_open()){
+
+                            std::cout << "\nCreating file " << FileName << std::endl ;
+                            outfile << LatexText.str();
+                            outfile.close();
+                        }
+                    }
+                }
+                else{
+                    std::ostringstream LatexText;
+
+                    //LatexText << "=============================== Latex Table for particle " << ParticleName << " and Source " << GeometryRadiotracerSources[srcInc] << "\n\n";
+
+                    LatexText << "\n\n\n\n\\usepackage{booktabs, makecell, graphicx, caption, subcaption}\n";
+                    LatexText << "\\usepackage{threeparttable}\n\%\\usepackage{longtable}\n\%\\usepackage{rotating}\n";
+                    LatexText << "\\usepackage{multirow}\n";
+                    LatexText << "\n\n";
+
+                    LatexText << "\\begin{table}[H] \n\%\\begin{sidewaystable}\n"
+                              << "\\centering \n\%\\caption*{Table 3: (\\textit{continued})}\n";
+
+                    if(sss==0){
+                        if(RowNum == 3){
+                            LatexText << "\\caption{" << QuantityUnit[QuantitiesToScore] << " values of radiotracers for each source region calculated in " << GeometryList[fd] << " by DoseCalcs and compared to the " << CompareReferenceName << " reference} \n";
+                        }else{
+                            LatexText << "\\caption{" << QuantityUnit[QuantitiesToScore] << " values of radiotracers for each source region calculated in " << GeometryList[fd] << " by DoseCalcs} \n";
+                        }
+                    }
+                    else if(sss==1){
+                        if(RowNum == 3){
+                            LatexText << "\\caption{" << QuantityUnit[QuantitiesToScore] << " values of radiotracers for each source-target combination calculated in " << GeometryList[fd] << " by DoseCalcs and compared to the " << CompareReferenceName << " reference} \n";
+                        }else{
+                            LatexText << "\\caption{" << QuantityUnit[QuantitiesToScore] << " values of radiotracers for each source-target combination calculated in " << GeometryList[fd] << " by DoseCalcs} \n";
+                        }
+                    }
+
+
+                    LatexText << "\\begin{adjustbox}{width=\\columnwidth,center}\n"
+                              << "\\begin{threeparttable}\n"
+                              << "\%\\tiny \%to make any table size fill one page\n\\begin{tabular}{";
+
+                    for ( int A = 0; A < NumberOfCol ; A++  )
+                    {
+                        LatexText << "l";
+                    }
+                    LatexText << "} \\hline \n";
+
+                    if(sss==0){
+                        LatexText << "\\multicolumn{1}{c}{\\multirow{2}{*}{\\textbf{Source Region}}} & \\multirow{2}{*}{\\textbf{Method}} & \\multicolumn{";
+                    }
+                    else if(sss==1){
+                        LatexText << "\\multicolumn{1}{c}{\\multirow{2}{*}{\\textbf{Source$\\to$Target}}} & \\multirow{2}{*}{\\textbf{Method}} & \\multicolumn{";
+                    }
+
+                    LatexText << NumberOfRadioTracerOrGeom << "}{c}{ ";
+                    LatexText << " \\textbf{Radiotracers}}       \\\\ \\cline{3-"<< NumberOfCol << "}\n                 \\multicolumn{1}{c}{}                             & \\multicolumn{1}{c}{}                        ";
+
+                    for ( int A = 0; A < NumberOfRadioTracerOrGeom ; A++  )
+                    {
+                        LatexText << "   & \\textbf{" << RadiotracerList[A]<< "}";
+                    }
+
+                    for ( int srcInc = 0; srcInc < GeometryRadiotracerSources.size() ; srcInc++  ){
+
+                        //if(GeometryRadiotracerSources[srcInc] == "IntakeIntoBody"){ continue;}
+                        if(sss==0){
+                            LatexText << "       \\\\\\hline \n";
+                            LatexText << "\\multirow{"<< RowNum <<"}{*}{\\textbf{"<<GeometryRadiotracerSources[srcInc] << "}}       & " <<ValNm  << "                                         ";
+                            for ( int B = 0; B < NumberOfRadioTracerOrGeom ; B++  ){
+                                LatexText << "& " << std::scientific << std::setprecision(QuantityDigitNum) << ResultQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometryList[fd]][RadiotracerList[B]][GeometryRadiotracerSources[srcInc]][GeometryRadiotracerSources[srcInc]] << "        ";
+                            }
+
+                            if(RowNum == 3){
+                                LatexText << "\\\\ \n                             & "<< CompareReferenceName << "(" << DiffSym << "\\tnote{a} " << ")                      ";
+
+                                for ( int B = 0; B < NumberOfRadioTracerOrGeom ; B++  ){
+                                    double a1 = ResultQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometryList[fd]][RadiotracerList[B]][GeometryRadiotracerSources[srcInc]][GeometryRadiotracerSources[srcInc]];
+                                    double a2 = ReferenceQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometryList[fd]][RadiotracerList[B]][GeometryRadiotracerSources[srcInc]][GeometryRadiotracerSources[srcInc]];
+                                    double a3 = RelativeDifferenceCalculation(a1,a2);
+                                    LatexText << "& " << std::scientific << std::setprecision(QuantityDigitNum) << ReferenceQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometryList[fd]][RadiotracerList[B]][GeometryRadiotracerSources[srcInc]][GeometryRadiotracerSources[srcInc]] << " (" << std::fixed << std::setprecision(DiffDigitNum) << a3 << ")        ";
+                                }
+                            }
+
+                            LatexText << "\\\\ \n                             & "<< "RSD(\\%)\\tnote{b} " << "                                        ";
+
+                            for ( int B = 0; B < NumberOfRadioTracerOrGeom ; B++  ){
+                                double a1 = QuantityGeometryRadioTracerSourceTargetRelativeStandartDeviation[QuantitiesToScore][GeometryList[fd]][RadiotracerList[B]][GeometryRadiotracerSources[srcInc]][GeometryRadiotracerSources[srcInc]];
+                                LatexText << "& " << std::scientific << std::setprecision(QuantityDigitNum) << a1 << "        ";
+                            }
+                        }
+                        else if(sss==1){
+                            for ( int A = 0; A < TargetNamesToScore.size() ; A++  ){
+
+                                LatexText << "       \\\\\\hline \n";
+                                LatexText << "\\multirow{"<< RowNum <<"}{*}{\\textbf{"<<TargetNamesToScore[A]<<"$\\leftarrow$" <<GeometryRadiotracerSources[srcInc] << "}}       & " <<ValNm  << "                                         ";
+
+                                for ( int B = 0; B < NumberOfRadioTracerOrGeom ; B++  ){
+                                    LatexText << "& " << std::scientific << std::setprecision(QuantityDigitNum) << ResultQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometryList[fd]][RadiotracerList[B]][GeometryRadiotracerSources[srcInc]][TargetNamesToScore[A]] << "        ";
+                                }
+
+                                if(RowNum == 3){
+                                    LatexText << "\\\\ \n                             & "<< CompareReferenceName << "(" << DiffSym << "\\tnote{a} " << ")                      ";
+
+                                    for ( int B = 0; B < NumberOfRadioTracerOrGeom ; B++  ){
+                                        double a1 = ResultQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometryList[fd]][RadiotracerList[B]][GeometryRadiotracerSources[srcInc]][TargetNamesToScore[A]];
+                                        double a2 = ReferenceQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometryList[fd]][RadiotracerList[B]][GeometryRadiotracerSources[srcInc]][TargetNamesToScore[A]];
+                                        double a3 = RelativeDifferenceCalculation(a1,a2);
+                                        LatexText << "& " << std::scientific << std::setprecision(QuantityDigitNum) << ReferenceQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometryList[fd]][RadiotracerList[B]][GeometryRadiotracerSources[srcInc]][TargetNamesToScore[A]] << " (" << std::fixed << std::setprecision(DiffDigitNum) << a3 << ")        ";
+                                    }
+                                }
+
+                                LatexText << "\\\\ \n                             & "<< "RSD(\\%)\\tnote{b} " << "                                        ";
+
+                                for ( int B = 0; B < NumberOfRadioTracerOrGeom ; B++  ){
+                                    double a1 = QuantityGeometryRadioTracerSourceTargetRelativeStandartDeviation[QuantitiesToScore][GeometryList[fd]][RadiotracerList[B]][GeometryRadiotracerSources[srcInc]][TargetNamesToScore[A]];
+                                    LatexText << "& " << std::scientific << std::setprecision(QuantityDigitNum) << a1 << "        ";
+                                }
+                            }
+                        }
+                    }
+
+                    LatexText << "\\\\ \\hline\n\\end{tabular} \n\%\\begin{flushright}\\textit{Continued on next page}\\end{flushright}\n";
+                    LatexText << "\\begin{tablenotes}\\footnotesize\n";
+                    LatexText << "\\item[a] " << DiffExp << "\n";
+                    LatexText << "\\item[b] Relative Standard Deviation (\\%)\n";
+                    LatexText << "\\end{tablenotes}\n";
+                    LatexText << "\\end{threeparttable}\n";
+                    LatexText << "\\end{adjustbox}\n";
+                    if(sss==0){
+                        LatexText << "\\label{tab:SourceRadiotracersIn" << GeometryList[fd] << "}\n";
+                    }
+                    else if(sss==1){
+                        LatexText << "\\label{tab:SourceTargetRadiotracersIn" << GeometryList[fd] << "}\n";
+                    }
+                    LatexText << "\\end{table}\n\%\\end{sidewaystable}";
+                    LatexText << "\n\n";
+
+                    std::ofstream outfile(FileName , std::ios::app);
+                    if(outfile.is_open()){
+
+                        std::cout << "\nCreating file " << FileName << std::endl ;
+                        outfile << LatexText.str();
+                        outfile.close();
+                    }
+                }
+            }
+            for (int fd = 0 ; fd < RadiotracerList.size() ; fd++) {
+
+                int NumberOfRadioTracerOrGeom = GeometryList.size();
+                int NumberOfCol = NumberOfRadioTracerOrGeom + 1;
+
+                std::cout << "\n\n                                                          ========= Creation of Latex Table For Radiotracer Data for radiotracers ========= "<< "\n" << std::endl;
+
+                DataInitialization();
+                std::string FileName = GraphsDirectoryPath + "ResRefLatexTables";
+
+                if(sss==2){
+                    for ( int srcInc = 0; srcInc < GeometryRadiotracerSources.size() ; srcInc++  ){
+
+                        //if(GeometryRadiotracerSources[srcInc] == "IntakeIntoBody"){ continue;}
+
+                        std::ostringstream LatexText;
+
+                        std::cout << "\n\n                                                          ========= Creation of Latex Table For Geometry Data and radiotracers ========= "<< "\n" << std::endl;
+
+                        //LatexText << "=============================== Latex Table for particle " << ParticleName << " and Source " << GeometryRadiotracerSources[srcInc] << "\n\n";
+
+                        LatexText << "\n\n\n\n\\usepackage{booktabs, makecell, graphicx, caption, subcaption}\n";
+                        LatexText << "\\usepackage{threeparttable}\n\%\\usepackage{longtable}\n\%\\usepackage{rotating}\n";
+                        LatexText << "\\usepackage{multirow}\n";
+                        LatexText << "\n\n";
+
+                        LatexText << "\\begin{table}[H] \n\%\\begin{sidewaystable}\n"
+                                  << "\\centering \n\%\\caption*{Table 3: (\\textit{continued})}\n";
+
+                        LatexText << "\%for long tatbles ------------------------------ \n\%\\begin{tiny}\n\% \\begin{longtable}{@{\\extracolsep{\\fill}}*{"<<NumberOfCol<<"}{l}}\n\%------------------------------\n";
+
+                        if(RowNum == 3){
+                            LatexText << "\\caption{" << QuantityUnit[QuantitiesToScore] << " values of " << RadiotracerList[fd] << " for internal irradiation from "<<GeometryRadiotracerSources[srcInc]<<" calculated in phantoms target regions by DoseCalcs and compared to the " << CompareReferenceName << " reference} \n";
+                        }else{
+                            LatexText << "\\caption{" << QuantityUnit[QuantitiesToScore] << " values of " << RadiotracerList[fd] << " for internal irradiation from "<<GeometryRadiotracerSources[srcInc]<<" calculated in phantoms target regions  by DoseCalcs} \n";
+                        }
+
+                        LatexText << "\%for long tatbles ------------------------------ \n\%\\\\ \n\%\\hline\n\% \\endfirsthead\n\% \\caption[]{(\\textit{continued})}\\\\\n\% \\hline\n\%------------------------------\n";
+
+                        LatexText << "\\begin{adjustbox}{width=\\columnwidth,center}\n"
+                                  << "\\begin{threeparttable}\n"
+                                  << "\%\\tiny \%to make any table size fill one page\n\\begin{tabular}{";
+
+                        for ( int A = 0; A < NumberOfCol ; A++  )
+                        {
+                            LatexText << "l";
+                        }
+                        LatexText << "} \\hline \n";
+
+                        LatexText << "\\multicolumn{1}{l}{\\multirow{1}{*}{\\textbf{Target}}} & \\multicolumn{";
+                        LatexText << NumberOfRadioTracerOrGeom << "}{l}{ ";
+                        LatexText << " \\textbf{Phantoms}}       \\\\ \\cline{2-"<< NumberOfCol << "}\n                 \\multicolumn{1}{l}{}      ";
+                        for ( int A = 0; A < NumberOfRadioTracerOrGeom ; A++  )
+                        {
+                            LatexText << "   & \\textbf{" << GeometryList[A]<< "}";
+                        }
+
+                        LatexText << "\%for long tatbles ------------------------------ \n\%\\\\\\hline \n\%\\endhead \n\%\\hline \n\%\\multicolumn{6}{r}{(\\textit{Continued on next page})} \\\\ \n\%\\endfoot \n\%\\hline \n\%\\endlastfoot\n";
+
+                        LatexText << "\n\%\\multicolumn{1}{l}{\\multirow{1}{*}{\\textbf{Target}}} & \\multicolumn{";
+                        LatexText << NumberOfRadioTracerOrGeom << "}{l}{ ";
+                        LatexText << "\n\% \\textbf{Phantoms}}       \\\\ \\cline{2-"<< NumberOfCol << "}\n\%                 \\multicolumn{1}{l}{}    ";
+                        for ( int A = 0; A < NumberOfRadioTracerOrGeom ; A++  )
+                        {
+                            LatexText << "   & \\textbf{" << GeometryList[A]<< "}";
+                        }
+                        LatexText << "\n\%------------------------------\n";
+
+                        for ( int A = 0; A < TargetNamesToScore.size() ; A++  ){
+
+                            LatexText << "       \\\\\\hline \n";
+                            LatexText << "\\multirow{"<< RowNum <<"}{*}{\\textbf{"<<TargetNamesToScore[A]<< "}}                                            ";
+
+                            for ( int B = 0; B < NumberOfRadioTracerOrGeom ; B++  ){
+                                double a1 = QuantityGeometryRadioTracerSourceTargetRelativeStandartDeviation[QuantitiesToScore][GeometryList[B]][RadiotracerList[fd]][GeometryRadiotracerSources[srcInc]][TargetNamesToScore[A]];
+                                LatexText << "& " << std::scientific << std::setprecision(QuantityDigitNum) << ResultQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometryList[B]][RadiotracerList[fd]][GeometryRadiotracerSources[srcInc]][TargetNamesToScore[A]] << " ("<<std::scientific << std::setprecision(QuantityDigitNum) << a1 << "\\%)        ";
+                            }
+
+                            if(RowNum == 3){
+                                LatexText << "\\\\ \n                             & "<< CompareReferenceName << "(" << DiffSym << "\\tnote{a} " << ")                      ";
+
+                                for ( int B = 0; B < NumberOfRadioTracerOrGeom ; B++  ){
+                                    double a1 = ResultQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometryList[B]][RadiotracerList[fd]][GeometryRadiotracerSources[srcInc]][TargetNamesToScore[A]];
+                                    double a2 = ReferenceQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometryList[B]][RadiotracerList[fd]][GeometryRadiotracerSources[srcInc]][TargetNamesToScore[A]];
+                                    double a3 = RelativeDifferenceCalculation(a1,a2);
+                                    LatexText << "& " << std::scientific << std::setprecision(QuantityDigitNum) << ReferenceQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometryList[B]][RadiotracerList[fd]][GeometryRadiotracerSources[srcInc]][TargetNamesToScore[A]] << " (" << std::fixed << std::setprecision(DiffDigitNum) << a3 << ")        ";
+                                }
+                            }
+
+                            //LatexText << "\\\\ \n                             & "<< "RSD(\\%)\\tnote{b} " << "                                        ";
+
+                            //for ( int B = 0; B < NumberOfRadioTracerOrGeom ; B++  ){
+                            //    double a1 = QuantityGeometryRadioTracerSourceTargetRelativeStandartDeviation[QuantitiesToScore][GeometryList[B]][RadiotracerList[fd]][GeometryRadiotracerSources[srcInc]][TargetNamesToScore[A]];
+                            //    LatexText << "& " << std::scientific << std::setprecision(QuantityDigitNum) << a1 << "        ";
+                            //}
+                        }
+
+                        LatexText << "\%for long tatbles ------------------------------ \n\%\\end{longtable} \n\%\\footnotetext[1]{Ratio} \n\%\\footnotetext[2]{Relative standard deviation}\n\%\\end{tiny}\n\%------------------------------\n";
+
+                        LatexText << "\\\\ \\hline\n\\end{tabular} \n\%\\begin{flushright}\\textit{Continued on next page}\\end{flushright}\n";
+                        //LatexText << "\\begin{tablenotes}\\footnotesize\n";
+                        //LatexText << "\\item[a] " << DiffExp << "\n";
+                        //LatexText << "\\item[b] Relative Standard Deviation (\\%)\n";
+                        //LatexText << "\\end{tablenotes}\n";
+                        LatexText << "\\end{threeparttable}\n";
+                        LatexText << "\\end{adjustbox}\n";
+                        LatexText << "\\label{tab:"<<GeometryRadiotracerSources[srcInc]<<"GeometriesFrom" << RadiotracerList[fd] << "}\n";
+                        LatexText << "\\end{table}\n\%\\end{sidewaystable}";
+                        LatexText << "\n\n";
+
+                        std::ofstream outfile(FileName , std::ios::app);
+                        if(outfile.is_open()){
+
+                            std::cout << "\nCreating file " << FileName << std::endl ;
+                            outfile << LatexText.str();
+                            outfile.close();
+                        }
+                    }
+                }
+                else{
+
+                    std::ostringstream LatexText;
+
+                    std::cout << "\n\n                                                          ========= Creation of Latex Table For Geometry Data and radiotracers ========= "<< "\n" << std::endl;
+
+                    //LatexText << "=============================== Latex Table for particle " << ParticleName << " and Source " << GeometryRadiotracerSources[srcInc] << "\n\n";
+
+                    LatexText << "\n\n\n\n\\usepackage{booktabs, makecell, graphicx, caption, subcaption}\n";
+                    LatexText << "\\usepackage{threeparttable}\n\%\\usepackage{longtable}\n\%\\usepackage{rotating}\n";
+                    LatexText << "\\usepackage{multirow}\n";
+                    LatexText << "\n\n";
+
+                    LatexText << "\\begin{table}[H] \n\%\\begin{sidewaystable}\n"
+                              << "\\centering \n\%\\caption*{Table 3: (\\textit{continued})}\n";
+
+                    LatexText << "\%for long tatbles ------------------------------ \n\%\\begin{tiny}\n\% \\begin{longtable}{@{\\extracolsep{\\fill}}*{"<<NumberOfCol<<"}{l}}\n\%------------------------------\n";
+
+                    if(sss==0){
+                        if(RowNum == 3){
+                            LatexText << "\\caption{" << QuantityUnit[QuantitiesToScore] << " values of " << RadiotracerList[fd] << " for each source region calculated in simulated geometries by DoseCalcs and compared to the " << CompareReferenceName << " reference} \n";
+                        }else{
+                            LatexText << "\\caption{" << QuantityUnit[QuantitiesToScore] << " values of " << RadiotracerList[fd] << " for each source region calculated in simulated geometries  by DoseCalcs} \n";
+                        }
+                    }
+                    else if(sss==1){
+                        if(RowNum == 3){
+                            LatexText << "\\caption{" << QuantityUnit[QuantitiesToScore] << " values of " << RadiotracerList[fd] << " for each source-target combination calculated in simulated geometries by DoseCalcs and compared to the " << CompareReferenceName << " reference} \n";
+                        }else{
+                            LatexText << "\\caption{" << QuantityUnit[QuantitiesToScore] << " values of " << RadiotracerList[fd] << " for each source-target combination calculated in simulated geometries  by DoseCalcs} \n";
+                        }
+                    }
+
+                    LatexText << "\%for long tatbles ------------------------------ \n\%\\\\ \n\%\\hline\n\% \\endfirsthead\n\% \\caption[]{(\\textit{continued})}\\\\\n\% \\hline\n\%------------------------------\n";
+
+                    LatexText << "\\begin{adjustbox}{width=\\columnwidth,center}\n"
+                              << "\\begin{threeparttable}\n"
+                              << "\%\\tiny \%to make any table size fill one page\n\\begin{tabular}{";
+
+                    for ( int A = 0; A < NumberOfCol ; A++  )
+                    {
+                        LatexText << "l";
+                    }
+                    LatexText << "} \\hline \n";
+
+                    if(sss==0){
+                        LatexText << "\\multicolumn{1}{c}{\\multirow{2}{*}{\\textbf{Source Region}}} & \\multirow{2}{*}{\\textbf{Method}} & \\multicolumn{";
+                    }
+                    else if(sss==1){
+                        LatexText << "\\multicolumn{1}{c}{\\multirow{2}{*}{\\textbf{Source$\\to$Target}}} & \\multirow{2}{*}{\\textbf{Method}} & \\multicolumn{";
+                    }
+                    LatexText << NumberOfRadioTracerOrGeom << "}{c}{ ";
+                    LatexText << " \\textbf{Phantoms}}       \\\\ \\cline{3-"<< NumberOfCol << "}\n                 \\multicolumn{1}{c}{}                             & \\multicolumn{1}{c}{}                        ";
+                    for ( int A = 0; A < NumberOfRadioTracerOrGeom ; A++  )
+                    {
+                        LatexText << "   & \\textbf{" << GeometryList[A]<< "}";
+                    }
+
+                    LatexText << "\%for long tatbles ------------------------------ \n\%\\\\\\hline \n\%\\endhead \n\%\\hline \n\%\\multicolumn{6}{r}{(\\textit{Continued on next page})} \\\\ \n\%\\endfoot \n\%\\hline \n\%\\endlastfoot\n";
+                    if(sss==0){
+                        LatexText << "\n\%\\multicolumn{1}{c}{\\multirow{2}{*}{\\textbf{Source Region}}} & \\multirow{2}{*}{\\textbf{Method}} & \\multicolumn{";
+                    }
+                    else if(sss==1){
+                        LatexText << "\n\%\\multicolumn{1}{c}{\\multirow{2}{*}{\\textbf{Source$\\to$Target}}} & \\multirow{2}{*}{\\textbf{Method}} & \\multicolumn{";
+                    }
+                    LatexText << NumberOfRadioTracerOrGeom << "}{c}{ ";
+                    LatexText << "\n\% \\textbf{Phantoms}}       \\\\ \\cline{3-"<< NumberOfCol << "}\n\%                 \\multicolumn{1}{c}{}                             & \\multicolumn{1}{c}{}                        ";
+                    for ( int A = 0; A < NumberOfRadioTracerOrGeom ; A++  )
+                    {
+                        LatexText << "   & \\textbf{" << GeometryList[A]<< "}";
+                    }
+                    LatexText << "\n\%------------------------------\n";
+
+                    for ( int srcInc = 0; srcInc < GeometryRadiotracerSources.size() ; srcInc++  ){
+                        //if(GeometryRadiotracerSources[srcInc] == "IntakeIntoBody"){ continue;}
+
+                        if(sss==0){
+                            LatexText << "       \\\\\\hline \n";
+                            LatexText << "\\multirow{"<< RowNum <<"}{*}{\\textbf{"<<GeometryRadiotracerSources[srcInc] << "}}       & " <<ValNm  << "                                         ";
+
+                            for ( int B = 0; B < NumberOfRadioTracerOrGeom ; B++  ){
+                                LatexText << "& " << std::scientific << std::setprecision(QuantityDigitNum) << ResultQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometryList[B]][RadiotracerList[fd]][GeometryRadiotracerSources[srcInc]][GeometryRadiotracerSources[srcInc]] << "        ";
+                            }
+
+                            if(RowNum == 3){
+                                LatexText << "\\\\ \n                             & "<< CompareReferenceName << "(" << DiffSym << "\\tnote{a} " << ")                      ";
+
+                                for ( int B = 0; B < NumberOfRadioTracerOrGeom ; B++  ){
+                                    double a1 = ResultQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometryList[B]][RadiotracerList[fd]][GeometryRadiotracerSources[srcInc]][GeometryRadiotracerSources[srcInc]];
+                                    double a2 = ReferenceQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometryList[B]][RadiotracerList[fd]][GeometryRadiotracerSources[srcInc]][GeometryRadiotracerSources[srcInc]];
+                                    double a3 = RelativeDifferenceCalculation(a1,a2);
+                                    LatexText << "& " << std::scientific << std::setprecision(QuantityDigitNum) << ReferenceQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometryList[B]][RadiotracerList[fd]][GeometryRadiotracerSources[srcInc]][GeometryRadiotracerSources[srcInc]] << " (" << std::fixed << std::setprecision(DiffDigitNum) << a3 << ")        ";
+                                }
+                            }
+
+                            LatexText << "\\\\ \n                             & "<< "RSD(\\%)\\tnote{b} " << "                                        ";
+
+                            for ( int B = 0; B < NumberOfRadioTracerOrGeom ; B++  ){
+                                double a1 = QuantityGeometryRadioTracerSourceTargetRelativeStandartDeviation[QuantitiesToScore][GeometryList[B]][RadiotracerList[fd]][GeometryRadiotracerSources[srcInc]][GeometryRadiotracerSources[srcInc]];
+                                LatexText << "& " << std::scientific << std::setprecision(QuantityDigitNum) << a1 << "        ";
+                            }
+                        }
+                        else if(sss==2){
+
+                        }
+                        else if(sss==1){
+                            for ( int A = 0; A < TargetNamesToScore.size() ; A++  ){
+
+                                LatexText << "       \\\\\\hline \n";
+                                LatexText << "\\multirow{"<< RowNum <<"}{*}{\\textbf{"<<TargetNamesToScore[A]<<"$\\leftarrow$" <<GeometryRadiotracerSources[srcInc] << "}}       & " <<ValNm  << "                                         ";
+
+                                for ( int B = 0; B < NumberOfRadioTracerOrGeom ; B++  ){
+                                    LatexText << "& " << std::scientific << std::setprecision(QuantityDigitNum) << ResultQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometryList[B]][RadiotracerList[fd]][GeometryRadiotracerSources[srcInc]][TargetNamesToScore[A]] << "        ";
+                                }
+
+                                if(RowNum == 3){
+                                    LatexText << "\\\\ \n                             & "<< CompareReferenceName << "(" << DiffSym << "\\tnote{a} " << ")                      ";
+
+                                    for ( int B = 0; B < NumberOfRadioTracerOrGeom ; B++  ){
+                                        double a1 = ResultQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometryList[B]][RadiotracerList[fd]][GeometryRadiotracerSources[srcInc]][TargetNamesToScore[A]];
+                                        double a2 = ReferenceQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometryList[B]][RadiotracerList[fd]][GeometryRadiotracerSources[srcInc]][TargetNamesToScore[A]];
+                                        double a3 = RelativeDifferenceCalculation(a1,a2);
+                                        LatexText << "& " << std::scientific << std::setprecision(QuantityDigitNum) << ReferenceQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometryList[B]][RadiotracerList[fd]][GeometryRadiotracerSources[srcInc]][TargetNamesToScore[A]] << " (" << std::fixed << std::setprecision(DiffDigitNum) << a3 << ")        ";
+                                    }
+                                }
+
+                                LatexText << "\\\\ \n                             & "<< "RSD(\\%)\\tnote{b} " << "                                        ";
+
+                                for ( int B = 0; B < NumberOfRadioTracerOrGeom ; B++  ){
+                                    double a1 = QuantityGeometryRadioTracerSourceTargetRelativeStandartDeviation[QuantitiesToScore][GeometryList[B]][RadiotracerList[fd]][GeometryRadiotracerSources[srcInc]][TargetNamesToScore[A]];
+                                    LatexText << "& " << std::scientific << std::setprecision(QuantityDigitNum) << a1 << "        ";
+                                }
+                            }
+                        }
+                    }
+
+                    LatexText << "\%for long tatbles ------------------------------ \n\%\\end{longtable} \n\%\\footnotetext[1]{Ratio} \n\%\\footnotetext[2]{Relative standard deviation}\n\%\\end{tiny}\n\%------------------------------\n";
+
+                    LatexText << "\\\\ \\hline\n\\end{tabular} \n\%\\begin{flushright}\\textit{Continued on next page}\\end{flushright}\n";
+                    LatexText << "\\begin{tablenotes}\\footnotesize\n";
+                    LatexText << "\\item[a] " << DiffExp << "\n";
+                    LatexText << "\\item[b] Relative Standard Deviation (\\%)\n";
+                    LatexText << "\\end{tablenotes}\n";
+                    LatexText << "\\end{threeparttable}\n";
+                    LatexText << "\\end{adjustbox}\n";
+                    if(sss==0){
+                        LatexText << "\\label{tab:SourceGeometriesFrom" << RadiotracerList[fd] << "}\n";
+                    }
+                    else if(sss==1){
+                        LatexText << "\\label{tab:SourceTargetGeometriesFrom" << RadiotracerList[fd] << "}\n";
+                    }
+                    LatexText << "\\end{table}\n\%\\end{sidewaystable}";
+                    LatexText << "\n\n";
+
+                    std::ofstream outfile(FileName , std::ios::app);
+                    if(outfile.is_open()){
+
+                        std::cout << "\nCreating file " << FileName << std::endl ;
+                        outfile << LatexText.str();
+                        outfile.close();
+                    }
+                }
+            }
+        }
+
+        // For Comparison factor simple table
+
+        for (int fd = 0 ; fd < RadiotracerList.size() ; fd++) {
+
+            DataInitialization();
+            std::string FileName = GraphsDirectoryPath + "ResRefLatexTables";
+
+            std::ostringstream LatexText;
+
+            LatexText << "\\begin{table}[H] \n\%\\begin{sidewaystable}\n"
+                      << "\\centering \n\%\\caption*{Table 3: (\\textit{continued})}\n"
+                      << "\\caption{" << DifferenceMethod << " for " << RadiotracerList[fd] << " calculated in geometries by DoseCalcs and compared to the " << CompareReferenceName << " reference} \n"
+                      << "\\begin{tabular}{llllll} \n";
+            LatexText << "\\hline \n";
+
+            for ( int dss = 0; dss < 2 ; dss++  ){
+                LatexText << "\\textbf{Target$\\leftarrow$Source} ";
+                for ( int DD = 0; DD < GeometryList.size() ; DD++  ){
+                    LatexText << " & \\textbf{" << GeometryList[DD] << "}";
+                }
+                if(dss != 1){
+                    LatexText << " & ";
+                }
+            }
+
+            int ja=1;
+            for ( int A = 0; A < SourceNamesToScore.size() ; A++  ){
+                for ( int B = 0; B < TargetNamesToScore.size() ; B++  ){
+                    if(TargetNamesToScore[B] == "World"){
+                        continue;
+                    }
+
+                    if(ja==2){
+                        LatexText << " &  " ;
+                        ja=1;
+                    }else{
+                        LatexText << "       \\\\\\hline\n";
+                        ja=2;
+                    }
+
+                    LatexText << TargetNamesToScore[B] << "$\\leftarrow$" << SourceNamesToScore[A] ;//
+                    //<<"     & " << std::fixed << std::setprecision(GeometryVarDigitNum) << GeometryRegionVariableValue[GeometrySymbol]["Volume"][OrgansNameVector[A]] <<"      & "<< GeometryRegionVariableValue[GeometrySymbol]["Mass"][OrgansNameVector[A]] <<"     & " << GeometryRegionVariableValue[GeometrySymbol]["Density"][OrgansNameVector[A]];
+
+                    for ( int DD = 0; DD < GeometryList.size() ; DD++  ){
+                        double a1 = ResultQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometryList[DD]][RadiotracerList[fd]][SourceNamesToScore[A]][TargetNamesToScore[B]];
+                        double a2 = ReferenceQuantityGeometryRadioTracerSourceTargetValues[QuantitiesToScore][GeometryList[DD]][RadiotracerList[fd]][SourceNamesToScore[A]][TargetNamesToScore[B]];
+                        double a3 = RelativeDifferenceCalculation(a1,a2);
+
+                        LatexText <<"     & " << std::fixed << std::setprecision(DiffDigitNum) << a3;
+
+                    }
+                }
+            }
+
+            LatexText << "\\\\ \\hline\n\\end{tabular} \n\%\\begin{flushright}\\textit{Continued on next page}\\end{flushright}\n";
+            LatexText << "\\label{"<< RadiotracerList[fd] <<"GeometriesComparison}\n";
+            LatexText << "\\end{table}\n\%\\end{sidewaystable}";
+            LatexText << "\n\n\n\n\n";
+
+            std::ofstream outfile(FileName , std::ios::app);
+            if(outfile.is_open()){
+
+                std::cout << "\nCreating file " << FileName << std::endl ;
+                outfile << LatexText.str();
+                outfile.close();
+            }
+        }
+
     }
 
 }
@@ -3784,7 +4441,7 @@ void G4DoseCalcsAnalysis::createDataInCSVFormat(){
     {
         Quantity = Obeg->first;
         
-        std::string FileName = GraphsDirectoryPath +"DoseCalcs_RadioNucleides_"+Quantity+".csv";
+        std::string FileName = GraphsDirectoryPath +"DoseCalcs_RadioNuclides_"+Quantity+".csv";
         std::ofstream outfile(FileName , std::ios::app);
         if(outfile.is_open()){
             std::cout << "\nCreating file " << FileName << std::endl ;
@@ -3797,7 +4454,6 @@ void G4DoseCalcsAnalysis::createDataInCSVFormat(){
         for ( auto Mbeg = Obeg->second.begin(); Mbeg != Obeg->second.end(); ++Mbeg  )
         {
             Geometry = Mbeg->first;
-            
             
             for ( auto Abeg = Mbeg->second.begin(); Abeg != Mbeg->second.end(); ++Abeg  )
             {

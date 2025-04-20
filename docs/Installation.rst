@@ -171,7 +171,7 @@ In terminal, execute
 DoseCalcs building
 ------------------
 
-DoseCalcs is available for download at https://github.com/TarikEl/DoseCalcs/archive/refs/heads/main.zip. The source will look like this after extraction: 
+DoseCalcs is available for download at https://codeload.github.com/TarikEl/DoseCalcs-Gui/zip/refs/heads/main. The source of DoseCalcs-Core in the DoseCalcs extracted files will look like this: 
 
  .. image:: /images/SourceDir.png
 

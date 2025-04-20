@@ -1625,9 +1625,9 @@ void InstallationDialog::on_pushButtonDownloadSupplement_clicked()
                 //"wget -O DoseCalcsSupplementaries.tar.xz --no-check-certificate -r 'https://drive.google.com/uc?export=download&id=1arU9aJpi7M5VehO1lPKOSM1JkyRe7j2k' \n"+
                 //"wget --load-cookies /tmp/cookies.txt \"https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1arU9aJpi7M5VehO1lPKOSM1JkyRe7j2k' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\\1\\n/p')&id=1arU9aJpi7M5VehO1lPKOSM1JkyRe7j2k\" -O DoseCalcsSupplementaries.tar.xz && rm -rf /tmp/cookies.txt \n"+
                 "sudo apt-get install -y curl\n"
-                "curl -L \"https://drive.usercontent.google.com/download?id=1arU9aJpi7M5VehO1lPKOSM1JkyRe7j2k&export=download&confirm=y\" -o \"DoseCalcsSupplementaries.tar.xz\"\n"
+                "curl -L \"https://drive.usercontent.google.com/download?id=1SMKv5_AlP2zwMg6QOT6BldR-y02fGVXj&export=download&confirm=y\" -o \"DoseCalcsSupplementaries.tar.xz\"\n"
 
-                //"wget "+ Supplementary_Url_String +"\n"+
+                //https://drive.google.com/file/d/1SMKv5_AlP2zwMg6QOT6BldR-y02fGVXj/view?usp=sharing                                                                                                                                                        //"wget "+ Supplementary_Url_String +"\n"+
                 "tar xvf "+ GUIPackagesAndFilesDirPath+"/DoseCalcsSupplementaries.tar.xz"+ +"\n"
                 ;
         filesManagerObj->WriteTextToFile(Supplementary_sh_path,text_shFile);
