@@ -4510,6 +4510,84 @@ void G4DoseCalcsAnalysis::createDataInCSVFormat(){
         }
     }
     
+    // file for each quantity (a table for each radiotracer (all geometries and combinations with SD)
+
+    for ( auto Obeg = ResultQuantityGeometryRadioTracerSourceTargetValues.begin(); Obeg != ResultQuantityGeometryRadioTracerSourceTargetValues.end(); ++Obeg  )
+    {
+        Quantity = Obeg->first;
+
+        std::string FileName = GraphsDirectoryPath +"DoseCalcs_RadioNuclides_"+Quantity+".csv";
+        std::ofstream outfile(FileName , std::ios::app);
+        if(outfile.is_open()){
+            std::cout << "\nCreating file " << FileName << std::endl ;
+        }
+
+
+        std::ostringstream LatexText;
+        LatexText << QuantityUnit[Quantity] << "\n";
+
+        for ( auto Mbeg = Obeg->second.begin(); Mbeg != Obeg->second.end(); ++Mbeg  )
+        {
+            Geometry = Mbeg->first;
+
+            for ( auto Abeg = Mbeg->second.begin(); Abeg != Mbeg->second.end(); ++Abeg  )
+            {
+                PARTICLE_NAME = Abeg->first;
+
+                LatexText << "\n" << Geometry << "," << PARTICLE_NAME <<  "\n";
+
+                LatexText << "Target<-Source" << "," << QuantityUnit[Quantity] << ", Rel_SD%" << "\n";
+
+                for ( auto Bbeg = Abeg->second.begin(); Bbeg != Abeg->second.end(); ++Bbeg  )
+                {
+                    Source_ORG = Bbeg->first;
+                    if(Source_ORG == "IntakeIntoBody"){
+                        continue;
+                    }
+
+                    for ( auto Cbeg = Bbeg->second.begin(); Cbeg != Bbeg->second.end(); ++Cbeg  )
+                    {
+
+                        Target_ORG = Cbeg->first;
+                        //LatexText << Target_ORG  << ",";
+                        LatexText << Target_ORG  << "<-" << Source_ORG << ",";
+
+                        double val = ResultQuantityGeometryRadioTracerSourceTargetValues[Quantity][Geometry][PARTICLE_NAME][Source_ORG][Target_ORG];
+                        double error = QuantityGeometryRadioTracerSourceTargetRelativeStandartDeviation[Quantity][Geometry][PARTICLE_NAME][Source_ORG][Target_ORG];
+                        if(val == 0 || __isinf(val) || __isnan(val)){
+                            LatexText << " ," << " ,";
+                        }else{
+                            LatexText << val << "," << error << ",";
+                        }
+
+
+                        //if(val == 0 || __isinf(val) || __isnan(val)){
+                        //    LatexText << "," ;
+                        //}else{
+                        //    LatexText << val << "," ;
+                        //}
+
+
+
+
+                        LatexText << "\n";
+
+                    }
+
+                    //LatexText << "-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------";
+
+                }
+            }
+
+            LatexText << "\n\n*****************************************************************************************************************************************************************************************************************************************************************\n";
+
+        }
+        if(outfile.is_open()){
+            outfile << LatexText.str();
+            outfile.close();
+        }
+    }
+
     // file for each quantity (a table for each geometry and radiotracer and source and SD) with reference
     
     for ( auto Obeg = ResultQuantityGeometryRadioTracerSourceTargetValues.begin(); Obeg != ResultQuantityGeometryRadioTracerSourceTargetValues.end(); ++Obeg  )
