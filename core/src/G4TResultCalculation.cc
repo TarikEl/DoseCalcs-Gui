@@ -307,7 +307,7 @@ void G4TResultCalculation::G4TCoutReset(){
 }
 
 void G4TResultCalculation::MergeSimulationsData(){
-    
+
     if(UseAllResultsFiles == true){
         
         std::cout << "\n\n The resulted files are read from " << ResultDirectoryPath <<  "\n\n"<< std::endl;
@@ -3202,6 +3202,8 @@ void G4TResultCalculation::GenerateExternalDosimetryCoefficients(){
 }
 void G4TResultCalculation::GenerateRegionResultForRadioTracer(){
 
+    //V = true;
+
     if(V)G4cout << "\n-------- " << __FUNCTION__ << "\n" << G4endl ;
 
     G4String RadioTracer_NAME;
@@ -3459,12 +3461,30 @@ void G4TResultCalculation::GenerateRegionResultForRadioTracer(){
         }
     }
 
+    /*
+    for ( auto it0 = RadioTracerQuantitySourceTargetValue.begin(); it0 != RadioTracerQuantitySourceTargetValue.end(); ++it0  ){
+        RadioTracer_NAME = it0->first;
+        for ( auto it1 = it0->second.begin(); it1 != it0->second.end(); ++it1  ){
+            Quantity_NAME = it1->first;
+            for ( auto it2 = it1->second.begin(); it2 != it1->second.end(); ++it2  ){
+                Source_NAME = it2->first;
+                for ( auto it3 = it2->second.begin(); it3 != it2->second.end(); ++it3  ){
+                    Target_NAME = it3->first;
+                    G4cout << "RadioTracer_NAME " << RadioTracer_NAME << " Quantity_NAME " << Quantity_NAME << " Source_NAME "
+                           << Source_NAME << " Target_NAME " << Target_NAME << G4endl ;
+                }
+            }
 
+        }
+    }
+    */
     if(IsAllTargetsToScore == true){ TargetNamesToScore.clear();for (G4int gg = 0 ; gg < OrgansNameVector.size() ; gg++) {TargetNamesToScore.push_back(OrgansNameVector[gg]);}}
+    //G4cout << "\n\n================================== 111111111111 deposition data in body target organs for intake of radio-tracer: " << RadioTracer_NAME << " into simulated source organs ==================================\n" << G4endl ;
 
     for ( auto it0 = RadioTracerQuantitySourceTargetValue.begin(); it0 != RadioTracerQuantitySourceTargetValue.end(); ++it0  ){
 
         RadioTracer_NAME = it0->first;
+        //G4cout << "\n\n================================== Generation deposition data in body target organs for intake of radio-tracer: " << RadioTracer_NAME << " into simulated source organs ==================================\n" << G4endl ;
 
         for ( auto it1 = it0->second.begin(); it1 != it0->second.end(); ++it1  ){
 
@@ -3797,11 +3817,18 @@ void G4TResultCalculation::GenerateRadiotracerQuantitiesByInterpolation(G4String
         for(G4int ss = 0 ; ss < Abeg->second[ParticleName].size() ; ss++){
             
             G4int ff = ss+1;
-            
-            G4int da = Abeg->second[ParticleName].size()-1; if(ff == da){break;}
-            
+                        
             G4double E1 = Abeg->second[ParticleName][ss];
-            G4double E2 = Abeg->second[ParticleName][ff];
+            G4double E2;
+            if(ff == Abeg->second[ParticleName].size()){
+                Energy1 = E1;
+                Energy2 = 0.;
+                //G4cout << " Energy1 " << Energy1 << " Energy " << Energy << " Energy2 " << Energy2 << G4endl ;
+                break;
+            }
+
+            E2 = Abeg->second[ParticleName][ff];
+
             //G4cout << ss << " " << E1 << " " << ff << " " << E2 << G4endl ;
             
             if(E1 < Energy && Energy < E2){
@@ -3812,35 +3839,114 @@ void G4TResultCalculation::GenerateRadiotracerQuantitiesByInterpolation(G4String
             }
         }
         
+        if(Energy2 == 0 || Energy1 == 0 ){
+            G4cout << "Value will be approximated beacause the energy not delimited. Energy1 " << Energy1 << " Energy " << Energy << " Energy2 " << Energy2 << G4endl ;
+        }
+
         for(G4int hh = 0 ; hh < (G4int)OrgansNameVector.size() ; hh++){
             
             for(G4int vc = 0 ; vc < (G4int)DoseCalcsQuantities.size() ; vc++){
                 
                 G4double Val1 = ResultTable[DoseCalcsQuantities[vc]][ParticleName][Energy1][Abeg->first][OrgansNameVector[hh]];
                 G4double Val2 = ResultTable[DoseCalcsQuantities[vc]][ParticleName][Energy2][Abeg->first][OrgansNameVector[hh]];
+                if(isinfl(Val1) || isnanl(Val1)){Val1=0.;}; if(isinfl(Val2) || isnanl(Val2)){Val2=0.;}
                 //G4double Val  = Val1 + (Energy-Energy1)*((Val2-Val1)/(Energy2-Energy1));
-                G4double Val  = std::exp(std::log(Val1) + (std::log(Energy) - std::log(Energy1)) * (std::log(Val2) - std::log(Val1)) / (std::log(Energy2) - std::log(Energy1)));
-
+                //G4double Val  = std::exp(std::log(Val1) + (std::log(Energy) - std::log(Energy1)) * (std::log(Val2) - std::log(Val1)) / (std::log(Energy2) - std::log(Energy1)));
+                G4double Val;
+                if(Energy2 == 0 || Energy1 == 0){
+                    if(Energy2 == 0){Val2=0.;} if(Energy1 == 0){Val1=0.;}
+                    if(Energy2 == 0){
+                        Val  = Val1 + (Energy-Energy1)*((Val1)/(Energy1));
+                    }else{
+                        Val  = Val1 + (Energy-Energy1)*((Val2-Val1)/(Energy2-Energy1));
+                    }
+                    //G4cout << " Val " << Val << G4endl ;
+                }else{
+                    Val = std::exp(std::log(Val1) + (std::log(Energy) - std::log(Energy1)) * (std::log(Val2) - std::log(Val1)) / (std::log(Energy2) - std::log(Energy1)));
+                    //Val = Val1 + (Energy-Energy1)*((Val2-Val1)/(Energy2-Energy1));
+                }
                 ResultTable[DoseCalcsQuantities[vc]][ParticleName][Energy][Abeg->first][OrgansNameVector[hh]] = Val;
+
 
                 Val1 = StandardDeviation["AE"][ParticleName][Energy1][Abeg->first][OrgansNameVector[hh]];
                 Val2 = StandardDeviation["AE"][ParticleName][Energy2][Abeg->first][OrgansNameVector[hh]];
-                //Val  = Val1 + (Energy-Energy1)*((Val2-Val1)/(Energy2-Energy1));
-                Val  = std::exp(std::log(Val1) + (std::log(Energy) - std::log(Energy1)) * (std::log(Val2) - std::log(Val1)) / (std::log(Energy2) - std::log(Energy1)));
-
+                if(isinfl(Val1) || isnanl(Val1)){Val1=0.;}; if(isinfl(Val2) || isnanl(Val2)){Val2=0.;}
+                if(Energy2 == 0 || Energy1 == 0){
+                    if(Energy2 == 0){Val2=0.;} if(Energy1 == 0){Val1=0.;}
+                    if(Energy2 == 0){
+                        Val  = Val1 + (Energy-Energy1)*((Val1)/(Energy1));
+                    }else{
+                        Val  = Val1 + (Energy-Energy1)*((Val2-Val1)/(Energy2-Energy1));
+                    }
+                    //G4cout << " Val " << Val << G4endl ;
+                }else{
+                    Val = std::exp(std::log(Val1) + (std::log(Energy) - std::log(Energy1)) * (std::log(Val2) - std::log(Val1)) / (std::log(Energy2) - std::log(Energy1)));
+                    //Val = Val1 + (Energy-Energy1)*((Val2-Val1)/(Energy2-Energy1));
+                }
                 StandardDeviation["AE"][ParticleName][Energy][Abeg->first][OrgansNameVector[hh]] = Val;
+
+
 
                 Val1 = TotalAEForRadiotracerRSD["AE"][ParticleName][Energy1][Abeg->first][OrgansNameVector[hh]];
                 Val2 = TotalAEForRadiotracerRSD["AE"][ParticleName][Energy2][Abeg->first][OrgansNameVector[hh]];
-                //Val  = Val1 + (Energy-Energy1)*((Val2-Val1)/(Energy2-Energy1));
-                Val  = std::exp(std::log(Val1) + (std::log(Energy) - std::log(Energy1)) * (std::log(Val2) - std::log(Val1)) / (std::log(Energy2) - std::log(Energy1)));
+                if(isinfl(Val1) || isnanl(Val1)){Val1=0.;}; if(isinfl(Val2) || isnanl(Val2)){Val2=0.;}
+                if(Energy2 == 0 || Energy1 == 0){
+                    if(Energy2 == 0){Val2=0.;} if(Energy1 == 0){Val1=0.;}
+                    if(Energy2 == 0){
+                        Val  = Val1 + (Energy-Energy1)*((Val1)/(Energy1));
+                    }else{
+                        Val  = Val1 + (Energy-Energy1)*((Val2-Val1)/(Energy2-Energy1));
+                    }
+                    //G4cout << " Val " << Val << G4endl ;
+                }else{
+                    Val = std::exp(std::log(Val1) + (std::log(Energy) - std::log(Energy1)) * (std::log(Val2) - std::log(Val1)) / (std::log(Energy2) - std::log(Energy1)));
+                    //Val = Val1 + (Energy-Energy1)*((Val2-Val1)/(Energy2-Energy1));
+                }
                 TotalAEForRadiotracerRSD["AE"][ParticleName][Energy][Abeg->first][OrgansNameVector[hh]] = Val;
+
 
                 unsigned long long int uVal1 = NumberOfSteps[ParticleName][Energy1][Abeg->first][OrgansNameVector[hh]];
                 unsigned long long int uVal2 = NumberOfSteps[ParticleName][Energy2][Abeg->first][OrgansNameVector[hh]];
-                //unsigned long long int uVal  = uVal1 + (Energy-Energy1)*((uVal2-uVal1)/(Energy2-Energy1));
-                unsigned long long int uVal  = std::exp(std::log(uVal1) + (std::log(Energy) - std::log(Energy1)) * (std::log(uVal2) - std::log(uVal1)) / (std::log(Energy2) - std::log(Energy1)));
+                unsigned long long int uVal = 0;
+
+                //G4cout << "befor uVal1 " << uVal1 << " uVal2 " << uVal2 << " uVal " << uVal<< G4endl ;
+                //if(Energy2 == 0){uVal2=0.;} if(Energy1 == 0){uVal1=0.;}
+                //G4cout << "after uVal1 " << uVal1 << " uVal2 " << uVal2 << " uVal " << uVal<< G4endl ;
+
+                //if(OrgansNameVector[hh] == "Liver"){
+                //    G4cout << "b Val " << Val << G4endl ;
+                //    G4cout << "b uVal " << uVal << G4endl ;
+                //}
+
+                if(isinfl(uVal1) || isnanl(uVal1)){uVal1=0.;}; if(isinfl(uVal2) || isnanl(uVal2)){uVal2=0.;}
+                if(Energy2 == 0 || Energy1 == 0){
+
+                    if(Energy2 == 0){uVal2=0.;} if(Energy1 == 0){uVal1=0.;}
+                    //if(OrgansNameVector[hh] == "Liver"){
+                    //    G4cout << " Energy " << Energy
+                    //           << " Energy1 " << Energy1
+                    //           << " uVal2 " << uVal2
+                    //           << " uVal1 " << uVal1
+                    //           << " Energy2 " << Energy2
+                    //           << G4endl ;
+                    //}
+                    if(Energy2 == 0){
+                        uVal  = uVal1 + (Energy-Energy1)*((uVal1)/(Energy1));
+                    }else{
+                        uVal  = uVal1 + (Energy-Energy1)*((uVal2-uVal1)/(Energy2-Energy1));
+                    }
+
+                }else{
+                    uVal  = std::exp(std::log(uVal1) + (std::log(Energy) - std::log(Energy1)) * (std::log(uVal2) - std::log(uVal1)) / (std::log(Energy2) - std::log(Energy1)));
+                    //uVal  = uVal1 + (Energy-Energy1)*((uVal2-uVal1)/(Energy2-Energy1));
+                }
+                //if(OrgansNameVector[hh] == "Liver"){
+                //    G4cout << " Val " << Val << G4endl ;
+                //    G4cout << " uVal " << uVal << G4endl ;
+                //}
+
                 NumberOfSteps[ParticleName][Energy][Abeg->first][OrgansNameVector[hh]] = uVal;
+
 
                 //G4cout << "\n\n\n\n Variable " << DoseCalcsQuantities[vc]  << " ParticleName " << ParticleName  << " Energy1 " << Energy1 << " Energy2 " << Energy2   << " Abeg->first " << Abeg->first  << " OrgansNameVector[hh] " << OrgansNameVector[hh]  << " " << Val << " ResultTable[DoseCalcsQuantities[vc]][ParticleName][Energy][Abeg->first][OrgansNameVector[hh]] " << ResultTable[DoseCalcsQuantities[vc]][ParticleName][Energy][Abeg->first][OrgansNameVector[hh]] << " " <<  OrgansNameVector.size() << G4endl ;
                 

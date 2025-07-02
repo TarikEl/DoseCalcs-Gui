@@ -1171,13 +1171,14 @@ void MainWindow::UsePackagesMethods(){
 
 
 
-/*
+
+    /*
     // /////////////////////  change the reference masses of the defined organs using two files, the source(with blood)
     // and target mass of organs, and reference file, the name of organs in reference and masses files should be the same
 
 
     QStringList DefinedOrgans=(QStringList() << "Liver" << "Spleen" << "Pancreas" << "Brain" << "Thyroid"
-                               <<"Thymus" << "HeW" << "GBW"<< "Prostate" << "Uterus"
+                               <<"Thymus" << "HeW" << "GBW"<< "Prostate" << "Uterus" << "LyN"
                                //<< "Ovary_right" << "Ovary_left"
                                //<<"Salivary_glands_left" << "Salivary_glands_right" << "Adrenal_left"  << "Adrenal_left"
                                );
@@ -1287,33 +1288,61 @@ void MainWindow::UsePackagesMethods(){
                 QString Value = "";
                 //fields.removeOne("");
                 QString spacee = " ";
+                QString newline = "";
+
                 if(fields.size() > 1){
                     int cc = fields.size()-1;
-                    for (int ff = 2 ; ff < fields.size(); ff++) {
 
-                        if(fields[ff]=="" || fields[ff]==" "){
-                            continue;
+                    if(fields[0] == "******" || fields[0] == "#" || fields[0] == "*"){
+                        for (int ff = 0 ; ff < fields.size(); ff++) {
+                            Value += fields[ff]+spacee ;
                         }
-                        if(ff == cc){
-                            spacee = "";
+                        newline= Value + "\n";
+
+                    }else{
+
+                        for (int ff = 2 ; ff < fields.size(); ff++) {
+
+                            if(fields[ff]=="" || fields[ff]==" "){
+                                continue;
+                            }
+                            if(ff == cc){
+                                spacee = "";
+                            }
+                            Value += fields[ff]+spacee ;
                         }
-                        Value += fields[ff]+spacee ;
+
+                        showResultsOutput( "Command : " + fields[0] + "  fields[1] : " + fields[1], 4);
+
+                        double valll = 150.96045/79.129; // for LyN AF
+                        //double valll = 189.6/137.952; // for LyN AM
+                        //Manually for each organ by including the mass factopr directly here.
+                        for (int aa = 0 ; aa < DefinedOrgans.size(); aa++) {
+
+                            if(DefinedOrgans[aa] == "LyN"){
+                                fields[1] = QString::number(fields[1].toDouble()/valll);
+                                break;
+                            }
+                        }
+
+                    ////Automatically
+                    //for (int aa = 0 ; aa < DefinedOrgans.size(); aa++) {
+
+                    //    if(DefinedOrgans[aa] == fields[0]){
+
+                    //        QTextStream(stdout) << fields[0] << " " << DefinedOrgans[aa] << " " << fields[1] << " " << fields[1].toDouble()*OrganMassFactors[fields[0]] <<"\n";
+                    //        fields[1] = QString::number(fields[1].toDouble()/OrganMassFactors[fields[0]]);
+                    //        break;
+                    //    }
+                    //}
+
+                        newline= fields[0] + " " + fields[1] +" "+ Value + "\n";
+
                     }
-
-                    showResultsOutput( "Command : " + fields[0] + "  fields[1] : " + fields[1], 4);
-                    for (int aa = 0 ; aa < DefinedOrgans.size(); aa++) {
-
-                        if(DefinedOrgans[aa] == fields[0]){
-                            QTextStream(stdout) << fields[0] << " " << DefinedOrgans[aa] << " " << fields[1] << " " << fields[1].toDouble()*OrganMassFactors[fields[0]] <<"\n";
-                            fields[1] = QString::number(fields[1].toDouble()/OrganMassFactors[fields[0]]);
-                            break;
-                        }
-                    }
-                    QString newline= fields[0] + " " + fields[1] +" "+ Value + "\n";
 
                     Text += newline;
                 }else{
-                    QString newline= fields[0] + "\n";
+                    newline= fields[0] + "\n";
 
                     QTextStream(stdout) << newline <<"\n";
 
@@ -1325,8 +1354,8 @@ void MainWindow::UsePackagesMethods(){
         filee.close();
     }
     fileManagerObject->WriteTextToFile(FilePath,Text);
-
 */
+
 }
 
 //called from MainWindow() and ...
@@ -4124,7 +4153,7 @@ void MainWindow::on_actionAbout_triggered()
 {
 
 
-    UsePackagesMethods();
+    //UsePackagesMethods();
     QMessageBox msgBox;
     msgBox.setWindowTitle("About");
     msgBox.setWindowIcon(QIcon(QDir(QCoreApplication::applicationDirPath()).filePath(GUIPackagesAndFilesDirName+"/AppIcon.png")));
