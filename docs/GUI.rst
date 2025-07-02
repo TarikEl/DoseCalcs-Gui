@@ -49,13 +49,13 @@ Qt5 packages and xterm are required to install DoseCalcs-Gui. If the user will i
 
  .. code-block:: bash
 
-   $ sudo apt-get install -y build-essential qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libqt5charts5-dev qttools5-dev xterm curl openssh-client openssh-server 
+   $ sudo apt-get install -y build-essential cmake qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libqt5charts5-dev qttools5-dev xterm curl openssh-client openssh-server 
 
 On CentOs, you can use "yum".
 
  .. code-block:: bash
 
-   $ sudo yum install -y build-essential qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libqt5charts5-dev qttools5-dev xterm curl openssh-clients openssh
+   $ sudo yum install -y build-essential cmake qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libqt5charts5-dev qttools5-dev xterm curl openssh-clients openssh
 
 .. The DoseCalcs application uses the Qt network library for automatic download of prerequisites, and the Qt Painter library for saving data to pdf files; this necessitates the full Qt5 installation by online or offline method.
 
