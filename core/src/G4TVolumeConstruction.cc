@@ -3910,7 +3910,11 @@ void G4TVolumeConstruction::setRankDataForMPIMode(){
                                     }
                                 }
                                 if(SaveCN){
+
                                     G4Tet* tetSolid = tetData->GetTetrahedron(n);
+                                    xMin = DBL_MAX; yMin = DBL_MAX; zMin = DBL_MAX;
+                                    xMax = DBL_MIN; yMax = DBL_MIN; zMax = DBL_MIN;
+
                                     for(auto vertex:tetSolid->GetVertices()){
                                         if      (vertex.getX() < xMin) xMin = vertex.getX();
                                         else if (vertex.getX() > xMax) xMax = vertex.getX();
@@ -3919,6 +3923,13 @@ void G4TVolumeConstruction::setRankDataForMPIMode(){
                                         if      (vertex.getZ() < zMin) zMin = vertex.getZ();
                                         else if (vertex.getZ() > zMax) zMax = vertex.getZ();
                                     }
+                                    //std::cout << " n:" << n
+                                    //          << " Region: " << CopyNumberRegionNameMap[n]
+                                    //          << " xMin " << xMin  << " xMax " << xMax
+                                    //          << " yMin " << yMin  << " yMax " << yMax
+                                    //          << " zMin " << zMin  << " zMax " << zMax
+                                    //          << std::endl;
+
                                     internalTetVec.push_back(tetData->GetTetrahedron(n));
                                 }
                             }else{
@@ -3926,6 +3937,9 @@ void G4TVolumeConstruction::setRankDataForMPIMode(){
                                 if(CopyNumberRegionNameMap[n] != SourceRegionsNamesValues[b1]) continue;
                                 //VoxelsIDsOfSourceRegion.push_back(n);
                                 G4Tet* tetSolid = tetData->GetTetrahedron(n);
+                                xMin = DBL_MAX; yMin = DBL_MAX; zMin = DBL_MAX;
+                                xMax = DBL_MIN; yMax = DBL_MIN; zMax = DBL_MIN;
+
                                 for(auto vertex:tetSolid->GetVertices()){
                                     if      (vertex.getX() < xMin) xMin = vertex.getX();
                                     else if (vertex.getX() > xMax) xMax = vertex.getX();
@@ -3934,6 +3948,13 @@ void G4TVolumeConstruction::setRankDataForMPIMode(){
                                     if      (vertex.getZ() < zMin) zMin = vertex.getZ();
                                     else if (vertex.getZ() > zMax) zMax = vertex.getZ();
                                 }
+                                //std::cout << " n:" << n
+                                //          << " Region: " << CopyNumberRegionNameMap[n]
+                                //          << " xMin " << xMin  << " xMax " << xMax
+                                //          << " yMin " << yMin  << " yMax " << yMax
+                                //          << " zMin " << zMin  << " zMax " << zMax
+                                //          << std::endl;
+
                                 internalTetVec.push_back(tetData->GetTetrahedron(n));
                             }
                         }

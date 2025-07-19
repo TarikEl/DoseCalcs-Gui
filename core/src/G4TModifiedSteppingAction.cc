@@ -43,12 +43,27 @@ G4TModifiedSteppingAction::~G4TModifiedSteppingAction(){}
 
 void G4TModifiedSteppingAction::UserSteppingAction(const G4Step* step)
 {
-    static G4ParticleDefinition* opticalphoton = G4OpticalPhoton::OpticalPhotonDefinition();
-    const G4ParticleDefinition* particleDef = step->GetTrack()->GetDynamicParticle()->GetParticleDefinition();
-    RunAction->CountOpticalInteractions(step->GetPreStepPoint()->GetTouchable()->GetVolume()->GetLogicalVolume()->GetName()+"_"+particleDef->GetParticleName(), step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName());
+    // For Protontherapy voxelized phantom irradiation
 
+    auto edep = step->GetTotalEnergyDeposit();
+    if (edep == 0.) return;
+    const G4VTouchable* touchable = step->GetPreStepPoint()->GetTouchable();
+    if(touchable->GetVolume()->GetName() == "Voxel"){
+        RunAction->FillVoxelStepHits(touchable->GetCopyNumber(), edep);
+        //G4cout << "---- CN:" << touchable->GetCopyNumber() << " VolumeName" << touchable->GetVolume()->GetName() <<  " edep:" << edep << " @@@@@@@@@@@@@@@@@@@@@@@" << G4endl;
+    }
 }
 
+/////////////////////////////////////  For Protontherapy voxelized phantom irradiation ///////////////////////////////////////////////////////////////////////////
+/*
+auto edep = step->GetTotalEnergyDeposit();
+if (edep == 0.) return;
+const G4VTouchable* touchable = step->GetPreStepPoint()->GetTouchable();
+if(touchable->GetVolume()->GetName() == "Voxel"){
+    RunAction->FillVoxelStepHits(touchable->GetCopyNumber(), edep);
+    //G4cout << "---- CN:" << touchable->GetCopyNumber() << " VolumeName" << touchable->GetVolume()->GetName() <<  " edep:" << edep << " @@@@@@@@@@@@@@@@@@@@@@@" << G4endl;
+}
+*/
 ///////////////////////////////////// For Detector, Scintillation and ////////////////////////////////////////////////////////////////////////////
 /*
     #include "G4OpBoundaryProcess.hh"

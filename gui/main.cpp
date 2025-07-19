@@ -116,9 +116,9 @@ extern QString TestPackagesPathsBeforToRun(){
     }
 
     if(!QFile::exists(DoseCalcsCore_build_dir_path+"/simulate")){
-        PackagesInfo += "***** DoseCalcs Simullation Executable (Not Found) - "+DoseCalcsCore_build_dir_path+"/simulate"+"\n\n";
+        PackagesInfo += "***** DoseCalcs Simulation Executable (Not Found) - "+DoseCalcsCore_build_dir_path+"/simulate"+"\n\n";
     }else{
-        PackagesInfo += "***** DoseCalcs Simullation Executable (Found) - "+DoseCalcsCore_build_dir_path+"/simulate"+"\n\n";
+        PackagesInfo += "***** DoseCalcs Simulation Executable (Found) - "+DoseCalcsCore_build_dir_path+"/simulate"+"\n\n";
     }
 
     if(!QFile::exists(geant4_Lib_dir_path+"/geant4.sh")){

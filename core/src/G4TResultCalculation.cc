@@ -1233,6 +1233,82 @@ void G4TResultCalculation::ReadSimulationData(){
                         file1.close();
                     }
                 }
+                else if(type == "ICRPPublication107"){
+
+                    LineString >> filename ;
+
+                    std::ifstream file1(filename.c_str() , std::ios::binary);
+
+                    if(file1.is_open()){
+
+                        RadiotracerDataFomFile = true;
+
+                        G4String RPar;
+                        G4String S;
+                        G4double total = 0;
+                        G4double LastEnergy = 0.;
+                        std::string line, indicator;
+                        G4double EVal;
+                        G4double PVal;
+                        while (getline(file1, line)) {
+
+                            //G4cout << " the line " << line << G4"\n" ;
+
+                            std::istringstream A(line);
+
+                            if(A.str().empty()){
+                                continue;
+                            }
+
+                            std::vector<G4String> fields;
+                            while(A >> S ){
+                                fields.push_back(S);
+                                if(V)G4cout << " S " << S << G4endl ;
+                            }
+
+                            if(fields.size() == 3){ // radionu data
+
+                                RadioTracerName = fields[0];
+
+                                int HLConversion = 1;
+                                G4String HLunit = "s";
+                                if(fields[1].contains("s")){HLConversion = 1;HLunit = "s";}
+                                else if(fields[1].contains("m")){HLConversion = 60;HLunit = "m";}
+                                else if(fields[1].contains("h")){HLConversion = 60*60;HLunit = "h";}
+                                else if(fields[1].contains("d")){HLConversion = 60*60*24;HLunit = "d";}
+                                else if(fields[1].contains("y")){HLConversion = 60*60*24*365;HLunit = "y";}
+
+                                //ICRPRadioNuclideHalfLives[RadioNuclideName] = HLConversion*fields[1].remove(HLunit).toDouble() ;
+
+                                //QTextStream(stdout) << "RadioNuclideName " << RadioNuclideName << " Half-life "<< ICRPRadioNuclideHalfLives[RadioNuclideName] << "\n";
+
+                            }else if(fields.size() == 4) { //radiation data ene yield par...
+
+                                if(fields[3] == "G"){ParticleName = "gamma";}
+                                else if(fields[3] == "PG"){ParticleName = "gamma";}
+                                else if(fields[3] == "DG"){ParticleName = "gamma";}
+                                else if(fields[3] == "X"){ParticleName = "gamma";}
+                                else if(fields[3] == "AQ"){ParticleName = "gamma";}
+                                else if(fields[3] == "B+"){ParticleName = "e+";}
+                                else if(fields[3] == "B-"){ParticleName = "e-";}
+                                else if(fields[3] == "BD"){ParticleName = "e-";}
+                                else if(fields[3] == "IE"){ParticleName = "e-";}
+                                else if(fields[3] == "AE"){ParticleName = "e-";}
+                                else if(fields[3] == "A"){ParticleName = "alpha";}
+                                else if(fields[3] == "AR"){ParticleName = "alpha";}
+                                else if(fields[3] == "FF"){ParticleName = "FF";}
+                                else if(fields[3] == "N"){ParticleName = "neutron";}
+
+                                //QTextStream(stdout) << "RadioNuclideName " << RadioNuclideName << " fields[3] " << fields[3]  << " ParticleName " << ParticleName << " fields[2].toDouble() " << fields[2].toDouble() << " fields[1].toDouble() " << fields[1].toDouble() << "\n";
+
+                                RPar = fields[3];
+                                EVal = atof(fields[2]);
+                                PVal = atof(fields[1]);
+                                RadioTracerEnergyPerCent[RadioTracerName][RPar][EVal] = PVal*100;
+                            }
+                        }
+                    }
+                }
                 else{
                     if(V)G4cout << " RadioTracerName " << RadioTracerName << G4endl ;
                     G4double PerC, Ene; G4String pn;
@@ -1242,6 +1318,24 @@ void G4TResultCalculation::ReadSimulationData(){
                         RadioTracerEnergyPerCent[RadioTracerName][pn][Ene] = PerC;
                         if(V)G4cout << " pn " << pn << " Ene " << Ene << " PerC " << PerC << G4endl ;
                     }
+                    //while(LineString >> pn ){
+                    //    if(pn == "gamma" ||
+                    //            pn == "e-" ||
+                    //            pn == "e+" ||
+                    //            pn == "proton" ||
+                    //            pn == "alpha" ||
+                    //            pn == "neutron" ||
+                    //            pn == "FF"){
+                    //        LineString >> Ene;
+                    //        LineString >> PerC;
+                    //        RadioTracerEnergyPerCent[RadioTracerName][pn][Ene] = PerC;
+                    //
+                    //    }else{
+                    //        LineString >> RadioTracerName ;
+                    //    }
+                    //
+                    //    if(V)G4cout  << " RadioTracerName " << RadioTracerName << " pn " << pn << " Ene " << Ene << " PerC " << PerC << G4endl ;
+                    //}
                 }
                 GenerateResultsForRadioTracer = true;
             }

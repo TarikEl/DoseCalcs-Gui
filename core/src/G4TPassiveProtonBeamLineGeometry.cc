@@ -43,6 +43,8 @@
 #include "G4PVReplica.hh"
 #include "G4PhysicalVolumeStore.hh"
 #include "G4TPhantomCreationAdding.hh"
+#include "G4TPhantomNestedParameterisation.hh"
+#include "G4PVParameterised.hh"
 
 extern G4String* CopyNumberRegionNameMap;
 extern G4double VoxXHalfSize;
@@ -1732,7 +1734,7 @@ void G4TPassiveProtonBeamLineGeometry::ConstructPhantom()
                         phantomSizeY/2,
                         phantomSizeZ/2);
 
-    // Definition of the logical volume of the Phantom
+    //// Definition of the logical volume of the Phantom
     phantomLogicalVolume = new G4LogicalVolume(phantom,
                                                phantomMaterial,
                                                "phantomLog", 0, 0, 0);
@@ -1757,7 +1759,51 @@ void G4TPassiveProtonBeamLineGeometry::ConstructPhantom()
 
 
 
-    // ***********************************  Detector Geometry
+    VoxXNumber = 20;
+    VoxYNumber = 20;
+    VoxZNumber = 20;
+
+    VoxXHalfSize = phantomSizeX/VoxXNumber;
+    VoxYHalfSize = phantomSizeY/VoxYNumber;
+    VoxZHalfSize = phantomSizeZ/VoxZNumber;
+
+
+    G4Material* water = G4Material::GetMaterial("G4_WATER");
+
+    // Définir les dimensions du voxel
+    G4double voxelSizeX = 1.0*cm;
+    G4double voxelSizeY = 1.0*cm;
+    G4double voxelSizeZ = 1.0*cm;
+
+    // Nombre de voxels selon chaque axe
+
+    // Solid et logique d’un voxel
+    auto voxelSolid = new G4Box("voxelSolid", VoxXHalfSize/2, VoxYHalfSize/2, VoxZHalfSize/2);
+    auto voxelLV = new G4LogicalVolume(voxelSolid, water, "voxelLV");
+
+    // Construction statique voxel par voxel
+    for (G4int ix = 0; ix < VoxXNumber; ix++) {
+        for (G4int iy = 0; iy < VoxYNumber; iy++) {
+            for (G4int iz = 0; iz < VoxZHalfSize; iz++) {
+
+                G4double x = (ix - VoxXNumber/2 + 0.5) * VoxXHalfSize;
+                G4double y = (iy - VoxYNumber/2 + 0.5) * VoxYHalfSize;
+                G4double z = (iz - VoxZHalfSize/2 + 0.5) * VoxZHalfSize;
+
+                G4ThreeVector position(x, y, z);
+
+                new G4PVPlacement(
+                    nullptr,              // no rotation
+                    position,             // position
+                    voxelLV,              // logical volume
+                    "voxelPhys",          // name
+                    phantomLogicalVolume,             // mother volume
+                    false,                // no boolean
+                    ix + iy*VoxXNumber + iz*VoxXNumber*VoxYNumber, // unique copy number
+                    false);               // check overlaps
+            }
+        }
+    }
 
 
     /*

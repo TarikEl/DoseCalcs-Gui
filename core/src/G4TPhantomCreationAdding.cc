@@ -126,7 +126,7 @@ void G4TPhantomCreationAdding::CreateAndAddPhantom(G4VPhysicalVolume* motherPhyV
     brass -> AddElement(zincNist, fractionmass = 30 *perCent);
     brass -> AddElement(copperNist, fractionmass = 70 *perCent);
 
-
+/*
     //***************************** PW ***************************************
 
     // DetectorROGeometry Material
@@ -198,7 +198,6 @@ void G4TPhantomCreationAdding::CreateAndAddPhantom(G4VPhysicalVolume* motherPhyV
 
     ROToWorldPosition = phantomPosition + ROPosition;
 
-    ROMaterial = G4NistManager::Instance()->FindOrBuildMaterial("G4_WATER", false);
 
     // Default detector RO voxels size
     // 200 slabs along the beam direction (X)
@@ -317,6 +316,8 @@ void G4TPhantomCreationAdding::CreateAndAddPhantom(G4VPhysicalVolume* motherPhyV
                     VoxZNumber,
                     voxelZThickness);
 
+
+
     size_t VoxelNumberInPhantom = VoxXNumber*VoxYNumber*VoxZNumber;
 
     CopyNumberXPos = new G4float[VoxelNumberInPhantom];
@@ -340,12 +341,13 @@ void G4TPhantomCreationAdding::CreateAndAddPhantom(G4VPhysicalVolume* motherPhyV
         for(size_t g = 0; g < VoxYNumber ;g++ ){
             for(size_t d = 0; d < VoxXNumber ;d++ ){
 
+
                 CopyNumberXPos[Cn_inc] = Voxel0PosX + d * 2 * VoxXHalfSize;
                 CopyNumberYPos[Cn_inc] = Voxel0PosY + g * 2 * VoxYHalfSize;
                 CopyNumberZPos[Cn_inc] = Voxel0PosZ + f * 2 * VoxZHalfSize;
                 //G4cout << Cn_inc << " " << f << " " << g << " " << d << G4endl;
 
-                CopyNumberMassSize[Cn_inc]= ROMaterial->GetDensity() * (mm3/kg) * VoxelVolume; /*density ; e+21 in g/mm3 , and e+18 g/cm3 )*/
+                CopyNumberMassSize[Cn_inc]= ROMaterial->GetDensity() * (mm3/kg) * VoxelVolume; /*density ; e+21 in g/mm3 , and e+18 g/cm3 )
                 CopyNumberRegionNameMap[Cn_inc] = "RO";
 
                 //G4float ff = VoxelsMaterials[MateIDs[Cn_inc]]->GetDensity() * G4Density_to_kgPerMm3 * VoxelVolume ;
@@ -356,6 +358,63 @@ void G4TPhantomCreationAdding::CreateAndAddPhantom(G4VPhysicalVolume* motherPhyV
             }
         }
     }
+
+
+*/
+
+//G4VPhysicalVolume* motherPhyVol, G4ThreeVector PhantomPos, G4ThreeVector PhantomSize){
+
+
+    // === Define voxel grid parameters ===
+    VoxXNumber = 50;
+    VoxYNumber = 10;
+    VoxZNumber = 10;
+    size_t VoxelNumberInPhantom = VoxXNumber*VoxYNumber*VoxZNumber;
+
+    // number of voxels in each direction
+    G4double voxelSize = 1.0 * cm;
+    VoxXHalfSize = 0.2 * cm;
+    VoxYHalfSize = 1.0 * cm;
+    VoxZHalfSize = 1.0 * cm;
+
+    G4double VoxelVolume = VoxXHalfSize*VoxYHalfSize*VoxZHalfSize*8;
+
+    // === Define voxel solid and logical volume ===
+    auto voxelSolid = new G4Box("Voxel", VoxXHalfSize, VoxYHalfSize, VoxZHalfSize);
+    auto voxelLV = new G4LogicalVolume(voxelSolid, G4NistManager::Instance()->FindOrBuildMaterial("G4_WATER", false), "Voxel");
+
+    CopyNumberXPos = new G4float[VoxelNumberInPhantom];
+    CopyNumberYPos = new G4float[VoxelNumberInPhantom];
+    CopyNumberZPos = new G4float[VoxelNumberInPhantom];
+
+    CopyNumberMassSize = new G4float[VoxelNumberInPhantom];
+    CopyNumberRegionNameMap = new G4String[VoxelNumberInPhantom];
+
+    // === Place voxels manually ===
+    for (int ix = 0; ix < VoxXNumber; ++ix) {
+        for (int iy = 0; iy < VoxYNumber; ++iy) {
+            for (int iz = 0; iz < VoxZNumber; ++iz) {
+
+                G4double x = (ix - VoxXNumber / 2 + 0.5) * VoxXHalfSize*2;
+                G4double y = (iy - VoxYNumber / 2 + 0.5) * VoxYHalfSize*2;
+                G4double z = (iz - VoxZNumber / 2 + 0.5) * VoxZHalfSize*2;
+
+                G4ThreeVector position(x, y, z);
+                int copyID = ix + iy * VoxXNumber + iz * VoxXNumber * VoxYNumber;
+
+                CopyNumberXPos[copyID] = x;
+                CopyNumberYPos[copyID] = y;
+                CopyNumberZPos[copyID] = z;
+                //G4cout << Cn_inc << " " << f << " " << g << " " << d << G4endl;
+                //
+                CopyNumberMassSize[copyID]= G4NistManager::Instance()->FindOrBuildMaterial("G4_WATER", false)->GetDensity() * (mm3/kg) * VoxelVolume; /*density ; e+21 in g/mm3 , and e+18 g/cm3 )*/
+                CopyNumberRegionNameMap[copyID] = "RO";
+
+                new G4PVPlacement(nullptr, position+PhantomPos, voxelLV,"Voxel", motherPhyVol->GetLogicalVolume(), false, copyID, false);
+            }
+        }
+    }
+
 
 }
 
