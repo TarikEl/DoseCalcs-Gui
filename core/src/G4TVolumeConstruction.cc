@@ -3813,6 +3813,8 @@ void G4TVolumeConstruction::CreateICRPSAFsReferenceDataFile(){
 //############################################################ setting or generating source data
 void G4TVolumeConstruction::setRankDataForMPIMode(){
 
+    std::cout << " Source regions TetrahedronsOrVoxels selection Task"<< std::endl;
+
     G4int SourceParticlesNumber = SourceParticlesNamesValues.size();
     G4int SourceRegionsNumber   = SourceRegionsNamesValues.size();
     G4int SourceEnergiesNumber  = SourceEnergiesValues.size();
@@ -3899,6 +3901,102 @@ void G4TVolumeConstruction::setRankDataForMPIMode(){
                         G4double xMin(DBL_MAX), yMin(DBL_MAX), zMin(DBL_MAX);
                         G4double xMax(DBL_MIN), yMax(DBL_MIN), zMax(DBL_MIN);
 
+
+                        if(SourceRegionsNamesValues[b1] == "allregions"){
+
+                            bool SaveCN = true;
+                            //for(G4int n=0;n<tetData->GetNumTetrahedron() ;n++){
+                            //for(G4int n=0;n<INT_MAX ;n++){
+
+                            G4int bnn = 0;
+                            while (bnn < tetData->GetNumTetrahedron()) {
+
+                                G4int TETCN = (G4int)(tetData->GetNumTetrahedron()*(G4double)G4UniformRand());
+
+                                //std::cout << " khedaaaaaaaaaaaaaaaaaaaaam "<< std::endl;
+
+                                //for(G4int TETCN=0;TETCN<tetData->GetNumTetrahedron() ;TETCN++){
+
+                                //    SaveCN=false;
+                                //    if("Liver" == CopyNumberRegionNameMap[TETCN]){
+                                //    if("RST_trunk" == CopyNumberRegionNameMap[TETCN]){
+                                //        SaveCN=true;
+                                //    }
+
+                                SaveCN=true;
+                                for (int gg = 0 ; gg < SourceRegionsNamesToBeIgnoredValues.size() ; gg++) {
+                                    if(SourceRegionsNamesToBeIgnoredValues[gg] == CopyNumberRegionNameMap[TETCN]){
+                                        SaveCN=false;
+                                    }
+                                }
+
+                                if(SaveCN){
+
+                                    //G4Tet* tetSolid = tetData->GetTetrahedron(TETCN);
+                                    //xMin = DBL_MAX; yMin = DBL_MAX; zMin = DBL_MAX;
+                                    //xMax = DBL_MIN; yMax = DBL_MIN; zMax = DBL_MIN;
+
+                                    //for(auto vertex:tetSolid->GetVertices()){
+                                    //    if      (vertex.getX() < xMin) xMin = vertex.getX();
+                                    //    else if (vertex.getX() > xMax) xMax = vertex.getX();
+                                    //    if      (vertex.getY() < yMin) yMin = vertex.getY();
+                                    //    else if (vertex.getY() > yMax) yMax = vertex.getY();
+                                    //    if      (vertex.getZ() < zMin) zMin = vertex.getZ();
+                                    //    else if (vertex.getZ() > zMax) zMax = vertex.getZ();
+                                    //}
+                                    //std::cout << " TETCN:" << TETCN
+                                    //          << " Region: " << CopyNumberRegionNameMap[TETCN]
+                                    //          << " xMin " << xMin  << " xMax " << xMax
+                                    //          << " yMin " << yMin  << " yMax " << yMax
+                                    //          << " zMin " << zMin  << " zMax " << zMax
+                                    //          << std::endl;
+
+                                    bnn++;
+                                    internalTetVec.push_back(tetData->GetTetrahedron(TETCN));
+                                    //std::cout << " TETCN "<<  TETCN << " Region: " << CopyNumberRegionNameMap[TETCN] << " bnn "<<  bnn << " bnn%:" << (G4double)((bnn/800000)*100) << std::endl;
+                                }
+                            }
+
+                            //for(G4int n=0;n<100000000 ;n++){
+
+
+                            //}
+
+                            std::cout << " Number of selected tetrahedrons for source region named \"allregions\" is : " <<internalTetVec.size() << std::endl;
+
+
+                        }else{
+
+                            for(G4int n=0;n<tetData->GetNumTetrahedron();n++){
+
+                                if(CopyNumberRegionNameMap[n] != SourceRegionsNamesValues[b1]) continue;
+                                //VoxelsIDsOfSourceRegion.push_back(n);
+                                G4Tet* tetSolid = tetData->GetTetrahedron(n);
+                                xMin = DBL_MAX; yMin = DBL_MAX; zMin = DBL_MAX;
+                                xMax = DBL_MIN; yMax = DBL_MIN; zMax = DBL_MIN;
+
+                                for(auto vertex:tetSolid->GetVertices()){
+                                    if      (vertex.getX() < xMin) xMin = vertex.getX();
+                                    else if (vertex.getX() > xMax) xMax = vertex.getX();
+                                    if      (vertex.getY() < yMin) yMin = vertex.getY();
+                                    else if (vertex.getY() > yMax) yMax = vertex.getY();
+                                    if      (vertex.getZ() < zMin) zMin = vertex.getZ();
+                                    else if (vertex.getZ() > zMax) zMax = vertex.getZ();
+                                }
+
+                                //std::cout << " n:" << n
+                                //          << " Region: " << CopyNumberRegionNameMap[n]
+                                //          << " xMin " << xMin  << " xMax " << xMax
+                                //          << " yMin " << yMin  << " yMax " << yMax
+                                //          << " zMin " << zMin  << " zMax " << zMax
+                                //          << std::endl;
+
+                                internalTetVec.push_back(tetData->GetTetrahedron(n));
+                            }
+                        }
+
+
+/*
                         for(G4int n=0;n<tetData->GetNumTetrahedron();n++){
 
                             if(SourceRegionsNamesValues[b1] == "allregions"){
@@ -3958,6 +4056,7 @@ void G4TVolumeConstruction::setRankDataForMPIMode(){
                                 internalTetVec.push_back(tetData->GetTetrahedron(n));
                             }
                         }
+*/
 
                         //NewRankVoxelsIDsOfSourceRegion.push_back(VoxelsIDsOfSourceRegion);
 

@@ -2072,7 +2072,10 @@ void MainWindow::on_pushButtonCalculateNumSimulation_clicked()
         int mines = 0;
         for(int b=0; b < InputsVals.size();b++){
             if(InputsVals[b].toLower() == "allregions"){
-                if(InputsVals.size() >= b ){
+                if(InputsVals.size() == b ){
+                    mines = InputsVals[b].toInt() + 1;
+                }
+                else if(InputsVals.size() > b ){
                     mines = InputsVals[b+1].toInt() + 1;
                 }
                 break;
@@ -7883,13 +7886,13 @@ void MainWindow::on_comboBoxTypeOfSources_currentIndexChanged(const QString &arg
         ui->lineEditChosenSourceTypeData->setPlaceholderText("RegionName1 RegionName2 RegionName3 ...\n");
         ui->lineEditChosenSourceTypeData->setToolTip("RegionName1 RegionName2 RegionName3 ... :\n"
                                                      "Liver Thyroid Brain \n"
-                                                     );
+                                                     "allregions 2 Liver Brain  (2 means except two regions that are Liver and Brain)");
     }
     else if(ui->comboBoxTypeOfSources->currentText() == "TET"){
         ui->lineEditChosenSourceTypeData->setPlaceholderText("RegionName1 RegionName2 RegionName3 ...\n");
         ui->lineEditChosenSourceTypeData->setToolTip("RegionName1 RegionName2 RegionName3 ... :\n"
                                                      "Liver Thyroid Brain \n"
-                                                     );
+                                                     "allregions 2 Liver Brain  (2 means except two regions that are Liver and Brain)");
     }
     else if(ui->comboBoxTypeOfSources->currentText() == "Point"){
         ui->lineEditChosenSourceTypeData->setPlaceholderText("SourceName SourcePosition(X Y Z) RotationAxis RotationAngle");
