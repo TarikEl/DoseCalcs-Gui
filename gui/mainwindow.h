@@ -423,10 +423,13 @@ private:
 
     void setBiokineticsDefaulsInputs();
     void CalculateQuantitiesBasedOnICRPData();
+    void CalculateQuantityBasedOnICRPDataAndGenerateResultsDataFile();
     void GenerateSAFFromNewSource(QString);
     void GenerateSAFFromNewTarget(QString);
 
     void GenerateRadiotracerQuantitiesByInterpolationInDefaultUnit(QString, double);
+    void GenerateRadiotracerQuantitiesForSpecificSourceTargetByInterpolationInDefaultUnit(QString,QString,QString, double);
+
     double GenerateRadiotracerQuantitiesByInterpolationInDefaultUnitForBiokinetic(QString, double, QString, QString);
     double  GenerateRadiationFactor(QString, double);
     void GenerateDataInTableView();
@@ -470,6 +473,8 @@ private:
     //std::map<QString,std::map<double,double>> RadiationFactorMap ;
     QMap<QString,QVector<QString>> RadionuclidesParticles ;
     QMap<QString,QMap<QString,QMap<QString,double>>> RadioTracerSourceOrganResidenceTime;
+    std::map<QString,std::map<QString,std::map<QString,std::map<QString,std::map<QString,double>>>>> QuantityGeometryRadiotracerSourceTargetValue ;
+
     std::map<QString,QString> RadiotracerradionucleidMap;
     //bool IsICRPCalculationTerminated;
     QMap<QString,QMap<QString,QMap<QString,double>>> SpecialOrganSoftMassFraction;

@@ -247,7 +247,7 @@ int main(int argc, char *argv[])
     QuantitiesUnitsLists["AF"] = (QStringList()<<"");
     QuantitiesUnitsLists["AE"] = (QStringList()<<"MeV"<<"keV"<<"eV"<<"J");
     QuantitiesUnitsLists["AD"] = (QStringList()<<"MeV/kg"<<"Gy");
-    QuantitiesUnitsLists["S"] = (QStringList()<<"MeV/kg"<<"nGy"<<"miGy"<<"mGy"<<"Gy"<<"kGy"<<"MGy");
+    QuantitiesUnitsLists["S"] = (QStringList()<<"MeV/kg"<<"nGy"<<"miGy"<<"mGy"<<"mGy/(MBq*s)"<<"Gy"<<"kGy"<<"MGy");
     QuantitiesUnitsLists["H"] = (QStringList()<<"MeV/kg"<<"nGy"<<"miGy"<<"mGy"<<"Gy"<<"kGy"<<"MGy"<<"mSv"<<"Sv");
     QuantitiesUnitsLists["E"] = (QStringList()<<"MeV/kg"<<"nGy"<<"miGy"<<"mGy"<<"Gy"<<"kGy"<<"MGy"<<"mSv"<<"Sv");
     QuantitiesUnitsLists["T"] = (QStringList()<<"s"<<"min"<<"h"<<"d"<<"y");
@@ -274,6 +274,7 @@ int main(int argc, char *argv[])
     QuantitiesConversionFromDefault["S"]["Gy"] = 1./MeV_to_J;
     QuantitiesConversionFromDefault["S"]["miGy"] = 1./(MeV_to_J*1e+6);
     QuantitiesConversionFromDefault["S"]["nGy"] = 1./(MeV_to_J*1e+9);
+    QuantitiesConversionFromDefault["S"]["mGy/(MBq*s)"] = (1./(MeV_to_J*1e+3*1e+6));
     QuantitiesConversionFromDefault["S"]["mGy"] = 1./(MeV_to_J*1e+3);
     QuantitiesConversionFromDefault["S"]["MGy"] = 1./(MeV_to_J*1e-6);
     QuantitiesConversionFromDefault["S"]["kGy"] = 1./(MeV_to_J*1e-3);

@@ -1320,7 +1320,12 @@ TGraph* G4DoseCalcsAnalysis::setGraphData(TGraph* graph, int MS, int ColorNum){
     int MarkerSize = MaxMarkerSize - MS;if(MarkerSize <= 0){ColorNum=MaxMarkerSize;}
     graph->SetMarkerSize(MarkerSize);
 
-    graph->SetLineWidth(1.5);
+    if(QuantitiesToScore == "S"){
+        graph->SetLineWidth(0);
+    }else{
+        graph->SetLineWidth(1.5);
+    }
+
     graph->SetMarkerSize(2);
     graph->SetMarkerStyle(RootM[MS]);
     graph->SetMarkerColor(RootC[ColorNum]);
@@ -1356,7 +1361,7 @@ void G4DoseCalcsAnalysis::CreateMultiGraphParametersAndCanvas(std::string mgt, s
         gPad->SetLogx(1);
     }
     if(UseGridXY=="yes"){
-        gPad->SetGridx();
+        if(QuantitiesToScore == "S"){gPad->SetGridx(false);}else{gPad->SetGridx();}
         gPad->SetGridy();
     }
 
@@ -4204,7 +4209,7 @@ void G4DoseCalcsAnalysis::GenerateGraphFromROOTGraphDATA(){
     }
     
     if(UseGridXY=="yes"){
-        gPad->SetGridx();
+        if(QuantitiesToScore == "S"){gPad->SetGridx(false);}else{gPad->SetGridx();}
         gPad->SetGridy();
     }
     
@@ -4677,6 +4682,99 @@ void G4DoseCalcsAnalysis::createDataInCSVFormat(){
         }
     }
     
+    // file for each quantity (a table for each geometry and radiotracer for all combinations and SD) with reference
+
+    for ( auto Obeg = ResultQuantityGeometryRadioTracerSourceTargetValues.begin(); Obeg != ResultQuantityGeometryRadioTracerSourceTargetValues.end(); ++Obeg  )
+    {
+        Quantity = Obeg->first;
+
+        if(ReferenceQuantityGeometryRadioTracerSourceTargetValues[Quantity].size() == 0){continue;}
+
+        std::string FileName = GraphsDirectoryPath + "DoseCalcs-" + CompareReferenceName + "_Radionuclide_"+Quantity+".csv";
+        std::ofstream outfile(FileName , std::ios::app);
+        if(outfile.is_open()){
+            std::cout << "\nCreating file " << FileName << std::endl ;
+        }
+
+        std::ostringstream LatexText;
+        LatexText << QuantityUnit[Quantity] << "\n";
+
+        for ( auto Mbeg = Obeg->second.begin(); Mbeg != Obeg->second.end(); ++Mbeg  )
+        {
+            Geometry = Mbeg->first;
+
+            if(ReferenceQuantityGeometryRadioTracerSourceTargetValues[Quantity][Geometry].size() == 0){continue;}
+
+            for ( auto Abeg = Mbeg->second.begin(); Abeg != Mbeg->second.end(); ++Abeg  )
+            {
+                PARTICLE_NAME = Abeg->first;
+
+                if(ReferenceQuantityGeometryRadioTracerSourceTargetValues[Quantity][Geometry][PARTICLE_NAME].size() == 0){continue;}
+
+
+                LatexText << "\n" << Geometry << "," << PARTICLE_NAME << ","<< Source_ORG << ","<<  "\n";
+
+                LatexText << "Target<-Source" << "," << QuantityUnit[Quantity] << "-DoseCalcs,"<< QuantityUnit[Quantity] <<"-"<< CompareReferenceName <<", Ratio" << "\n";
+
+                for ( auto Bbeg = Abeg->second.begin(); Bbeg != Abeg->second.end(); ++Bbeg  )
+                {
+                    Source_ORG = Bbeg->first;
+                    if(Source_ORG == "IntakeIntoBody"){
+                        continue;
+                    }
+
+                    if(ReferenceQuantityGeometryRadioTracerSourceTargetValues[Quantity][Geometry][PARTICLE_NAME][Source_ORG].size() == 0){continue;}
+
+                    for ( auto Cbeg = Bbeg->second.begin(); Cbeg != Bbeg->second.end(); ++Cbeg  )
+                    {
+
+                        Target_ORG = Cbeg->first;
+                        LatexText << Target_ORG << "<-"<< Source_ORG<< ",";
+                        //LatexText << Target_ORG  << "<-" << Source_ORG << ",";
+
+                        double val = ResultQuantityGeometryRadioTracerSourceTargetValues[Quantity][Geometry][PARTICLE_NAME][Source_ORG][Target_ORG];
+                        double val2 = ReferenceQuantityGeometryRadioTracerSourceTargetValues[Quantity][Geometry][PARTICLE_NAME][Source_ORG][Target_ORG];
+                        if(val == MinValForLog || val == 0 || __isinf(val) || __isnan(val)){
+
+                            LatexText << " ,";
+                            if(val2 == MinValForLog || val2 == 0 || __isinf(val2) || __isnan(val2))
+                            {
+                                LatexText << " ," << " ,";
+
+                            }else{
+                                double ratio = val/val2;
+                                LatexText << val2 << " ,"  << ratio << " ,";
+                            }
+
+                        }else{
+
+                            LatexText << val << ",";
+                            if(val2 == MinValForLog || val2 == 0 || __isinf(val2) || __isnan(val2))
+                            {
+                                LatexText << " ," << " ,";
+
+                            }else{
+                                double ratio = val/val2;
+                                LatexText << val2 << " ,"  << ratio << " ,";
+                            }
+                        }
+                        LatexText << "\n";
+                    }
+
+                }
+                LatexText << "-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------";
+
+            }
+
+            LatexText << "\n\n*****************************************************************************************************************************************************************************************************************************************************************\n";
+
+        }
+        if(outfile.is_open()){
+            outfile << LatexText.str();
+            outfile.close();
+        }
+    }
+
 }
 
 #ifdef ANALYSIS_USE
@@ -5199,7 +5297,7 @@ void G4DoseCalcsAnalysis::TestGraphGeneration(){
     }
     
     if(UseGridXY=="yes"){
-        gPad->SetGridx();
+        if(QuantitiesToScore == "S"){gPad->SetGridx(false);}else{gPad->SetGridx();}
         gPad->SetGridy();
     }
     
@@ -6131,7 +6229,7 @@ void G4DoseCalcsAnalysis::GenerateResultForEachParticleEnergyInOneGraph(){
     gPad->SetLogx(0);
 
     if(UseGridXY=="yes"){
-        gPad->SetGridx();
+        if(QuantitiesToScore == "S"){gPad->SetGridx(false);}else{gPad->SetGridx();}
         gPad->SetGridy();
     }
 
@@ -6273,7 +6371,7 @@ void G4DoseCalcsAnalysis::GenerateResultForEachParticleEnergyInOneGraph(){
     gPad->SetLogx(0);
 
     if(UseGridXY=="yes"){
-        gPad->SetGridx();
+        if(QuantitiesToScore == "S"){gPad->SetGridx(false);}else{gPad->SetGridx();}
         gPad->SetGridy();
     }
 
@@ -7092,7 +7190,7 @@ void G4DoseCalcsAnalysis::GenerateSourceEnegyGraph(){
     }
 
     if(UseGridXY=="yes"){
-        gPad->SetGridx();
+        if(QuantitiesToScore == "S"){gPad->SetGridx(false);}else{gPad->SetGridx();}
         gPad->SetGridy();
     }
     if(UseLogVariable == "yes"){
@@ -7240,7 +7338,7 @@ void G4DoseCalcsAnalysis::GenerateRadioTracerResultsInOneGraphForAllComAndSrcReg
     gPad->SetLogx(0);
 
     if(UseGridXY=="yes"){
-        gPad->SetGridx();
+        if(QuantitiesToScore == "S"){gPad->SetGridx(false);}else{gPad->SetGridx();}
         gPad->SetGridy();
     }
 
@@ -7403,7 +7501,7 @@ void G4DoseCalcsAnalysis::GenerateRadioTracerResultsInOneGraphForAllComAndSrcReg
 
 
     if(UseGridXY=="yes"){
-        gPad->SetGridx();
+        if(QuantitiesToScore == "S"){gPad->SetGridx(false);}else{gPad->SetGridx();}
         gPad->SetGridy();
     }
 
@@ -7526,7 +7624,7 @@ void G4DoseCalcsAnalysis::GenerateRadioTracerResultsInOneGraphForAllComAndSrcReg
     gPad->SetLogx(0);
 
     if(UseGridXY=="yes"){
-        gPad->SetGridx();
+        if(QuantitiesToScore == "S"){gPad->SetGridx(false);}else{gPad->SetGridx();}
         gPad->SetGridy();
     }
 
@@ -7647,7 +7745,7 @@ void G4DoseCalcsAnalysis::GenerateRadioTracerResultsInOneGraphForAllComAndSrcReg
     gPad->SetLogx(0);
 
     if(UseGridXY=="yes"){
-        gPad->SetGridx();
+        if(QuantitiesToScore == "S"){gPad->SetGridx(false);}else{gPad->SetGridx();}
         gPad->SetGridy();
     }
 
@@ -7780,7 +7878,7 @@ void G4DoseCalcsAnalysis::GenerateRadioTracerResultsInOneGraphForAllComAndSrcReg
     gPad->SetLogx(0);
 
     if(UseGridXY=="yes"){
-        gPad->SetGridx();
+        if(QuantitiesToScore == "S"){gPad->SetGridx(false);}else{gPad->SetGridx();}
         gPad->SetGridy();
     }
 
@@ -7900,7 +7998,7 @@ void G4DoseCalcsAnalysis::GenerateRadioTracerResultsInOneGraphForAllComAndSrcReg
     gPad->SetLogx(0);
 
     if(UseGridXY=="yes"){
-        gPad->SetGridx();
+        if(QuantitiesToScore == "S"){gPad->SetGridx(false);}else{gPad->SetGridx();}
         gPad->SetGridy();
     }
 
@@ -8015,7 +8113,7 @@ void G4DoseCalcsAnalysis::GenerateRadioTracerResultsInOneGraphForAllComAndSrcReg
     gPad->SetLogx(0);
 
     if(UseGridXY=="yes"){
-        gPad->SetGridx();
+        if(QuantitiesToScore == "S"){gPad->SetGridx(false);}else{gPad->SetGridx();}
         gPad->SetGridy();
     }
 
@@ -8181,7 +8279,7 @@ void G4DoseCalcsAnalysis::GenerateRadioTracerResultsInOneGraphWithComparisonForA
     gPad->SetLogx(0);
 
     if(UseGridXY=="yes"){
-        gPad->SetGridx();
+        if(QuantitiesToScore == "S"){gPad->SetGridx(false);}else{gPad->SetGridx();}
         gPad->SetGridy();
     }
 
@@ -8325,7 +8423,7 @@ void G4DoseCalcsAnalysis::GenerateRadioTracerResultsInOneGraphWithComparisonForA
     gPad->SetLogx(0);
 
     if(UseGridXY=="yes"){
-        gPad->SetGridx();
+        if(QuantitiesToScore == "S"){gPad->SetGridx(false);}else{gPad->SetGridx();}
         gPad->SetGridy();
     }
 
@@ -8481,7 +8579,7 @@ void G4DoseCalcsAnalysis::GenerateRadioTracerComparisonFactorGraphsForAllComAndS
     gPad->SetLogx(0);
 
     if(UseGridXY=="yes"){
-        gPad->SetGridx();
+        if(QuantitiesToScore == "S"){gPad->SetGridx(false);}else{gPad->SetGridx();}
         gPad->SetGridy();
     }
 
@@ -8615,7 +8713,7 @@ void G4DoseCalcsAnalysis::GenerateRadioTracerComparisonFactorGraphsForAllComAndS
     gPad->SetLogx(0);
 
     if(UseGridXY=="yes"){
-        gPad->SetGridx();
+        if(QuantitiesToScore == "S"){gPad->SetGridx(false);}else{gPad->SetGridx();}
         gPad->SetGridy();
     }
 
@@ -8738,7 +8836,7 @@ void G4DoseCalcsAnalysis::GenerateRadioTracerComparisonFactorGraphsForAllComAndS
     gPad->SetLogx(0);
 
     if(UseGridXY=="yes"){
-        gPad->SetGridx();
+        if(QuantitiesToScore == "S"){gPad->SetGridx(false);}else{gPad->SetGridx();}
         gPad->SetGridy();
     }
 
@@ -8864,7 +8962,7 @@ void G4DoseCalcsAnalysis::GenerateRadioTracerComparisonFactorGraphsForAllComAndS
     gPad->SetLogx(0);
 
     if(UseGridXY=="yes"){
-        gPad->SetGridx();
+        if(QuantitiesToScore == "S"){gPad->SetGridx(false);}else{gPad->SetGridx();}
         gPad->SetGridy();
     }
 
@@ -8989,7 +9087,7 @@ void G4DoseCalcsAnalysis::GenerateRadioTracerComparisonFactorGraphsForAllComAndS
     gPad->SetLogx(0);
 
     if(UseGridXY=="yes"){
-        gPad->SetGridx();
+        if(QuantitiesToScore == "S"){gPad->SetGridx(false);}else{gPad->SetGridx();}
         gPad->SetGridy();
     }
 
@@ -9106,7 +9204,7 @@ void G4DoseCalcsAnalysis::GenerateRadioTracerComparisonFactorGraphsForAllComAndS
     gPad->SetLogx(0);
 
     if(UseGridXY=="yes"){
-        gPad->SetGridx();
+        if(QuantitiesToScore == "S"){gPad->SetGridx(false);}else{gPad->SetGridx();}
         gPad->SetGridy();
     }
 
@@ -9243,7 +9341,7 @@ void G4DoseCalcsAnalysis::GenerateRadioTracerComparisonFactorGraphsForAllComAndS
         gPad->SetLogy(1);
     }
     if(UseGridXY=="yes"){
-        gPad->SetGridx();
+        if(QuantitiesToScore == "S"){gPad->SetGridx(false);}else{gPad->SetGridx();}
         gPad->SetGridy();
     }
 
@@ -9349,7 +9447,7 @@ void G4DoseCalcsAnalysis::GenerateRadioTracerComparisonFactorGraphsForAllComAndS
             gPad->SetLogy(1);
         }
         if(UseGridXY=="yes"){
-            gPad->SetGridx();
+            if(QuantitiesToScore == "S"){gPad->SetGridx(false);}else{gPad->SetGridx();}
             gPad->SetGridy();
         }
 
@@ -9454,7 +9552,7 @@ void G4DoseCalcsAnalysis::GenerateRadioTracerComparisonFactorGraphsForAllComAndS
             gPad->SetLogy(1);
         }
         if(UseGridXY=="yes"){
-            gPad->SetGridx();
+            if(QuantitiesToScore == "S"){gPad->SetGridx(false);}else{gPad->SetGridx();}
             gPad->SetGridy();
         }
 
@@ -9551,7 +9649,7 @@ void G4DoseCalcsAnalysis::GenerateRadioTracerComparisonFactorGraphsForAllComAndS
                 gPad->SetLogy(1);
             }
             if(UseGridXY=="yes"){
-                gPad->SetGridx();
+                if(QuantitiesToScore == "S"){gPad->SetGridx(false);}else{gPad->SetGridx();}
                 gPad->SetGridy();
             }
 
@@ -9656,7 +9754,7 @@ void G4DoseCalcsAnalysis::GenerateRadioTracerComparisonFactorGraphsForAllComAndS
         gPad->SetLogy(1);
     }
     if(UseGridXY=="yes"){
-        gPad->SetGridx();
+        if(QuantitiesToScore == "S"){gPad->SetGridx(false);}else{gPad->SetGridx();}
         gPad->SetGridy();
     }
 
@@ -9812,7 +9910,7 @@ void G4DoseCalcsAnalysis::CreatePercentageDepthDoseGraph(){
     }
 
     if(UseGridXY=="yes"){
-        gPad->SetGridx();
+        if(QuantitiesToScore == "S"){gPad->SetGridx(false);}else{gPad->SetGridx();}
         gPad->SetGridy();
     }
 
@@ -9902,7 +10000,7 @@ void G4DoseCalcsAnalysis::CreatePercentageDepthDoseGraph(){
 
 
     if(UseGridXY=="yes"){
-        gPad->SetGridx();
+        if(QuantitiesToScore == "S"){gPad->SetGridx(false);}else{gPad->SetGridx();}
         gPad->SetGridy();
     }
 
@@ -10308,7 +10406,7 @@ void G4DoseCalcsAnalysis::GenerateCrossSectionGraphs(){
             gPad->SetLeftMargin(0.13);
 
             if(UseGridXY=="yes"){
-                gPad->SetGridx();
+                if(QuantitiesToScore == "S"){gPad->SetGridx(false);}else{gPad->SetGridx();}
                 gPad->SetGridy();
             }
 

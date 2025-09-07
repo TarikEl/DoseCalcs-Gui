@@ -115,6 +115,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
                                 <<"ICRP143 Voxel-Type Female Newborn"
                                 <<"ICRP145 Mesh-Type Adult Male"
                                 <<"ICRP145 Mesh-Type Adult Female"
+                                <<"ICRP156 Mesh-Type Male 15-years-old"
+                                <<"ICRP156 Mesh-Type Female 15-years-old"
+                                <<"ICRP156 Mesh-Type Male 10-years-old"
+                                <<"ICRP156 Mesh-Type Female 10-years-old"
+                                <<"ICRP156 Mesh-Type Male 05-years-old"
+                                <<"ICRP156 Mesh-Type Female 05-years-old"
+                                <<"ICRP156 Mesh-Type Male 01-years-old"
+                                <<"ICRP156 Mesh-Type Female 01-years-old"
+                                <<"ICRP156 Mesh-Type Male 00-years-old"
+                                <<"ICRP156 Mesh-Type Female 00-years-old"
                                 <<"Phantom Constructed using DICOM/CT Files"
                                 <<"Simple Voxelized Geometry Using DoseCalcs Commands"
                                 <<"Stylized MIRD Adult Female Phantom using CPP (../DoseCalcs/core/src/G4TCPPGeometryFormat.cc) Geometry Method"
@@ -141,16 +151,26 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     PreDefinedGeomMap[PreDefinedGeom[11]]="VoxICRPFemale00";
     PreDefinedGeomMap[PreDefinedGeom[12]]="TetICRPAdultMale";
     PreDefinedGeomMap[PreDefinedGeom[13]]="TetICRPAdultFemale";
-    PreDefinedGeomMap[PreDefinedGeom[14]]="DICOM_CT_Phantom";
-    PreDefinedGeomMap[PreDefinedGeom[15]]="DoseCalcs_Voxelized_Geometry";
-    PreDefinedGeomMap[PreDefinedGeom[16]]="Stylized_CPP_MIRD_AdultFemale";
-    PreDefinedGeomMap[PreDefinedGeom[17]]="Stylized_GDML_MIRD_AdultFemale";
-    PreDefinedGeomMap[PreDefinedGeom[18]]="Stylized_TEXT_MIRD_AdultFemale";
-    PreDefinedGeomMap[PreDefinedGeom[19]]="Constructed_GDML_CPP_TEXT_STL_STAN_Example";
-    PreDefinedGeomMap[PreDefinedGeom[20]]="STL_Solids_Example";
-    PreDefinedGeomMap[PreDefinedGeom[21]]="Geant4_STANDARDs_Example";
-    PreDefinedGeomMap[PreDefinedGeom[22]]="SimpleVoxelizedWaterPhantom";
-    PreDefinedGeomMap[PreDefinedGeom[23]]="MyGeometry";
+    PreDefinedGeomMap[PreDefinedGeom[14]]="TetICRPMale15";
+    PreDefinedGeomMap[PreDefinedGeom[15]]="TetICRPFemale15";
+    PreDefinedGeomMap[PreDefinedGeom[16]]="TetICRPMale10";
+    PreDefinedGeomMap[PreDefinedGeom[17]]="TetICRPFemale10";
+    PreDefinedGeomMap[PreDefinedGeom[18]]="TetICRPMale05";
+    PreDefinedGeomMap[PreDefinedGeom[19]]="TetICRPFemale05";
+    PreDefinedGeomMap[PreDefinedGeom[20]]="TetICRPMale01";
+    PreDefinedGeomMap[PreDefinedGeom[21]]="TetICRPFemale01";
+    PreDefinedGeomMap[PreDefinedGeom[22]]="TetICRPMale00";
+    PreDefinedGeomMap[PreDefinedGeom[23]]="TetICRPFemale00";
+    PreDefinedGeomMap[PreDefinedGeom[24]]="DICOM_CT_Phantom";
+    PreDefinedGeomMap[PreDefinedGeom[25]]="DoseCalcs_Voxelized_Geometry";
+    PreDefinedGeomMap[PreDefinedGeom[26]]="Stylized_CPP_MIRD_AdultFemale";
+    PreDefinedGeomMap[PreDefinedGeom[27]]="Stylized_GDML_MIRD_AdultFemale";
+    PreDefinedGeomMap[PreDefinedGeom[28]]="Stylized_TEXT_MIRD_AdultFemale";
+    PreDefinedGeomMap[PreDefinedGeom[29]]="Constructed_GDML_CPP_TEXT_STL_STAN_Example";
+    PreDefinedGeomMap[PreDefinedGeom[30]]="STL_Solids_Example";
+    PreDefinedGeomMap[PreDefinedGeom[31]]="Geant4_STANDARDs_Example";
+    PreDefinedGeomMap[PreDefinedGeom[32]]="SimpleVoxelizedWaterPhantom";
+    PreDefinedGeomMap[PreDefinedGeom[33]]="MyGeometry";
 
     ui->comboBoxPreDefinedGeom->addItems(PreDefinedGeom);
 
@@ -1144,8 +1164,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::UsePackagesMethods(){
 
-
-
     // ///////////////////// to replace words in a file using two file, the pair (word and new words) file, and the file
     // that we will modifiy
 
@@ -1172,7 +1190,8 @@ void MainWindow::UsePackagesMethods(){
 
 
 
-    /*
+/*
+
     // /////////////////////  change the reference masses of the defined organs using two files, the source(with blood)
     // and target mass of organs, and reference file, the name of organs in reference and masses files should be the same
 
@@ -1183,7 +1202,7 @@ void MainWindow::UsePackagesMethods(){
                                //<<"Salivary_glands_left" << "Salivary_glands_right" << "Adrenal_left"  << "Adrenal_left"
                                );
 
-    QString FilePath = ICRPDATAPath+"/ICRP110RegionsData";
+    QString FilePath = "/home/tarik/DoseCalcs_build/core_build/SourceTarget110Masses";
     std::ifstream file(FilePath.toStdString() , std::ios::binary);
     QMap<QString,double> TargetMassFactors;
     QMap<QString,double> SourceMassFactors;
@@ -1245,8 +1264,8 @@ void MainWindow::UsePackagesMethods(){
                     }
                 }
                 else if(indicator == "Target"){
-                    A >> trgMass ;//>> trgMass ; // for male
-                    //A >> trgMass >> trgMass ; // for female
+                    //A >> trgMass ;//>> trgMass ; // for male
+                    A >> trgMass >> trgMass ; // for female
 
                     TargetMassFactors[word.c_str()] = trgMass;
 
@@ -1262,7 +1281,7 @@ void MainWindow::UsePackagesMethods(){
 
     for (int ff = 0 ; ff < DefinedOrgans.size(); ff++) {
         if(SourceMassFactors[DefinedOrgans[ff]] != 0){
-            OrganMassFactors[DefinedOrgans[ff]] = SourceMassFactors[DefinedOrgans[ff]]/TargetMassFactors[DefinedOrgans[ff]];
+            OrganMassFactors[DefinedOrgans[ff]] = TargetMassFactors[DefinedOrgans[ff]]/SourceMassFactors[DefinedOrgans[ff]];
             QTextStream(stdout) << DefinedOrgans[ff] << " Factor "<< OrganMassFactors[DefinedOrgans[ff]] <<"\n";
         }
     }
@@ -1314,27 +1333,28 @@ void MainWindow::UsePackagesMethods(){
 
                         showResultsOutput( "Command : " + fields[0] + "  fields[1] : " + fields[1], 4);
 
-                        double valll = 150.96045/79.129; // for LyN AF
-                        //double valll = 189.6/137.952; // for LyN AM
-                        //Manually for each organ by including the mass factopr directly here.
+                        //double valll = 150.96045/79.129; // for LyN AF
+                        ////double valll = 189.6/137.952; // for LyN AM
+                        ////Manually for each organ by including the mass factopr directly here.
+                        //for (int aa = 0 ; aa < DefinedOrgans.size(); aa++) {
+
+                        //    if(DefinedOrgans[aa] == "LyN"){
+                        //        fields[1] = QString::number(fields[1].toDouble()/valll);
+                        //        break;
+                        //    }
+                        //
+                        //}
+
+                        //Automatically
                         for (int aa = 0 ; aa < DefinedOrgans.size(); aa++) {
 
-                            if(DefinedOrgans[aa] == "LyN"){
-                                fields[1] = QString::number(fields[1].toDouble()/valll);
+                            if(DefinedOrgans[aa] == fields[0]){
+
+                                QTextStream(stdout) << fields[0] << " " << DefinedOrgans[aa] << " " << fields[1] << " " << fields[1].toDouble()*OrganMassFactors[fields[0]] <<"\n";
+                                fields[1] = QString::number(fields[1].toDouble()/OrganMassFactors[fields[0]]);
                                 break;
                             }
                         }
-
-                    ////Automatically
-                    //for (int aa = 0 ; aa < DefinedOrgans.size(); aa++) {
-
-                    //    if(DefinedOrgans[aa] == fields[0]){
-
-                    //        QTextStream(stdout) << fields[0] << " " << DefinedOrgans[aa] << " " << fields[1] << " " << fields[1].toDouble()*OrganMassFactors[fields[0]] <<"\n";
-                    //        fields[1] = QString::number(fields[1].toDouble()/OrganMassFactors[fields[0]]);
-                    //        break;
-                    //    }
-                    //}
 
                         newline= fields[0] + " " + fields[1] +" "+ Value + "\n";
 
@@ -1355,7 +1375,6 @@ void MainWindow::UsePackagesMethods(){
     }
     fileManagerObject->WriteTextToFile(FilePath,Text);
 */
-
 }
 
 //called from MainWindow() and ...
@@ -4155,8 +4174,7 @@ void MainWindow::on_actionGeometryModelling_triggered()
 void MainWindow::on_actionAbout_triggered()
 {
 
-
-    //UsePackagesMethods();
+    UsePackagesMethods();
     QMessageBox msgBox;
     msgBox.setWindowTitle("About");
     msgBox.setWindowIcon(QIcon(QDir(QCoreApplication::applicationDirPath()).filePath(GUIPackagesAndFilesDirName+"/AppIcon.png")));
@@ -9451,7 +9469,244 @@ void MainWindow::GenerateSAFFromNewTarget(QString TTARGET){
 }
 
 
+// The quantity and the geometry should be chosen, then modify the radionuclides names in C++ syntax of loop
+void MainWindow::CalculateQuantityBasedOnICRPDataAndGenerateResultsDataFile()
+{
+    // quantity, geometry, radionuclide, source, target, value
 
+    QString Quantity_NAME = ui->comboBoxQuantityNucl->currentText();
+    QString Geometry_NAME = ui->comboBoxPhantom->currentText();
+    QString Quantity_NAME_UNIT = ui->comboBoxQuantityNucl->currentText()+"("+ ui->comboBoxEffDoseUnit->currentText()+")";
+
+    QString RadioTracer_NAME;
+    QString Particle_NAME;
+    QString Source_NAME;
+    QString Target_NAME;
+    double Energy_Val;
+
+
+
+    // /////////////////////////////////// calculate SAF based on source massess
+
+
+    QMap<QString,QMap<QString,QMap<double,QMap<QString,QMap<QString,double>>>>> SAFMap = ICRPSAFs["SAF"];
+
+
+
+    // if you want to uses SAF with source masses
+    for ( auto it2 = SAFMap[ui->comboBoxPhantom->currentText()].begin(); it2 != SAFMap[ui->comboBoxPhantom->currentText()].end(); ++it2  ){
+        QString Particle_NAME = it2.key();
+        //            QTextStream(stdout) << "---Particle_NAME " << Particle_NAME <<"\n";
+
+        for ( auto it3 = it2.value().begin(); it3 != it2.value().end(); ++it3  ){
+            double Energy_Val = it3.key();
+            //                QTextStream(stdout) << "----Energy_Val " << Energy_Val <<"\n";
+
+            for ( auto DD = it3.value().begin(); DD != it3.value().end(); ++DD  ){
+                QString Source_NAME  = DD.key();
+                //                    QTextStream(stdout) << "-----Source_NAME " << Source_NAME <<"\n";
+
+                for ( auto CC = DD.value().begin(); CC != DD.value().end(); ++CC  ){
+                    QString  Target_NAME  = CC.key();
+                    double SAFValue  = CC.value();
+
+                    if((ICRPSourceMassMap[ui->comboBoxPhantom->currentText()]["Mass"][Target_NAME] != RegionParameterValueMap[ui->comboBoxPhantom->currentText()]["Mass"][Target_NAME])
+                            && ICRPSourceMassMap[ui->comboBoxPhantom->currentText()]["Mass"][Target_NAME] != 0.
+                            && !__isnan(ICRPSourceMassMap[ui->comboBoxPhantom->currentText()]["Mass"][Target_NAME])){
+
+                        ICRPSAFs["SAF"][ui->comboBoxPhantom->currentText()][Particle_NAME][Energy_Val][Source_NAME][Target_NAME] = (SAFValue*ICRPSourceMassMap[ui->comboBoxPhantom->currentText()]["Mass"][Target_NAME])/RegionParameterValueMap[ui->comboBoxPhantom->currentText()]["Mass"][Target_NAME];
+                        //RegionParameterValueMap[ui->comboBoxPhantom->currentText()]["Mass"][Target_NAME]= ICRPSourceMassMap[ui->comboBoxPhantom->currentText()]["Mass"][Target_NAME];
+                }
+
+                    //if(Source_NAME == "Liver" && Target_NAME == "Liver"){
+                    //    QTextStream(stdout) << " Geometry_NAME " << ui->comboBoxPhantom->currentText() << " Particle_NAME " << Particle_NAME << " Energy_Val " << Energy_Val << " Source_NAME " << Source_NAME << " Target_NAME " << Target_NAME << " SAFValue " << SAFValue << " " << RegionParameterValueMap[ui->comboBoxPhantom->currentText()]["Mass"][Target_NAME]/TargetMassMap[Target_NAME] << " "<< ICRPSAFs["SAF"][ui->comboBoxPhantom->currentText()][Particle_NAME][Energy_Val][Source_NAME][Target_NAME]  << "\n";
+                    //}
+                }
+            }
+        }
+    }
+
+    // /////////////////////////////////// calculate for radionuclides and source regions, modify if() of radionuclides and source
+
+    QuantityGeometryRadiotracerSourceTargetValue.clear();
+    for ( auto it = ICRPRadioNuclideData.begin(); it != ICRPRadioNuclideData.end(); ++it  ){
+
+        RadioTracer_NAME = it.key();
+
+        if(    RadioTracer_NAME == "I-125"
+               //RadioTracer_NAME == "At-217" ||
+               //RadioTracer_NAME == "Bi-211" ||
+               //RadioTracer_NAME == "Fr-221" ||
+               //RadioTracer_NAME == "Po-211" ||
+               //RadioTracer_NAME == "Po-213" ||
+               //RadioTracer_NAME == "Po-215" ||
+               //RadioTracer_NAME == "Rn-219" ||
+
+               //RadioTracer_NAME == "Bi-207" ||
+               //RadioTracer_NAME == "Pb-209" ||
+               //RadioTracer_NAME == "Pb-211" ||
+               //RadioTracer_NAME == "Tl-207" ||
+               //RadioTracer_NAME == "Tl-209"
+                ){
+
+        }else{
+            continue;
+        }
+
+        QTextStream(stdout) << "The results calculation for " << RadioTracer_NAME << "\n";
+
+        for ( auto it2 = it.value().begin(); it2 != it.value().end(); ++it2  ){
+            Particle_NAME = it2.key();
+
+            //QTextStream(stdout) << "Particle_NAME " << Particle_NAME << " is checked " << ui->RadNeutronCheckBox->isChecked() <<"\n";
+
+            QString Partial_Particle_NAME = Particle_NAME;
+            if(Particle_NAME == "e+"){
+                Partial_Particle_NAME = "e-";
+            }
+
+            //QTextStream(stdout) << "Particle_NAME " << Particle_NAME <<"\n";
+            for ( auto it3 = it2.value().begin(); it3 != it2.value().end(); ++it3  ){
+                Energy_Val = it3.key();
+                double RadiationPerCent = it3.value();
+                if(Particle_NAME == "neutron"){
+                   Energy_Val = EnergyIDRadionuclideForNeutronSAF[RadioTracer_NAME];
+                }
+
+                for (int var1 = 0; var1 < ui->comboBoxSources->count(); ++var1) {
+
+                    for (int var2 = 0; var2 < ui->comboBoxTargets->count(); ++var2) {
+
+                        Source_NAME=ui->comboBoxSources->itemText(var1);
+                        Target_NAME=ui->comboBoxTargets->itemText(var2);
+
+                        if(Source_NAME == "Liver" || Source_NAME == "UBCs"  || Source_NAME == "UB-cont"){}else {continue;}
+
+
+                        //if(Particle_NAME == "FF" && Target_NAME == Source_NAME){
+                        //    ICRPSAFs["SAF"][Geometry_NAME][Particle_NAME][Energy_Val][Source_NAME][Source_NAME] = 1/RegionParameterValueMap[Geometry_NAME]["Mass"][Target_NAME];
+                        //    //QTextStream(stdout) << "Particle_NAME " << Particle_NAME << " ICRPSAFs " << ICRPSAFs["AE"][Geometry_NAME][Particle_NAME][Energy_Val][Source_NAME][Source_NAME] <<"\n";
+                        //}
+
+                        //QTextStream(stdout) << " RadioTracer_NAME " << RadioTracer_NAME <<  " Particle_NAME " << Particle_NAME <<  " Partial_Particle_NAME " << Partial_Particle_NAME  <<  " Spectrum Energy_Val " << Energy_Val  << " yield " << ICRPRadioNuclideData[RadioTracer_NAME][Particle_NAME][Energy_Val] << " SAF "<<  ICRPSAFs[Quantity_NAME][Geometry_NAME][Partial_Particle_NAME][Energy_Val][ui->comboBoxSources->currentText()][ui->comboBoxTargets->currentText()] << " ValueInc " << Value  << "\n" ;
+
+                        GenerateRadiotracerQuantitiesForSpecificSourceTargetByInterpolationInDefaultUnit(Source_NAME,Target_NAME,Partial_Particle_NAME,Energy_Val);
+
+                        if( __isnan(ICRPSAFs[Quantity_NAME][Geometry_NAME][Particle_NAME][Energy_Val][Source_NAME][Target_NAME])
+                                || __isinf(ICRPSAFs[Quantity_NAME][Geometry_NAME][Particle_NAME][Energy_Val][Source_NAME][Target_NAME])
+                                || ICRPSAFs[Quantity_NAME][Geometry_NAME][Particle_NAME][Energy_Val][Source_NAME][Target_NAME] == 0
+                                || ICRPSAFs[Quantity_NAME][Geometry_NAME][Particle_NAME][Energy_Val][Source_NAME][Target_NAME] == NULL){
+
+                            ICRPSAFs[Quantity_NAME][Geometry_NAME][Particle_NAME][Energy_Val][Source_NAME][Target_NAME] = 0;
+                        }
+
+
+                        QuantityGeometryRadiotracerSourceTargetValue[Quantity_NAME][Geometry_NAME][RadioTracer_NAME][Source_NAME][Target_NAME] += it3.value()
+                                *ICRPSAFs[Quantity_NAME][Geometry_NAME][Partial_Particle_NAME][Energy_Val][Source_NAME][Target_NAME];
+
+                        //Value += it3.value()
+                        //        *ICRPSAFs[Quantity_NAME][Geometry_NAME][Partial_Particle_NAME][Energy_Val][Source_NAME][Target_NAME];
+                        //QTextStream(stdout) << " RadioTracer_NAME " << RadioTracer_NAME
+                        //                    << " Partial_Particle_NAME " << Partial_Particle_NAME
+                        //                    << " Energy_Val " << Energy_Val
+                        //                    << " RadiationPerCent " << RadiationPerCent
+                        //                    << " Source_NAME " << Source_NAME
+                        //                    << " Target_NAME " << Target_NAME
+                        //                    << " Quantity_NAME " << Quantity_NAME
+                        //                    << " Value " << ICRPSAFs[Quantity_NAME][Geometry_NAME][Partial_Particle_NAME][Energy_Val][Source_NAME][Target_NAME] <<"\n";
+                    }
+                }
+            }
+        }
+    }
+
+    int SZ = 17;
+    int VarSZ = 8;
+    std::ostringstream filname ;
+    filname << UserCurrentResultsDirPath.toStdString() << "/ReferenceData";
+    QString fileNameString = filname.str().c_str();
+    std::ofstream file(fileNameString.toStdString(), std::ios_base::app);
+
+
+    for ( auto ittt = QuantityGeometryRadiotracerSourceTargetValue[Quantity_NAME][Geometry_NAME].begin(); ittt != QuantityGeometryRadiotracerSourceTargetValue[Quantity_NAME][Geometry_NAME].end(); ++ittt  ){
+        RadioTracer_NAME = ittt->first;
+
+        for ( auto it2 = ittt->second.begin(); it2 != ittt->second.end(); ++it2  ){
+
+            Source_NAME = it2->first;
+
+            if(file.is_open()){
+
+                std::ostringstream OutS;
+
+                // For ResultData file
+                // ****** S Liver RadioTracer Ac-225 AF EMS 392.244  |
+                //OutS << "****** "
+                //     << ui->comboBoxQuantityNucl->currentText().toStdString() << " "
+                //     << "IntakeIntoBody "
+                //     << "RadioTracer "
+                //     << RadioTracer_NAME.toStdString() << " "
+                //     << Geometry_NAME.toStdString() <<  " "
+                //     << "Physics "
+                //     << " TotalEmittedEnergy! "
+                //     << " Activity "
+                //     << " Value " ;
+
+                // For Reference Data file
+                //****** S mGy/MBq-s Brain RadioTracer Ra-223 AF
+                OutS << "****** "
+                     << ui->comboBoxQuantityNucl->currentText().toStdString() << " "
+                     << Quantity_NAME_UNIT.toStdString() << " "
+                     << Source_NAME.toStdString() << " "
+                     << " RadioTracer "
+                     << RadioTracer_NAME.toStdString() <<  " "
+                     << Geometry_NAME.toStdString() <<" "
+                     ;
+
+                OutS << "\n";
+
+                QString headerText= OutS.str().c_str();
+
+                file << headerText.toStdString();
+
+                file << std::setw(24) << std::left << "# Volume" << " "
+                     << std::setw(SZ) << std::left << Quantity_NAME_UNIT.toStdString() << " "
+                     << std::setw(SZ) << std::left << "SDev"  << " "
+                     << std::setw(SZ) << std::left << "Rel_SDev(%)" << " "
+                     << std::setw(SZ) << std::left << "Values Num" << " "
+                     << std::setw(SZ) << std::left << "Mass[kg]" << " "
+                     << std::setw(SZ) << std::left << "Volume[cm3]" << " "
+                     << std::setw(SZ) << std::left << "Density[g/cm3] " << " \n";
+
+                for ( auto it3 = it2->second.begin(); it3 != it2->second.end(); ++it3  ){
+
+                    Target_NAME = it3->first;
+                    double value = QuantityGeometryRadiotracerSourceTargetValue[Quantity_NAME][Geometry_NAME][RadioTracer_NAME][Source_NAME][Target_NAME]*0.74
+                            /QuantitiesConversionFromDefault[ui->comboBoxQuantityNucl->currentText()][ui->comboBoxEffDoseUnit->currentText()];
+                    double sdv = 1;
+                    unsigned long long int sm = 1;
+                    double rsdv = ((sdv*sm)/100)*100;
+
+                    file << std::setw(24) << std::left << Target_NAME.toStdString() << " "
+                         << std::setw(SZ) << std::left << std::scientific << std::setprecision(VarSZ) << value << " "
+                         << std::setw(SZ) << std::left << std::scientific << std::setprecision(VarSZ) << sdv << " "
+                         << std::setw(SZ) << std::left << std::scientific << std::setprecision(VarSZ) << rsdv << " "
+                         << std::resetiosflags(file.basefield) << std::resetiosflags( file.floatfield) << std::resetiosflags( file.flags())
+                         << std::setw(SZ) << std::left << sm << " "
+                         << std::setw(SZ) << std::left << RegionParameterValueMap[Geometry_NAME]["Mass"][Target_NAME] << " "
+                         << std::setw(SZ) << std::left << RegionParameterValueMap[Geometry_NAME]["Volume"][Target_NAME] << " "
+                         << std::setw(SZ) << std::left << RegionParameterValueMap[Geometry_NAME]["Density"][Target_NAME] << " \n";
+                }
+                file << "* ----------------------------------------------------------------------------------------------------------------------------------------------\n";
+
+            }
+        }
+    }
+
+    file.close();
+
+    QTextStream(stdout) << "The results calculation and writing terminated" << "\n";
+}
 
 
 void MainWindow::GenerateRadiotracerQuantitiesByInterpolationInDefaultUnit(QString ParticleName, double Energy){
@@ -9500,11 +9755,15 @@ void MainWindow::GenerateRadiotracerQuantitiesByInterpolationInDefaultUnit(QStri
         for(int ss = 0 ; ss < SourceParticleEnergyValues[Source_NAME][ParticleName].size() ; ss++){
 
             int ff = ss+1;
-
-            int da = SourceParticleEnergyValues[Source_NAME][ParticleName].size()-1; if(ff == da){break;}
-
             double E1 = SourceParticleEnergyValues[Source_NAME][ParticleName][ss];
-            double E2 = SourceParticleEnergyValues[Source_NAME][ParticleName][ff];
+            double E2;
+            if(ff == SourceParticleEnergyValues[Source_NAME][ParticleName].size()){
+                Energy1 = E1;
+                Energy2 = 0.;
+                //G4cout << " Energy1 " << Energy1 << " Energy " << Energy << " Energy2 " << Energy2 << G4endl ;
+                break;
+            }
+            E2 = SourceParticleEnergyValues[Source_NAME][ParticleName][ff];
             //QTextStream(stdout) << ss << " " << E1 << " " << ff << " " << E2 << "\n" ;
 
             if(E1 < Energy && Energy < E2){
@@ -9514,6 +9773,23 @@ void MainWindow::GenerateRadiotracerQuantitiesByInterpolationInDefaultUnit(QStri
                 //QTextStream(stdout) << " ParticleName " << ParticleName << " Energy1 " << Energy1 << " Energy " << Energy << " Energy2 " << Energy2 << "\n" ;
                 break;
             }
+
+            //int ff = ss+1;
+
+            //int da = SourceParticleEnergyValues[Source_NAME][ParticleName].size()-1; if(ff == da){break;}
+
+            //double E1 = SourceParticleEnergyValues[Source_NAME][ParticleName][ss];
+            //double E2 = SourceParticleEnergyValues[Source_NAME][ParticleName][ff];
+            ////QTextStream(stdout) << ss << " " << E1 << " " << ff << " " << E2 << "\n" ;
+
+            //if(E1 < Energy && Energy < E2){
+            //    Energy1 = E1;
+            //    Energy2 = E2;
+
+            //    //QTextStream(stdout) << " ParticleName " << ParticleName << " Energy1 " << Energy1 << " Energy " << Energy << " Energy2 " << Energy2 << "\n" ;
+            //    break;
+            //}
+
         }
 
         if(Quantity_Name == "AE"){
@@ -9541,11 +9817,167 @@ void MainWindow::GenerateRadiotracerQuantitiesByInterpolationInDefaultUnit(QStri
             Val2 = ICRPSAFs["SAF"][Geometry_NAME][ParticleName][Energy2][Source_NAME][Target_NAME]*(Energy2)*GenerateRadiationFactor(ParticleName,Energy2)*TissueFactorMap[Target_NAME];
         }
 
-        Val  = Val1 + (Energy-Energy1)*((Val2-Val1)/(Energy2-Energy1));
+        if(isinfl(Val1) || isnanl(Val1)){Val1=0.;}; if(isinfl(Val2) || isnanl(Val2)){Val2=0.;}
+
+        if(Energy2 == 0 || Energy1 == 0){
+            if(Energy2 == 0){Val2=0.;} if(Energy1 == 0){Val1=0.;}
+            if(Energy2 == 0){
+                Val  = Val1 + (Energy-Energy1)*((Val1)/(Energy1));
+            }else{
+                Val  = Val1 + (Energy-Energy1)*((Val2-Val1)/(Energy2-Energy1));
+            }
+            //G4cout << " Val " << Val << G4endl ;
+        }else{
+            Val = std::exp(std::log(Val1) + (std::log(Energy) - std::log(Energy1)) * (std::log(Val2) - std::log(Val1)) / (std::log(Energy2) - std::log(Energy1)));
+        }
+
+        //QTextStream(stdout) << "Interpolated Value for ----> Source_NAME " << Source_NAME << " Target_NAME " << Target_NAME << " Val " << Val << "\n" ;
+
+        //Val  = Val1 + (Energy-Energy1)*((Val2-Val1)/(Energy2-Energy1));
+
+        //if(Source_NAME == "Liver" && Target_NAME == "Liver" && Energy == 0.249776){
+        //}
+
+    }
+
+    if( !__isnan(Val) && !__isinf(Val) && Val != 0 && Val != NULL){
+        ICRPSAFs[Quantity_Name][Geometry_NAME][ParticleName][Energy][Source_NAME][Target_NAME] = Val;
+    }
+
+}
+void MainWindow::GenerateRadiotracerQuantitiesForSpecificSourceTargetByInterpolationInDefaultUnit(QString Source_NAME,QString Target_NAME,QString ParticleName, double Energy){
+
+    QString Geometry_NAME = ui->comboBoxPhantom->currentText();
+    QString Quantity_Name = ui->comboBoxQuantityNucl->currentText();
+
+    double Val1 = 0;
+    double Val2 = 0;
+    double Val = 0;
+    double Energy1;
+    double Energy2;
+
+    if(ICRPSAFs["SAF"][Geometry_NAME][ParticleName][Energy][Source_NAME][Target_NAME] != 0){
+
+        if(Quantity_Name == "AE"){
+            Val = ICRPSAFs["SAF"][Geometry_NAME][ParticleName][Energy][Source_NAME][Target_NAME]*(RegionParameterValueMap[Geometry_NAME]["Mass"][Target_NAME]*Energy);
+        }
+        else if(Quantity_Name == "AF"){
+            Val = ICRPSAFs["SAF"][Geometry_NAME][ParticleName][Energy][Source_NAME][Target_NAME]*(RegionParameterValueMap[Geometry_NAME]["Mass"][Target_NAME]);
+        }
+        else if(Quantity_Name == "SAF"){
+            Val = ICRPSAFs["SAF"][Geometry_NAME][ParticleName][Energy][Source_NAME][Target_NAME];
+        }
+        else if(Quantity_Name == "S"){
+            Val = ICRPSAFs["SAF"][Geometry_NAME][ParticleName][Energy][Source_NAME][Target_NAME]*(Energy);
+        }
+        else if(Quantity_Name == "H"){
+            Val = ICRPSAFs["SAF"][Geometry_NAME][ParticleName][Energy][Source_NAME][Target_NAME]*(Energy)*GenerateRadiationFactor(ParticleName,Energy);
+        }
+        else if(Quantity_Name == "E"){
+            Val = ICRPSAFs["SAF"][Geometry_NAME][ParticleName][Energy][Source_NAME][Target_NAME]*(Energy)*GenerateRadiationFactor(ParticleName,Energy)*TissueFactorMap[Target_NAME];
+        }
 
         if(Source_NAME == "Liver" && Target_NAME == "Liver" && Energy == 0.249776){
             QTextStream(stdout) << " Val " << Val << "\n" ;
         }
+
+    }else{
+
+        Energy1 = 0;
+        Energy2 = 0;
+
+        for(int ss = 0 ; ss < SourceParticleEnergyValues[Source_NAME][ParticleName].size() ; ss++){
+
+            int ff = ss+1;
+            double E1 = SourceParticleEnergyValues[Source_NAME][ParticleName][ss];
+            double E2;
+            if(ff == SourceParticleEnergyValues[Source_NAME][ParticleName].size()){
+                //Energy1 = E1;
+                //Energy2 = 0.;
+                if(E1 > Energy){
+                    Energy1 = 0;
+                    Energy2 = E1;
+                }else{
+                    Energy1 = E1;
+                    Energy2 = 0.;
+                }
+                //G4cout << " Energy1 " << Energy1 << " Energy " << Energy << " Energy2 " << Energy2 << G4endl ;
+                break;
+            }
+            E2 = SourceParticleEnergyValues[Source_NAME][ParticleName][ff];
+            //QTextStream(stdout) << ss << " " << E1 << " " << ff << " " << E2 << "\n" ;
+
+            if(E1 < Energy && Energy < E2){
+                Energy1 = E1;
+                Energy2 = E2;
+
+                //QTextStream(stdout) << " ParticleName " << ParticleName << " Energy1 " << Energy1 << " Energy " << Energy << " Energy2 " << Energy2 << "\n" ;
+                break;
+            }
+
+            //int ff = ss+1;
+
+            //int da = SourceParticleEnergyValues[Source_NAME][ParticleName].size()-1; if(ff == da){break;}
+
+            //double E1 = SourceParticleEnergyValues[Source_NAME][ParticleName][ss];
+            //double E2 = SourceParticleEnergyValues[Source_NAME][ParticleName][ff];
+            ////QTextStream(stdout) << ss << " " << E1 << " " << ff << " " << E2 << "\n" ;
+
+            //if(E1 < Energy && Energy < E2){
+            //    Energy1 = E1;
+            //    Energy2 = E2;
+
+            //    //QTextStream(stdout) << " ParticleName " << ParticleName << " Energy1 " << Energy1 << " Energy " << Energy << " Energy2 " << Energy2 << "\n" ;
+            //    break;
+            //}
+
+        }
+
+        if(Quantity_Name == "AE"){
+            Val1 = ICRPSAFs["SAF"][Geometry_NAME][ParticleName][Energy1][Source_NAME][Target_NAME]*(RegionParameterValueMap[Geometry_NAME]["Mass"][Target_NAME]*Energy1);
+            Val2 = ICRPSAFs["SAF"][Geometry_NAME][ParticleName][Energy2][Source_NAME][Target_NAME]*(RegionParameterValueMap[Geometry_NAME]["Mass"][Target_NAME]*Energy2);
+        }
+        else if(Quantity_Name == "AF"){
+            Val1 = ICRPSAFs["SAF"][Geometry_NAME][ParticleName][Energy1][Source_NAME][Target_NAME]*(RegionParameterValueMap[Geometry_NAME]["Mass"][Target_NAME]);
+            Val2 = ICRPSAFs["SAF"][Geometry_NAME][ParticleName][Energy2][Source_NAME][Target_NAME]*(RegionParameterValueMap[Geometry_NAME]["Mass"][Target_NAME]);
+        }
+        else if(Quantity_Name == "SAF"){
+            Val1 = ICRPSAFs["SAF"][Geometry_NAME][ParticleName][Energy1][Source_NAME][Target_NAME];
+            Val2 = ICRPSAFs["SAF"][Geometry_NAME][ParticleName][Energy2][Source_NAME][Target_NAME];
+        }
+        else if(Quantity_Name == "S"){
+            Val1 = ICRPSAFs["SAF"][Geometry_NAME][ParticleName][Energy1][Source_NAME][Target_NAME]*(Energy1);
+            Val2 = ICRPSAFs["SAF"][Geometry_NAME][ParticleName][Energy2][Source_NAME][Target_NAME]*(Energy2);
+        }
+        else if(Quantity_Name == "H"){
+            Val1 = ICRPSAFs["SAF"][Geometry_NAME][ParticleName][Energy1][Source_NAME][Target_NAME]*(Energy1)*GenerateRadiationFactor(ParticleName,Energy1);
+            Val2 = ICRPSAFs["SAF"][Geometry_NAME][ParticleName][Energy2][Source_NAME][Target_NAME]*(Energy2)*GenerateRadiationFactor(ParticleName,Energy2);
+        }
+        else if(Quantity_Name == "E"){
+            Val1 = ICRPSAFs["SAF"][Geometry_NAME][ParticleName][Energy1][Source_NAME][Target_NAME]*(Energy1)*GenerateRadiationFactor(ParticleName,Energy1)*TissueFactorMap[Target_NAME];
+            Val2 = ICRPSAFs["SAF"][Geometry_NAME][ParticleName][Energy2][Source_NAME][Target_NAME]*(Energy2)*GenerateRadiationFactor(ParticleName,Energy2)*TissueFactorMap[Target_NAME];
+        }
+
+        if(isinfl(Val1) || isnanl(Val1)){Val1=0.;}; if(isinfl(Val2) || isnanl(Val2)){Val2=0.;}
+
+        if(Energy2 == 0 || Energy1 == 0){
+            if(Energy2 == 0){Val2=0.;} if(Energy1 == 0){Val1=0.;}
+            if(Energy2 == 0){
+                Val  = Val1 + (Energy-Energy1)*((Val1)/(Energy1));
+            }else{
+                Val  = Val1 + (Energy-Energy1)*((Val2-Val1)/(Energy2-Energy1));
+            }
+            //G4cout << " Val " << Val << G4endl ;
+        }else{
+            Val = std::exp(std::log(Val1) + (std::log(Energy) - std::log(Energy1)) * (std::log(Val2) - std::log(Val1)) / (std::log(Energy2) - std::log(Energy1)));
+        }
+
+        //QTextStream(stdout) << "Interpolated Value for ----> Source_NAME " << Source_NAME << " Target_NAME " << Target_NAME << " Val " << Val << "\n" ;
+
+        //Val  = Val1 + (Energy-Energy1)*((Val2-Val1)/(Energy2-Energy1));
+
+        //if(Source_NAME == "Liver" && Target_NAME == "Liver" && Energy == 0.249776){
+        //}
 
     }
 
@@ -9653,6 +10085,7 @@ double MainWindow::GenerateTissueFactor(QString OrganName){
 void MainWindow::on_pushButtonGetResultsNucl_clicked()
 {
     //QFuture<void> future = QtConcurrent::run(this, &MainWindow::CalculateQuantitiesBasedOnICRPData);
+    CalculateQuantityBasedOnICRPDataAndGenerateResultsDataFile();
     CalculateQuantitiesBasedOnICRPData();
 }
 void MainWindow::on_pushButtonReverseData_clicked()

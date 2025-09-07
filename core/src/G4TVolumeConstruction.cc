@@ -103,6 +103,10 @@ G4TVolumeConstruction::G4TVolumeConstruction()
     //G4cout<< " @@@@@@@@@@@@@@@@@@@@@@@@@@  G4TVolumeConstruction  @@@@@@@@@@@@@@@@@@@@@@@@@@@"<< G4endl;
 #endif
 
+    //GenerateICRPMaterialsCommands();
+
+
+
     //CreateICRPSAFsReferenceDataFile();
 
 
@@ -213,7 +217,7 @@ G4VPhysicalVolume* G4TVolumeConstruction::Construct()
     else if(GeometryFileType == "Generate") {
 
         //For ICRP voxelized phantoms materials Generation
-        GenerateICRPMaterialsCommands();
+        //GenerateICRPMaterialsCommands();
 
         //For TET phantoms materials Generation
 
@@ -3251,6 +3255,163 @@ void G4TVolumeConstruction::GenerateICRPMaterialsCommands(){
     std::cout << "\n\n" << __FUNCTION__ <<  std::endl;
 
 
+
+
+
+    // to generate the materials commands from Mesh-type Publication .material file
+    // Give the .material file path and use this method in the constructor to generate DoseCalcs commands
+
+
+    // Table li kayrabet ZAID b symbol
+    std::map<int, std::string> elementMap = {
+        {1000, "H"}, {2000, "He"}, {3000, "Li"}, {4000, "Be"},
+        {5000, "B"}, {6000, "C"}, {7000, "N"}, {8000, "O"},
+        {9000, "F"}, {10000, "Ne"}, {11000, "Na"}, {12000, "Mg"},
+        {13000, "Al"}, {14000, "Si"}, {15000, "P"}, {16000, "S"},
+        {17000, "Cl"}, {18000, "Ar"}, {19000, "K"}, {20000, "Ca"},
+        {26000, "Fe"}, {53000, "I"}
+        // zid b7al ma bghiti mn elements
+    };
+
+    struct ElementData {
+        std::string symbol;
+        double fraction; // en %
+    };
+
+    struct Material {
+        std::string name;
+        int id;
+        double density;
+        std::vector<ElementData> elements;
+    };
+
+    std::ifstream file11("/home/tarik/Downloads/GeoFile/MRCP-15M.material");
+    if (!file11.is_open()) {
+        std::cerr << "Error: cannot open file11.\n";
+        //return 1;
+    }
+    int elemNum = 0;
+    double summ = 0;
+    std::string line1;
+    std::string string11;
+    Material mat;
+    std::vector<Material> materials;
+
+    while (std::getline(file11, line1)) {
+        if (line1.empty()) continue;
+        std::istringstream iss(line1);
+
+        //std::cout << line1 << "\n" ;
+
+        // detect C line1 => material header
+        if (line1[0] == 'C' && line1.size() > 2 && line1[1] == ' ') {
+
+            std::cout << "\n/MaterialData/createMaterial " << mat.name << " " << mat.id << " " << elemNum << " " << mat.density << " g/cm3 frac" << " \n" ;
+            std::cout << "/MaterialData/addElements " << string11 << "\n\n" ;
+
+
+            //std::cout << summ << "\n" ;
+
+            //if(summ == 100.){
+            //    std::cout << " " << mat.name << " " << string11 << " -   -   -   -   -   -   -    -   -   -   -   -   -   -    -   -   -   -   -   -   -   \n" ;
+            //}else{
+            //    std::cout << " " << mat.name << " " << string11 << " yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy\n" ;
+
+            // //    std::cout << "\n/MaterialData/createMaterial " << mat.name << " " << mat.id << " " << elemNum << " " << mat.density << " g/cm3 frac" << " \n" ;
+            // //    std::cout << "/MaterialData/addElements " << string11 << "\n\n" ;
+            // //    std::cout << "summ " << summ << "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n" ;
+            //}
+
+
+            std::string C, name;
+            double density;
+            std::string unit;
+
+            elemNum=0;string11="";summ = 0;
+
+            iss >> C >> name >> density >> unit;
+            mat = Material();
+            mat.name = name;
+            mat.density = density;
+            //std::cout << name << " " << density << " " << unit << " " << "\n" ;
+
+        }
+        // detect mXXX line1 => ID
+        else if (line1[0] == 'm') {
+            std::string word;
+            iss >> word;          // word = "m301"
+            if (word.size() > 1) {
+                mat.id = std::stoi(word.substr(1)); // khrej lnumber bla 'm'
+            }
+            //std::cout << "ID: "<< mat.id << " " << "\n" ;
+        }
+
+        // detect element lines
+        else if (line1[0]==' ') {
+            int zaid;
+            double frac;
+            iss >> zaid >> frac;
+            //std::cout << "zaid: "<< zaid  << "frac: "<< frac << " " << "\n" ;
+
+            ElementData el;
+            if (elementMap.count(zaid))
+                el.symbol = elementMap[zaid];
+            else
+                el.symbol = "X"; // unknown
+
+            el.fraction = -frac * 100.0; // convert to %
+
+            mat.elements.push_back(el);
+            //std::cout << "zaid: "<< zaid << " " << " symbol: "<< el.symbol << " frac: "<< el.fraction  << "\n" ;
+            elemNum++;
+            frac = -frac * 100.;
+            string11 = string11 +" "+ el.symbol + " "+ std::to_string(frac);
+            //double bb = frac;
+            summ = summ + frac;
+
+            //std::cout << "/MaterialData/addElements " << string11 << "\n\n" ;
+
+        }
+        // detect end of material (C alone)
+        else if (line1[0] == 'C' && line1.size() == 1) {
+            materials.push_back(mat);
+            //std::cout << "\n\n\n\n\n\n\n\n" ;
+
+        }
+
+    }
+    file11.close();
+
+    std::cout << "\n/MaterialData/createMaterial " << mat.name << " " << mat.id << " " << elemNum << " " << mat.density << " g/cm3 frac" << " \n" ;
+    std::cout << "/MaterialData/addElements " << string11 << "\n\n" ;
+
+
+    //std::cout << materials.size() << "\n" ;
+
+    // print results
+    for (auto &m : materials) {
+        std::cout << "/MaterialData/createMaterial "
+                  << m.name << " " << m.id << " "
+                  << m.elements.size() << " "
+                  << std::fixed << std::setprecision(4) << m.density
+                  << " g/cm3\n";
+
+        std::cout << "/MaterialData/addElements ";
+        for (auto &e : m.elements) {
+            std::cout << e.symbol << " "
+                      << std::fixed << std::setprecision(2)
+                      << e.fraction << " ";
+        }
+        std::cout << "\n\n";
+    }
+    return;
+
+
+
+
+
+
+
     std::string OrganName, MediaName ;
     int IdOrgan , IdMat;
     double HFrac, CFrac, NFrac, OFrac, NaFrac, MgFrac,PFrac,SFrac,ClFrac,KFrac, CaFrac, FeFrac, IFrac;
@@ -3259,6 +3420,35 @@ void G4TVolumeConstruction::GenerateICRPMaterialsCommands(){
 
     std::ifstream fileR(GeometryPath.c_str());
     G4String TextToWrite = "";
+
+
+    std::ifstream file("input.txt");
+    if (!file.is_open()) {
+        std::cerr << "Error: could not open file." << std::endl;
+
+    }
+
+    // Load the entire file into one string
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    file.close();
+
+    // Put it into istringstream
+    std::istringstream iss(buffer.str());
+
+    while (iss >> word) {   // read word by word
+        // Example conditions
+        if (word == "C") {
+            std::cout << "Found word: C" << std::endl;
+        }
+        else if (word.size() > 5) {
+            std::cout << "Long word: " << word << std::endl;
+        }
+        else {
+            std::cout << "Word: " << word << std::endl;
+        }
+    }
+
     if(fileR.is_open()){
 
         //G4cout  << " \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n" << G4endl;
@@ -3271,7 +3461,12 @@ void G4TVolumeConstruction::GenerateICRPMaterialsCommands(){
             std::istringstream LineString(line);
 
             if(LineString.str().empty()){ continue; }
-
+            if(LineString.str()=="C"){ continue; }
+            if (LineString.str().find("C ") != std::string::npos) {
+                    std::cout << "Line contains 'C '" << std::endl;
+                } else {
+                    std::cout << "Line does not contain 'C '" << std::endl;
+                }
             LineString >> word;  // the white spaces more than 1 are considered as 1
 
             //G4cout << " the word " << word << G4endl ;
@@ -3298,6 +3493,7 @@ void G4TVolumeConstruction::GenerateICRPMaterialsCommands(){
                     std::cout  << VoxXNumber << " "  << VoxYNumber << " " << VoxZNumber << " " << VoxXHalfSize << " " << VoxYHalfSize << " " << VoxZHalfSize << " "  << ICRPOrgansNumber << " " << ICRPMaterialsNumber << std::endl;;
                 }
                 else if (indicator == "materials_comp_data") {
+
 
                     IdMat = atoi(word.c_str());
                     //LineString >> MaterialIDName[IdMat];

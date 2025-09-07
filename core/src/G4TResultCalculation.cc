@@ -1197,7 +1197,7 @@ void G4TResultCalculation::ReadSimulationData(){
                                     else if(word == "DG"){RPar = "gamma";   S == "Discrete";}
                                     else if(word == "X") {RPar = "gamma";   S == "Discrete";}
                                     else if(word == "AQ"){RPar = "gamma";   S == "Discrete";}
-                                    else if(word == "B+"){RPar = "e+";      S == "Discrete";}
+                                    else if(word == "B+"){RPar = "e-";      S == "Discrete";}
                                     else if(word == "B-"){RPar = "e-";      S == "Discrete";}
                                     else if(word == "BD"){RPar = "e-";      S == "Discrete";}
                                     else if(word == "IE"){RPar = "e-";      S == "Discrete";}
@@ -1289,7 +1289,7 @@ void G4TResultCalculation::ReadSimulationData(){
                                 else if(fields[3] == "DG"){ParticleName = "gamma";}
                                 else if(fields[3] == "X"){ParticleName = "gamma";}
                                 else if(fields[3] == "AQ"){ParticleName = "gamma";}
-                                else if(fields[3] == "B+"){ParticleName = "e+";}
+                                else if(fields[3] == "B+"){ParticleName = "e-";}
                                 else if(fields[3] == "B-"){ParticleName = "e-";}
                                 else if(fields[3] == "BD"){ParticleName = "e-";}
                                 else if(fields[3] == "IE"){ParticleName = "e-";}
@@ -3722,7 +3722,7 @@ void G4TResultCalculation::GenerateRegionResultForRadioTracer(){
 
 
 
-    // i want just the results of radionuclides for articles
+    // i want just the results of radionuclides and for Particles
     return;
 
 
@@ -3915,8 +3915,26 @@ void G4TResultCalculation::GenerateRadiotracerQuantitiesByInterpolation(G4String
             G4double E1 = Abeg->second[ParticleName][ss];
             G4double E2;
             if(ff == Abeg->second[ParticleName].size()){
-                Energy1 = E1;
-                Energy2 = 0.;
+
+                //if(E1 < Energy){
+                //    Energy1 = E1;
+                //    Energy2 = 0.;
+                //}else if(E1 > Energy){
+                //    Energy1 = 0;
+                //    Energy2 = E1;
+                //}else if (E1 = Energy){
+                //    Energy1 = E1;
+                //    Energy2 = 0.;
+                //}
+
+                if(E1 > Energy){
+                    Energy1 = 0;
+                    Energy2 = E1;
+                }else{
+                    Energy1 = E1;
+                    Energy2 = 0.;
+                }
+
                 //G4cout << " Energy1 " << Energy1 << " Energy " << Energy << " Energy2 " << Energy2 << G4endl ;
                 break;
             }
@@ -3933,8 +3951,11 @@ void G4TResultCalculation::GenerateRadiotracerQuantitiesByInterpolation(G4String
             }
         }
         
-        if(Energy2 == 0 || Energy1 == 0 ){
-            G4cout << "Value will be approximated beacause the energy not delimited. Energy1 " << Energy1 << " Energy " << Energy << " Energy2 " << Energy2 << G4endl ;
+        if(Energy2 == 0 && Energy1 == 0 ){
+            G4cout << "\n !!!!!!!!!!!!!!! Value cannot be calculated the "<< ParticleName << " energy " << Energy <<" because not delimited by E1 or E2 for source "<< Abeg->first << "\n" << G4endl  ;
+        }
+        else if(Energy2 == 0 || Energy1 == 0 ){
+            G4cout << "Value will be approximated beacause the " << ParticleName << " energy not delimited for source "<< Abeg->first << ". Energy1 " << Energy1 << " Energy " << Energy << " Energy2 " << Energy2 << G4endl ;
         }
 
         for(G4int hh = 0 ; hh < (G4int)OrgansNameVector.size() ; hh++){
@@ -3981,6 +4002,7 @@ void G4TResultCalculation::GenerateRadiotracerQuantitiesByInterpolation(G4String
 
 
 
+
                 Val1 = TotalAEForRadiotracerRSD["AE"][ParticleName][Energy1][Abeg->first][OrgansNameVector[hh]];
                 Val2 = TotalAEForRadiotracerRSD["AE"][ParticleName][Energy2][Abeg->first][OrgansNameVector[hh]];
                 if(isinfl(Val1) || isnanl(Val1)){Val1=0.;}; if(isinfl(Val2) || isnanl(Val2)){Val2=0.;}
@@ -3997,6 +4019,7 @@ void G4TResultCalculation::GenerateRadiotracerQuantitiesByInterpolation(G4String
                     //Val = Val1 + (Energy-Energy1)*((Val2-Val1)/(Energy2-Energy1));
                 }
                 TotalAEForRadiotracerRSD["AE"][ParticleName][Energy][Abeg->first][OrgansNameVector[hh]] = Val;
+
 
 
                 unsigned long long int uVal1 = NumberOfSteps[ParticleName][Energy1][Abeg->first][OrgansNameVector[hh]];
