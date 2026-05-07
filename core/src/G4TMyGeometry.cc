@@ -62,6 +62,7 @@
 #include "G4TDetectorGeometry.hh"
 #include "G4TPassiveProtonBeamLineGeometry.hh"
 #include "G4TFlashRadioTherapyGeometry.hh"
+#include "G4TLaminography.hh"
 
 G4TMyGeometry::G4TMyGeometry(){}
 G4TMyGeometry::~G4TMyGeometry(){}
@@ -75,12 +76,15 @@ G4VPhysicalVolume* G4TMyGeometry::ConstructPhysicalVolume(){
     //WorldPhysicalVolume = NewGeom->ConstructLXe();
     //WorldPhysicalVolume = NewGeom->ConstructNeutronDetector();
 
-    G4TPassiveProtonBeamLineGeometry* NewGeom = new G4TPassiveProtonBeamLineGeometry();
-    WorldPhysicalVolume = NewGeom->Construct();//
+    //G4TPassiveProtonBeamLineGeometry* NewGeom = new G4TPassiveProtonBeamLineGeometry();
+    //WorldPhysicalVolume = NewGeom->Construct();//
 
 
     //G4TFlashRadioTherapyGeometry* NewGeom = new G4TFlashRadioTherapyGeometry();
     //WorldPhysicalVolume = NewGeom->ConstructGeometry();
+
+    G4TLaminography* NewGeom = new G4TLaminography();
+    WorldPhysicalVolume = NewGeom->ConstructPhysicalVolume();//
 
     return WorldPhysicalVolume;
 

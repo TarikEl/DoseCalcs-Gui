@@ -74,6 +74,12 @@ extern  G4float* CopyNumberZPos;
 extern  G4float* CopyNumberMassSize;
 extern std::map<G4String, G4Colour> RegionNameColour;
 
+
+extern G4ThreeVector PointSourcePositionTowardDetector;
+extern G4double ThetaDirectionValueTowardDetector;
+extern G4double PhiDirectionValueTowardDetector;
+
+
 extern std::vector<G4String> SourceRegionsNamesToBeIgnoredValues;
 
 extern  G4double AllGeometryVolume;
@@ -87,6 +93,8 @@ extern G4String GeometryFileType;
 extern G4String DataFilesExtension;
 
 extern G4String ParticleName;
+
+extern G4String DetectFor;
 
 extern G4String SourceType;
 extern G4String SourceRegionName;
@@ -407,11 +415,14 @@ public:
 
     void setSourceParticlesNamesValues(G4String n ){ SourceParticlesNamesValues.push_back(n); }
     void setSourceRegionsNamesValues(G4String n ){ SourceRegionsNamesValues.push_back(n); }
-    void setSourceRegionsBoxDimValues(G4ThreeVector n ){ SourceRegionsBoxDimValues.push_back(n); }
+    void setSourceRegionsBoxDimValues(G4ThreeVector n ){ SourceRegionsBoxDimValues.push_back(n);
+        PointSourcePositionTowardDetector = n;}
     void setSourceEnergiesValues(G4double n ){ SourceEnergiesValues.push_back(n); }
     void setSourceMomDirsValues(G4String n ){ SourceMomDirsValues.push_back(n); }
-    void setSourceMomDirsDirectedThetaValues(G4double n ){ SourceMomDirsDirectedThetaValues.push_back(n); }
-    void setSourceMomDirsDirectedPhiValues(G4double n ){ SourceMomDirsDirectedPhiValues.push_back(n); }
+    void setSourceMomDirsDirectedThetaValues(G4double n ){ SourceMomDirsDirectedThetaValues.push_back(n);
+        ThetaDirectionValueTowardDetector = n;}
+    void setSourceMomDirsDirectedPhiValues(G4double n ){ SourceMomDirsDirectedPhiValues.push_back(n);
+        PhiDirectionValueTowardDetector = n;}
 
     void setSourceRegionsNamesToBeIgnoredValues(G4String n ){ SourceRegionsNamesToBeIgnoredValues.push_back(n); }
 

@@ -35,28 +35,39 @@
 
 #include "globals.hh"
 #include "G4UserEventAction.hh"
+#include "G4TRunAction.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 class G4TDetectorEventAction : public G4UserEventAction
 {
- public:
-  G4TDetectorEventAction();
-  ~G4TDetectorEventAction();
+public:
+    G4TDetectorEventAction(G4TRunAction*);
+    virtual ~G4TDetectorEventAction();
 
-  void BeginOfEventAction(const G4Event*) override;
-  void EndOfEventAction(const G4Event*) override;
+    virtual void BeginOfEventAction(const G4Event*);
+    virtual void EndOfEventAction(const G4Event*);
 
-  void AddRayleigh() { ++fRayleigh; }
-  void AddAbsorption() { ++fAbsorption; }
-  void AddMie() { ++fMie; }
-  void AddBoundary() { ++fBoundary; }
+    std::map<G4String,unsigned long long int> decetorEventHitMap;
+    std::map<G4String,G4double> decetorEventEnerDepoMap;
+    std::map<G4String,G4double> decetorEventEnerDepoMap2;
+    void AddRayleigh() { ++fRayleigh; }
+    void AddAbsorption() { ++fAbsorption; }
+    void AddMie() { ++fMie; }
+    void AddBoundary() { ++fBoundary; }
 
- private:
-  G4int fRayleigh;
-  G4int fAbsorption;
-  G4int fMie;
-  G4int fBoundary;
+    //void setEnerDepo(G4double EE) { EnerDepo = EE; }
+    void setDetectorNameMap(G4String SS, double EnerDepo);
+
+    //  G4double getEnetDepo() { ++fBoundary; }
+
+private:
+    G4double EnerDepo;
+    G4int fRayleigh;
+    G4int fAbsorption;
+    G4int fMie;
+    G4int fBoundary;
+    G4TRunAction* runAction;
 };
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 #endif

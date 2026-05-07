@@ -37,7 +37,7 @@
 #include "G4TRunActionForCriticality.hh"
 //#include "G4TEventAction.hh"
 
-#include "G4TDetectorEventAction.hh"
+//#include "G4TDetectorEventAction.hh"
 #include "G4TDetectorStackingAction.hh"
 
 #include "G4TSteppingAction.hh"
@@ -132,6 +132,7 @@ void G4TActionInitialization::Build() const {
     G4TRunAction* runAction = new G4TRunAction;
     SetUserAction(runAction);
 
+
     //// Voxelized
     //SetUserAction(new G4TNestedParamSteppingAction(runAction));
     //SetUserAction(new G4TDirectVoxelsPrimaryGeneratorAction);
@@ -196,11 +197,20 @@ void G4TActionInitialization::Build() const {
 
             SetUserAction(new G4TSteppingActionVoxelizedExternal(runAction));
         }
+        else if (SimulationIntExtNeutDet == "Detector"){
+
+            //G4cout << " \n  -- G4TDetectorEventAction" << G4endl;
+            G4cout << " \n  -- G4TDetectorSteppingAction" << G4endl;
+
+            //SetUserAction(new G4TDetectorEventAction(runAction));
+            SetUserAction(new G4TDetectorSteppingAction(runAction));
+        }
         else if (SimulationIntExtNeutDet == "MyCPPSteppingAction"){
             G4cout << " \n  -- G4TModifiedSteppingAction" << G4endl;
 
             SetUserAction(new G4TModifiedSteppingAction(runAction));
-        }else{
+        }
+        else{
             if(GenerateVoxelsResuls=="yes"){
                 G4cout << " \n  -- G4TVoxelsSteppingAction" << G4endl;
 
@@ -236,6 +246,15 @@ void G4TActionInitialization::Build() const {
             G4cout << " \n  -- G4TModifiedSteppingAction" << G4endl;
 
             SetUserAction(new G4TModifiedSteppingAction(runAction));
+        }
+        else if (SimulationIntExtNeutDet == "Detector"){
+            GenerateVoxelsResuls = "no"; // for now we dont have a pixelized detector
+            //G4cout << " \n  -- G4TDetectorEventAction" << G4endl;
+            G4cout << " \n  -- G4TDetectorSteppingAction" << G4endl;
+
+            //SetUserAction(new G4TDetectorEventAction(runAction));
+            SetUserAction(new G4TDetectorSteppingAction(runAction));
+
         }else{
             G4cout << " \n  -- G4TModifiedSteppingAction" << G4endl;
             SetUserAction(new G4TSteppingAction(runAction));

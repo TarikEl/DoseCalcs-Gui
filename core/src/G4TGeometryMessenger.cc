@@ -206,13 +206,15 @@ void G4TGeometryMessenger::SetNewValue(G4UIcommand* command,G4String newValue){
 
         G4String ext = getFileExt(mn);
 
-        if(ext == "gdml" || ext == "geom" || ext == "cpp" || ext == "c++" || mn == "MyGeometry"){
+        if(ext == "gdml" || ext == "geom" || ext == "cpp" || ext == "c++" /*mn == "MyGeometry"*/){
 
             //std::cout << "\n\n 1-------------- "  << std::endl;
             GeometryConstruction->placeVolume(mn, "", G4ThreeVector(), G4ThreeVector());
             //std::cout << "\n\n 2-------------- "  << std::endl;
 
-        }else{
+        }
+        else if(mn == "MyGeometry"){GeometryConstruction->setGeometryFileType(mn); }
+        else{
             //std::cout << "\n\n 1-------------- "  << std::endl;
             G4double ff = StoD(next()), ss = StoD(next()), gg = StoD(next()); G4String dc = next();
             GeometryConstruction->constructWorldVolume(mn, G4ThreeVector(ff*UseG4Units(dc),ss*UseG4Units(dc),gg*UseG4Units(dc)));
@@ -330,7 +332,7 @@ void G4TGeometryMessenger::SetNewValue(G4UIcommand* command,G4String newValue){
             GeometryConstruction->setGeometryFileType(volN);
             GeometryConstruction->setGeometryPath(volS);
         }
-        else if(volN == "DICOM" || volN == "VOXEL" || volN == "CPP" ){
+        else if(volN == "DICOM" || volN == "VOXEL" || volN == "CPP" || volN == "MyGeometry" ){
             GeometryConstruction->setGeometryFileType(volN);
         }
         else if(volN == "TET"){

@@ -86,6 +86,10 @@ size_t* MateIDs; // index of material of each voxel unsigned int* fMateIDs; // i
 G4String* CopyNumberRegionNameMap;
 std::map<G4String, G4Colour> RegionNameColour;
 
+G4ThreeVector PointSourcePositionTowardDetector;
+G4double ThetaDirectionValueTowardDetector;
+G4double PhiDirectionValueTowardDetector;
+
 G4float* CopyNumberXPos;
 G4float* CopyNumberYPos;
 G4float* CopyNumberZPos;
@@ -107,6 +111,8 @@ G4double AllGeometryVolume;
 G4double AllGeometryMass;
 
 G4String GeometryFileType;
+
+G4String DetectFor;
 
 G4String ParticleName;
 G4String SourceType;
@@ -539,6 +545,8 @@ int main(int argc,char** argv){
 
 #ifdef G4MULTITHREADED
         runManager->SetNumberOfThreads(1);
+        runManager->SetNumberOfEventsToBeProcessed(300);
+        static_cast<G4MTRunManager*>(runManager)->SetEventModulo(300);
         // For B and T modes we need a normal simulation without Box or Points Testing
 #endif
 

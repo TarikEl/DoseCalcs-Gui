@@ -61,6 +61,7 @@
 #include "G4TNuclearReactorGeometry.hh"
 #include "G4TDetectorGeometry.hh"
 #include "G4TPassiveProtonBeamLineGeometry.hh"
+#include "G4TLaminography.hh"
 
 G4TCPPGeometryFormat::G4TCPPGeometryFormat(){}
 G4TCPPGeometryFormat::~G4TCPPGeometryFormat(){}
@@ -70,7 +71,6 @@ G4VPhysicalVolume* G4TCPPGeometryFormat::ConstructPhysicalVolume(){
     // //////////////////////////////// Required Material creation ////////////////////////
 
 
-
     //G4TDetectorGeometry* NewGeom = new G4TDetectorGeometry();
     //WorldPhysicalVolume = NewGeom->ConstructDetector();
     //return WorldPhysicalVolume;
@@ -78,6 +78,11 @@ G4VPhysicalVolume* G4TCPPGeometryFormat::ConstructPhysicalVolume(){
     //G4TPassiveProtonBeamLineGeometry* NewGeom = new G4TPassiveProtonBeamLineGeometry();
     //WorldPhysicalVolume = NewGeom->Construct();
     //return WorldPhysicalVolume;
+
+   //G4TLaminography* NewGeom = new G4TLaminography();
+   //WorldPhysicalVolume = NewGeom->ConstructPhysicalVolume();
+   //return WorldPhysicalVolume;
+
 
     G4Material* matH2O;
     G4Material* soft;

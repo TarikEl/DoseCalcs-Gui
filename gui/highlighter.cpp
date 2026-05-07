@@ -77,6 +77,7 @@ Highlighter::Highlighter(QTextDocument *parent) : QSyntaxHighlighter(parent) {
         QStringLiteral("\\bS\\b"), QStringLiteral("\\bAD\\b"),
         QStringLiteral("\\bDR\\b"), QStringLiteral("\\bE\\b"),
         QStringLiteral("\\bH\\b"), QStringLiteral("\\bDCC\\b"),
+        QStringLiteral("\\bCounts\\b"),
 
         QStringLiteral("\\bsource\\b"), QStringLiteral("\\btarget\\b"),
 

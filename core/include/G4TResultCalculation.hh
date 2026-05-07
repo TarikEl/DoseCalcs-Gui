@@ -73,6 +73,7 @@ private:
 
     G4bool VOX_USE;
     G4bool GenerateVoxelsResuls;
+    G4String SimulationIntExtNeutDet;
 
     G4String RankParticleName;
     G4double RankParticleSourceEnergy;
@@ -204,6 +205,7 @@ private:
     G4double HUnitFactor;
     G4double EUnitFactor;
     G4double DCCUnitFactor;
+    G4double CountsUnitFactor;
 
     G4String AEUnit;
     G4String AFUnit;
@@ -213,6 +215,7 @@ private:
     G4String HUnit;
     G4String EUnit;
     G4String DCCUnit;
+    G4String CountsUnit;
 
     G4String UnitPerParticle;
     G4String UnitPerRadioTracerDecay;
@@ -236,6 +239,7 @@ private:
     void GenerateRegionResultForRadioTracer();
     void GenerateExternalDosimetryCoefficients();
     void GenerateRadiotracerQuantitiesByInterpolation(G4String, G4double);
+    void GenerateCountsMatrixFile();
 
     G4String RemoveWordFromString(G4String,G4String);
     double GenerateRadiationFactor(G4String, double);
@@ -259,6 +263,7 @@ private:
     std::map<G4String,std::map<G4String,std::map<G4String,unsigned long long int>>> NumberOfStepsInRadiotracerSourceTarget;
     std::map<G4String,std::map<G4String,unsigned long long int>> NumberOfStepsInRadiotracerOrgan;
 
+    std::map<G4double,std::map<G4double,std::map<G4double,std::map<G4double,std::map<G4double,G4double>>>>> ProjeectionMatrix;
 
     std::map<G4String,G4double> DR_Total ;
     std::map<G4String,G4double> ER_Total ;
@@ -328,6 +333,14 @@ private:
     std::map<G4String,G4double> DCC_RelS_D ;
     std::map<G4String,G4double> EE_RelS_D ;
 
+    std::map<G4String,G4double> Counts_Total ;
+    std::map<G4String,G4double> Counts2_Total ;
+    std::map<G4String,G4double> Counts_Mean ;
+    std::map<G4String,G4double> Counts2_Mean ;
+    std::map<G4String,G4double> Counts_Var ;
+    std::map<G4String,G4double> Counts_SDev ;
+    std::map<G4String,G4double> Counts_RelS_D ;
+
     std::vector<G4String> DoseCalcsQuantities;
     std::map<G4String,std::map<G4String,G4double>> TotalValueOfQuantity;
 
@@ -357,6 +370,7 @@ private:
     std::map<G4String, G4double> HCte ;
     std::map<G4String, G4double> ECte ;
     std::map<G4String, G4double> DCCCte ;
+    std::map<G4String, G4double> CountsCte ;
     std::map<G4String, G4double> EECte ;
 
     std::map<G4String,std::vector<G4String>> ReadedResultFilesPaths;

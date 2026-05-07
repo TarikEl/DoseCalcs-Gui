@@ -250,7 +250,7 @@ void G4TPrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command,G4String new
 
         //std::cout<< " @@@@@@@@@@@@@@@@@@@@@@@@@ " << ST << std::endl;
 
-        if(ST == "Volume" || ST == "Voxels" || ST == "TET"){
+        if(ST == "Volume" || ST == "Voxels" || ST == "TET" || ST == "Point"){
         }else {
             XPos = StoD(next()), YPos = StoD(next()), ZPos = StoD(next());
             GeoConst->setSourcePosition(G4ThreeVector(XPos*UseG4Units(Un1), YPos*UseG4Units(Un1), ZPos*UseG4Units(Un1)));
@@ -262,10 +262,27 @@ void G4TPrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command,G4String new
         G4double A, B, C;
 
         if(ST == "Point"){
-            GeoConst->setSourceRegionsNamesValues(SN);
 
-            GeoConst->setRotPosAxis(next());
-            GeoConst->setRotTheta(StoD(next()));
+            //GeoConst->setSourceRegionsNamesValues(SN);
+
+            //GeoConst->setRotPosAxis(next());
+            //GeoConst->setRotTheta(StoD(next()));
+
+            //std::cout<< " Dddddd " << SN <<  " @@@@@@@@@@@@@@@@@@@@@@@@@@@"<< std::endl;
+            while (!SN.empty()) {
+
+                GeoConst->setSourceRegionsNamesValues(SN);
+
+                //std::cout<< " RegionName " << SN << " @@@@@@@@@@@@@@@@@@@@@@@@@@@"<< std::endl;
+                A = StoD(next()); B = StoD(next()); C = StoD(next()) ; //Un1 = next();
+                //std::cout<< " RegionName " << SN << " A " << A <<  " B " << B << " C " << C << " @@@@@@@@@@@@@@@@@@@@@@@@@@@"<< std::endl;
+                GeoConst->setSourceRegionsBoxDimValues(G4ThreeVector(A*UseG4Units(Un1), B*UseG4Units(Un1), C*UseG4Units(Un1)));
+                //GeoConst->setXYZOfBox(                 G4ThreeVector(A*UseG4Units(Un1), B*UseG4Units(Un1), C*UseG4Units(Un1)), true);
+
+                SN = next();
+            }
+
+
         }
         else if(ST == "Beam"){
             GeoConst->setSourceRegionsNamesValues(SN);

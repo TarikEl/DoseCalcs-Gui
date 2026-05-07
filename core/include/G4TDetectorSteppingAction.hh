@@ -33,6 +33,7 @@
 #include "G4TRunAction.hh"
 #include "globals.hh"
 #include "G4UserSteppingAction.hh"
+#include "G4TDetectorEventAction.hh"
 
 class G4TDetectorSteppingAction : public G4UserSteppingAction
 {
@@ -44,6 +45,7 @@ class G4TDetectorSteppingAction : public G4UserSteppingAction
 
  private:
   G4TRunAction* RunAction;
+  G4TDetectorEventAction* EventAction;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

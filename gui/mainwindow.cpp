@@ -505,7 +505,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
                                <<"ExternalDosimetry"
                                <<"MyCPPSteppingAction"
                                //<<"Neutronic"
-                               //<<"Detector"
+                               <<"Detector"
                                );
 
     ui->comboBoxSimulationRunFor->addItems(RunForList);
@@ -1777,7 +1777,7 @@ void MainWindow::setCompleters(){
     completer->setCaseSensitivity(Qt::CaseInsensitive);
     ui->AnalysisLineEditVarToScore->setCompleter(completer);
 
-    VarToScorellist=(QStringList()<<"AE"<<"AD"<<"AF"<<"SAF"<<"S"<<"H"<<"E"<<"DR"<<"DCC");
+    VarToScorellist=(QStringList()<<"AE"<<"AD"<<"AF"<<"SAF"<<"S"<<"H"<<"E"<<"DR"<<"DCC"<<"Counts");
     completer = new QCompleter(VarToScorellist, this);
     completer->setCaseSensitivity(Qt::CaseInsensitive);
     ui->AnalysisLineEditVarToScore->setCompleter(completer);
@@ -1905,7 +1905,7 @@ void MainWindow::setCompleters(){
                       "AE" << "AD" <<
                       "S" << "AD" <<
                       "DR" << "E" <<
-                      "H" <<"DCC"<<
+                      "H" <<"DCC"<<"Counts"<<
 
                       "all" << "All" <<
                       "m" << "o" <<
@@ -5168,7 +5168,6 @@ bool MainWindow::TestSimulateExecutableInputsToRun(){
                 return false;
             }
         }
-
     }
 
     // check World data
@@ -5261,6 +5260,9 @@ bool MainWindow::TestSimulateExecutableInputsToRun(){
 
     // check source regions data
     InputsVals = ui->lineEditChosenSourceTypeData->text().split(QRegExp("(\\s|\\n|\\r)+"), QString::SkipEmptyParts); // "/GeometryData/createWorld"
+    if(InputsVals.size() > 1){
+        ui->comboBoxTypeOfSources->setCurrentText(InputsVals[1]);
+    }
     if(ui->comboBoxTypeOfSources->currentText()=="Volume"){
         if(InputsVals.size() < 4){
             ui->Tab->setCurrentIndex(1);

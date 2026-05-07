@@ -54,7 +54,7 @@ G4TResultCalculation::G4TResultCalculation(){
 
     DoseCalcsQuantities.push_back("AE");DoseCalcsQuantities.push_back("AF");DoseCalcsQuantities.push_back("SAF"); DoseCalcsQuantities.push_back("DR");
     DoseCalcsQuantities.push_back("AD");DoseCalcsQuantities.push_back("S");DoseCalcsQuantities.push_back("H");DoseCalcsQuantities.push_back("E");
-    DoseCalcsQuantities.push_back("ER");DoseCalcsQuantities.push_back("DCC");
+    DoseCalcsQuantities.push_back("ER");DoseCalcsQuantities.push_back("DCC");DoseCalcsQuantities.push_back("Counts");
 
     ErrorMessage = "\n\n========= Errors and Warnings =====================\n";
 
@@ -105,6 +105,7 @@ G4TResultCalculation::G4TResultCalculation(){
     // H Sv
     // E Sv
     // DCC pGy/cm2
+    // Counts
 
     AEUnitFactor = 1.;
     AFUnitFactor = 1.;
@@ -114,6 +115,7 @@ G4TResultCalculation::G4TResultCalculation(){
     HUnitFactor = 1.;
     EUnitFactor = 1.;
     DCCUnitFactor = MeV_to_J*1e+12 /*0.16021773*/;
+    CountsUnitFactor = 1;
 
     //G4cout << "DCCUnitFactor : " << DCCUnitFactor << G4endl;
 
@@ -125,6 +127,7 @@ G4TResultCalculation::G4TResultCalculation(){
     HUnit = "MeV/kg";
     EUnit = "MeV/kg";
     DCCUnit = "pGy/cm2";
+    CountsUnit = "";
 
     UnitPerParticle = "Particle";
     UnitPerRadioTracerDecay = "Decay";
@@ -552,6 +555,13 @@ void G4TResultCalculation::MergeSimulationsData(){
                     DCC_SDev.clear();
                     DCC_RelS_D.clear();
 
+                    Counts_Total.clear();
+                    Counts2_Total.clear();
+                    Counts_Mean.clear();
+                    Counts2_Mean.clear();
+                    Counts_Var.clear();
+                    Counts_SDev.clear();
+                    Counts_RelS_D.clear();
 
 
                     DR_Total.clear();
@@ -817,6 +827,10 @@ void G4TResultCalculation::MergeSimulationsData(){
     }
     // ////////////////////////////////////////////////////
 
+    if(SimulationIntExtNeutDet == "Detector"){
+        GenerateCountsMatrixFile();
+    }
+
     G4cout << "\n-------- " << ErrorMessage << G4endl ;
 
 
@@ -928,6 +942,7 @@ void G4TResultCalculation::ReadSimulationData(){
                         QuantityNamesToScore.push_back("E");
                         QuantityNamesToScore.push_back("DR");
                         QuantityNamesToScore.push_back("DCC");
+                        QuantityNamesToScore.push_back("Counts");
                         break;
                     }
                     else {
@@ -1598,6 +1613,10 @@ void G4TResultCalculation::ReadSimulationData(){
             else if(ParameterName =="ExecutionMode"){
                 LineString >> ExecutionMode;
                 if(V)G4cout << " ExecutionMode " << ExecutionMode << G4endl ;
+            }
+            else if(ParameterName =="/RunAndScoreData/RunFor"){
+                LineString >> SimulationIntExtNeutDet;
+                if(V)G4cout << " SimulationIntExtNeutDet " << SimulationIntExtNeutDet << G4endl ;
             }
         }
         file1.close();
@@ -2331,6 +2350,7 @@ void G4TResultCalculation::RegionQuantitiesCalculation(){
         HCte[OrgansNameVector[gg]]   = HUnitFactor*(1./(VolumeNameMassMap[OrgansNameVector[gg]]*(double)TotalEventNumber))*GenerateRadiationFactor(ParticleName,ParticleSourceEnergy);
         ECte[OrgansNameVector[gg]]   = EUnitFactor*(1./(VolumeNameMassMap[OrgansNameVector[gg]]*(double)TotalEventNumber))*GenerateRadiationFactor(ParticleName,ParticleSourceEnergy)*TissueFactorMap[OrgansNameVector[gg]];
         DCCCte[OrgansNameVector[gg]] = DCCUnitFactor  /(VolumeNameMassMap[OrgansNameVector[gg]]*Fluence[OrgansNameVector[gg]]);
+        CountsCte[OrgansNameVector[gg]] = CountsUnitFactor;
 
         AF_Total[OrgansNameVector[gg]]  = ED_Total[OrgansNameVector[gg]]*AFCte[OrgansNameVector[gg]];
         SAF_Total[OrgansNameVector[gg]] = ED_Total[OrgansNameVector[gg]]*SAFCte[OrgansNameVector[gg]];
@@ -2339,6 +2359,7 @@ void G4TResultCalculation::RegionQuantitiesCalculation(){
         H_Total[OrgansNameVector[gg]]   = ED_Total[OrgansNameVector[gg]]*HCte[OrgansNameVector[gg]];
         E_Total[OrgansNameVector[gg]]   = ED_Total[OrgansNameVector[gg]]*ECte[OrgansNameVector[gg]];
         DCC_Total[OrgansNameVector[gg]] = ED_Total[OrgansNameVector[gg]]*DCCCte[OrgansNameVector[gg]];
+        Counts_Total[OrgansNameVector[gg]] = ED_Total[OrgansNameVector[gg]]*CountsCte[OrgansNameVector[gg]];
 
         //G4cout << " OrgansNameVector[gg] " << OrgansNameVector[gg]
         //       << " DCCUnitFactor " << DCCUnitFactor
@@ -2368,6 +2389,7 @@ void G4TResultCalculation::RegionQuantitiesCalculation(){
         ResultTable["H"  ][ParticleName][ParticleSourceEnergy][SourceRegionName][OrgansNameVector[gg]] = H_Total  [OrgansNameVector[gg]];
         ResultTable["E"  ][ParticleName][ParticleSourceEnergy][SourceRegionName][OrgansNameVector[gg]] = E_Total  [OrgansNameVector[gg]];
         ResultTable["DCC"][ParticleName][ParticleSourceEnergy][SourceRegionName][OrgansNameVector[gg]] = DCC_Total[OrgansNameVector[gg]];
+        ResultTable["Counts"][ParticleName][ParticleSourceEnergy][SourceRegionName][OrgansNameVector[gg]] = Counts_Total[OrgansNameVector[gg]];
 
         //ResultTable["EAm"][ParticleName][ParticleSourceEnergy][SourceRegionName]["All"] += E_Total[OrgansNameVector[gg]];
         //ResultTable["FluenceAm"][ParticleName][ParticleSourceEnergy][SourceRegionName]["All"] += Fluence[OrgansNameVector[gg]];
@@ -2401,6 +2423,7 @@ void G4TResultCalculation::RegionQuantitiesCalculation(){
         H_Mean[OrgansNameVector[gg]]   = H_Total[OrgansNameVector[gg]]/NOfValues[OrgansNameVector[gg]] ;
         E_Mean[OrgansNameVector[gg]]   = E_Total[OrgansNameVector[gg]]/NOfValues[OrgansNameVector[gg]] ;
         DCC_Mean[OrgansNameVector[gg]]   = DCC_Total[OrgansNameVector[gg]]/NOfValues[OrgansNameVector[gg]] ;
+        Counts_Mean[OrgansNameVector[gg]]   = Counts_Total[OrgansNameVector[gg]]/NOfValues[OrgansNameVector[gg]] ;
 
         AF_Var[OrgansNameVector[gg]]  = AFCte[OrgansNameVector[gg]] * AFCte[OrgansNameVector[gg]] * ED_Var[OrgansNameVector[gg]] ;
         SAF_Var[OrgansNameVector[gg]] = SAFCte[OrgansNameVector[gg]] * SAFCte[OrgansNameVector[gg]] * ED_Var[OrgansNameVector[gg]] ;
@@ -2408,7 +2431,8 @@ void G4TResultCalculation::RegionQuantitiesCalculation(){
         S_Var[OrgansNameVector[gg]]   = SCte[OrgansNameVector[gg]] * SCte[OrgansNameVector[gg]] * AD_Var[OrgansNameVector[gg]] ;
         H_Var[OrgansNameVector[gg]]   = HCte[OrgansNameVector[gg]] * HCte[OrgansNameVector[gg]] * AD_Var[OrgansNameVector[gg]] ;
         E_Var[OrgansNameVector[gg]]   = ECte[OrgansNameVector[gg]] * ECte[OrgansNameVector[gg]] * H_Var[OrgansNameVector[gg]] ;
-        DCC_Var[OrgansNameVector[gg]]   = DCCCte[OrgansNameVector[gg]] * DCCCte[OrgansNameVector[gg]] * H_Var[OrgansNameVector[gg]] ;
+        DCC_Var[OrgansNameVector[gg]]   = DCCCte[OrgansNameVector[gg]] * DCCCte[OrgansNameVector[gg]] * DCC_Var[OrgansNameVector[gg]] ;
+        Counts_Var[OrgansNameVector[gg]]   = CountsCte[OrgansNameVector[gg]] * CountsCte[OrgansNameVector[gg]] * Counts_Var[OrgansNameVector[gg]] ;
 
         AF_SDev[OrgansNameVector[gg]] = std::sqrt(std::abs(AF_Var[OrgansNameVector[gg]]));
         SAF_SDev[OrgansNameVector[gg]] = std::sqrt(std::abs(SAF_Var[OrgansNameVector[gg]]));
@@ -2417,6 +2441,7 @@ void G4TResultCalculation::RegionQuantitiesCalculation(){
         H_SDev[OrgansNameVector[gg]] = std::sqrt(std::abs(H_Var[OrgansNameVector[gg]]));
         E_SDev[OrgansNameVector[gg]] = std::sqrt(std::abs(E_Var[OrgansNameVector[gg]]));
         DCC_SDev[OrgansNameVector[gg]] = std::sqrt(std::abs(DCC_Var[OrgansNameVector[gg]]));
+        Counts_SDev[OrgansNameVector[gg]] = std::sqrt(std::abs(Counts_Var[OrgansNameVector[gg]]));
 
         StandardDeviation["AE"][ParticleName][ParticleSourceEnergy][SourceRegionName][OrgansNameVector[gg]] = ED_SDev[OrgansNameVector[gg]];
         StandardDeviation["AF"][ParticleName][ParticleSourceEnergy][SourceRegionName][OrgansNameVector[gg]] = AF_SDev[OrgansNameVector[gg]];
@@ -2426,6 +2451,7 @@ void G4TResultCalculation::RegionQuantitiesCalculation(){
         StandardDeviation["H"][ParticleName][ParticleSourceEnergy][SourceRegionName][OrgansNameVector[gg]] = H_SDev[OrgansNameVector[gg]];
         StandardDeviation["E"][ParticleName][ParticleSourceEnergy][SourceRegionName][OrgansNameVector[gg]] = E_SDev[OrgansNameVector[gg]];
         StandardDeviation["DCC"][ParticleName][ParticleSourceEnergy][SourceRegionName][OrgansNameVector[gg]] = DCC_SDev[OrgansNameVector[gg]];
+        StandardDeviation["Counts"][ParticleName][ParticleSourceEnergy][SourceRegionName][OrgansNameVector[gg]] = Counts_SDev[OrgansNameVector[gg]];
 
         TotalAEForRadiotracerRSD["AE"][ParticleName][ParticleSourceEnergy][SourceRegionName][OrgansNameVector[gg]] = ED_Total[OrgansNameVector[gg]];
 
@@ -2633,6 +2659,13 @@ void G4TResultCalculation::GenerateRegionResultFile(){
                 ChosenVariableMean = DCC_Mean;
                 ChosenVariablevariance = DCC_Var;
                 ChosenVariableStandardDeviation = DCC_SDev;
+            }
+            else if(QuantityNamesToScore[ikl] == "Counts"){
+                Quantity_NAME_UNIT = "Counts[(" + CountsUnit+ ")]";
+                ChosenVariableTotal = Counts_Total;
+                ChosenVariableMean = Counts_Mean;
+                ChosenVariablevariance = Counts_Var;
+                ChosenVariableStandardDeviation = Counts_SDev;
             }
             else{
                 
@@ -4074,6 +4107,384 @@ void G4TResultCalculation::GenerateRadiotracerQuantitiesByInterpolation(G4String
         }
     }
 }
+
+void G4TResultCalculation::GenerateCountsMatrixFile(){
+
+    std::cout << "\n\n                                                          ========= "<< __FUNCTION__ << " ========= "<< "\n" << std::endl;
+
+    std::string line , unit, Geometry,Quantity,SrcRegionName , organTargetname, ParticleName , RadTracerName, word;
+    double particleE , mass, volume, density, Val, StandardDeviation , err, CompuTime ;
+    bool isADataLines = false ;
+    unsigned long long int ival;
+    int detectorID;
+    int RayInc = 0;
+
+    std::string fileNameString = ResultDirectoryPath + "/ResultsData" ;
+    std::ifstream fileR(fileNameString.c_str());
+
+
+    int NumberOfDetectors=40; // Number of values for each directions
+    int NumberOfSourcePositions=30; // Number of source positions for each directions
+    int NumberOfDirections=11; // Number Of directions
+
+    // All this calculation is based on the nomenclature in ResultsData file source name, which is: Src-0003-0001, Direction 3 position 1
+    // Where directions 1 is the toward most bottom, 5 is the most top 1, for position 1 the most top and most top-1 directrions are 0 ,
+    // for 2 the most top-1 direction is 0 , for position 30 the most bottom and most bottom-1 directrions are 0 ,
+    // for 29 the most bottom-1 direction is 0 ,
+    // 30 source position, 30 detector, 5 directions, the same order Position=LineData(detector) is for direction 3
+    // In cartezian axes, order of detectors as are in the ResultsData file are ordered as follow 1, 2, 3 ... from top to bottom
+    int SourcePositionID; // from 1 to 30 Number of detectors (positions)
+    int ProjectionOrDirection;  // from 1 to 5 because of the projections (directions)
+
+    int IncreToFindDetectorID=0; // from 1 to 30 Number of values of each direction-position (in 30 detectors), the data lines in ResultsData
+
+    int MaxcCountsValue=0; // Number of values for each directions
+
+    // This is the relation to find which line in ResultsData file () is considered as a measurement value  Source 3 and Direction 2 (center),
+    // means the data line 2, (by 3-1)
+    //ProjectionSpecificDetectorRelation[1] = 2;
+    //ProjectionSpecificDetectorRelation[2] = 1;
+    //ProjectionSpecificDetectorRelation[3] = 0;
+    //ProjectionSpecificDetectorRelation[4] = -1;
+    //ProjectionSpecificDetectorRelation[5] = -2;
+
+    //std::map<G4double,G4double> ProjectionSpecificDetectorRelation;
+
+    std::vector<double> Xvalues;
+    std::vector<double> Yvalues;
+    std::vector<double> Zvalues;
+    std::vector<double> Thetavalues;
+    std::vector<double> Phivalues;
+    G4double currentX;
+    G4double currentY;
+    G4double currentZ;
+    G4double currentTheta;
+    G4double currentPhi;
+
+    std::vector<std::vector<double>> RaysData;
+    //
+    if(fileR.is_open()){
+
+        std::cout << "Reading Result file "<< fileNameString << " For Projection Matrix Generation ... " << std::endl ;
+
+        // to fill the map array DataTables[SrcRegionName][organTargetname][ParticleName][particleE] = Val;
+        while (getline(fileR, line)) {
+
+            //std::cout << " the line " << line << std::endl ;
+
+            std::istringstream LineString(line);
+            LineString >> word;
+
+            //std::cout << " the word " << word << std::endl ;
+            //G4cout << LineString.str().c_str()  << " " <<  G4endl ;
+
+            if(isADataLines == true){
+
+                //G4cout << " Data line ................." <<  G4endl ;
+
+                if (word == "*") {
+
+                    isADataLines = false;
+                    continue;
+                }
+                if (word == "#") {
+                    continue;
+                }
+                organTargetname = word;
+
+                LineString >> Val;
+                LineString >> StandardDeviation;
+                LineString >> err;
+                LineString >> ival; // for Num Steps
+                LineString >> mass;
+                LineString >> volume;
+                LineString >> density;
+
+                std::vector<double> SpecificRaysData;
+                SpecificRaysData.push_back(currentTheta);
+                SpecificRaysData.push_back(currentPhi);
+                SpecificRaysData.push_back(currentX);
+                SpecificRaysData.push_back(currentY);
+                SpecificRaysData.push_back(currentZ);
+                SpecificRaysData.push_back(Val);
+                RaysData.push_back(SpecificRaysData);
+                RayInc++;
+
+                //ProjeectionMatrix[currentTheta][currentZ] = Val;
+                ProjeectionMatrix[currentTheta][currentPhi][currentX][currentY][currentZ] = Val;
+
+
+                std::cout << " currentTheta " << currentTheta
+                          << " currentX " << currentX
+                          << " currentY " << currentY
+                          << " currentZ " << currentZ
+                          << " Val " << Val
+                          << std::endl;
+
+            }
+
+            if (word == "******" && isADataLines == false) {
+
+                LineString >> Quantity >> SrcRegionName >> ParticleName ;
+                //LineString >> Quantity >> unit >> SrcRegionName >> ParticleName ;
+                //QuantityUnit[Quantity] = unit;
+
+                G4cout << " -------------------------------------------------------------------------- " <<  G4endl ;
+
+                if(ParticleName == "RadioTracer"){
+                    continue;
+                }
+
+                IncreToFindDetectorID = 0;
+                MaxcCountsValue = 0;
+
+                LineString >> particleE
+                        >> Geometry >> word >> word >> word >> word
+                        >> word >> word >> word >> word >> word
+                        >> word >> word >> word >> word >> word
+                        >> word >> CompuTime ;
+
+                std::stringstream ss(SrcRegionName);
+                std::string token;
+
+                std::vector<std::string> tokens;
+
+                while (std::getline(ss, token, '_')) {
+                    tokens.push_back(token);
+                }
+
+                // tokens ستكون هكذا:
+                // [0] PosXYZ
+                // [1] -200
+                // [2] 0
+                // [3] 76.5306
+                // [4] Theta
+                // [5] 20.214
+
+                currentX = std::stod(tokens[1]);
+                currentY = std::stod(tokens[2]);
+                currentZ = std::stod(tokens[3]);
+                currentTheta = std::stod(tokens[5]);
+                if(tokens.size()>7){
+                    currentPhi = std::stod(tokens[7]);
+                }else{
+                    currentPhi = 0;
+                }
+
+                bool exist = false;
+                for(G4int aa = 0 ; aa < Xvalues.size(); aa++){
+                    if(Xvalues[aa] == currentX){
+                        exist = true;
+                    }
+                }
+                if(exist == false){
+                    Xvalues.push_back(currentX);
+                }
+
+                exist = false;
+                for(G4int aa = 0 ; aa < Yvalues.size(); aa++){
+                    if(Yvalues[aa] == currentY){
+                        exist = true;
+                    }
+                }
+                if(exist == false){
+                    Yvalues.push_back(currentY);
+                }
+
+                exist = false;
+                for(G4int aa = 0 ; aa < Zvalues.size(); aa++){
+                    if(Zvalues[aa] == currentZ){
+                        exist = true;
+                    }
+                }
+                if(exist == false){
+                    Zvalues.push_back(currentZ);
+                }
+
+                exist = false;
+                for(G4int aa = 0 ; aa < Thetavalues.size(); aa++){
+                    if(Thetavalues[aa] == currentTheta){
+                        exist = true;
+                    }
+                }
+                if(exist == false){
+                    Thetavalues.push_back(currentTheta);
+                }
+
+                exist = false;
+                for(G4int aa = 0 ; aa < Phivalues.size(); aa++){
+                    if(Phivalues[aa] == currentPhi){
+                        exist = true;
+                    }
+                }
+                if(exist == false){
+                    Phivalues.push_back(currentPhi);
+                }
+
+
+                //std::cout << " Geometry " << Geometry << " Quantity " << Quantity << " SrcRegionName " << SrcRegionName<< " ParticleName " << ParticleName  << std::endl ;
+                isADataLines = true;
+            }
+        }
+
+
+
+        fileR.close();
+
+        std::ostringstream filname ;
+        filname << ResultDirectoryPath << "/ProjectionsMatrix";
+        G4String fileNameString = filname.str().c_str();
+
+
+        // The results data should removed and generated befor generating this file
+        std::cout << "Projection Matrix File Generation " << fileNameString.c_str() << std::endl ;
+
+        int WW = 15;
+
+        //if(FILE* file1 = fopen(fileNameString.c_str(),"a")){
+        if(FILE* file1 = fopen(fileNameString.c_str(),"w")){
+            //if(fileR.is_open()){
+
+            std::stringstream table;
+
+            //G4cout << "\nWriting the generated Projection Matrix to file " << G4endl;
+
+            std::sort(Xvalues.begin(), Xvalues.end(), std::greater<double>());//Descending
+            std::sort(Yvalues.begin(), Yvalues.end(), std::greater<double>());//Descending
+            std::sort(Zvalues.begin(), Zvalues.end(), std::greater<double>());//Descending
+
+            //std::sort(Zvalues.begin(), Zvalues.end());//Ascending
+            std::sort(Thetavalues.begin(), Thetavalues.end(), std::greater<double>());
+            std::sort(Phivalues.begin(), Phivalues.end(), std::greater<double>());
+            //std::sort(Thetavalues.begin(), Thetavalues.end());
+
+
+            bool generateMatrix = false;
+
+            if(generateMatrix){
+                for(G4int aa = 0 ; aa < Thetavalues.size(); aa++){
+                    for(G4int bb = 0 ; bb < Zvalues.size(); bb++){
+
+                        //G4cout << ProjeectionMatrix[aa+1][bb+1]  << " " <<  G4endl ;
+
+                        table << std::setw(WW) << std::left << ProjeectionMatrix[Thetavalues[aa]][0][-20][0][Zvalues[bb]];
+
+                    }
+                    table << "\n";
+                }
+
+            }else{
+
+                G4String Delimiter = ", " ;
+
+                table << std::setw(WW) << std::left << std::setw(WW) << " RayID " << Delimiter << "RayTheta(Z-X)  " << Delimiter
+                      << std::setw(WW) << " RayPhi(X-Y)  " << Delimiter << std::setw(WW)
+                      << std::setw(WW) << " RayInitialPosX " << Delimiter << std::setw(WW)
+                      << std::setw(WW) << " RayInitialPosY " << Delimiter  << std::setw(WW)
+                      << " RayInitialPosZ " << Delimiter  << std::setw(WW)
+                      //<< " RayInitialPosX " << Delimiter << std::setw(WW) << " RayFinalPosY " << Delimiter  << std::setw(WW) << " RayFinalPosZ " << Delimiter << std::setw(WW)
+                      << " Counts(max:"<<  TotalEventNumber <<") \n";
+
+
+                // to generate data in file in ordering Z position from min to max based on Z values SourcesPositions map
+                int rayincre = 1;
+                for(G4int aa = 0 ; aa < RaysData.size(); aa++){
+
+
+                    //for(G4int tt = 0 ; tt < Thetavalues.size(); tt++){
+                    //    for(G4int pp = 0 ; pp < Phivalues.size(); pp++){
+                    //        for(G4int xx = 0 ; xx < Xvalues.size(); xx++){
+                    //            for(G4int yy = 0 ; yy < Yvalues.size(); yy++){
+                    //                for(G4int zz = 0 ; zz < Zvalues.size(); zz++){
+
+                    //                    //table << std::setw(WW) << std::left <<  << " " << Delimiter
+                    //                    //      << std::setw(WW) << std::left << Thetavalues[tt] << " " << Delimiter
+                    //                    //      << std::setw(WW) << std::left << Phivalues[pp] << " " << Delimiter
+                    //                    //      << std::setw(WW) << std::left << Xvalues[xx] << " " << Delimiter
+                    //                    //      << std::setw(WW) << std::left << Yvalues[yy] << " " << Delimiter
+                    //                    //      << std::setw(WW) << std::left << Zvalues[zz] << " " << Delimiter
+                    //                    //      << std::setw(WW) << std::left << ProjeectionMatrix[Thetavalues[tt]][Phivalues[pp]][Xvalues[xx]][Yvalues[yy]][Zvalues[zz]]
+                    //                    //      << "\n";
+                    //                    //rayincre++;
+
+                    //                    if(Thetavalues[tt] == RaysData[aa][0]){
+                    //                        if(Phivalues[pp] == RaysData[aa][1]){
+                    //                            if(Xvalues[xx] == RaysData[aa][2]){
+                    //                                if(Yvalues[yy] == RaysData[aa][3]){
+                    //                                    if(Zvalues[zz] == RaysData[aa][4]){
+
+
+                                                            table << std::setw(WW) << std::left << rayincre << Delimiter ;
+
+                                                            for(G4int bb = 0 ; bb < RaysData[aa].size(); bb++){
+                                                                //G4cout << ProjeectionMatrix[aa+1][bb+1]  << " " <<  G4endl ;
+                                                                if(bb == (RaysData[aa].size()-1)){
+                                                                    table << std::setw(WW) << std::left << RaysData[aa][bb];
+
+                                                                }else{
+                                                                    table << std::setw(WW) << std::left << RaysData[aa][bb] << Delimiter  ;
+                                                                }
+                                                            }
+                                                            table << "\n";
+                                                            rayincre++;
+
+
+
+                    //                                    }
+                    //                                }
+                    //                            }
+                    //                        }
+                    //                    }
+
+
+
+                    //                }
+                    //            }
+                    //        }
+                    //    }
+                    //}
+
+
+
+
+                }
+
+                // to generate data in file but without ordering Z position from min to max
+                //for(G4int aa = 0 ; aa < RaysData.size(); aa++){
+                //    table << std::setw(WW) << std::left << aa << Delimiter ;
+                //    for(G4int bb = 0 ; bb < 8; bb++){
+                //        //G4cout << ProjeectionMatrix[aa+1][bb+1]  << " " <<  G4endl ;
+                //        if(bb == 7){
+                //            table << std::setw(WW) << std::left << RaysData[aa][bb];
+
+                //        }else{
+                //            table << std::setw(WW) << std::left << RaysData[aa][bb] << Delimiter  ;
+                //        }
+                //    }
+                //    table << "\n";
+                //}
+            }
+
+            std::fprintf(file1,"%s",table.str().c_str());
+
+            //if(V)G4cout << "\n" << G4endl;
+
+            std::fclose(file1);
+
+            //if(V)G4cout << "The CN " << VoxelCNForMinRel_SDv << ", have Min Rel SDev " << (double)VoxMinRel_SDv << G4endl;
+            //if(V)G4cout << "The CN " << VoxelCNForMaxRel_SDv << ", have Max Rel SDev " << (double)VoxMaxRel_SDv << G4endl;
+        }
+
+
+    }
+    else{
+
+        std::cout << "cannot open the file " << fileNameString.c_str() << std::endl ;
+    }
+
+
+}
+
 
 double G4TResultCalculation::GenerateRadiationFactor(G4String ParticleName, double Energy){ // enerrgy in MeV
 

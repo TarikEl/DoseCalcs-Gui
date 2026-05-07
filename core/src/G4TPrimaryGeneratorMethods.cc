@@ -517,7 +517,12 @@ void G4TPrimaryGeneratorMethods::GenerateEventsPosition(){
 
         //// position in point
 
-        X = SourcePosition.getX(), Y = SourcePosition.getY(), Z = SourcePosition.getZ();
+        //X = SourcePosition.getX(), Y = SourcePosition.getY(), Z = SourcePosition.getZ();
+
+        X = NewRankSourceRegionsBoxDimValues[DataID].getX();
+        Y = NewRankSourceRegionsBoxDimValues[DataID].getY();
+        Z = NewRankSourceRegionsBoxDimValues[DataID].getZ();
+
         //return G4ThreeVector(SourcePosition.getX(), SourcePosition.getY(), SourcePosition.getZ());
     }
     else if(PositionTypeNum == 7){

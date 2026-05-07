@@ -99,6 +99,8 @@ extern std::string getFileExt(const std::string& s);
 
 G4TVolumeConstruction::G4TVolumeConstruction()
 {
+    //G4cout<< " @@@@@@@@@@@@@@@@@@@@@@@@@@  G4TVolumeConstruction  @@@@@@@@@@@@@@@@@@@@@@@@@@@"<< G4endl;
+
 #if VERBOSE_USE
     //G4cout<< " @@@@@@@@@@@@@@@@@@@@@@@@@@  G4TVolumeConstruction  @@@@@@@@@@@@@@@@@@@@@@@@@@@"<< G4endl;
 #endif
@@ -106,15 +108,19 @@ G4TVolumeConstruction::G4TVolumeConstruction()
     //GenerateICRPMaterialsCommands();
 
 
-
     //CreateICRPSAFsReferenceDataFile();
 
+
+    PointSourcePositionTowardDetector = G4ThreeVector();
+    ThetaDirectionValueTowardDetector = 0;
+    PhiDirectionValueTowardDetector = 0;
 
     InternalSourcePosition = G4ThreeVector();
 
     DicomCTName = "CTDATA.txt";
     DicomPETName = "PETDATA.txt";
 
+    DetectFor = "ForLam"; // ForLAM, ForCNN
     GeometryFileType = "Construct";
     GeometrySymbol = "phantom0";
     ThreadsNumber = 0;
@@ -186,7 +192,6 @@ G4VPhysicalVolume* G4TVolumeConstruction::Construct()
     //ConstructICRPPhantomVolume(); return 0;
 
 
-
     if(GeometryFileType == "GDML"){
 #if GDML_USE
 #else
@@ -198,6 +203,10 @@ G4VPhysicalVolume* G4TVolumeConstruction::Construct()
         CreateVolumesData();
     }
     else if(GeometryFileType == "GDML" || GeometryFileType == "TEXT" || GeometryFileType == "CPP" || GeometryFileType == "Construct" || GeometryFileType == "STL" || GeometryFileType == "MyGeometry" ){
+
+        //std::cout << "\n\n\n\n\n\n\n\n 1---------------------- PointSourcePositionTowardDetector " << PointSourcePositionTowardDetector << "\n"
+        //    << " ThetaDirectionValueTowardDetector "<< ThetaDirectionValueTowardDetector <<  std::endl;
+
         ConstructVolumes();
 
         CreateVolumesData();
@@ -237,6 +246,8 @@ G4VPhysicalVolume* G4TVolumeConstruction::Construct()
 
 void G4TVolumeConstruction::ConstructVolumes(){
 
+
+
     if(GeometryFileType == "GDML"){
 #if GDML_USE
         G4GDMLParser parser;
@@ -264,9 +275,14 @@ void G4TVolumeConstruction::ConstructVolumes(){
         WorldPhysicalVolume = CGF->ConstructPhysicalVolume();
 
     }
-    else if(GeometryFileType == "Construct"){
+    else if(GeometryFileType == "Construct"){ // because we use the source position and direction theta
 
     }
+
+    WorldPhysicalVolume->SetName("World");
+    WorldPhysicalVolume->GetLogicalVolume()->SetName("World");
+
+
     //else if(GeometryFileType == "NR"){
     //    G4TNuclearReactorGeometry* NucRea = new G4TNuclearReactorGeometry();
     //    WorldPhysicalVolume = NucRea->ConstructNuclearReactor();
@@ -589,6 +605,7 @@ void G4TVolumeConstruction::TestAndShowUserInputs(){
     G4cout<<"\n\n >> Geometry Type: " << GeometryFileType <<G4endl;
     G4cout<<" >> Geometry File: " << GeometryPath <<G4endl;
     G4cout<<" >> SourcePosition: " << SourcePosition <<G4endl;
+    G4cout<<" >> PointSourcePositionTowardDetector: " << PointSourcePositionTowardDetector <<G4endl;
     G4cout<<" >> WorldHalfSize: " << WorldHalfSize <<G4endl;
     G4cout<<" >> WorldMaterialName: " << WorldMaterialName << G4endl;
     G4cout<<" >> Use Material Name As Region Name: " << MaterialNameAsRegionName <<"\n\n"<<G4endl;
@@ -1397,7 +1414,7 @@ void G4TVolumeConstruction::placeVolume(G4String n, G4String MotherVolumeName, G
 
     G4String PhysicalVolumeName = n ;
     G4String FileName = getFileNameFromPath(n) ;
-    G4String FileExtension = getFileExt(n);;
+    G4String FileExtension = getFileExt(n);
 
 //    G4cout << "\n\n --------------- " << __FUNCTION__ << G4endl;
 
@@ -4054,7 +4071,17 @@ void G4TVolumeConstruction::setRankDataForMPIMode(){
                     std::vector <unsigned int> VoxelsIDsOfSourceRegion ;
                     NewRankSourceParticlesNamesValues.push_back(SourceParticlesNamesValues[a1]);
                     NewRankSourceRegionsNamesValues.push_back(SourceRegionsNamesValues[b1]);
-                    if(SourceType == "Volume"){
+                    if(SourceType == "Point"){
+                        NewRankSourceRegionsBoxDimValues.push_back(SourceRegionsBoxDimValues[b1]);
+                        //  NewRankSourceRegionsPosValues.push_back(getRegionAbsolutePosition(SourceRegionsNamesValues[b1]));
+                        //G4Navigator* aNavigator = new G4Navigator();
+                        //aNavigator->SetWorldVolume(WorldPhysicalVolume);
+                        //NavigatorForVolumesInitialPosition.push_back(aNavigator);
+                        //G4cout <<" \n\n\n\n\n\n\n\n\n\n BoxDimValues " << SourceRegionsBoxDimValues[b1]
+                        //        << " NewRankSourceRegionsPosValues " << getRegionAbsolutePosition(SourceRegionsNamesValues[b1])
+                        //        << " SourceRegionsNamesValues " << SourceRegionsNamesValues[b1] << G4endl;
+
+                    }else if(SourceType == "Volume"){
                         NewRankSourceRegionsBoxDimValues.push_back(SourceRegionsBoxDimValues[b1]);
                         NewRankSourceRegionsPosValues.push_back(getRegionAbsolutePosition(SourceRegionsNamesValues[b1]));
                         G4Navigator* aNavigator = new G4Navigator();
@@ -4311,7 +4338,17 @@ void G4TVolumeConstruction::setRankDataForMPIMode(){
         for( G4int d = 0; d < nn ; d++ ){
             NewRankSourceParticlesNamesValues.push_back(NewRankSourceParticlesNamesValues[0]);
             NewRankSourceRegionsNamesValues.push_back(NewRankSourceRegionsNamesValues[0]);
-            if(SourceType == "Volume"){
+            if(SourceType == "Point"){
+                NewRankSourceRegionsBoxDimValues.push_back(SourceRegionsBoxDimValues[0]);
+                //NewRankSourceRegionsPosValues.push_back(getRegionAbsolutePosition(SourceRegionsNamesValues[0]));
+                //G4Navigator* aNavigator = new G4Navigator();
+                //aNavigator->SetWorldVolume(WorldPhysicalVolume);
+                //NavigatorForVolumesInitialPosition.push_back(aNavigator);
+                //G4cout <<" \n\n\n\n\n\n\n\n\n\n BoxDimValues " << SourceRegionsBoxDimValues[b1]
+                //        << " NewRankSourceRegionsPosValues " << getRegionAbsolutePosition(SourceRegionsNamesValues[b1])
+                //        << " SourceRegionsNamesValues " << SourceRegionsNamesValues[b1] << G4endl;
+
+            }else if(SourceType == "Volume"){
                 NewRankSourceRegionsBoxDimValues.push_back(NewRankSourceRegionsBoxDimValues[0]);
                 NewRankSourceRegionsPosValues.push_back(NewRankSourceRegionsPosValues[0]);
                 G4Navigator* aNavigator = new G4Navigator();
@@ -4355,7 +4392,17 @@ void G4TVolumeConstruction::setRankDataForMPIMode(){
         for( G4int d = 0; d < nn ; d++ ){
             NewRankSourceParticlesNamesValues.push_back(NewRankSourceParticlesNamesValues[0]);
             NewRankSourceRegionsNamesValues.push_back(NewRankSourceRegionsNamesValues[0]);
-            if(SourceType == "Volume"){
+            if(SourceType == "Point"){
+                NewRankSourceRegionsBoxDimValues.push_back(NewRankSourceRegionsBoxDimValues[0]);
+                //NewRankSourceRegionsPosValues.push_back(NewRankSourceRegionsPosValues[0]);
+                //G4Navigator* aNavigator = new G4Navigator();
+                //aNavigator->SetWorldVolume(WorldPhysicalVolume);
+                //NavigatorForVolumesInitialPosition.push_back(aNavigator);
+                //G4cout <<" \n\n\n\n\n\n\n\n\n\n BoxDimValues " << SourceRegionsBoxDimValues[b1]
+                //        << " NewRankSourceRegionsPosValues " << getRegionAbsolutePosition(SourceRegionsNamesValues[b1])
+                //        << " SourceRegionsNamesValues " << SourceRegionsNamesValues[b1] << G4endl;
+
+            }else if(SourceType == "Volume"){
                 NewRankSourceRegionsBoxDimValues.push_back(NewRankSourceRegionsBoxDimValues[0]);
                 NewRankSourceRegionsPosValues.push_back(NewRankSourceRegionsPosValues[0]);
                 G4Navigator* aNavigator = new G4Navigator();

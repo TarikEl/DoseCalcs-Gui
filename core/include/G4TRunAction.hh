@@ -105,6 +105,12 @@ public:
     void CountOpticalInteractions(G4String,G4String);
     void ShowOpticalPhotonInteractionData();
 
+    //For detector ;
+    void AddEventsDataInDetectors(int,G4String,G4double);
+    void calculateDetectorED2AndNOValues();
+    void CalculateCountsInDetectors();
+
+
 private:
 
     G4String GenerateCrossSectionGraph, ExecutionMode, OneOrMultiSimulations;
@@ -119,6 +125,7 @@ private:
     std::map<G4String,G4double> OrganNameDensityMap;
 
 #ifdef G4MULTITHREADED
+
     G4ThreadLocal static std::ofstream CriticalityFile;
 
     G4ThreadLocal static unsigned long long int*    FluxParticlePosX   ;
@@ -136,6 +143,13 @@ private:
     G4ThreadLocal static std::map<G4int,std::map<G4String,G4double>> Fluence ;
     G4ThreadLocal static std::map<G4int,std::map<G4String,G4double>> ED2_Total ;
     G4ThreadLocal static std::map<G4int,std::map<G4String,G4int>> ParticleProduction;
+
+    G4ThreadLocal static std::map<G4String,int> Counts_Det ;
+    G4ThreadLocal static std::map<G4int,std::map<G4String,int>> Counts_DataID_Det ;
+    G4ThreadLocal static std::map<G4int,std::map<G4int,std::map<G4String,G4double>>> ED_Total_Det ;
+    G4ThreadLocal static std::map<G4int,std::map<G4int,std::map<G4String,G4double>>> ED2_Total_Det ;
+    G4ThreadLocal static std::map<G4int,std::map<G4int,std::map<G4String,unsigned long long int>>> NOfValues_Det ;
+
 
     //G4ThreadLocal static G4double Keffective;
     //G4ThreadLocal static G4int NumberOfFissionNeutrons;
@@ -170,6 +184,13 @@ private:
     std::map<G4int,std::map<unsigned int,G4double>>   VoxelsFluence ;
     std::map<G4int,std::map<unsigned int,G4double>>   VoxelsED2_Total ;
     std::map<G4int,std::map<unsigned int,unsigned long long int>>     VoxelsNOfValues ;
+
+
+    std::map<G4String,int> Counts_Det ;
+    std::map<G4int,std::map<G4String,int>> Counts_DataID_Det ;
+    std::map<G4int,std::map<G4int,std::map<G4String,G4double>>> ED_Total_Det ;
+    std::map<G4int,std::map<G4int,std::map<G4String,G4double>>> ED2_Total_Det ;
+    std::map<G4int,std::map<G4int,std::map<G4String,unsigned long long int>>> NOfValues_Det ;
 
     std::map<G4int,std::map<G4String,unsigned long long int>> NOfValues;
     std::map<G4int,std::map<G4String,G4double>> ED_Total ;

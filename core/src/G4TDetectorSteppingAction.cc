@@ -49,9 +49,46 @@ G4TDetectorSteppingAction::~G4TDetectorSteppingAction() {}
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void G4TDetectorSteppingAction::UserSteppingAction(const G4Step* step)
 {
-    static G4ParticleDefinition* opticalphoton = G4OpticalPhoton::OpticalPhotonDefinition();
 
-    const G4ParticleDefinition* particleDef = step->GetTrack()->GetDynamicParticle()->GetParticleDefinition();
+    //G4cout << " UserSteppingAction " << G4endl;
+
+    auto edep = step->GetTotalEnergyDeposit();
+
+    //std::cout <<" edep:" << edep << " @@@@@@@@@@@@@@@@@@@@@@@" << std::endl;
+
+    if (edep == 0.) return;
+
+    auto reg = step->GetPreStepPoint()->GetTouchable()->GetVolume()->GetLogicalVolume()->GetName();
+    RunAction->AddEventsDataInDetectors(G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID(), reg, edep);
+
+
+    // For Lam, eliminate all other detectors except one with a known name
+    ////if(DetName == "Det1"){
+    ////    EventAction->setDetectorNameMap(DetName, step->GetTotalEnergyDeposit());
+    ////}
+
+    //G4cout << " DetName " << DetName << " EDep " << step->GetTotalEnergyDeposit() << G4endl;
+
+    //EventAction->setDetectorNameMap(DetName, step->GetTotalEnergyDeposit());
+
+    //G4cout << " setDetectorNameMap has been called " << DetName << G4endl;
+
+
+    //static G4ParticleDefinition* opticalphoton = G4OpticalPhoton::OpticalPhotonDefinition();
+
+    //const G4ParticleDefinition* particleDef = step->GetTrack()->GetDynamicParticle()->GetParticleDefinition();
+
+    //const G4Event* event = G4RunManager::GetRunManager()->GetCurrentEvent();
+
+    //void setDetectorNameMap(G4String SS, double EnerDepo) { decetorEnerDepoMap[SS] += EnerDepo; }
+
+
+    //G4int eventID = event->GetEventID();
+    //G4RunManager::GetRunManager()->GetCurrentEvent()->setEnerDepo(step->GetTotalEnergyDeposit());
+    //G4RunManager::GetRunManager()->GetCurrentEvent()->setDetectorNameMap(step->GetPreStepPoint()->GetTouchable()->GetVolume()->GetLogicalVolume()->GetName());
+
+    //setEnerDepo(G4double EE) { EnerDepo = EE; }
+    //void setDetectorNameMap(G4String SS) { decetorEnerDepoMap[SS] += EnerDepo; }
 
     //G4cout << " EventID " << G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID()
     //       << " Track ID "<< step->GetTrack()->GetTrackID()
@@ -62,7 +99,7 @@ void G4TDetectorSteppingAction::UserSteppingAction(const G4Step* step)
     //       //<< " RegionPost " << step->GetPostStepPoint()->GetTouchable()->GetVolume()->GetLogicalVolume()->GetName()
     //       << G4endl;
 
-    RunAction->CountOpticalInteractions(step->GetPreStepPoint()->GetTouchable()->GetVolume()->GetLogicalVolume()->GetName()+"_"+particleDef->GetParticleName(), step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName());
+    //RunAction->CountOpticalInteractions(step->GetPreStepPoint()->GetTouchable()->GetVolume()->GetLogicalVolume()->GetName()+"_"+particleDef->GetParticleName(), step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName());
 
     //if(particleDef == opticalphoton)
     //{

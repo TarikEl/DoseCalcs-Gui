@@ -430,7 +430,15 @@ void G4TDirectPrimaryGeneratorAction::GenerateEventsPosition(){
 
     }
     else if(PositionTypeNum == 6){
-        X = SourcePosition.getX(), Y = SourcePosition.getY(), Z = SourcePosition.getZ();
+        //X = SourcePosition.getX(), Y = SourcePosition.getY(), Z = SourcePosition.getZ();
+
+        // it is used here as point vector and not box dimension
+        X = NewRankSourceRegionsBoxDimValues[DataID].getX();
+        Y = NewRankSourceRegionsBoxDimValues[DataID].getY();
+        Z = NewRankSourceRegionsBoxDimValues[DataID].getZ();
+
+        //std::cout << "DataID "<< DataID << " SourceType=" << SourceType << " NewRankSourceRegionsBoxDimValues[DataID]=" << NewRankSourceRegionsBoxDimValues[DataID] << " NewRankSourceRegionsNamesValues[DataID]=" << NewRankSourceRegionsNamesValues[DataID] << " Generated Pos: " << G4ThreeVector(X,Y,Z) << std::endl;
+
         //return G4ThreeVector(SourcePosition.getX(), SourcePosition.getY(), SourcePosition.getZ());
     }
     else if(PositionTypeNum == 7){

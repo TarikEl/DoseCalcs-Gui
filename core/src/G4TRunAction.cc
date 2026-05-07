@@ -66,6 +66,7 @@
 
 extern G4String GeometryFileType;
 extern G4String GenerateVoxelsResuls;
+extern G4String DetectFor;
 
 extern  G4String* CopyNumberRegionNameMap;
 extern  G4float* CopyNumberXPos;
@@ -91,6 +92,10 @@ extern std::vector<G4String> NewRankSourceParticlesNamesValues;
 extern std::vector<G4String> NewRankSourceRegionsNamesValues;
 extern std::vector<G4double> NewRankSourceEnergiesValues;
 extern std::vector<G4String> NewRankSourceMomDirsValues;
+extern std::vector<G4double> NewRankSourceMomDirsDirectedThetaValues;
+extern std::vector<G4double> NewRankSourceMomDirsDirectedPhiValues;
+extern std::vector<G4ThreeVector> NewRankSourceRegionsBoxDimValues; // for Point source is considered as position of point
+
 
 
 extern std::map<unsigned int,G4double* >      EnergyListForCriticality;
@@ -121,6 +126,12 @@ G4ThreadLocal std::map<G4int,std::map<G4String,unsigned long long int>> G4TRunAc
 G4ThreadLocal std::map<G4int,std::map<G4String,G4double>> G4TRunAction::ED_Total ;
 G4ThreadLocal std::map<G4int,std::map<G4String,G4double>> G4TRunAction::Fluence ;
 G4ThreadLocal std::map<G4int,std::map<G4String,G4double>> G4TRunAction::ED2_Total ;
+G4ThreadLocal std::map<G4String,int> G4TRunAction::Counts_Det ;
+G4ThreadLocal std::map<G4int,std::map<G4String,int>> G4TRunAction::Counts_DataID_Det ;
+G4ThreadLocal std::map<G4int,std::map<G4int,std::map<G4String,G4double>>> G4TRunAction::ED_Total_Det ;
+G4ThreadLocal std::map<G4int,std::map<G4int,std::map<G4String,G4double>>> G4TRunAction::ED2_Total_Det;
+G4ThreadLocal std::map<G4int,std::map<G4int,std::map<G4String,unsigned long long int>>> G4TRunAction::NOfValues_Det ;
+
 G4ThreadLocal G4int G4TRunAction::rank, G4TRunAction::thread, G4TRunAction::DataID, G4TRunAction::CurrentBatch, G4TRunAction::NumberOfRanksThreads, G4TRunAction::TotalEventNumber;
 //G4ThreadLocal G4double G4TRunAction::Keffective;
 //G4ThreadLocal G4int G4TRunAction::NumberOfFissionNeutrons, G4TRunAction::NumberOfFission, G4TRunAction::NumberOfCapture,
@@ -595,7 +606,6 @@ void G4TRunAction::EndOfRunAction(const G4Run* aRun)
     useTime(1); // "0" for setting the begining time befor a loop, "1" it get the end time and calculate consumed time by a loop and show the difference, the loop should not have a setting or getting time inside it
 
 
-
     if(UseGeneratedData == "read"){
         const G4TReadPrimaryGeneratorAction* primaryGeneratorAction = static_cast<const G4TReadPrimaryGeneratorAction*> (G4RunManager::GetRunManager()->GetUserPrimaryGeneratorAction());
         EnergyEmittedPerThread = primaryGeneratorAction->getEmittedEnergy();
@@ -642,21 +652,28 @@ void G4TRunAction::EndOfRunAction(const G4Run* aRun)
     }
 #endif
 
-    ShowOpticalPhotonInteractionData();
+    //ShowOpticalPhotonInteractionData();
 
+    if (SimulationIntExtNeutDet == "Detector"){
+        //G4cout << " \n  -- SimulationIntExtNeutDet == Detector" << G4endl;
+
+        if(DetectFor == "ForCNN"){
+
+        }else{
+            calculateDetectorED2AndNOValues();
+            CalculateCountsInDetectors();
+        }
+    }
 
     // because MyGeometry can be not voxelized or stylized and voxelized in the same time which is not one
     // of the voxelized geometries VoxIDs, VOXEL, and DICOM.
     //if(GeometryFileType == "VoxIDs" || GeometryFileType == "VOXEL" || GeometryFileType == "DICOM"){
-        if(GenerateVoxelsResuls == "yes"){
-            CreateThreadVoxelsResultsFiles();
-        }else{
-            CreateThreadRegionResultFile();
-        }
+    if(GenerateVoxelsResuls == "yes"){
+        CreateThreadVoxelsResultsFiles();
+    }else{
+        CreateThreadRegionResultFile();
+    }
 
-    //}else{
-    //    CreateThreadRegionResultFile();
-    //}
 
 
 
@@ -742,25 +759,54 @@ void G4TRunAction::CreateThreadRegionResultFile(){
 
     std::ostringstream fname;
 
-    fname << ResultDirectoryPath <<"/AE@for@Rank@"<<rank<<"@Thread@"<<thread << "@" << GeometrySymbol << "@" << NewRankSourceParticlesNamesValues[DataID] << "@" << NewRankSourceRegionsNamesValues[DataID] << "@" << ParticleSourceEnergy ;
-    //fname << ResultDirectoryPath <<"/AE@for@Rank@"<<rank<<"@Thread@"<<thread << "@" << NewRankSourceParticlesNamesValues[DataID] << "@" << NewRankSourceRegionsNamesValues[DataID] << "@" << ParticleSourceEnergy ;
+
+    if(SimulationIntExtNeutDet == "Detector"){
+        fname << ResultDirectoryPath <<"/AE@for@Rank@"<<rank<<"@Thread@"<<thread << "@" << GeometrySymbol << "@" << NewRankSourceParticlesNamesValues[DataID]
+            << "@" << "PosXYZ_" << NewRankSourceRegionsBoxDimValues[DataID].getX()<<
+            "_"<< NewRankSourceRegionsBoxDimValues[DataID].getY() <<
+            "_"<< NewRankSourceRegionsBoxDimValues[DataID].getZ()
+              <<"_Theta_"<< (180*NewRankSourceMomDirsDirectedThetaValues[DataID])/CLHEP::pi
+              <<"_Phi_"<< (180*NewRankSourceMomDirsDirectedPhiValues[DataID])/CLHEP::pi
+              << "@" << ParticleSourceEnergy ;
+    } else{
+
+        fname << ResultDirectoryPath <<"/AE@for@Rank@"<<rank<<"@Thread@"<<thread << "@" << GeometrySymbol << "@" << NewRankSourceParticlesNamesValues[DataID] << "@" << NewRankSourceRegionsNamesValues[DataID] << "@" << ParticleSourceEnergy ;
+        //fname << ResultDirectoryPath <<"/AE@for@Rank@"<<rank<<"@Thread@"<<thread << "@" << NewRankSourceParticlesNamesValues[DataID] << "@" << NewRankSourceRegionsNamesValues[DataID] << "@" << ParticleSourceEnergy ;
+    }
+
     std::ofstream file(fname.str().c_str(), std::ios_base::binary);
 
     std::cout << " Creating region result file of worker thread or rank " << fname.str().c_str()<< std::endl;
 
     G4int SZ = 30;
 
+
     //file << "RegionName" << "\n" ;
-    file << std::setw(SZ) << std::left << "RegionName" << " "
-    << std::setw(15) << std::left << "AE(MeV)" << " "
-    << std::setw(15) << std::left << "AE^2(MeV^2)" << " "
+    file << std::setw(SZ) << std::left << "RegionName" << " ";
+    if(SimulationIntExtNeutDet == "Detector"){
+        file << std::setw(15) << std::left << "Counts" << " ";
+    }else{
+        file << std::setw(15) << std::left << "AE(MeV)" << " ";
+    }
+    file << std::setw(15) << std::left << "AE^2(MeV^2)" << " "
     << std::setw(15) << std::left << "Steps Number" << " "
     << std::setw(20) << std::left << "Mass(kg)"<< " "
     << std::setw(20) << std::left << "Volume(cm3)"<< " "
     << std::setw(20) << std::left << "Density(g/cm3)" << " "
     << std::setw(20) << std::left << "Fluence(1/cm2)" << "\n";
 
+    //std::cout << " \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"<< std::endl;
+
     for(G4int jk = 0 ; jk < (G4int)OrgansNameVector.size() ; jk++){ // each line for an organ name
+
+
+        // just for Detector calculation
+        if(SimulationIntExtNeutDet == "Detector"){
+            if(!OrgansNameVector[jk].contains("Detector")){
+                continue;
+            }
+        }
+
         file << std::setw(SZ) << std::left << OrgansNameVector[jk] << " "
              << std::setw(15) << std::left << ED_Total[DataID][OrgansNameVector[jk]] << " "
              << std::setw(15) << std::left << ED2_Total[DataID][OrgansNameVector[jk]] << " "
@@ -1039,6 +1085,115 @@ void G4TRunAction::pushVolumeHitsNumber(std::map<G4String, unsigned int> StepsMa
         NOfValues[DataID][it->first] += it->second ;
     }
 }
+
+
+
+
+// For detector ; save the map of each events
+// DataID , eventID , DetectorName , Energy deposited
+void G4TRunAction::AddEventsDataInDetectors(int EvenID, // make sure that ID does not repeat in EventAction, if so, correct it by just increment it here
+                                            G4String DetName,
+                                            G4double EneDep
+    ){
+
+    //G4cout << " EvenID " << EvenID << " DetName " << DetName << " EneDep " << EneDep << G4endl;
+
+    //G4cout << " AddEventsDataInDetectors 1" << G4endl;
+
+    ED_Total_Det[DataID][EvenID][DetName] = EneDep ;
+    ED2_Total_Det[DataID][EvenID][DetName] = EneDep*EneDep ;
+    NOfValues_Det[DataID][EvenID][DetName]++;
+
+    //G4cout << " AddEventsDataInDetectors 2" << G4endl;
+
+}
+
+
+// To calculate the ED2 and NOfvalues since they are related to the volume and not to specific event, not like ED which in our case it
+// is related to each event because the count for each event is calculated according to ED value
+void G4TRunAction::calculateDetectorED2AndNOValues(){
+
+    //G4cout << " calculateDetectorED2AndNOValues 1" << G4endl;
+
+    //int evtInc =0;
+    for ( auto it = ED2_Total_Det[DataID].begin(); it != ED2_Total_Det[DataID].end(); ++it  ){
+        for ( auto it2 = it->second.begin(); it2 != it->second.end(); ++it2  ){
+            //G4cout << it->first  << " " << it->second <<  G4endl ;
+            ED2_Total[DataID][it2->first] += it2->second;
+            NOfValues[DataID][it2->first] += NOfValues_Det[DataID][it->first][it2->first];
+        }
+    }
+
+    //G4cout << " calculateDetectorED2AndNOValues 2" << G4endl;
+
+}
+// Here to unify the nomenclature in syntax, ED_Total for detector case means the counts
+void G4TRunAction::CalculateCountsInDetectors(){
+
+    //G4cout << " CalculateCountsInDetectors 1" << G4endl;
+
+    //std::map<G4int,std::map<G4String,int>> Counts_DataID_Det ;
+
+    for ( auto it = ED_Total_Det[DataID].begin(); it != ED_Total_Det[DataID].end(); ++it  ){
+
+        G4double MaxEnergyDepositedValue = 0;//50*keV;
+        G4String DetectorOfMaxEneDeposited = "UnknownDet";
+
+        for ( auto it2 = it->second.begin(); it2 != it->second.end(); ++it2  ){
+            //G4cout << it->first  << " " << it->second <<  G4endl ;
+
+            //G4cout << " Event " << it->first << " Detector " << it2->first << " AE " << it2->second << G4endl;
+
+            // To test if an event is accounted in a detector, then, it will be eliminated from all other detectors
+
+            if(it2->second == MaxEnergyDepositedValue || it2->second > MaxEnergyDepositedValue){
+                // Make some testing tasks to see if this lower energy can be neglegeable and take the high energy deposited
+                //if(MaxEnergyDepositedValue){
+                //  ...
+                //}
+                MaxEnergyDepositedValue = it2->second;
+                DetectorOfMaxEneDeposited = it2->first;
+                //G4cout << " MaxEnergyDepositedValue " << MaxEnergyDepositedValue << " DetectorOfMaxEneDeposited " << DetectorOfMaxEneDeposited << G4endl;
+            }
+        }
+
+        // Make some manipulation to check if it is a real count or fake
+        //if(MaxEnergyDepositedValue){
+        //  ...
+        //}
+
+        //G4cout << " MaxEnergyDepositedValue " << MaxEnergyDepositedValue << " (ParticleSourceEnergy/100) " << (ParticleSourceEnergy/100) << G4endl;
+
+        //if(MaxEnergyDepositedValue == 0. || MaxEnergyDepositedValue < (ParticleSourceEnergy/100)){
+        if(MaxEnergyDepositedValue == 0.){
+        }else{
+            ED_Total[DataID][DetectorOfMaxEneDeposited] += 1; // AE in case of detector is the count
+        }
+    }
+    //G4cout << " CalculateCountsInDetectors 2" << G4endl;
+
+    //// Accumulate detectors counts between the threads
+    //// Counts_Det Total Dete_NumbCounts all
+    //for ( auto it = Counts_DataID_Det.begin(); it != Counts_DataID_Det.end(); ++it  ){
+    //    for ( auto it2 = it->second.begin(); it2 != it->second.end(); ++it2  ){
+    //        Counts_Det[it2->first] += it2->second;
+    //    }
+    //}
+
+
+    //G4cout << " CalculateCountsInDetectors 1" << G4endl;
+
+    //std::map<G4int,std::map<G4String,int>> Counts_DataID_Det ;
+
+    // normalized the values, counts/event
+    //for ( auto it = ED_Total[DataID].begin(); it != ED_Total[DataID].end(); ++it  ){
+
+    //    ED_Total[DataID][it->first] = it->second/TotalEventNumber;
+
+    //}
+
+}
+
 
 
 void G4TRunAction::CountFission() {
