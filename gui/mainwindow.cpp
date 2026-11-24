@@ -1542,6 +1542,7 @@ void MainWindow::CommandsInitialization(){
     GeometryCommands.push_back("/GeometryData/createVolume");
     GeometryCommands.push_back("/GeometryData/setVolumesVisToNotForced");
     GeometryCommands.push_back("/GeometryData/setGeometrySymbol");
+    GeometryCommands.push_back("/GeometryData/UserParametersForCPPCodeImplementation");
 
     CONSCommands.push_back("/GeometryData/createSolid");
     CONSCommands.push_back("/GeometryData/createVolume");

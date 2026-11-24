@@ -112,6 +112,8 @@ G4double AllGeometryMass;
 
 G4String GeometryFileType;
 
+G4String UserParametersForCPPCodeImplementation;
+
 G4String DetectFor;
 
 G4String ParticleName;

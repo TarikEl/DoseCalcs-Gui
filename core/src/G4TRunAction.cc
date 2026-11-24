@@ -108,6 +108,8 @@ extern std::map<G4int,std::map<G4String,std::map<G4String,G4int>>> OpticalPhoton
 extern std::vector<G4double> KeffectiveInEachBatch;
 extern std::map<G4int,std::map<G4int,G4bool>> TerminatedThreadBatch;
 
+extern  G4String UserParametersForCPPCodeImplementation;
+
 #ifdef G4MULTITHREADED
 G4ThreadLocal std::ofstream G4TRunAction::CriticalityFile;
 G4ThreadLocal std::map<G4int,std::vector<G4double>>      G4TRunAction::NewNeutronFissionEnergyList;
@@ -661,7 +663,11 @@ void G4TRunAction::EndOfRunAction(const G4Run* aRun)
 
         }else{
             calculateDetectorED2AndNOValues();
+            // gives counts // to use it only without CalculateSpectrumInDetectors() in steppingAction uncomment the
             CalculateCountsInDetectors();
+
+            // gives spectrum files
+            //CalculateSpectrumInDetectors();
         }
     }
 
@@ -802,7 +808,7 @@ void G4TRunAction::CreateThreadRegionResultFile(){
 
         // just for Detector calculation
         if(SimulationIntExtNeutDet == "Detector"){
-            if(!OrgansNameVector[jk].contains("Detector")){
+            if(!OrgansNameVector[jk].contains("D")){
                 continue;
             }
         }
@@ -1096,12 +1102,12 @@ void G4TRunAction::AddEventsDataInDetectors(int EvenID, // make sure that ID doe
                                             G4double EneDep
     ){
 
-    //G4cout << " EvenID " << EvenID << " DetName " << DetName << " EneDep " << EneDep << G4endl;
+    //G4cout << " \n\n\n\n\n\n\n\n EvenID " << EvenID << " DetName " << DetName << " EneDep " << EneDep << G4endl;
 
     //G4cout << " AddEventsDataInDetectors 1" << G4endl;
 
-    ED_Total_Det[DataID][EvenID][DetName] = EneDep ;
-    ED2_Total_Det[DataID][EvenID][DetName] = EneDep*EneDep ;
+    ED_Total_Det[DataID][EvenID][DetName] += EneDep ;
+    ED2_Total_Det[DataID][EvenID][DetName] += EneDep*EneDep ;
     NOfValues_Det[DataID][EvenID][DetName]++;
 
     //G4cout << " AddEventsDataInDetectors 2" << G4endl;
@@ -1130,7 +1136,7 @@ void G4TRunAction::calculateDetectorED2AndNOValues(){
 // Here to unify the nomenclature in syntax, ED_Total for detector case means the counts
 void G4TRunAction::CalculateCountsInDetectors(){
 
-    //G4cout << " CalculateCountsInDetectors 1" << G4endl;
+    //G4cout << " \n\n\n\n\n\n\n\n CalculateCountsInDetectors 1" << G4endl;
 
     //std::map<G4int,std::map<G4String,int>> Counts_DataID_Det ;
 
@@ -1194,7 +1200,381 @@ void G4TRunAction::CalculateCountsInDetectors(){
 
 }
 
+void G4TRunAction::CalculateSpectrumInDetectors(){
 
+    // To add for the spectrum
+    static constexpr G4int    kNCanal        = 1024;
+    static constexpr G4double kEmin          = 0.0   * keV;   // first canal lower edge
+    static constexpr G4double kEmax          = 1500.0* keV;   // last  canal upper edge
+    static constexpr G4double kCanalWidth    = (kEmax - kEmin) / kNCanal;
+
+    // Spectrum storage (integer counts, used for physics / variance)
+    std::map<G4int, std::map<G4String, std::array<G4long, kNCanal>>> Spectrum_Det;
+    std::map<G4int, std::map<G4String, std::array<G4long, kNCanal>>> SpectrumRaw_Det;
+    // Per-canal uncertainties
+    std::map<G4int, std::map<G4String, std::array<G4double, kNCanal>>> SpectrumRawErr_Det;
+    std::map<G4int, std::map<G4String, std::array<G4double, kNCanal>>> SpectrumErr_Det;
+    // Per-canal smearing variance (extra variance from Gaussian displacement)
+    std::map<G4int, std::map<G4String, std::array<G4double, kNCanal>>> SpectrumSmearVar_Det;
+
+    // =====================================================================
+    //  1. Canal parameters (NaI(Tl)-like, 0–1500 keV, 1024 canals)
+    // =====================================================================
+    const G4int    N_CANAL     = 1024;
+    const G4double E_MIN       = 0.0    * keV;
+    const G4double E_MAX       = 1500.0 * keV;
+    const G4double CANAL_WIDTH = (E_MAX - E_MIN) / (G4double)N_CANAL;
+
+    // NaI(Tl) resolution: FWHM(E) = sqrt(a^2 + b^2*E + c^2*E^2), E in MeV
+    const G4double RES_A = 0.0;
+    const G4double RES_B = 0.08;
+    const G4double RES_C = 0.0;
+
+    // =====================================================================
+    //  2. Clear previous spectra and errors
+    // =====================================================================
+    Spectrum_Det.clear();
+    SpectrumRaw_Det.clear();
+    SpectrumRawErr_Det.clear();
+    SpectrumErr_Det.clear();
+    SpectrumSmearVar_Det.clear();
+
+    // =====================================================================
+    //  3. First pass: build the smeared spectrum (Poisson part) and store
+    //     the raw counts.  We also accumulate per-canal smearing variance
+    //     analytically using the Gaussian CDF.
+    // =====================================================================
+    for (auto& dataPair : ED_Total_Det) {
+
+        const G4int dataID = dataPair.first;
+
+        for (auto& eventPair : dataPair.second) {
+
+            const G4int eventID = eventPair.first;
+
+            for (auto& detPair : eventPair.second) {
+
+                const G4String& detName = detPair.first;
+                const G4double  edep    = detPair.second;
+
+                if (edep <= 0.0) continue;
+
+                // --- raw canal (no smearing) ---
+                G4int canalRaw = (G4int)std::floor((edep - E_MIN) / CANAL_WIDTH);
+                if (canalRaw < 0)        canalRaw = 0;
+                if (canalRaw >= N_CANAL) canalRaw = N_CANAL - 1;
+                SpectrumRaw_Det[dataID][detName][canalRaw]++;
+
+                // --- smeared canal (Gaussian displacement) ---
+                if (edep >= E_MIN && edep <= E_MAX) {
+
+                    const G4double E_MeV = edep / MeV;
+                    const G4double fwhm  = std::sqrt(RES_A*RES_A
+                                                    + RES_B*RES_B * E_MeV
+                                                    + RES_C*RES_C * E_MeV * E_MeV);
+                    const G4double sigma = fwhm / 2.355;  // in MeV
+
+                    G4double E_smeared = edep;
+                    if (sigma > 0.0)
+                        E_smeared = G4RandGauss::shoot(edep, sigma * MeV);
+
+                    G4int canalSm =
+                        (G4int)std::floor((E_smeared - E_MIN) / CANAL_WIDTH);
+                    if (canalSm < 0)        canalSm = 0;
+                    if (canalSm >= N_CANAL) canalSm = N_CANAL - 1;
+
+                    Spectrum_Det[dataID][detName][canalSm]++;
+                }
+                else {
+                    G4int canalClamp = (edep < E_MIN) ? 0 : (N_CANAL - 1);
+                    Spectrum_Det[dataID][detName][canalClamp]++;
+                }
+            }
+        }
+    }
+
+    // =====================================================================
+    //  4. Second pass: compute per-canal uncertainties.
+    //     (Unchanged — kept in integer counts, then normalized at the end)
+    // =====================================================================
+
+    // Standard normal CDF
+    auto Phi = [](G4double x) -> G4double {
+        return 0.5 * (1.0 + std::erf(x / std::sqrt(2.0)));
+    };
+
+    for (auto& dataPair : Spectrum_Det) {
+
+        const G4int dataID = dataPair.first;
+
+        for (auto& detPair : dataPair.second) {
+
+            const G4String& detName = detPair.first;
+            const auto& specSm = detPair.second;
+            const auto& specRaw = SpectrumRaw_Det[dataID][detName];
+
+            auto& errRaw   = SpectrumRawErr_Det[dataID][detName];
+            auto& errSm    = SpectrumErr_Det[dataID][detName];
+            auto& varSmear = SpectrumSmearVar_Det[dataID][detName];
+
+            // --- 4a. Raw Poisson error ---
+            for (G4int c = 0; c < N_CANAL; ++c) {
+                errRaw[c] = std::sqrt((G4double)specRaw[c]);
+            }
+
+            // --- 4b. Smeared Poisson error (naive, kept for reference) ---
+            for (G4int c = 0; c < N_CANAL; ++c) {
+                errSm[c] = std::sqrt((G4double)specSm[c]);
+            }
+
+            // --- 4c. Smearing variance, computed analytically ---
+            for (G4int c = 0; c < N_CANAL; ++c) varSmear[c] = 0.0;
+
+            for (G4int cp = 0; cp < N_CANAL; ++cp) {
+
+                const G4long Ncp = specRaw[cp];
+                if (Ncp == 0) continue;
+
+                const G4double Ecp = E_MIN + (cp + 0.5) * CANAL_WIDTH;
+                const G4double E_MeV = Ecp / MeV;
+                const G4double fwhm  = std::sqrt(RES_A*RES_A
+                                                + RES_B*RES_B * E_MeV
+                                                + RES_C*RES_C * E_MeV * E_MeV);
+                const G4double sigma = fwhm / 2.355 * MeV;
+
+                if (sigma <= 0.0) {
+                    varSmear[cp] += 0.0;
+                    continue;
+                }
+
+                const G4double halfRange = 5.0 * sigma;
+                G4int cLow  = (G4int)std::floor((Ecp - halfRange - E_MIN) / CANAL_WIDTH);
+                G4int cHigh = (G4int)std::ceil ((Ecp + halfRange - E_MIN) / CANAL_WIDTH);
+                if (cLow  < 0)        cLow  = 0;
+                if (cHigh >= N_CANAL) cHigh = N_CANAL - 1;
+
+                for (G4int c = cLow; c <= cHigh; ++c) {
+                    const G4double E_lo = E_MIN + c       * CANAL_WIDTH;
+                    const G4double E_hi = E_MIN + (c + 1.0) * CANAL_WIDTH;
+                    const G4double p = Phi((E_hi - Ecp) / sigma)
+                                       - Phi((E_lo - Ecp) / sigma);
+                    varSmear[c] += (G4double)Ncp * p * (1.0 - p);
+                }
+            }
+
+            // --- 4d. Total error on the smeared spectrum (in counts) ---
+            for (G4int c = 0; c < N_CANAL; ++c) {
+                const G4double totalVar = (G4double)specSm[c] + varSmear[c];
+                errSm[c] = std::sqrt(totalVar);
+            }
+        }
+    }
+
+    // =====================================================================
+    //  4e. NORMALIZATION:  convert everything to "per simulated event".
+    //
+    //      TotalEventNumber is the total number of primary events simulated
+    //      (in the current run/thread — must match the denominator you
+    //      used for your cross-sections / yields).
+    //
+    //      We divide:
+    //          counts_raw[c]  ->  counts_raw[c]  / TotalEventNumber
+    //          counts_sm[c]   ->  counts_sm[c]   / TotalEventNumber
+    //          err_raw[c]     ->  err_raw[c]     / TotalEventNumber
+    //          err_sm[c]      ->  err_sm[c]      / TotalEventNumber
+    //          smear_var[c]   ->  smear_var[c]   / TotalEventNumber^2
+    //          (variance scales as 1/N^2 when counts scale as 1/N)
+    // =====================================================================
+
+    auto normalizeSpec = [&](std::map<G4int, std::map<G4String,
+                                                      std::array<G4long, kNCanal>>>& spec) {
+        if (TotalEventNumber <= 0) return;
+        for (auto& dp : spec) {
+            for (auto& d : dp.second) {
+                for (G4int c = 0; c < kNCanal; ++c) {
+                    d.second[c] = (G4long)0;  // placeholder; we do NOT
+                        // overwrite the integer
+                        // values, we only use them
+                        // for the CSV output below.
+                }
+            }
+        }
+    };
+
+    // We keep the integer maps untouched and just write normalized values
+    // to the CSV.  (See the CSV writer further down.)
+
+    // =====================================================================
+    //  5. Optional: summary printout
+    // =====================================================================
+    G4cout << "\n================ SPECTRUM SUMMARY (WITH ERRORS) ================\n";
+    G4cout << "  Canals       : " << N_CANAL << "\n";
+    G4cout << "  Energy range : " << E_MIN/keV << " – " << E_MAX/keV << " keV\n";
+    G4cout << "  Canal width  : " << CANAL_WIDTH/keV << " keV\n";
+    G4cout << "  TotalEventNumber = " << TotalEventNumber << "\n";
+
+    for (auto& dataPair : Spectrum_Det) {
+        const G4int dataID = dataPair.first;
+        for (auto& detPair : dataPair.second) {
+            const G4String& detName = detPair.first;
+            const auto& specSm  = detPair.second;
+            const auto& specRaw = SpectrumRaw_Det[dataID][detName];
+            const auto& errRaw  = SpectrumRawErr_Det[dataID][detName];
+            const auto& errSm   = SpectrumErr_Det[dataID][detName];
+            const auto& varSm   = SpectrumSmearVar_Det[dataID][detName];
+
+            G4long   totalRaw = 0, totalSm = 0;
+            G4double sumEraw  = 0.0, sumEsm = 0.0;
+
+            for (G4int c = 0; c < N_CANAL; ++c) {
+                totalRaw += specRaw[c];
+                totalSm  += specSm[c];
+                const G4double Ec = E_MIN + (c + 0.5) * CANAL_WIDTH;
+                sumEraw += (G4double)specRaw[c] * Ec;
+                sumEsm  += (G4double)specSm[c]  * Ec;
+            }
+            const G4double meanRaw = (totalRaw > 0) ? sumEraw / totalRaw : 0.0;
+            const G4double meanSm  = (totalSm  > 0) ? sumEsm  / totalSm  : 0.0;
+
+            // Normalized totals (per simulated event)
+            const G4double nRawPerEvent = (TotalEventNumber > 0)
+                                              ? (G4double)totalRaw / (G4double)TotalEventNumber
+                                              : 0.0;
+            const G4double nSmPerEvent  = (TotalEventNumber > 0)
+                                             ? (G4double)totalSm  / (G4double)TotalEventNumber
+                                             : 0.0;
+
+            G4cout << "  DataID " << dataID
+                   << "  Det " << detName
+                   << "  N_raw = " << totalRaw
+                   << " (per event: " << nRawPerEvent << ")"
+                   << "  N_sm = "  << totalSm
+                   << " (per event: " << nSmPerEvent << ")"
+                   << "  <E>_raw = " << meanRaw/keV << " keV"
+                   << "  <E>_sm = "  << meanSm/keV  << " keV\n";
+
+            std::vector<G4int> order(N_CANAL);
+            for (G4int i = 0; i < N_CANAL; ++i) order[i] = i;
+            std::partial_sort(order.begin(), order.begin() + 5, order.end(),
+                              [&](G4int a, G4int b){ return specSm[a] > specSm[b]; });
+
+            G4cout << "      Top 5 canals (smeared):\n";
+            for (G4int k = 0; k < 5; ++k) {
+                const G4int c = order[k];
+                const G4double Ec = (E_MIN + (c + 0.5) * CANAL_WIDTH) / keV;
+                G4cout << "        canal " << c
+                       << "  E = " << Ec << " keV"
+                       << "  N = "   << specSm[c]
+                       << " +/- "    << errSm[c]
+                       << "   (raw N = " << specRaw[c]
+                       << " +/- " << errRaw[c]
+                       << ", smear var = " << varSm[c] << ")\n";
+            }
+        }
+    }
+    G4cout << "================================================================\n\n";
+
+    // =====================================================================
+    //  6. CSV output — NORMALIZED to counts per simulated event
+    // =====================================================================
+
+    for (auto& dataPair : Spectrum_Det) {
+        const G4int dataID = dataPair.first;
+        for (auto& detPair : dataPair.second) {
+            const G4String& detName = detPair.first;
+            const auto& specSm  = detPair.second;
+            const auto& specRaw = SpectrumRaw_Det[dataID][detName];
+            const auto& errRaw  = SpectrumRawErr_Det[dataID][detName];
+            const auto& errSm   = SpectrumErr_Det[dataID][detName];
+            const auto& varSm   = SpectrumSmearVar_Det[dataID][detName];
+
+            std::ostringstream fname1;
+            fname1 << ResultDirectoryPath <<"/Spectrum@for@Rank@"<<rank<<"@Thread@"<<thread << "@" << GeometrySymbol<< UserParametersForCPPCodeImplementation << "@" << NewRankSourceParticlesNamesValues[DataID]
+                   << "@" << "PosXYZ_" << NewRankSourceRegionsBoxDimValues[DataID].getX()<<
+                "_"<< NewRankSourceRegionsBoxDimValues[DataID].getY() <<
+                "_"<< NewRankSourceRegionsBoxDimValues[DataID].getZ()
+                   <<"_Theta_"<< (180*NewRankSourceMomDirsDirectedThetaValues[DataID])/CLHEP::pi
+                   <<"_Phi_"<< (180*NewRankSourceMomDirsDirectedPhiValues[DataID])/CLHEP::pi
+                   << "@" << ParticleSourceEnergy;
+
+            const G4int WIDTH = 16;   // wider cells for scientific notation
+
+            // Safe denominator
+            const G4double N_tot = (TotalEventNumber > 0)
+                                       ? (G4double)TotalEventNumber
+                                       : 1.0;
+
+            // ---- Lambdas producing fixed-width strings ----
+            auto fmtDouble = [&](G4double v) -> std::string {
+                std::ostringstream ss;
+                ss << std::scientific << std::setprecision(6) << v;
+                std::string s = ss.str();
+                if ((G4int)s.size() < WIDTH) s.insert(0, WIDTH - s.size(), ' ');
+                else if ((G4int)s.size() > WIDTH) s = s.substr(0, WIDTH);
+                return s;
+            };
+
+            auto fmtLong = [&](G4long v) -> std::string {
+                std::ostringstream ss;
+                ss << v;
+                std::string s = ss.str();
+                if ((G4int)s.size() < WIDTH) s.insert(0, WIDTH - s.size(), ' ');
+                else if ((G4int)s.size() > WIDTH) s = s.substr(0, WIDTH);
+                return s;
+            };
+
+            auto fmtInt = [&](G4int v) -> std::string {
+                std::ostringstream ss;
+                ss << v;
+                std::string s = ss.str();
+                if ((G4int)s.size() < WIDTH) s.insert(0, WIDTH - s.size(), ' ');
+                else if ((G4int)s.size() > WIDTH) s = s.substr(0, WIDTH);
+                return s;
+            };
+
+            auto fmtStr = [&](const std::string& v) -> std::string {
+                std::string s = v;
+                if ((G4int)s.size() < WIDTH) s.append(WIDTH - s.size(), ' ');
+                else if ((G4int)s.size() > WIDTH) s = s.substr(0, WIDTH);
+                return s;
+            };
+
+            // ---- Write CSV ----
+            std::ofstream out(fname1.str());
+
+            out << fmtStr("canal")             << ","
+                << fmtStr("energy_keV")        << ","
+                << fmtStr("counts_raw_per_evt")<< ","
+                << fmtStr("err_raw_per_evt")   << ","
+                << fmtStr("counts_sm_per_evt") << ","
+                << fmtStr("err_sm_per_evt")    << ","
+                << fmtStr("smear_var_per_evt2")<< "\n";
+
+            for (G4int c = 0; c < N_CANAL; ++c) {
+                const G4double E = (E_MIN + (c + 0.5) * CANAL_WIDTH) / keV;
+
+                // ---- Normalization to per-simulated-event ----
+                //   counts  :  divide by N_tot
+                //   errors  :  divide by N_tot   (since sigma ∝ sqrt(N))
+                //   variance:  divide by N_tot^2 (since var ∝ N)
+                const G4double nRawPerEvt  = (G4double)specRaw[c] / N_tot;
+                const G4double nSmPerEvt   = (G4double)specSm [c] / N_tot;
+                const G4double errRawPerEvt= errRaw[c]            / N_tot;
+                const G4double errSmPerEvt = errSm [c]            / N_tot;
+                const G4double varPerEvt2  = varSm [c]            / (N_tot*N_tot);
+
+                out << fmtInt(c)                 << ","
+                    << fmtDouble(E)              << ","
+                    << fmtDouble(nRawPerEvt)     << ","
+                    << fmtDouble(errRawPerEvt)   << ","
+                    << fmtDouble(nSmPerEvt)      << ","
+                    << fmtDouble(errSmPerEvt)    << ","
+                    << fmtDouble(varPerEvt2)     << "\n";
+            }
+            out.close();
+        }
+    }
+}
 
 void G4TRunAction::CountFission() {
     //G4cout << "Fission" << G4endl;

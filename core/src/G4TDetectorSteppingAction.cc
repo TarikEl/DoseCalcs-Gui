@@ -59,7 +59,36 @@ void G4TDetectorSteppingAction::UserSteppingAction(const G4Step* step)
     if (edep == 0.) return;
 
     auto reg = step->GetPreStepPoint()->GetTouchable()->GetVolume()->GetLogicalVolume()->GetName();
-    RunAction->AddEventsDataInDetectors(G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID(), reg, edep);
+
+    //std::cout <<" edep:" << edep <<" reg:" << reg << " @@@@@@@@@@@@@@@@@@@@@@@" << std::endl;
+
+    if ( reg == "D")
+    {
+
+        //std::cout <<"\n\n\n\n\n\n\n\n edep:" << edep <<" reg:" << reg << " @@@@@@@@@@@@@@@@@@@@@@@" << std::endl;
+
+        RunAction->AddEventsDataInDetectors(G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID(), reg, edep);
+        G4EventManager::GetEventManager()->AbortCurrentEvent();
+    }
+    //std::cout << 1 << std::endl;
+
+    //std::cout << G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID() << " edep:" << edep << " @@@@@@@@@@@@@@@@@@@@@@@" << std::endl;
+
+    //in all cases we need just the particles that pass to detector directly
+    G4EventManager::GetEventManager()->AbortCurrentEvent();
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     // For Lam, eliminate all other detectors except one with a known name

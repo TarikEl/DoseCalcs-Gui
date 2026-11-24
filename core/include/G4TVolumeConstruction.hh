@@ -74,6 +74,7 @@ extern  G4float* CopyNumberZPos;
 extern  G4float* CopyNumberMassSize;
 extern std::map<G4String, G4Colour> RegionNameColour;
 
+extern  G4String UserParametersForCPPCodeImplementation;
 
 extern G4ThreeVector PointSourcePositionTowardDetector;
 extern G4double ThetaDirectionValueTowardDetector;
@@ -458,6 +459,8 @@ public:
     std::vector<SourceDataStruct> GetRankThreadSourceData() const { return RankThreadSourceData;}
 
     G4ThreeVector InternalSourcePosition;
+
+    void setUserParametersForCPPCodeImplementation(G4String nn ) { UserParametersForCPPCodeImplementation = nn;}
 
 private:
 

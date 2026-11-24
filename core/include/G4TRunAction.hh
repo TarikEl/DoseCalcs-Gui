@@ -109,6 +109,7 @@ public:
     void AddEventsDataInDetectors(int,G4String,G4double);
     void calculateDetectorED2AndNOValues();
     void CalculateCountsInDetectors();
+    void CalculateSpectrumInDetectors();
 
 
 private:

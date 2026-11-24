@@ -541,6 +541,12 @@ void G4TGeometryMessenger::SetNewValue(G4UIcommand* command,G4String newValue){
         GeometryConstruction->setGeometrySymbol(newValue);
     }
 
+
+    if( command == UserParametersForCPPCodeImplementation )
+    {
+        GeometryConstruction->setUserParametersForCPPCodeImplementation(newValue);
+    }
+
     // voxelized Volume
 
     if( command == VoxDefaultMaterialNameCMD )
@@ -871,6 +877,14 @@ void  G4TGeometryMessenger::CommandsForGeometries(){
     G4UIparameter* param1;
     param1 = new G4UIparameter("Name of volume to be considered as internal source",'s', false);      SourceVolumeData->SetParameter(param1);
 
+    UserParametersForCPPCodeImplementation = new G4UIcommand("/GeometryData/UserParametersForCPPCodeImplementation" ,this);
+    param = new G4UIparameter("Parameter1",'s', true);      UserParametersForCPPCodeImplementation->SetParameter(param); // true because if we sent just 11 fpr ex it will not throw an error
+    param = new G4UIparameter("Parameter2",'s', true);      UserParametersForCPPCodeImplementation->SetParameter(param); // true because if we sent just 11 fpr ex it will not throw an error
+    param = new G4UIparameter("Parameter3",'s', true);      UserParametersForCPPCodeImplementation->SetParameter(param); // true because if we sent just 11 fpr ex it will not throw an error
+    param = new G4UIparameter("Parameter4",'s', true);      UserParametersForCPPCodeImplementation->SetParameter(param); // true because if we sent just 11 fpr ex it will not throw an error
+    param = new G4UIparameter("Parameter5",'s', true);      UserParametersForCPPCodeImplementation->SetParameter(param); // true because if we sent just 11 fpr ex it will not throw an error
+    param = new G4UIparameter("Parameter6",'s', true);      UserParametersForCPPCodeImplementation->SetParameter(param); // true because if we sent just 11 fpr ex it will not throw an error
+    param = new G4UIparameter("Parameter7",'s', true);      UserParametersForCPPCodeImplementation->SetParameter(param); // true because if we sent just 11 fpr ex it will not throw an error
 
 }
 void  G4TGeometryMessenger::CommandsForVoxGeometryType(){

@@ -118,6 +118,8 @@ private:
 
     G4UIcommand*          SourceVolumeData ;
 
+    G4UIcommand*          UserParametersForCPPCodeImplementation;
+
 
 /*
 

@@ -2706,6 +2706,10 @@ void G4TResultCalculation::GenerateRegionResultFile(){
 
                     //G4cout.setf(std::ios::fixed,std::ios::floatfield);
 
+                    if(SimulationIntExtNeutDet == "Detector"){
+                        ChosenVariableTotal[TargetNamesToScore[dd]]=ChosenVariableTotal[TargetNamesToScore[dd]]/TotalEventNumber;
+                    }
+
                     G4cout << std::setw(24) << std::left << TargetNamesToScore[dd].c_str() << " "
                            << std::setw(SZ) << std::left << std::scientific << std::setprecision(VarSZ) << ChosenVariableTotal[TargetNamesToScore[dd]] << " "
                            << std::setw(SZ) << std::left << std::scientific << std::setprecision(VarSZ) << ChosenVariableStandardDeviation[TargetNamesToScore[dd]]  << " "
@@ -3328,6 +3332,10 @@ void G4TResultCalculation::GenerateExternalDosimetryCoefficients(){
 
 }
 void G4TResultCalculation::GenerateRegionResultForRadioTracer(){
+
+    if(SimulationIntExtNeutDet == "Detector"){
+        return;
+    }
 
     //V = true;
 
@@ -3984,12 +3992,12 @@ void G4TResultCalculation::GenerateRadiotracerQuantitiesByInterpolation(G4String
             }
         }
         
-        if(Energy2 == 0 && Energy1 == 0 ){
-            G4cout << "\n !!!!!!!!!!!!!!! Value cannot be calculated the "<< ParticleName << " energy " << Energy <<" because not delimited by E1 or E2 for source "<< Abeg->first << "\n" << G4endl  ;
-        }
-        else if(Energy2 == 0 || Energy1 == 0 ){
-            G4cout << "Value will be approximated beacause the " << ParticleName << " energy not delimited for source "<< Abeg->first << ". Energy1 " << Energy1 << " Energy " << Energy << " Energy2 " << Energy2 << G4endl ;
-        }
+        //if(Energy2 == 0 && Energy1 == 0 ){
+        //    G4cout << "\n !!!!!!!!!!!!!!! Value cannot be calculated the "<< ParticleName << " energy " << Energy <<" because not delimited by E1 or E2 for source "<< Abeg->first << "\n" << G4endl  ;
+        //}
+        //else if(Energy2 == 0 || Energy1 == 0 ){
+        //    G4cout << "Value will be approximated beacause the " << ParticleName << " energy not delimited for source "<< Abeg->first << ". Energy1 " << Energy1 << " Energy " << Energy << " Energy2 " << Energy2 << G4endl ;
+        //}
 
         for(G4int hh = 0 ; hh < (G4int)OrgansNameVector.size() ; hh++){
             
@@ -4161,6 +4169,8 @@ void G4TResultCalculation::GenerateCountsMatrixFile(){
     G4double currentTheta;
     G4double currentPhi;
 
+    //G4cout << " ------------------------ 1 -------------------------------------------------- " <<  G4endl ;
+
     std::vector<std::vector<double>> RaysData;
     //
     if(fileR.is_open()){
@@ -4214,12 +4224,12 @@ void G4TResultCalculation::GenerateCountsMatrixFile(){
                 ProjeectionMatrix[currentTheta][currentPhi][currentX][currentY][currentZ] = Val;
 
 
-                std::cout << " currentTheta " << currentTheta
-                          << " currentX " << currentX
-                          << " currentY " << currentY
-                          << " currentZ " << currentZ
-                          << " Val " << Val
-                          << std::endl;
+                //std::cout << " currentTheta " << currentTheta
+                //          << " currentX " << currentX
+                //          << " currentY " << currentY
+                //          << " currentZ " << currentZ
+                //          << " Val " << Val
+                //          << std::endl;
 
             }
 
@@ -4229,7 +4239,7 @@ void G4TResultCalculation::GenerateCountsMatrixFile(){
                 //LineString >> Quantity >> unit >> SrcRegionName >> ParticleName ;
                 //QuantityUnit[Quantity] = unit;
 
-                G4cout << " -------------------------------------------------------------------------- " <<  G4endl ;
+                //G4cout << " -------------1--------------- " <<  G4endl ;
 
                 if(ParticleName == "RadioTracer"){
                     continue;
@@ -4248,9 +4258,13 @@ void G4TResultCalculation::GenerateCountsMatrixFile(){
                 std::string token;
 
                 std::vector<std::string> tokens;
+                //G4cout << " -------------2--------------- " <<  G4endl ;
 
+                int ddss = 0;
                 while (std::getline(ss, token, '_')) {
                     tokens.push_back(token);
+                    //G4cout << ddss << " " << SrcRegionName << " " << token <<  G4endl ;
+                    ddss ++;
                 }
 
                 // tokens ستكون هكذا:
@@ -4270,6 +4284,8 @@ void G4TResultCalculation::GenerateCountsMatrixFile(){
                 }else{
                     currentPhi = 0;
                 }
+
+                //G4cout << " -------------3--------------- " <<  G4endl ;
 
                 bool exist = false;
                 for(G4int aa = 0 ; aa < Xvalues.size(); aa++){
@@ -4320,6 +4336,8 @@ void G4TResultCalculation::GenerateCountsMatrixFile(){
                 if(exist == false){
                     Phivalues.push_back(currentPhi);
                 }
+                //G4cout << " -------------4--------------- " <<  G4endl ;
+
 
 
                 //std::cout << " Geometry " << Geometry << " Quantity " << Quantity << " SrcRegionName " << SrcRegionName<< " ParticleName " << ParticleName  << std::endl ;
@@ -4328,6 +4346,7 @@ void G4TResultCalculation::GenerateCountsMatrixFile(){
         }
 
 
+        G4cout << " ------------------------ Generation Of Projection -------------------------------------------------- " <<  G4endl ;
 
         fileR.close();
 
@@ -4358,7 +4377,6 @@ void G4TResultCalculation::GenerateCountsMatrixFile(){
             std::sort(Phivalues.begin(), Phivalues.end(), std::greater<double>());
             //std::sort(Thetavalues.begin(), Thetavalues.end());
 
-
             bool generateMatrix = false;
 
             if(generateMatrix){
@@ -4377,75 +4395,105 @@ void G4TResultCalculation::GenerateCountsMatrixFile(){
 
                 G4String Delimiter = ", " ;
 
-                table << std::setw(WW) << std::left << std::setw(WW) << " RayID " << Delimiter << "RayTheta(Z-X)  " << Delimiter
-                      << std::setw(WW) << " RayPhi(X-Y)  " << Delimiter << std::setw(WW)
-                      << std::setw(WW) << " RayInitialPosX " << Delimiter << std::setw(WW)
-                      << std::setw(WW) << " RayInitialPosY " << Delimiter  << std::setw(WW)
-                      << " RayInitialPosZ " << Delimiter  << std::setw(WW)
-                      //<< " RayInitialPosX " << Delimiter << std::setw(WW) << " RayFinalPosY " << Delimiter  << std::setw(WW) << " RayFinalPosZ " << Delimiter << std::setw(WW)
-                      << " Counts(max:"<<  TotalEventNumber <<") \n";
+                bool generateDifferentResultsForjustAnalysis = false;
+                if(generateDifferentResultsForjustAnalysis){
+                    //table << std::setw(WW) << std::left
+                    //      << std::setw(WW) << " RayID "          << Delimiter
+                    //      << std::setw(WW) << " RayTheta(Z-X)  "  << Delimiter
+                    //      << std::setw(WW) << " Energy  "  << Delimiter
+                    //      << std::setw(WW) << " RayPhi(X-Y)  "   << Delimiter
+                    //      << std::setw(WW) << " RayInitialPosX " << Delimiter
+                    //      << std::setw(WW) << " RayInitialPosY " << Delimiter
+                    //      << std::setw(WW) << " RayInitialPosZ " << Delimiter
+                    //      << std::setw(WW) << " Counts \n";
+
+                    //int rayincre = 1;
+                    //for(G4int aa = 0 ; aa < RaysData.size(); aa++){
 
 
-                // to generate data in file in ordering Z position from min to max based on Z values SourcesPositions map
-                int rayincre = 1;
-                for(G4int aa = 0 ; aa < RaysData.size(); aa++){
+                    //    table << std::setw(WW) << std::left << rayincre << Delimiter
+                    //          << std::setw(WW) << std::left << RaysData[aa][0] << Delimiter
+                    //          << std::setw(WW) << std::left << RaysData[aa][1] << Delimiter
+                    //          << std::setw(WW) << std::left << RaysData[aa][5] << Delimiter
+                    //          << std::setw(WW) << std::left << RaysData[aa][6] << Delimiter
+                    //          << std::setw(WW) << std::left << RaysData[aa][0] << Delimiter;
 
+                    //    table << "\n";
+                    //    rayincre++;
 
-                    //for(G4int tt = 0 ; tt < Thetavalues.size(); tt++){
-                    //    for(G4int pp = 0 ; pp < Phivalues.size(); pp++){
-                    //        for(G4int xx = 0 ; xx < Xvalues.size(); xx++){
-                    //            for(G4int yy = 0 ; yy < Yvalues.size(); yy++){
-                    //                for(G4int zz = 0 ; zz < Zvalues.size(); zz++){
-
-                    //                    //table << std::setw(WW) << std::left <<  << " " << Delimiter
-                    //                    //      << std::setw(WW) << std::left << Thetavalues[tt] << " " << Delimiter
-                    //                    //      << std::setw(WW) << std::left << Phivalues[pp] << " " << Delimiter
-                    //                    //      << std::setw(WW) << std::left << Xvalues[xx] << " " << Delimiter
-                    //                    //      << std::setw(WW) << std::left << Yvalues[yy] << " " << Delimiter
-                    //                    //      << std::setw(WW) << std::left << Zvalues[zz] << " " << Delimiter
-                    //                    //      << std::setw(WW) << std::left << ProjeectionMatrix[Thetavalues[tt]][Phivalues[pp]][Xvalues[xx]][Yvalues[yy]][Zvalues[zz]]
-                    //                    //      << "\n";
-                    //                    //rayincre++;
-
-                    //                    if(Thetavalues[tt] == RaysData[aa][0]){
-                    //                        if(Phivalues[pp] == RaysData[aa][1]){
-                    //                            if(Xvalues[xx] == RaysData[aa][2]){
-                    //                                if(Yvalues[yy] == RaysData[aa][3]){
-                    //                                    if(Zvalues[zz] == RaysData[aa][4]){
-
-
-                                                            table << std::setw(WW) << std::left << rayincre << Delimiter ;
-
-                                                            for(G4int bb = 0 ; bb < RaysData[aa].size(); bb++){
-                                                                //G4cout << ProjeectionMatrix[aa+1][bb+1]  << " " <<  G4endl ;
-                                                                if(bb == (RaysData[aa].size()-1)){
-                                                                    table << std::setw(WW) << std::left << RaysData[aa][bb];
-
-                                                                }else{
-                                                                    table << std::setw(WW) << std::left << RaysData[aa][bb] << Delimiter  ;
-                                                                }
-                                                            }
-                                                            table << "\n";
-                                                            rayincre++;
-
-
-
-                    //                                    }
-                    //                                }
-                    //                            }
-                    //                        }
-                    //                    }
-
-
-
-                    //                }
-                    //            }
-                    //        }
-                    //    }
                     //}
 
+                }else{
+
+                    table << std::setw(WW) << std::left << std::setw(WW) << "RayID " << Delimiter << "RayTheta(Z-X)  " << Delimiter
+                          << std::setw(WW) << " RayPhi(X-Y)  " << Delimiter << std::setw(WW)
+                          << std::setw(WW) << " RayInitialPosX " << Delimiter << std::setw(WW)
+                          << std::setw(WW) << " RayInitialPosY " << Delimiter  << std::setw(WW)
+                          << " RayInitialPosZ " << Delimiter  //<< std::setw(WW)
+                             //<< " RayInitialPosX " << Delimiter << std::setw(WW) << " RayFinalPosY " << Delimiter  << std::setw(WW) << " RayFinalPosZ " << Delimiter << std::setw(WW)
+                          << " Counts \n";//(max:"<<  TotalEventNumber <<") \n";
 
 
+                    // to generate data in file in ordering Z position from min to max based on Z values SourcesPositions map
+                    int rayincre = 1;
+                    for(G4int aa = 0 ; aa < RaysData.size(); aa++){
+
+
+                        //for(G4int tt = 0 ; tt < Thetavalues.size(); tt++){
+                        //    for(G4int pp = 0 ; pp < Phivalues.size(); pp++){
+                        //        for(G4int xx = 0 ; xx < Xvalues.size(); xx++){
+                        //            for(G4int yy = 0 ; yy < Yvalues.size(); yy++){
+                        //                for(G4int zz = 0 ; zz < Zvalues.size(); zz++){
+
+                        //                    //table << std::setw(WW) << std::left <<  << " " << Delimiter
+                        //                    //      << std::setw(WW) << std::left << Thetavalues[tt] << " " << Delimiter
+                        //                    //      << std::setw(WW) << std::left << Phivalues[pp] << " " << Delimiter
+                        //                    //      << std::setw(WW) << std::left << Xvalues[xx] << " " << Delimiter
+                        //                    //      << std::setw(WW) << std::left << Yvalues[yy] << " " << Delimiter
+                        //                    //      << std::setw(WW) << std::left << Zvalues[zz] << " " << Delimiter
+                        //                    //      << std::setw(WW) << std::left << ProjeectionMatrix[Thetavalues[tt]][Phivalues[pp]][Xvalues[xx]][Yvalues[yy]][Zvalues[zz]]
+                        //                    //      << "\n";
+                        //                    //rayincre++;
+
+                        //                    if(Thetavalues[tt] == RaysData[aa][0]){
+                        //                        if(Phivalues[pp] == RaysData[aa][1]){
+                        //                            if(Xvalues[xx] == RaysData[aa][2]){
+                        //                                if(Yvalues[yy] == RaysData[aa][3]){
+                        //                                    if(Zvalues[zz] == RaysData[aa][4]){
+
+
+                        table << std::setw(WW) << std::left << rayincre << Delimiter ;
+
+                        for(G4int bb = 0 ; bb < RaysData[aa].size(); bb++){
+                            //G4cout << ProjeectionMatrix[aa+1][bb+1]  << " " <<  G4endl ;
+                            if(bb == (RaysData[aa].size()-1)){
+                                table << std::setw(WW) << std::left << RaysData[aa][bb];
+
+                            }else{
+                                table << std::setw(WW) << std::left << RaysData[aa][bb] << Delimiter  ;
+                            }
+                        }
+                        table << "\n";
+                        rayincre++;
+
+
+
+                        //                                    }
+                        //                                }
+                        //                            }
+                        //                        }
+                        //                    }
+
+
+
+                        //                }
+                        //            }
+                        //        }
+                        //    }
+                        //}
+
+
+                    }
 
                 }
 
