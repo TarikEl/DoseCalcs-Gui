@@ -39,6 +39,7 @@
 #include "G4Element.hh"
 #include "G4ElementTable.hh"
 #include "G4Trd.hh"
+#include "G4AssemblyVolume.hh"
 
 #include "G4ThreeVector.hh"
 #include "G4RotationMatrix.hh"
@@ -116,7 +117,7 @@ G4VPhysicalVolume* G4TLaminography::ConstructPhysicalVolume(){
     G4double detectorSideX = +pipeRadiusInner;  // = +15 cm  (detector side)
 
 
-    G4String ControlFor = "DifferentShapes";// Simple, CokingInOilPipe, ForSpectrumGeneration, DifferentShapes, SedimentAndCorrosionFromSrcAndDetSides
+    G4String ControlFor = "ColumnCanals";//ColumnCanals, Simple, CokingInOilPipe, ForSpectrumGeneration, DifferentShapes, SedimentAndCorrosionFromSrcAndDetSides
 
         // 1 Coking in Oil Pipe	Crude Oil (G4_OCTANE)	Carbon (G4_C)	Heavy carbon deposits (coke) inside refinery pipes.
         // 2 Scale in Water PipeWater (G4_WATER)Calcium Carbonate (G4_CALCIUM_CARBONATE)"Limescale" buildup blocking industrial cooling systems.
@@ -1494,6 +1495,251 @@ G4VPhysicalVolume* G4TLaminography::ConstructPhysicalVolume(){
 
     }
 
+
+
+    else if(ControlFor == "ColumnCanals"){
+
+        // ======================================================================
+        //  LABORATORY PILOT COLUMN  –  4 Trays
+        //  Tray 2: Pivot at +X (fixed), -X (weir) tilts DOWN into Tray 3.
+        //  Tray 1: Broken weir fragment floating in fluid.
+        // ======================================================================
+
+        // ----------------------------------------------------------------------
+        // 0. ALL PARAMETERS
+        // ----------------------------------------------------------------------
+        const G4double colOuterR   = 63.5  * cm;
+        const G4double colWallT    = 0.5   * cm;
+        const G4double colInnerR   = colOuterR - colWallT;
+        const G4double colHeight   = 280.0 * cm;
+        const G4double colHalfZ    = colHeight / 2.0;
+
+        const G4double trayThk     = 1.5   * cm;
+        const G4double weirHeight  = 10.0  * cm;
+        const G4double weirThk     = 1.5   * cm;
+        const G4double cutAngle    = 90.0  * deg;
+        const G4double cutDepth    = colInnerR * (1.0 - std::cos(cutAngle/2.0));
+        const G4double chordWidth  = 2.0 * colInnerR * std::sin(cutAngle/2.0);
+        const G4double fluidHeight = 10.0 * cm;
+
+        const G4double zTray1 = -colHalfZ + 34.0  * cm;
+        const G4double zTray2 = -colHalfZ + 84.0  * cm;
+        const G4double zTray3 = -colHalfZ + 154.5 * cm;
+        const G4double zTray4 = -colHalfZ + 193.5 * cm;
+
+        const G4double fillFrac1 = 0.0; // Tray 1 is empty in the reference, but we place a fragment anyway
+        const G4double fillFrac2 = 0.8659;
+        const G4double fillFrac3 = 0.8639;
+        const G4double fillFrac4 = 0.8259;
+
+        const G4int weirSide1 = +1;
+        const G4int weirSide2 = -1;   // Weir on -X
+        const G4int weirSide3 = +1;
+        const G4int weirSide4 = -1;
+
+        // Input parameter for Tray 2 tilt angle
+        const G4double tiltAngle2 = 26.5 * deg;
+        const G4double bottomPoolHeight = 10.0 * cm;
+        const G4double bottomPoolZ      = -colHalfZ + bottomPoolHeight/2.0;
+
+        // --- NEW PARAMETERS: Broken Weir Fragment for Tray 1 ---
+        // Fragment dimensions (a piece broken from the weir)
+        const G4double fragThkX = 1.5 * cm;   // Same as weir thickness
+        const G4double fragWidthY = 10.0 * cm; // Width of the broken piece
+        const G4double fragHeightZ = 5.0 * cm; // Height of the broken piece
+        // Position inside Tray 1 fluid (relative to Tray 1 center)
+        const G4double fragPosX = 0.0 * cm;   // Modify as needed
+        const G4double fragPosY = 0.0 * cm;   // Modify as needed
+        const G4double fragPosZ = 2.5 * cm;   // Modify as needed (sitting in fluid)
+        // Rotation of the fragment (e.g., tilted/tumbled)
+        const G4double fragRotX = 15.0 * deg;
+        const G4double fragRotY = 45.0 * deg;
+        const G4double fragRotZ = 0.0 * deg;
+
+        // ----------------------------------------------------------------------
+        // 1. MATERIALS
+        // ----------------------------------------------------------------------
+        G4Element* elFe = nist->FindOrBuildElement("Fe");
+        G4Element* elC  = nist->FindOrBuildElement("C");
+        G4Element* elMn = nist->FindOrBuildElement("Mn");
+        G4Element* elSi = nist->FindOrBuildElement("Si");
+
+        G4Material* matSteel = new G4Material("ColumnCarbonSteel", 7.85 * g/cm3, 4);
+        matSteel->AddElement(elFe, 0.984);
+        matSteel->AddElement(elC,  0.003);
+        matSteel->AddElement(elMn, 0.010);
+        matSteel->AddElement(elSi, 0.003);
+
+        auto matWater = nist->FindOrBuildMaterial("G4_WATER");
+
+        // ----------------------------------------------------------------------
+        // 2. COLUMN SHELL
+        // ----------------------------------------------------------------------
+        G4Tubs* colShellSolid = new G4Tubs("ColumnShell", colInnerR, colOuterR, colHalfZ, 0.0*deg, 360.0*deg);
+        G4LogicalVolume* colShellLV = new G4LogicalVolume(colShellSolid, matSteel, "ColumnShellLV");
+        colShellLV->SetVisAttributes(G4Colour(0.6, 0.6, 0.6));
+        colShellLV->SetVisAttributes(G4VisAttributes::GetInvisible());
+        new G4PVPlacement(nullptr, G4ThreeVector(0, 0, 0), colShellLV, "ColumnShellPV", worldLogic, false, 0, true);
+
+        G4Tubs* colInnerSolid = new G4Tubs("ColumnInner", 0.0, colInnerR, colHalfZ, 0.0*deg, 360.0*deg);
+        G4LogicalVolume* colInnerLV = new G4LogicalVolume(colInnerSolid, Air, "ColumnInnerLV");
+        colInnerLV->SetVisAttributes(G4VisAttributes::GetInvisible());
+        new G4PVPlacement(nullptr, G4ThreeVector(0, 0, 0), colInnerLV, "ColumnInnerPV", worldLogic, false, 0, true);
+
+        // ----------------------------------------------------------------------
+        // 3. SHARED TRAY SOLID & WEIR SOLID
+        // ----------------------------------------------------------------------
+        G4Tubs* fullDiskSolid = new G4Tubs("FullDisk", 0.0, colInnerR, trayThk/2.0, 0.0*deg, 360.0*deg);
+
+        G4double cutterHalfX = 10.0 * cm;
+        G4double cutterHalfY = colInnerR * 2.0;
+        G4double cutterHalfZ = trayThk * 2.0;
+        G4Box* cutterBox = new G4Box("CutterBox", cutterHalfX, cutterHalfY, cutterHalfZ);
+
+        G4double cutterPosX = (colInnerR - cutDepth) + cutterHalfX;
+        G4ThreeVector cutPos(cutterPosX, 0, 0);
+
+        G4SubtractionSolid* cutDiskSolid = new G4SubtractionSolid("CutDisk", fullDiskSolid, cutterBox, nullptr, cutPos);
+        G4LogicalVolume* trayLV = new G4LogicalVolume(cutDiskSolid, matSteel, "TrayLV");
+        trayLV->SetVisAttributes(G4Colour(0.3, 0.3, 0.3));
+
+        G4Box* weirSolid = new G4Box("WeirBox", weirThk/2.0, chordWidth/2.0, weirHeight/2.0);
+        G4LogicalVolume* weirLV = new G4LogicalVolume(weirSolid, matSteel, "WeirLV");
+        weirLV->SetVisAttributes(G4Colour(0.4, 0.4, 0.4));
+
+        // ----------------------------------------------------------------------
+        // 4. SHARED FLUID CUTTER SETUP
+        // ----------------------------------------------------------------------
+        G4double fluidCutterHalfX = 10.0 * cm;
+        G4double fluidCutterHalfY = chordWidth / 2.0;
+        G4double fluidCutterPosX  = (colInnerR - cutDepth) + fluidCutterHalfX;
+        G4ThreeVector fluidCutPos(fluidCutterPosX, 0, 0);
+
+        // ----------------------------------------------------------------------
+        // 5. HELPER LAMBDA : place normal trays
+        // ----------------------------------------------------------------------
+        auto placeTray = [&](const G4String& tag, G4double zPos, G4double fillFrac, G4int weirSide)
+        {
+            G4RotationMatrix* rot = nullptr;
+            if (weirSide < 0) {
+                rot = new G4RotationMatrix();
+                rot->rotateZ(180.0 * deg);
+            }
+
+            new G4PVPlacement(rot, G4ThreeVector(0, 0, zPos), trayLV, "TrayPV_" + tag, colInnerLV, false, 0, true);
+
+            G4double weirCenterXlocal = colInnerR - cutDepth + weirThk/2.0;
+            G4double weirZ = zPos + trayThk/2.0 + weirHeight/2.0;
+            G4ThreeVector weirPos = (weirSide < 0) ? G4ThreeVector(-weirCenterXlocal, 0, weirZ) : G4ThreeVector(weirCenterXlocal, 0, weirZ);
+            new G4PVPlacement(rot, weirPos, weirLV, "WeirPV_" + tag, colInnerLV, false, 0, true);
+
+            if (fillFrac > 0.0) {
+                G4double localFluidHeight = fillFrac * fluidHeight;
+                G4Tubs* fullFluidSolid = new G4Tubs("FullFluid_" + tag, 0.0, colInnerR, localFluidHeight/2.0, 0.0*deg, 360.0*deg);
+                G4Box* localFluidCutter = new G4Box("FluidCutter_" + tag, fluidCutterHalfX, fluidCutterHalfY, localFluidHeight * 2.0);
+                G4SubtractionSolid* fluidSolid = new G4SubtractionSolid("FluidSolid_" + tag, fullFluidSolid, localFluidCutter, nullptr, fluidCutPos);
+                G4LogicalVolume* fluidLV = new G4LogicalVolume(fluidSolid, matWater, "FluidLV_" + tag);
+                fluidLV->SetVisAttributes(G4Colour(0.2, 0.4, 1.0, 0.5));
+                G4double fluidZ = zPos + trayThk/2.0 + localFluidHeight/2.0;
+                new G4PVPlacement(rot, G4ThreeVector(0, 0, fluidZ), fluidLV, "FluidPV_" + tag, colInnerLV, false, 0, true);
+            }
+        };
+
+        // ----------------------------------------------------------------------
+        // 6. PLACE THE TRAYS
+        // ----------------------------------------------------------------------
+        // Place Tray 1 (but we will manually handle its fluid to add the fragment)
+        {
+            G4RotationMatrix* rot1 = nullptr; // weirSide1 = +1
+            new G4PVPlacement(rot1, G4ThreeVector(0, 0, zTray1), trayLV, "TrayPV_Tray1", colInnerLV, false, 0, true);
+
+            // Weir for Tray 1
+            G4double weirCenterXlocal = colInnerR - cutDepth + weirThk/2.0;
+            G4double weirZ = zTray1 + trayThk/2.0 + weirHeight/2.0;
+            new G4PVPlacement(rot1, G4ThreeVector(weirCenterXlocal, 0, weirZ), weirLV, "WeirPV_Tray1", colInnerLV, false, 0, true);
+
+            // Fluid for Tray 1 (we force a 50% fill to float the fragment, since fillFrac1=0)
+            G4double localFluidHeight = 0.5 * fluidHeight;
+            G4Tubs* fullFluidSolid1 = new G4Tubs("FullFluid_Tray1", 0.0, colInnerR, localFluidHeight/2.0, 0.0*deg, 360.0*deg);
+            G4Box* localFluidCutter1 = new G4Box("FluidCutter_Tray1", fluidCutterHalfX, fluidCutterHalfY, localFluidHeight * 2.0);
+            G4SubtractionSolid* fluidSolid1 = new G4SubtractionSolid("FluidSolid_Tray1", fullFluidSolid1, localFluidCutter1, nullptr, fluidCutPos);
+            G4LogicalVolume* fluidLV1 = new G4LogicalVolume(fluidSolid1, matWater, "FluidLV_Tray1");
+            fluidLV1->SetVisAttributes(G4Colour(0.2, 0.4, 1.0, 0.5));
+            G4double fluidZ1 = zTray1 + trayThk/2.0 + localFluidHeight/2.0;
+            new G4PVPlacement(rot1, G4ThreeVector(0, 0, fluidZ1), fluidLV1, "FluidPV_Tray1", colInnerLV, false, 0, true);
+
+
+            // --- Add Broken Weir Fragment into Tray 1's Fluid ---
+            G4Box* fragSolid = new G4Box("WeirFragment", fragThkX/2.0, fragWidthY/2.0, fragHeightZ/2.0);
+            G4LogicalVolume* fragLV = new G4LogicalVolume(fragSolid, matSteel, "WeirFragmentLV");
+            fragLV->SetVisAttributes(G4Colour(0.8, 0.2, 0.2)); // Red color to distinguish it
+
+            G4RotationMatrix* fragRot = new G4RotationMatrix();
+            fragRot->rotateX(fragRotX);
+            fragRot->rotateY(fragRotY);
+            fragRot->rotateZ(fragRotZ);
+
+            // Position relative to the tray center (zTray1)
+            G4double fragZ_global = zTray1 + trayThk/2.0 + localFluidHeight/2.0 + fragPosZ;
+            G4ThreeVector fragPos_global(fragPosX, fragPosY, fragZ_global);
+
+            new G4PVPlacement(fragRot, fragPos_global, fragLV, "WeirFragmentPV", colInnerLV, false, 0, true);
+        }
+
+        // --- TRAY 2: Tilted Assembly (Pivot on +X, Weir on -X) ---
+        {
+            G4AssemblyVolume* tray2Assembly = new G4AssemblyVolume();
+
+            G4RotationMatrix* rotTray = new G4RotationMatrix();
+            rotTray->rotateZ(180.0 * deg);
+
+            G4ThreeVector posDisk(0, 0, 0);
+            tray2Assembly->AddPlacedVolume(trayLV, posDisk, rotTray);
+
+            G4double weirCenterXlocal = colInnerR - cutDepth + weirThk/2.0;
+            G4double weirZ = trayThk/2.0 + weirHeight/2.0;
+            G4ThreeVector posWeir(-weirCenterXlocal, 0, weirZ);
+            tray2Assembly->AddPlacedVolume(weirLV, posWeir, rotTray);
+
+            G4double localFluidHeight = fillFrac2 * fluidHeight;
+            G4Tubs* fullFluidSolid = new G4Tubs("FullFluid_Tray2", 0.0, colInnerR, localFluidHeight/2.0, 0.0*deg, 360.0*deg);
+            G4Box* localFluidCutter = new G4Box("FluidCutter_Tray2", fluidCutterHalfX, fluidCutterHalfY, localFluidHeight * 2.0);
+            G4SubtractionSolid* fluidSolid = new G4SubtractionSolid("FluidSolid_Tray2", fullFluidSolid, localFluidCutter, nullptr, fluidCutPos);
+            G4LogicalVolume* fluidLV = new G4LogicalVolume(fluidSolid, matWater, "FluidLV_Tray2");
+            fluidLV->SetVisAttributes(G4Colour(0.2, 0.4, 1.0, 0.5));
+
+            G4double fluidZ = trayThk/2.0 + localFluidHeight/2.0;
+            G4ThreeVector posFluid(0, 0, fluidZ);
+            tray2Assembly->AddPlacedVolume(fluidLV, posFluid, rotTray);
+
+            G4RotationMatrix* rotTilt = new G4RotationMatrix();
+            rotTilt->rotateY(-tiltAngle2);
+
+            G4ThreeVector pivotLocal(colInnerR, 0, 0);
+            G4ThreeVector pivotGlobal(colInnerR, 0, zTray2);
+
+            G4ThreeVector rotatedPivot = (*rotTilt) * pivotLocal;
+            G4ThreeVector translation = pivotGlobal - rotatedPivot;
+
+            tray2Assembly->MakeImprint(colInnerLV, translation, rotTilt, 0, true);
+        }
+
+        placeTray("Tray3", zTray3, fillFrac3, weirSide3);
+        placeTray("Tray4", zTray4, fillFrac4, weirSide4);
+
+        // ----------------------------------------------------------------------
+        // 6.b BOTTOM POOL FLUID
+        // ----------------------------------------------------------------------
+        {
+            G4Tubs* bottomPoolSolid = new G4Tubs("BottomPool", 0.0, colInnerR, bottomPoolHeight/2.0, 0.0*deg, 360.0*deg);
+            G4LogicalVolume* bottomPoolLV = new G4LogicalVolume(bottomPoolSolid, matWater, "BottomPoolLV");
+            bottomPoolLV->SetVisAttributes(G4Colour(0.2, 0.4, 1.0, 0.5));
+            new G4PVPlacement(nullptr, G4ThreeVector(0, 0, bottomPoolZ), bottomPoolLV, "BottomPoolPV", colInnerLV, false, 0, true);
+        }
+
+    } // end ColumnCanals
+
+
     // ==== Detector ====
 
     G4double detRadius = 3.0*cm;
@@ -1613,328 +1859,6 @@ G4VPhysicalVolume* G4TLaminography::ConstructPhysicalVolume(){
         new G4PVPlacement(rot, detectorPos, detLogic, "DetectorPhys", worldLogic, false, 0, true);
 
     }
-
-
-    // SOURCE POSITION
-    //G4ThreeVector SrcPos(-20*cm , 0*cm , -30*cm);
-    //G4double SourceDirectionTheta = 20*deg;
-
-
-    // ==== Materials ====
-    //auto Water          = nist->FindOrBuildMaterial("G4_WATER");
-    //auto StainlessSteel = nist->FindOrBuildMaterial("G4_STAINLESS-STEEL");
-    //auto Glass          = nist->FindOrBuildMaterial("G4_GLASS_PLATE");
-    //auto Concrete       = nist->FindOrBuildMaterial("G4_CONCRETE");
-    //auto SourceMaterial = Air; // Placeholder, replace with real radioactive material
-
-    //// ==== HIGH DENSITY MATERIAL ====
-
-    //// Get Tungsten element
-    //auto Tungsten = nist->FindOrBuildMaterial("G4_W");
-
-    //G4Element* W = nist->FindOrBuildElement("W");
-
-    //// Get Ultra Dense Tungsten element
-    //G4Material* UltraDenseW = new G4Material("UltraDenseW", 15.0 * g/cm3, 1, kStateSolid);
-    //UltraDenseW->AddElement(W, 1.0);
-    //// Very High Density Tungsten
-    //G4Material* SuperDense = new G4Material("SuperDense", 30.0 * g/cm3, 1, kStateSolid);
-    //SuperDense->AddElement(W, 1.0);
-
-
-    //// Define Osmium material manually
-    //G4Element* Os = nist->FindOrBuildElement("Os");
-    //G4Material* OsmiumMat = new G4Material("OsmiumMat", 22.6 * g/cm3, 1, kStateSolid);
-    //OsmiumMat->AddElement(Os, 1.0);
-
-
-
-    // ==== RANDOM VOLUMES INSIDE PIPE (HIGH ATTENUATION) ====
-
-
-    // -20  20
-
-    //G4double objSizeX = 20*cm;
-    //G4double objSizeY = 20*cm;
-    //G4double objSizeZ = 40*cm;   // BIG delta Z
-
-    //auto bigSolid = new G4Box("BigObject",
-    //                          objSizeX/2,
-    //                          objSizeY/2,
-    //                          objSizeZ/2);
-
-    //auto bigLogic = new G4LogicalVolume(bigSolid,
-    //                                    Pb,
-    //                                    "BigObjectLogic");
-
-    //// Place it centered in pipe
-    //new G4PVPlacement(nullptr,
-    //                  G4ThreeVector(0, 0, 0),
-    //                  bigLogic,
-    //                  "BigObjectPhys",
-    //                  worldLogic,
-    //                  false,
-    //                  0,
-    //                  true);
-
-
-
-    //// 40  80
-
-    //G4double radius = 10*cm;
-    //G4double height = 40*cm;   // full height in Z
-
-    //auto bigSolid1 = new G4Tubs("BigObject1",
-    //                           0.0,          // inner radius (solid cylinder)
-    //                           radius,       // outer radius
-    //                           height/2.0,   // half length in Z
-    //                           0.*deg,       // start angle
-    //                           360.*deg);    // full circle
-
-    //auto bigLogic1 = new G4LogicalVolume(bigSolid1, Pb, "BigObjectLogic1");
-
-    //// Place it centered in pipe
-    //new G4PVPlacement(nullptr,
-    //                  G4ThreeVector(0, 0, 60*cm),//60*cm
-    //                  bigLogic1,
-    //                  "BigObjectPhys1",
-    //                  worldLogic,
-    //                  false,
-    //                  0,
-    //                  true);
-
-
-    // ===================================================
-    // =============== SOURCES & DETECTORS ===============
-    // ===================================================
-
-    // ==== SOURCE CAPSULE + DISK ====
-    //auto srcCapsuleSolid = new G4Tubs("SrcCapsule", 2, 5*mm, 3*mm, 0, 360*deg);
-    //auto srcDiskSolid    = new G4Tubs("SrcDisk", 0, 2*mm, 3*mm, 0, 360*deg);
-
-    //auto srcCapsuleLogic = new G4LogicalVolume(srcCapsuleSolid, StainlessSteel, "SrcCapsuleLogic");
-    //auto srcDiskLogic    = new G4LogicalVolume(srcDiskSolid, SourceMaterial, "SrcDiskLogic");
-
-    //// Shielding layer around source capsule to block gamma outside collimators
-    ////auto shieldSolid = new G4Tubs("ShieldLayer", 0, 6*mm, 3.5*mm, 0, 360*deg);
-    ////auto shieldLogic = new G4LogicalVolume(shieldSolid, Pb, "ShieldLayerLogic");
-
-    //// Place disk inside capsule slightly shifted in +Z direction (local)
-    //new G4PVPlacement(nullptr, G4ThreeVector(0, 0, 1.5*mm), srcDiskLogic, "SrcDiskPhys", srcCapsuleLogic, false, 0, true);
-
-    //// ==== COLLIMATOR ====
-    //auto colOuter = new G4Tubs("CollimatorOuter", 0, 3*mm, 5*mm, 0, 360*deg);
-    //auto colHole  = new G4Tubs("CollimatorHole", 0, 1*mm, 6*mm, 0, 360*deg);
-    //auto colSolid = new G4SubtractionSolid("CollimatorSolid", colOuter, colHole);
-
-    //auto colLogic = new G4LogicalVolume(colSolid, Pb, "CollimatorLogic");
-
-    //// ==== DETECTOR (Housing + NaI crystal + Photocathode) ====
-    //auto detHousingSolid = new G4Tubs("DetHousing", 3, 3.2*cm, 5*cm, 0, 360*deg);
-    //auto detNaISolid     = new G4Tubs("NaICrystal", 0, 3*cm, 4*cm, 0, 360*deg);
-    //auto detPCSolid      = new G4Tubs("Photocathode", 0, 3*cm, 1*mm, 0, 360*deg);
-
-
-    // Source data
-
-    //std::cout << "\n\n\n\n\n\n\n\nn ---------------------- PointSourcePositionTowardDetector " << PointSourcePositionTowardDetector << "\n"
-    //    << " ThetaDirectionValueTowardDetector "<< ThetaDirectionValueTowardDetector <<  std::endl;
-
-
-
-    /*
-
-    G4double R_det  = 45*cm;
-    G4double Zslice = 0*cm;
-    G4int    N      = 30;
-
-    // Cylindrical detector (axis = local Z)
-    auto detSolid = new G4Tubs("D",
-                               0*cm,      // inner radius
-                               2*cm,      // outer radius
-                               3*cm,      // half length along axis
-                               0,
-                               360*deg);
-
-    for(int i=0; i<N; i++)
-    {
-
-        auto detLogic = new G4LogicalVolume(detSolid, NaI, "Detector_"+std::to_string(i));
-
-        G4double phi = 2*CLHEP::pi*i/N;
-
-        // --- Position ---
-        G4ThreeVector position(
-            R_det * std::cos(phi),
-            R_det * std::sin(phi),
-            Zslice
-            );
-
-        // --- Direction toward center (disk normal) ---
-        //G4ThreeVector axisDirection = -position.unit();
-
-        // --- Individual rotation matrix ---
-        G4ThreeVector zAxis(0,0,1);
-        G4ThreeVector axisDirection = -position.unit();
-
-        G4RotationMatrix rot;
-        rot = G4RotationMatrix();
-        rot.rotate(zAxis.angle(axisDirection),
-                   zAxis.cross(axisDirection));
-
-        // --- Individual full transform ---
-        G4Transform3D transform(rot, position);
-
-        new G4PVPlacement(transform,
-                          detLogic,
-                          "DetectorPhys",
-                          worldLogic,
-                          false,
-                          i,
-                          true);
-    }
-
-
-*/
-
-
-
-
-
-    // Manually placed and in one geometry , 30 source 40 detector for 11 angles
-
-    /*
-
-    // ==== ARRANGEMENT PARAMETERS ====
-
-    const G4int Nsrc = 30;
-    const G4int NdetMain = 30;
-    const G4int NdetExtra = 5;
-
-    const G4int Ndet = NdetMain + 2*NdetExtra; // = 40
-
-
-    // Pipe limits
-    G4double pipeZmin = -pipeLength/2;
-    G4double pipeZmax =  pipeLength/2;
-
-
-    // Z range for sources (inside pipe)
-    G4double zMinS = pipeZmin + 5*cm;
-    G4double zMaxS = pipeZmax - 5*cm;
-
-    G4double dzS = (zMaxS - zMinS)/(Nsrc-1);
-
-
-    // Z range for main detectors (inside pipe)
-    G4double zMinDmain = zMinS;
-    G4double dzDmain   = dzS;
-
-
-    // Z range for extra detectors
-    G4double dzExtra = dzS;
-
-
-    // X positions
-    G4double xSource   = -(pipeRadiusOuter + 6*cm);
-    G4double xDetector =  (pipeRadiusOuter + 7*cm);
-
-
-     ===================================================
-     ================== SOURCES ========================
-     ===================================================
-
-    for (G4int i=0;i<Nsrc;i++)
-    {
-        G4double zS = zMinS + i*dzS;
-
-        // Rotation: face detectors
-        auto srcRot = new G4RotationMatrix();
-        srcRot->rotateY(90*deg);
-
-        new G4PVPlacement(
-            srcRot,
-            G4ThreeVector(xSource,0,zS),
-            srcCapsuleLogic,
-            "CapsulePhys",
-            worldLogic,
-            false,
-            i,
-            true);
-    }
-
-
-
-     ===================================================
-     ================== DETECTORS ======================
-     ===================================================
-
-    for (G4int j=0;j<Ndet;j++)
-    {
-        G4double zD;
-
-        // ---- Bottom extra detectors
-        if (j < NdetExtra)
-        {
-            zD = zMinS - (NdetExtra-j)*dzExtra;
-        }
-
-        // ---- Main detectors (inside pipe)
-        else if (j < NdetExtra + NdetMain)
-        {
-            G4int k = j - NdetExtra;
-            zD = zMinS + k*dzDmain;
-        }
-
-        // ---- Top extra detectors
-        else
-        {
-            G4int k = j - (NdetExtra + NdetMain);
-            zD = zMaxS + (k+1)*dzExtra;
-        }
-
-
-        // Rotation toward sources
-        auto detRot = new G4RotationMatrix();
-        detRot->rotateY(-90*deg);
-
-
-        // Detector housing
-        auto detHousingLogic =
-            new G4LogicalVolume(detHousingSolid,
-                                Aluminum,
-                                "DetH_"+std::to_string(j));
-
-
-        // NaI crystal
-        auto detNaILogic =
-            new G4LogicalVolume(detNaISolid,
-                                NaI,
-                                "Detector_"+std::to_string(j));
-
-
-        // Place NaI
-        new G4PVPlacement(
-            nullptr,
-            G4ThreeVector(0,0,-5*mm),
-            detNaILogic,
-            "NaIPhys_"+std::to_string(j),
-            detHousingLogic,
-            false,0,true);
-
-
-        // Place detector
-        new G4PVPlacement(
-            detRot,
-            G4ThreeVector(xDetector,0,zD),
-            detHousingLogic,
-            "DetectorPhys_"+std::to_string(j),
-            worldLogic,
-            false,
-            j,
-            true);
-    }
-*/
 
 
     return WorldPhysicalVolume;
